@@ -25,7 +25,7 @@ export default (): Config.InitialOptions => {
       {
         displayName: 'node',
         testEnvironment: 'node',
-        testRegex: 'test/\\.spec\\.ts',
+        testRegex: 'test/.*\\.spec\\.ts',
       },
     ] as unknown[] as string[], // bad types
 
