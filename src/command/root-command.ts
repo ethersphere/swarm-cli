@@ -34,7 +34,7 @@ export class RootCommand {
    * if BEE_API_URL environment variable has been set the CLI will use that connection string
    */
   protected init(): void {
-    this.beeApiUrl = process.env.BEE_URL || this.assembleEndpoint(this.https, this.beeHost, this.beeApiPort)
+    this.beeApiUrl = process.env.BEE_API_URL || this.assembleEndpoint(this.https, this.beeHost, this.beeApiPort)
     this.bee = new Bee(this.beeApiUrl)
   }
 }
