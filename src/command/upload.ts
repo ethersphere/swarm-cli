@@ -53,7 +53,6 @@ export class Upload extends RootCommand implements LeafCommand {
     this.initCommand()
     let tag = await this.bee.createTag()
     let url: string
-    let directory = false
 
     if (!FS.existsSync(this.path)) {
       console.warn(bold().red(`Given filepath '${this.path}' doesn't exist`))
@@ -62,14 +61,16 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (FS.lstatSync(this.path).isDirectory()) {
-      directory = true
       console.log('Starting to upload the given folder')
       console.log(dim('Send data to the gateway Bee node...'))
+
+      if (this.pin) console.log(dim('Pin the uploaded data'))
 
       this.hash = await this.bee.uploadFilesFromDirectory(this.path, this.resursive, {
         indexDocument: this.indexDocument,
         errorDocument: this.errorDocument,
         tag: tag.uid,
+        pin: this.pin,
       })
       url = `${this.beeApiUrl}/bzz/${this.hash}`
     } else {
@@ -78,6 +79,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
       this.hash = await this.bee.uploadFile(FS.createReadStream(this.path), Path.basename(this.path), {
         tag: tag.uid,
+        pin: this.pin,
       })
       url = `${this.beeApiUrl}/files/${this.hash}`
     }
@@ -90,14 +92,6 @@ export class Upload extends RootCommand implements LeafCommand {
     await this.waitForFilePopulate(tag)
     console.log(dim('Uploading was successful!'))
     console.log(bold(`URL -> ${green(url)}`))
-
-    if (this.pin) {
-      console.log('Pinning the file')
-
-      if (directory) await this.bee.pinCollection(this.hash)
-      else await this.bee.pinFile(this.hash)
-      console.log('Pinning was successful!')
-    }
   }
 
   /** Init additional properties of class, that are not handled by the CLI framework */
