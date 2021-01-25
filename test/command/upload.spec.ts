@@ -28,7 +28,7 @@ describe('Test Upload command', () => {
 
     expect(commandBuilder.initedCommands[0].command.name).toBe('upload')
     const command = commandBuilder.initedCommands[0].command as Upload
-    expect(command.hash).toBe('8afcc8e6227b15c2983bcf1c9ff9cc5014e2806d27695ae65ea5c040ccb376ea')
+    expect(command.hash?.length).toBe(64)
     expect(consoleMessages[0]).toBe('Starting to upload the given folder')
   })
 
@@ -43,7 +43,7 @@ describe('Test Upload command', () => {
 
     expect(commandBuilder.initedCommands[0].command.name).toBe('upload')
     const command = commandBuilder.initedCommands[0].command as Upload
-    expect(command.hash).toBe('f9bf592525a5cbff6f2f94ea737037af31849d553c3acf8cd586411b13568a39')
+    expect(command.hash?.length).toBe(64)
     expect(consoleMessages[0]).toBe('Starting to upload the given file')
   })
 })
