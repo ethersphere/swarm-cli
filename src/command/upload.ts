@@ -86,10 +86,10 @@ export class Upload extends RootCommand implements LeafCommand {
     console.log(dim('Data have been sent to the gateway node successfully!'))
     console.log(bold(`Swarm root hash -> ${green(this.hash)}`))
 
-    console.log(dim('Waiting for file chunks populate on Swarm network...'))
+    console.log(dim('Waiting for file chunks to be synced on Swarm network...'))
     //refresh tag before populate tracking
     tag = await this.bee.retrieveTag(tag.uid)
-    await this.waitForFilePopulate(tag)
+    await this.waitForFileSynced(tag)
     console.log(dim('Uploading was successful!'))
     console.log(bold(`URL -> ${green(url)}`))
   }
@@ -99,30 +99,30 @@ export class Upload extends RootCommand implements LeafCommand {
     super.init()
   }
 
-  private async waitForFilePopulate(tag: Tag) {
+  private async waitForFileSynced(tag: Tag) {
     const tagUid = tag.uid
     const pollingTime = this.tagPollingTime
     const pollingTrials = this.tagPollingTrials
-    let populated = false
-    const populateBar = new SingleBar({}, Presets.rect)
-    populateBar.start(tag.split, 0)
+    let synced = false
+    const syncedBar = new SingleBar({}, Presets.rect)
+    syncedBar.start(tag.split, 0)
     for (let i = 0; i < pollingTrials; i++) {
       tag = await this.bee.retrieveTag(tagUid)
 
-      populateBar.update(tag.seen === 0 ? tag.synced : tag.seen)
+      syncedBar.update(tag.seen === 0 ? tag.synced : tag.seen)
 
       if (tag.synced === tag.stored || tag.seen === tag.stored) {
-        populated = true
+        synced = true
         break
       }
       await sleep(pollingTime)
     }
-    populateBar.stop()
+    syncedBar.stop()
 
-    if (!populated) {
-      console.warn(red('Data population timeout.'))
+    if (!synced) {
+      console.warn(red('Data syncing timeout.'))
     } else {
-      console.log(dim('Data has been populated on Swarm network'))
+      console.log(dim('Data has been synced on Swarm network'))
     }
   }
 }
