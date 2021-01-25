@@ -89,7 +89,10 @@ export class Upload extends RootCommand implements LeafCommand {
     console.log(dim('Waiting for file chunks to be synced on Swarm network...'))
     //refresh tag before populate tracking
     tag = await this.bee.retrieveTag(tag.uid)
-    await this.waitForFileSynced(tag)
+    const synced = await this.waitForFileSynced(tag)
+
+    if (!synced) return //error message printed before
+
     console.log(dim('Uploading was successful!'))
     console.log(bold(`URL -> ${green(url)}`))
   }
@@ -99,7 +102,14 @@ export class Upload extends RootCommand implements LeafCommand {
     super.init()
   }
 
-  private async waitForFileSynced(tag: Tag) {
+  /**
+   * Waits until the data syncing is successful on Swarm network
+   *
+   * @param tag had to be attached to the uploaded file
+   *
+   * @returns whether the file sync was successful or not.
+   */
+  private async waitForFileSynced(tag: Tag): Promise<boolean> {
     const tagUid = tag.uid
     const pollingTime = this.tagPollingTime
     const pollingTrials = this.tagPollingTrials
@@ -121,8 +131,12 @@ export class Upload extends RootCommand implements LeafCommand {
 
     if (!synced) {
       console.warn(red('Data syncing timeout.'))
+
+      return false
     } else {
       console.log(dim('Data has been synced on Swarm network'))
+
+      return true
     }
   }
 }
