@@ -24,7 +24,7 @@ export class Upload extends RootCommand implements LeafCommand {
   public pin!: boolean
 
   @Option({ key: 'recursive', alias: 'r', describe: 'Upload directory', default: true })
-  public resursive!: boolean
+  public recursive!: boolean
 
   @Option({ key: 'tag-polling-time', describe: 'Waiting time in ms between tag pollings', default: 500 })
   public tagPollingTime!: number
@@ -66,7 +66,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
       if (this.pin) console.log(dim('Pin the uploaded data'))
 
-      this.hash = await this.bee.uploadFilesFromDirectory(this.path, this.resursive, {
+      this.hash = await this.bee.uploadFilesFromDirectory(this.path, this.recursive, {
         indexDocument: this.indexDocument,
         errorDocument: this.errorDocument,
         tag: tag.uid,
