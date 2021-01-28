@@ -68,7 +68,7 @@
   },
   "dependencies": {
     "cli-progress": "^3.8.2",
-    "furious-commander": "^0.2.1",
+    "furious-commander": "^0.3.0",
     "kleur": "^4.1.4"
   }
 }

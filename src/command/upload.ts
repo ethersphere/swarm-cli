@@ -14,7 +14,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public readonly description = 'Upload file to Swarm'
 
-  @Argument({ key: 'path', describe: 'Path of the file (even directory)', demandOption: true })
+  @Argument({ key: 'path', describe: 'Path of the file (even directory)', required: true })
   public path!: string
 
   @Option({ key: 'pin', type: 'boolean', describe: 'Persist the uploaded data on the gateway node' })
