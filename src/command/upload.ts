@@ -17,7 +17,7 @@ export class Upload extends RootCommand implements LeafCommand {
   @Argument({ key: 'path', describe: 'Path of the file (even directory)', demandOption: true })
   public path!: string
 
-  @Option({ key: 'pin', type: 'boolean', describe: 'Preserve the uploaded data on the gateway node' })
+  @Option({ key: 'pin', type: 'boolean', describe: 'Persist the uploaded data on the gateway node' })
   public pin!: boolean
 
   @Option({ key: 'recursive', alias: 'r', describe: 'Upload directory', default: true })
