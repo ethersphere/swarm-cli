@@ -62,7 +62,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
     if (FS.lstatSync(this.path).isDirectory()) {
       console.log('Starting to upload the given folder')
-      console.log(dim('Send data to the gateway Bee node...'))
+      console.log(dim('Send data to the Bee node...'))
 
       if (this.pin) console.log(dim('Pin the uploaded data'))
 
@@ -75,7 +75,7 @@ export class Upload extends RootCommand implements LeafCommand {
       url = `${this.beeApiUrl}/bzz/${this.hash}`
     } else {
       console.log('Starting to upload the given file')
-      console.log(dim('Send data to the gateway Bee node...'))
+      console.log(dim('Send data to the Bee node...'))
 
       this.hash = await this.bee.uploadFile(FS.createReadStream(this.path), Path.basename(this.path), {
         tag: tag.uid,
@@ -83,7 +83,7 @@ export class Upload extends RootCommand implements LeafCommand {
       })
       url = `${this.beeApiUrl}/files/${this.hash}`
     }
-    console.log(dim('Data have been sent to the gateway node successfully!'))
+    console.log(dim('Data have been sent to the Bee node successfully!'))
     console.log(bold(`Swarm root hash -> ${green(this.hash)}`))
 
     console.log(dim('Waiting for file chunks to be synced on Swarm network...'))
