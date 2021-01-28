@@ -1,5 +1,6 @@
 import Bee from '@ethersphere/bee-js'
 import { ExternalOption } from 'furious-commander'
+import { defaultBeeApiUrl } from '../config'
 
 /**
  * This class can be parent of the Commands to handle root options of the CLI
@@ -7,26 +8,13 @@ import { ExternalOption } from 'furious-commander'
 export class RootCommand {
   // CLI FIELDS
 
-  @ExternalOption('https')
-  private https!: boolean
-
-  @ExternalOption('bee-host')
-  private beeHost!: string
-
-  @ExternalOption('bee-api-port')
-  private beeApiPort!: number
+  /** API URL of Bee */
+  @ExternalOption('bee-api-url')
+  public beeApiUrl!: string
 
   // CLASS FIELDS
 
-  /** assembled API URL of Bee */
-  public beeApiUrl!: string
-
   public bee!: Bee
-
-  /** Gives back URL string */
-  protected assembleEndpoint(https: boolean, beeHost: string, port: number): string {
-    return `${https ? 'https' : 'http'}://${beeHost}:${port}`
-  }
 
   /**
    * Init Root command fields
@@ -34,7 +22,7 @@ export class RootCommand {
    * if BEE_API_URL environment variable has been set the CLI will use that connection string
    */
   protected init(): void {
-    this.beeApiUrl = process.env.BEE_API_URL || this.assembleEndpoint(this.https, this.beeHost, this.beeApiPort)
+    this.beeApiUrl = this.beeApiUrl === defaultBeeApiUrl ? process.env.BEE_API_URL || this.beeApiUrl : this.beeApiUrl
     this.bee = new Bee(this.beeApiUrl)
   }
 }
