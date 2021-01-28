@@ -17,9 +17,6 @@ export class Upload extends RootCommand implements LeafCommand {
   @Argument({ key: 'path', describe: 'Path of the file (even directory)', demandOption: true })
   public path!: string
 
-  // @Option({ key: 'encrypt', describe: 'Encrypt the passed data with a randomly generated key' })
-  // public encrypt!: boolean
-
   @Option({ key: 'pin', type: 'boolean', describe: 'Preserve the uploaded data on the gateway node' })
   public pin!: boolean
 
