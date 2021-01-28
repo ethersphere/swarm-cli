@@ -67,6 +67,7 @@
     "webpack-cli": "^4.3.0"
   },
   "dependencies": {
+    "@ethersphere/bee-js": "github:ethersphere/bee-js",
     "cli-progress": "^3.8.2",
     "furious-commander": "^0.3.0",
     "kleur": "^4.1.4"
