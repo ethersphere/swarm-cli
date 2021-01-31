@@ -1,4 +1,4 @@
-import { BrandedString } from '../types'
+import { BrandedString } from './types'
 
 /**
  * Nominal type to represent hex strings
