@@ -1,6 +1,8 @@
 import Bee from '@ethersphere/bee-js'
 import { ExternalOption } from 'furious-commander'
-import { defaultBeeApiUrl } from '../config'
+import { beeApiUrl } from '../config'
+import { IOption } from 'furious-commander/dist/option'
+import { CommandConfig } from './command-config'
 
 /**
  * This class can be parent of the Commands to handle root options of the CLI
@@ -12,9 +14,16 @@ export class RootCommand {
   @ExternalOption('bee-api-url')
   public beeApiUrl!: string
 
+  @ExternalOption('config-folder')
+  public configFolder!: string
+
   // CLASS FIELDS
 
+  public appName = 'swarm-cli'
+
   public bee!: Bee
+
+  public commandConfig!: CommandConfig
 
   /**
    * Init Root command fields
@@ -22,7 +31,14 @@ export class RootCommand {
    * if BEE_API_URL environment variable has been set the CLI will use that connection string
    */
   protected init(): void {
-    this.beeApiUrl = this.beeApiUrl === defaultBeeApiUrl ? process.env.BEE_API_URL || this.beeApiUrl : this.beeApiUrl
+    this.commandConfig = new CommandConfig(this.appName, this.configFolder)
+    this.beeApiUrl = this.optionPassed(beeApiUrl)
+      ? this.beeApiUrl
+      : this.commandConfig.config.beeApiUrl || process.env.BEE_API_URL || this.beeApiUrl
     this.bee = new Bee(this.beeApiUrl)
+  }
+
+  protected optionPassed(option: IOption): boolean {
+    return Boolean(process.argv.indexOf(`--${option.key}`) > -1)
   }
 }
