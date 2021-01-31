@@ -97,6 +97,7 @@ const base = (env?: Partial<WebpackEnvParams>): Configuration => {
     performance: {
       hints: false,
     },
+    watch: !isProduction,
   }
 }
 
