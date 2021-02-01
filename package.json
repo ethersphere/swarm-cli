@@ -70,6 +70,7 @@
     "webpack-cli": "^4.3.0"
   },
   "dependencies": {
+    "@ethersphere/bee-js": "^0.4.2",
     "cli-progress": "^3.8.2",
     "ethereumjs-wallet": "^1.0.1",
     "furious-commander": "^0.3.0",
