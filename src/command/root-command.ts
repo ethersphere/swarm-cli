@@ -39,6 +39,6 @@ export class RootCommand {
   }
 
   protected optionPassed(option: IOption): boolean {
-    return Boolean(process.argv.indexOf(`--${option.key}`) > -1)
+    return process.argv.includes(`--${option.key}`)
   }
 }
