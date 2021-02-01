@@ -32,9 +32,12 @@ export class RootCommand {
    */
   protected init(): void {
     this.commandConfig = new CommandConfig(this.appName, this.configFolder)
-    this.beeApiUrl = this.optionPassed(beeApiUrl)
-      ? this.beeApiUrl
-      : this.commandConfig.config.beeApiUrl || process.env.BEE_API_URL || this.beeApiUrl
+
+    if (!this.optionPassed(beeApiUrl)) {
+      if (process.env.BEE_API_URL) this.beeApiUrl = process.env.BEE_API_URL
+      else if (this.commandConfig.config.beeApiUrl) this.beeApiUrl = this.commandConfig.config.beeApiUrl
+    } // else it gets its default option value
+
     this.bee = new Bee(this.beeApiUrl)
   }
 
