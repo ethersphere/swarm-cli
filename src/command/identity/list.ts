@@ -2,7 +2,7 @@ import { LeafCommand } from 'furious-commander'
 import { RootCommand } from '../root-command'
 import { bold, italic, red } from 'kleur'
 import { divider } from '../../utils/console-log'
-import { getPrintableIdentityType, getSimpleWallet, isSimleWallet, isV3Wallet } from '../../service/identity'
+import { getPrintableIdentityType, getSimpleWallet, isSimpleWallet, isV3Wallet } from '../../service/identity'
 
 export class List extends RootCommand implements LeafCommand {
   // CLI FIELDS
@@ -32,7 +32,7 @@ export class List extends RootCommand implements LeafCommand {
 
       if (isV3Wallet(wallet, identityType)) {
         address = '0x' + wallet.address
-      } else if (isSimleWallet(wallet, identityType)) {
+      } else if (isSimpleWallet(wallet, identityType)) {
         address = getSimpleWallet(wallet).getAddressString()
       }
       console.log(`Address \t ${address}`)

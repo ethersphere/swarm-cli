@@ -13,7 +13,7 @@ export function getPrintableIdentityType(identityType: IdentityType): string {
   }
 }
 
-export function isSimleWallet(wallet: IdentityWallet, identityType: IdentityType): wallet is SimpleWallet {
+export function isSimpleWallet(wallet: IdentityWallet, identityType: IdentityType): wallet is SimpleWallet {
   if (identityType === IdentityType.simple) return true
 
   return false
@@ -39,7 +39,7 @@ export function getV3Wallet(wallet: V3Keystore, password: string): Promise<Walle
 export function getWalletFromIdentity(identity: Identity, password?: string): Promise<Wallet> {
   const { wallet, identityType } = identity
 
-  if (isSimleWallet(wallet, identityType)) {
+  if (isSimpleWallet(wallet, identityType)) {
     return new Promise(resolve => resolve(getSimpleWallet(wallet)))
   } else if (isV3Wallet(wallet, identityType)) {
     if (!password) throw new Error(`There is no  password passed for V3 wallet initialization`)
