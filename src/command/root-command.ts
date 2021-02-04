@@ -1,6 +1,6 @@
 import Bee from '@ethersphere/bee-js'
 import { ExternalOption } from 'furious-commander'
-import { beeApiUrl } from '../config'
+import { beeApiUrl, configFolder } from '../config'
 import { IOption } from 'furious-commander/dist/option'
 import { CommandConfig } from './command-config'
 
@@ -31,6 +31,9 @@ export class RootCommand {
    * if BEE_API_URL environment variable has been set the CLI will use that connection string
    */
   protected init(): void {
+    if (!this.optionPassed(configFolder)) {
+      if (process.env.SWARM_CLI_CONFIG_FOLDER) this.configFolder = process.env.SWARM_CLI_CONFIG_FOLDER
+    }
     this.commandConfig = new CommandConfig(this.appName, this.configFolder)
 
     if (!this.optionPassed(beeApiUrl)) {
