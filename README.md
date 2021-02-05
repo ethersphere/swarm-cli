@@ -43,8 +43,8 @@ It is possible to set value of particular parameters in different ways.
 The assignment priority of how option gets its value in question is the following:
 
 1. passed CLI option value (with e.g. `--option-example-1`)
-2. env variable for that option in form of either `OPTION_EXAMPLE_1` or `SWARM_CLI_OPTION_EXAMPLE_1` (if it's available)
-3. CLI configuration value of that option (if it's available)
+2. env variable for that option in form of either `OPTION_EXAMPLE_1` or `SWARM_CLI_OPTION_EXAMPLE_1` (if it is available)
+3. CLI configuration value of that option (if it is available)
 4. option's default fallback value (or it is required to define by #1)
 
 ## System environment
