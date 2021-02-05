@@ -35,5 +35,6 @@
     "**/coverage": true
   },
   "typescript.referencesCodeLens.enabled": true,
-  "jest.runAllTestsFirst": false
+  "jest.runAllTestsFirst": false,
+  "jest.autoEnable": false
 }

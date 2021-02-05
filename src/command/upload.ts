@@ -6,6 +6,7 @@ import { sleep } from '../utils'
 import { Tag } from '@ethersphere/bee-js/dist/types'
 import { SingleBar, Presets } from 'cli-progress'
 import { bold, green, dim, red } from 'kleur'
+import { exit } from 'process'
 
 export class Upload extends RootCommand implements LeafCommand {
   // CLI FIELDS
@@ -54,7 +55,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!FS.existsSync(this.path)) {
       console.warn(bold().red(`Given filepath '${this.path}' doesn't exist`))
 
-      return
+      exit(1)
     }
 
     if (FS.lstatSync(this.path).isDirectory()) {
