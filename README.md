@@ -40,7 +40,7 @@ On first run, this configuration will be generated with default values, that you
 
 It is possible to set value of particular parameters in different ways.
 
-The assigment priority how option gets its value in question is the following:
+The assignment priority of how option gets its value in question is the following:
 
 1. passed CLI option value (with e.g. `--option-example-1`)
 2. env variable for that option in form of either `OPTION_EXAMPLE_1` or `SWARM_CLI_OPTION_EXAMPLE_1` (if it's available)
