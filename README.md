@@ -15,7 +15,7 @@
 
 > Command line interface tool for manage Bee node and utilize its functionalities
 
-The goal of this project to handle all Swarm related operations through CLI in the future.
+The goal of this project is to handle most of the Swarm operations through CLI at some point in the future.
 For currently supported operations, see [Commands](##Commands) section.
 
 ## Commands
