@@ -52,7 +52,7 @@ The assigment priority how option gets its value in question is the following:
 With specific system environment variables you can alter the behaviour of the CLI
 
 * `BEE_API_URL` - API URL of Bee client
-* `SWARM_CLI_CONFIG_FOLDER` - full path of configuration folder
+* `SWARM_CLI_CONFIG_FOLDER` - full path to a configuration folder
 
 # Install
 
