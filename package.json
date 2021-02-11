@@ -70,7 +70,7 @@
     "webpack-cli": "^4.3.0"
   },
   "dependencies": {
-    "@ethersphere/bee-js": "file:../bee-js",
+    "@ethersphere/bee-js": "git://github.com/ethersphere/bee-js#feat/feed-interface",
     "cli-progress": "^3.8.2",
     "ethereumjs-wallet": "^1.0.1",
     "furious-commander": "^0.4.0",
