@@ -1,14 +1,7 @@
-import { LeafCommand, Argument, Option } from 'furious-commander'
+import { LeafCommand, Option } from 'furious-commander'
 import { RootCommand } from '../root-command'
-import Wallet from 'ethereumjs-wallet'
-import { randomBytes } from 'crypto'
-import { bold, dim, green, italic, red } from 'kleur'
-import { divider } from '../../utils/console-log'
-import { IdentityType, SimpleWallet, V3Keystore } from '../../service/identity/types'
-import { bytesToHex } from '../../utils/hex'
+import { bold, dim, green, red } from 'kleur'
 import { exit } from 'process'
-import { askForPassword } from '../../utils/prompt'
-import ora from 'ora'
 import { getWalletFromIdentity } from '../../service/identity'
 
 export class Update extends RootCommand implements LeafCommand {
@@ -36,6 +29,7 @@ export class Update extends RootCommand implements LeafCommand {
     this.initCommand()
 
     const identity = this.commandConfig.config.identities[this.identity]
+
     if (!identity) {
       console.warn(red(`Invalid identity name: '${this.identity}'`))
 
@@ -45,7 +39,6 @@ export class Update extends RootCommand implements LeafCommand {
       const wallet = await getWalletFromIdentity(identity, this.password)
       const signer = wallet.getPrivateKey()
       const feed = this.bee.makeFeedWriter(signer, this.topic)
-      const updateReference = await feed.upload(this.reference)
 
       const manifestResponse = await feed.createManifest()
 
