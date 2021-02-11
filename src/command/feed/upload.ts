@@ -11,6 +11,11 @@ import { askForPassword } from '../../utils/prompt'
 import ora from 'ora'
 import { getWalletFromIdentity } from '../../service/identity'
 import { Upload as UploadBase } from '../upload'
+import * as FS from 'fs'
+import * as Path from 'path'
+import { Tag } from '@ethersphere/bee-js'
+import { Presets, SingleBar } from 'cli-progress'
+import { sleep } from '../../utils'
 
 export class Upload extends UploadBase {
   // CLI FIELDS
@@ -66,6 +71,8 @@ export class Upload extends UploadBase {
       exit(1)
     }
     try {
+      await this.upload()
+
       const wallet = await getWalletFromIdentity(identity, this.password)
       const signer = wallet.getPrivateKey()
       const feed = this.bee.makeFeedWriter(signer, this.topic)
@@ -80,6 +87,86 @@ export class Upload extends UploadBase {
       console.warn(red(e.message))
 
       exit(1)
+    }
+  }
+
+  public async upload(): Promise<void> {
+    let tag = await this.bee.createTag()
+    let url: string
+
+    if (!FS.existsSync(this.path)) {
+      console.warn(bold().red(`Given filepath '${this.path}' doesn't exist`))
+
+      exit(1)
+    }
+
+    if (FS.lstatSync(this.path).isDirectory()) {
+      console.log('Starting to upload the given folder')
+      console.log(dim('Send data to the Bee node...'))
+
+      if (this.pin) console.log(dim('Pin the uploaded data'))
+
+      this.hash = await this.bee.uploadFilesFromDirectory(this.path, this.recursive, {
+        indexDocument: this.indexDocument,
+        errorDocument: this.errorDocument,
+        tag: tag.uid,
+        pin: this.pin,
+      })
+      url = `${this.beeApiUrl}/bzz/${this.hash}`
+    } else {
+      console.log('Starting to upload the given file')
+      console.log(dim('Send data to the Bee node...'))
+
+      this.hash = await this.bee.uploadFile(FS.createReadStream(this.path), Path.basename(this.path), {
+        tag: tag.uid,
+        pin: this.pin,
+      })
+      url = `${this.beeApiUrl}/files/${this.hash}`
+    }
+    console.log(dim('Data have been sent to the Bee node successfully!'))
+    console.log(bold(`Swarm root hash -> ${green(this.hash)}`))
+
+    console.log(dim('Waiting for file chunks to be synced on Swarm network...'))
+    //refresh tag before populate tracking
+    tag = await this.bee.retrieveTag(tag.uid)
+    const synced = await this.waitForFileSynced(tag)
+
+    if (!synced) return //error message printed before
+
+    console.log(dim('Uploading was successful!'))
+    console.log(bold(`Manifest -> ${green(url)}`))
+  }
+
+  private async waitForFileSynced(tag: Tag): Promise<boolean> {
+    const tagUid = tag.uid
+    const pollingTime = this.tagPollingTime
+    const pollingTrials = this.tagPollingTrials
+    let synced = false
+    const syncedBar = new SingleBar({}, Presets.rect)
+    console.log('tag', tag) //TODO remove after bug has been presented
+    syncedBar.start(tag.total, 0)
+    for (let i = 0; i < pollingTrials; i++) {
+      tag = await this.bee.retrieveTag(tagUid)
+      const updateState = tag.synced
+
+      syncedBar.update(updateState)
+
+      if (tag.total === updateState) {
+        synced = true
+        break
+      }
+      await sleep(pollingTime)
+    }
+    syncedBar.stop()
+
+    if (!synced) {
+      console.warn(red('Data syncing timeout.'))
+
+      return false
+    } else {
+      console.log(dim('Data has been synced on Swarm network'))
+
+      return true
     }
   }
 
