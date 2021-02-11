@@ -82,7 +82,7 @@ export class Upload extends UploadBase {
 
       const url = `${this.beeApiUrl}/bzz/${manifestResponse.reference}`
       console.log(dim('Uploading was successful!'))
-      console.log(bold(`URL -> ${green(url)}`))
+      console.log(bold(`Manifest -> ${green(url)}`))
     } catch (e) {
       console.warn(red(e.message))
 
@@ -134,7 +134,7 @@ export class Upload extends UploadBase {
     if (!synced) return //error message printed before
 
     console.log(dim('Uploading was successful!'))
-    console.log(bold(`Manifest -> ${green(url)}`))
+    console.log(bold(`URL -> ${green(url)}`))
   }
 
   private async waitForFileSynced(tag: Tag): Promise<boolean> {
