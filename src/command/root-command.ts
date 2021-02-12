@@ -1,4 +1,4 @@
-import Bee from '@ethersphere/bee-js'
+import { Bee } from '@ethersphere/bee-js'
 import { ExternalOption } from 'furious-commander'
 import { beeApiUrl, configFolder } from '../config'
 import { IOption } from 'furious-commander/dist/option'
