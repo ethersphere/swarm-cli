@@ -113,15 +113,14 @@ export class Upload extends RootCommand implements LeafCommand {
     const pollingTrials = this.tagPollingTrials
     let synced = false
     const syncedBar = new SingleBar({}, Presets.rect)
-    console.log('tag', tag) //TODO remove after bug has been presented
-    syncedBar.start(tag.total, 0)
+    syncedBar.start(tag.processed, 0)
     for (let i = 0; i < pollingTrials; i++) {
       tag = await this.bee.retrieveTag(tagUid)
       const updateState = tag.synced
 
       syncedBar.update(updateState)
 
-      if (tag.total === updateState) {
+      if (tag.processed === updateState) {
         synced = true
         break
       }
