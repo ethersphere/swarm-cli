@@ -20,7 +20,7 @@ export class Update extends RootCommand implements LeafCommand {
   @Option({ key: 'password', describe: 'Password for the wallet' })
   public password!: string
 
-  @Option({ key: 'reference', describe: 'The new reference' })
+  @Option({ key: 'reference', describe: 'The new reference', required: true })
   public reference!: string
 
   // CLASS FIELDS

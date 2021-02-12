@@ -36,7 +36,7 @@ export class Upload extends UploadBase {
       const wallet = await getWalletFromIdentity(identity, this.password)
       const signer = wallet.getPrivateKey()
       const feed = this.bee.makeFeedWriter(signer, this.topic)
-
+      await feed.upload(this.hash)
       const manifestResponse = await feed.createManifest()
 
       const url = `${this.beeApiUrl}/bzz/${manifestResponse.reference}`
