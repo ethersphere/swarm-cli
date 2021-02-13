@@ -1,8 +1,8 @@
-import { Identity } from '../service/identity/types'
+import { Identity } from '../../service/identity/types'
 import { homedir, platform } from 'os'
 import { join } from 'path'
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs'
-import { beeApiUrl } from '../config'
+import { beeApiUrl } from '../../config'
 import { exit } from 'process'
 
 export interface Config {
