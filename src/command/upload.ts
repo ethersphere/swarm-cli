@@ -140,7 +140,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
       return false
     } else {
-      this.console.log(dim('Data has been synced on Swarm network'))
+      this.console.dim('Data has been synced on Swarm network')
 
       return true
     }
