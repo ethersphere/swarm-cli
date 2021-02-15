@@ -5,8 +5,9 @@ import * as Path from 'path'
 import { sleep } from '../utils'
 import { Tag } from '@ethersphere/bee-js/dist/types'
 import { SingleBar, Presets } from 'cli-progress'
-import { bold, green, dim, red } from 'kleur'
+import { bold, green, dim } from 'kleur'
 import { exit } from 'process'
+import { VerbosityLevel } from './root-command/command-log'
 
 export class Upload extends RootCommand implements LeafCommand {
   // CLI FIELDS
@@ -53,16 +54,16 @@ export class Upload extends RootCommand implements LeafCommand {
     let url: string
 
     if (!FS.existsSync(this.path)) {
-      console.warn(bold().red(`Given filepath '${this.path}' doesn't exist`))
+      this.console.error(`Given filepath '${this.path}' doesn't exist`)
 
       exit(1)
     }
 
     if (FS.lstatSync(this.path).isDirectory()) {
-      console.log('Starting to upload the given folder')
-      console.log(dim('Send data to the Bee node...'))
+      this.console.log('Starting to upload the given folder')
+      this.console.dim('Send data to the Bee node...')
 
-      if (this.pin) console.log(dim('Pin the uploaded data'))
+      if (this.pin) this.console.dim('Pin the uploaded data')
 
       this.hash = await this.bee.uploadFilesFromDirectory(this.path, this.recursive, {
         indexDocument: this.indexDocument,
@@ -72,8 +73,8 @@ export class Upload extends RootCommand implements LeafCommand {
       })
       url = `${this.beeApiUrl}/bzz/${this.hash}`
     } else {
-      console.log('Starting to upload the given file')
-      console.log(dim('Send data to the Bee node...'))
+      this.console.log('Starting to upload the given file')
+      this.console.dim('Send data to the Bee node...')
 
       this.hash = await this.bee.uploadFile(FS.createReadStream(this.path), Path.basename(this.path), {
         tag: tag.uid,
@@ -81,18 +82,24 @@ export class Upload extends RootCommand implements LeafCommand {
       })
       url = `${this.beeApiUrl}/files/${this.hash}`
     }
-    console.log(dim('Data have been sent to the Bee node successfully!'))
-    console.log(bold(`Swarm root hash -> ${green(this.hash)}`))
+    this.console.dim('Data have been sent to the Bee node successfully!')
+    this.console.log(bold(`Swarm root hash -> ${green(this.hash)}`))
 
-    console.log(dim('Waiting for file chunks to be synced on Swarm network...'))
+    this.console.dim('Waiting for file chunks to be synced on Swarm network...')
     //refresh tag before populate tracking
     tag = await this.bee.retrieveTag(tag.uid)
     const synced = await this.waitForFileSynced(tag)
 
     if (!synced) return //error message printed before
 
-    console.log(dim('Uploading was successful!'))
-    console.log(bold(`URL -> ${green(url)}`))
+    this.console.dim('Uploading was successful!')
+    this.console.log(bold(`URL -> ${green(url)}`))
+
+    if (this.verbosity === VerbosityLevel.Quiet) {
+      // Put hash of the file to the output regardless the verbosity level
+      // eslint-disable-next-line no-console
+      console.log(this.hash)
+    }
   }
 
   /** Init additional properties of class, that are not handled by the CLI framework */
@@ -129,11 +136,11 @@ export class Upload extends RootCommand implements LeafCommand {
     syncedBar.stop()
 
     if (!synced) {
-      console.warn(red('Data syncing timeout.'))
+      this.console.error('Data syncing timeout.')
 
       return false
     } else {
-      console.log(dim('Data has been synced on Swarm network'))
+      this.console.log(dim('Data has been synced on Swarm network'))
 
       return true
     }
