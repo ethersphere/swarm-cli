@@ -5,7 +5,7 @@ import * as Path from 'path'
 import { sleep } from '../utils'
 import { Tag } from '@ethersphere/bee-js/dist/types'
 import { SingleBar, Presets } from 'cli-progress'
-import { bold, green, dim } from 'kleur'
+import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { VerbosityLevel } from './root-command/command-log'
 
