@@ -54,7 +54,7 @@ export class CommandLog {
         this.dim = emptyFunction
         break
       default:
-        // quite
+        // quiet
         this.error = error
         this.log = emptyFunction
         this.info = emptyFunction
