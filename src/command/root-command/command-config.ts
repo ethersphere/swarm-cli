@@ -1,9 +1,10 @@
-import { Identity } from '../service/identity/types'
+import { Identity } from '../../service/identity/types'
 import { homedir, platform } from 'os'
 import { join } from 'path'
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs'
-import { beeApiUrl } from '../config'
+import { beeApiUrl } from '../../config'
 import { exit } from 'process'
+import { CommandLog } from './command-log'
 
 export interface Config {
   beeApiUrl: string
@@ -18,7 +19,10 @@ export class CommandConfig {
 
   public configFolderPath: string
 
-  constructor(appName: string, configFolder?: string) {
+  public console: CommandLog
+
+  constructor(appName: string, console: CommandLog, configFolder?: string) {
+    this.console = console
     this.config = {
       beeApiUrl: beeApiUrl.default || '',
       identities: {},
@@ -61,7 +65,9 @@ export class CommandConfig {
       try {
         this.config = JSON.parse(configData.toString())
       } catch (err) {
-        console.warn(`There has been an error parsing JSON configuration of CLI from path: '${this.configFilePath}'`)
+        this.console.error(
+          `There has been an error parsing JSON configuration of CLI from path: '${this.configFilePath}'`,
+        )
 
         exit(1)
       }

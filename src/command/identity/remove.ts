@@ -1,6 +1,5 @@
 import { LeafCommand, Option, Argument } from 'furious-commander'
 import { RootCommand } from '../root-command'
-import { italic, red } from 'kleur'
 import inquirer from 'inquirer'
 import { exit } from 'process'
 
@@ -21,8 +20,8 @@ export class Remove extends RootCommand implements LeafCommand {
     this.initCommand()
 
     if (!this.commandConfig.config.identities) {
-      console.log(red("You don't have any identity yet"))
-      console.log(italic(`You can create one with command '${this.appName} identity create'`))
+      this.console.error("You don't have any identity yet")
+      this.console.info(`You can create one with command '${this.appName} identity create'`)
 
       return
     }
@@ -41,7 +40,7 @@ export class Remove extends RootCommand implements LeafCommand {
 
     //check identityName does exist
     if (!identityNames.includes(this.identityName)) {
-      console.warn(red('Given identity name does not exist'))
+      this.console.error('Given identity name does not exist')
 
       return
     }
@@ -54,14 +53,14 @@ export class Remove extends RootCommand implements LeafCommand {
       })
 
       if (!approve.question) {
-        console.log('Removal of identity has been cancelled')
+        this.console.error('Removal of identity has been cancelled')
 
         exit(1)
       }
     }
 
     this.commandConfig.removeIdentity(this.identityName)
-    console.log('Identity has been successfully removed')
+    this.console.log('Identity has been successfully removed')
   }
 
   /** Init additional properties of class, that are not handled by the CLI framework */

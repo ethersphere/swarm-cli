@@ -1,6 +1,7 @@
 import { IOption } from 'furious-commander/dist/option'
 import { Upload } from './command/upload'
 import { Identity } from './command/identity'
+import { VerbosityLevel } from './command/root-command/command-log'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -13,6 +14,14 @@ export const configFolder: IOption<string> = {
   describe: 'Path of the configuration files that the CLI uses',
 }
 
-export const optionParameters: IOption<unknown>[] = [beeApiUrl, configFolder]
+export const verbosity: IOption<string> = {
+  key: 'verbosity',
+  alias: 'v',
+  describe: 'Print console messages in the given relevance level',
+  choices: [...Object.keys(VerbosityLevel)],
+  default: String(VerbosityLevel.Verbose),
+}
+
+export const optionParameters: IOption<unknown>[] = [beeApiUrl, configFolder, verbosity]
 
 export const rootCommandClasses = [Upload, Identity]

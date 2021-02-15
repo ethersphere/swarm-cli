@@ -25,6 +25,7 @@ module.exports = {
     'linebreak-style': ['warn', 'unix'],
     'no-alert': 'error',
     'no-case-declarations': 'error',
+    'no-console': 'error',
     'no-constant-condition': 'error',
     'no-div-regex': 'error',
     'no-empty': 'warn',
@@ -86,4 +87,4 @@ module.exports = {
       },
     },
   ],
-};
+}

@@ -1,7 +1,6 @@
 import { LeafCommand } from 'furious-commander'
 import { RootCommand } from '../root-command'
-import { bold, italic, red } from 'kleur'
-import { divider } from '../../utils/console-log'
+import { bold } from 'kleur'
 import { getPrintableIdentityType, getSimpleWallet, isSimpleWallet, isV3Wallet } from '../../service/identity'
 
 export class List extends RootCommand implements LeafCommand {
@@ -14,19 +13,19 @@ export class List extends RootCommand implements LeafCommand {
   public run(): void {
     this.initCommand()
 
-    console.log('List of your identities')
-    divider('=')
+    this.console.info('List of your identities')
+    this.console.divider('=')
 
     if (!this.commandConfig.config.identities) {
-      console.log(red("You don't have any identity yet"))
-      console.log(italic(`You can create one with command '${this.appName} identity create'`))
+      this.console.error("You don't have any identity yet")
+      this.console.info(`You can create one with command '${this.appName} identity create'`)
 
       return
     }
 
     for (const [identityName, identity] of Object.entries(this.commandConfig.config.identities)) {
-      console.log(bold(`Identity name \t ${identityName}`))
-      console.log(`Identity type \t ${getPrintableIdentityType(identity.identityType)}`)
+      this.console.log(bold(`Identity name \t ${identityName}`))
+      this.console.log(`Identity type \t ${getPrintableIdentityType(identity.identityType)}`)
       const { wallet, identityType } = identity
       let address = ''
 
@@ -35,8 +34,8 @@ export class List extends RootCommand implements LeafCommand {
       } else if (isSimpleWallet(wallet, identityType)) {
         address = getSimpleWallet(wallet).getAddressString()
       }
-      console.log(`Address \t ${address}`)
-      divider()
+      this.console.log(`Address \t ${address}`)
+      this.console.divider()
     }
   }
 
