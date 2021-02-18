@@ -90,6 +90,11 @@ There are some ways you can make this module better:
 - Consult our [open issues](https://github.com/ethersphere/swarm-cli/issues) and take on one of them
 - Help our tests reach 100% coverage!
 
+# Maintainers
+
+- [nugaon](https://github.com/nugaon)
+- [vojtechsimetka](https://github.com/vojtechsimetka)
+
 # License
 
 [BSD-3-Clause](./LICENSE)
