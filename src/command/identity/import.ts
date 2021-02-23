@@ -101,14 +101,6 @@ export class Import extends RootCommand implements LeafCommand {
     }
   }
 
-  private checkForAnyIdentityName(): void {
-    if (!this.path) {
-      this.console.error('Name for the new identity must be specified')
-
-      exit(1)
-    }
-  }
-
   private exists(path: string): boolean {
     try {
       const stat = statSync(path)
