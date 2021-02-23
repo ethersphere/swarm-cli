@@ -20,9 +20,8 @@ export class Export extends RootCommand implements LeafCommand {
     const options = this.getV3Identities()
     this.checkForEmptyIdentities(options)
     await this.ensureIdentityNameIsProvided(options)
-    const { identities } = this.commandConfig.config
     this.checkForExistingIdentity()
-    const identity: Identity = identities[this.identityName]
+    const identity: Identity = this.commandConfig.config.identities[this.identityName]
     this.checkForV3Identity(identity)
     this.console.log(JSON.stringify(identity.wallet, null, 4))
   }
