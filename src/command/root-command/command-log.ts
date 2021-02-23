@@ -64,30 +64,58 @@ export class CommandLog {
   }
 
   /**
-   * Ask for password
+   * Ask for an arbitrary value
+   *
+   * @returns value
+   */
+  public async askForValue(message: string): Promise<string> {
+    const input = await prompt({
+      name: 'value',
+      message,
+    })
+    const { value } = input
+
+    if (!value) {
+      this.error('You did not specify any value')
+
+      exit(1)
+    }
+
+    return value
+  }
+
+  /**
+   * Ask for password WITHOUT confirmation
    *
    * @returns password
    */
-  public async askForPassword(): Promise<string> {
+  public async askForPassword(message: string): Promise<string> {
     const passwordInput = await prompt({
       type: 'password',
       name: 'question',
-      message: `Please provide a password`,
+      message,
     })
     const password = passwordInput.question
 
     if (!password) {
-      this.error('You did not pass any password')
+      this.error('You did not specify any password')
 
       exit(1)
     }
-    const passwordInputAgain = await prompt({
-      type: 'password',
-      name: 'question',
-      message: `Please repeat the previously typed password`,
-    })
 
-    if (passwordInputAgain.question !== password) {
+    return password
+  }
+
+  /**
+   * Ask for password with confirmation
+   *
+   * @returns password
+   */
+  public async askForPasswordWithConfirmation(): Promise<string> {
+    const password = await this.askForPassword('Please provide a password')
+    const passwordAgain = await this.askForPassword('Please repeat the password')
+
+    if (password !== passwordAgain) {
       this.error('The two passwords do not match')
 
       exit(1)
