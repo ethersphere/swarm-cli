@@ -17,9 +17,9 @@ export class Export extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     this.initCommand()
     this.checkForNoIdentities()
-    const options = this.getV3Identities()
-    this.checkForEmptyIdentities(options)
-    await this.ensureIdentityNameIsProvided(options)
+    const identities = this.getV3Identities()
+    this.checkForEmptyIdentities(identities)
+    await this.ensureIdentityNameIsProvided(identities)
     this.checkForExistingIdentity()
     const identity: Identity = this.commandConfig.config.identities[this.identityName]
     this.checkForV3Identity(identity)
@@ -37,9 +37,9 @@ export class Export extends RootCommand implements LeafCommand {
       .map(identity => identity[0])
   }
 
-  private async ensureIdentityNameIsProvided(options: string[]): Promise<void> {
+  private async ensureIdentityNameIsProvided(identities: string[]): Promise<void> {
     if (!this.identityName) {
-      this.identityName = await promptUserForIdentity(options, 'Which identity would you like to export?')
+      this.identityName = await promptUserForIdentity(identities, 'Which identity would you like to export?')
     }
   }
 
