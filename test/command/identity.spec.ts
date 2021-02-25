@@ -67,7 +67,7 @@ describe('Test Identity command', () => {
       optionParameters,
       testArguments: [commandKey, 'list'],
     })
-    expect(consoleMessages[0]).toBe('List of your identities')
+    expect(consoleMessages[0]).toContain('List of your identities')
     expect(consoleMessages[2].includes('Identity name') && consoleMessages[2].includes('main')).toBeTruthy()
     expect(
       consoleMessages[6].includes('Identity name') && consoleMessages[6].includes('temporary-identity'),
