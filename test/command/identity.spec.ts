@@ -1,4 +1,5 @@
-import { access, existsSync, unlinkSync } from 'fs'
+import Wallet from 'ethereumjs-wallet'
+import { access, existsSync, unlinkSync, writeFileSync } from 'fs'
 import { cli, Utils } from 'furious-commander'
 import { join } from 'path'
 import { promisify } from 'util'
@@ -113,5 +114,24 @@ describe('Test Identity command', () => {
     // and check if the last console message looked like a v3 wallet json
     const exportIndex = consoleMessages.length - 1
     expect(consoleMessages[exportIndex]).toContain('"ciphertext"')
+  })
+
+  it('should import v3 identity', async () => {
+    // first save a v3 keystore to a file
+    const wallet = Wallet.generate()
+    const v3string = await wallet.toV3String('123')
+    const path = join(configFolderPath, 'v3-keystore.json')
+    writeFileSync(path, v3string)
+    // then import it
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: [commandKey, 'import', path, '--identity-name', 'import-test', '--password', '123'],
+    })
+    // and check for successful import message
+    const successfulImportIndex = consoleMessages.length - 1
+    expect(consoleMessages[successfulImportIndex]).toContain(
+      "V3 Wallet imported as identity 'import-test' successfully",
+    )
   })
 })
