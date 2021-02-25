@@ -68,12 +68,12 @@ describe('Test Identity command', () => {
       testArguments: [commandKey, 'list'],
     })
     expect(consoleMessages[0]).toContain('List of your identities')
-    expect(consoleMessages[2].includes('Identity name') && consoleMessages[2].includes('main')).toBeTruthy()
-    expect(
-      consoleMessages[6].includes('Identity name') && consoleMessages[6].includes('temporary-identity'),
-    ).toBeTruthy()
+    expect(consoleMessages[2]).toContain('Identity name')
+    expect(consoleMessages[2]).toContain('main')
+    expect(consoleMessages[6]).toContain('Identity name')
+    expect(consoleMessages[6]).toContain('temporary-identity')
     const listCommand = Utils.getCommandInstance(commandBuilder.initedCommands, ['identity', 'list']) as List
-    expect(Object.keys(listCommand.commandConfig.config.identities).length).toBe(2)
+    expect(Object.keys(listCommand.commandConfig.config.identities)).toHaveLength(2)
     expect(listCommand.commandConfig.config.identities.main).toBeDefined()
     expect(listCommand.commandConfig.config.identities['temporary-identity']).toBeDefined()
   })
@@ -93,7 +93,7 @@ describe('Test Identity command', () => {
       testArguments: [commandKey, 'list'],
     })
     const listCommand = Utils.getCommandInstance(commandBuilder.initedCommands, ['identity', 'list']) as List
-    expect(Object.keys(listCommand.commandConfig.config.identities).length).toBe(1)
+    expect(Object.keys(listCommand.commandConfig.config.identities)).toHaveLength(1)
     expect(listCommand.commandConfig.config.identities['temporary-identity']).toBeUndefined()
   })
 
