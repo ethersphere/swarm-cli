@@ -12,7 +12,7 @@ export class Import extends RootCommand implements LeafCommand {
 
   public readonly description = 'Import V3 wallet as a new identity'
 
-  @Argument({ key: 'path', describe: 'Path to the V3 wallet file' })
+  @Argument({ key: 'path', required: true, describe: 'Path to the V3 wallet file' })
   public path!: string
 
   @Option({ key: 'identityName', describe: 'Name of the identity to be saved as' })
@@ -23,7 +23,6 @@ export class Import extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     this.initCommand()
-    this.checkForAnyPath()
     this.checkForValidPath()
     await this.ensurePasswordIsProvided()
     const data = readFileSync(this.path).toString()
@@ -80,14 +79,6 @@ export class Import extends RootCommand implements LeafCommand {
 
     if (!successfulSave) {
       this.console.error(`Identity '${this.identityName}' already exist.`)
-
-      exit(1)
-    }
-  }
-
-  private checkForAnyPath(): void {
-    if (!this.path) {
-      this.console.error('Path to the V3 wallet file must be specified')
 
       exit(1)
     }
