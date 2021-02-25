@@ -1,9 +1,9 @@
-import { rootCommandClasses, optionParameters } from '../../src/config'
+import { access, existsSync, unlinkSync } from 'fs'
 import { cli, Utils } from 'furious-commander'
 import { join } from 'path'
-import { access, unlinkSync, existsSync } from 'fs'
 import { promisify } from 'util'
 import { List } from '../../src/command/identity/list'
+import { optionParameters, rootCommandClasses } from '../../src/config'
 
 describe('Test Identity command', () => {
   const commandKey = 'identity'
@@ -95,5 +95,23 @@ describe('Test Identity command', () => {
     const listCommand = Utils.getCommandInstance(commandBuilder.initedCommands, ['identity', 'list']) as List
     expect(Object.keys(listCommand.commandConfig.config.identities).length).toBe(1)
     expect(listCommand.commandConfig.config.identities['temporary-identity']).toBeUndefined()
+  })
+
+  it('should export v3 identity', async () => {
+    // first create a v3 identity
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: [commandKey, 'create', 'v3-identity', '--password', 'test'],
+    })
+    // then export it
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: [commandKey, 'export', 'v3-identity'],
+    })
+    // and check if the last console message looked like a v3 wallet json
+    const exportIndex = consoleMessages.length - 1
+    expect(consoleMessages[exportIndex]).toContain('"ciphertext"')
   })
 })
