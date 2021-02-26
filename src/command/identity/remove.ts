@@ -1,8 +1,9 @@
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import inquirer from 'inquirer'
 import { exit } from 'process'
+import { promptList } from '../../utils'
 import { RootCommand } from '../root-command'
-import { printNoIdentitiesError, promptUserForIdentity } from './common'
+import { printNoIdentitiesError } from './common'
 
 export class Remove extends RootCommand implements LeafCommand {
   // CLI FIELDS
@@ -29,7 +30,7 @@ export class Remove extends RootCommand implements LeafCommand {
     const identityNames = Object.keys(this.commandConfig.config.identities)
 
     if (!this.identityName) {
-      this.identityName = await promptUserForIdentity(identityNames, `Which identity that you would like to delete?`)
+      this.identityName = await promptList(identityNames, `Which identity that you would like to delete?`)
     }
 
     //check identityName does exist
