@@ -1,7 +1,6 @@
 import { Argument, LeafCommand } from 'furious-commander'
 import { exit } from 'process'
 import { Identity, IdentityType } from '../../service/identity/types'
-import { promptList } from '../../utils'
 import { IdentityCommand } from './identity-command'
 
 export class Export extends IdentityCommand implements LeafCommand {
@@ -39,7 +38,7 @@ export class Export extends IdentityCommand implements LeafCommand {
 
   private async ensureIdentityNameIsProvided(identities: string[]): Promise<void> {
     if (!this.identityName) {
-      this.identityName = await promptList(identities, 'Which identity would you like to export?')
+      this.identityName = await this.console.promptList(identities, 'Which identity would you like to export?')
     }
   }
 

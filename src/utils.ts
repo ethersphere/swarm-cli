@@ -1,5 +1,4 @@
 import { statSync } from 'fs'
-import inquirer from 'inquirer'
 
 /**
  * Sleep for N miliseconds
@@ -18,10 +17,4 @@ export function fileExists(path: string): boolean {
   } catch {
     return false
   }
-}
-
-export async function promptList(choices: string[], message: string): Promise<string> {
-  const result = await inquirer.prompt({ name: 'value', type: 'list', message, choices })
-
-  return result.value
 }

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { bold, dim, italic } from 'kleur'
 import { prompt } from 'inquirer'
+import { bold, dim, italic } from 'kleur'
 import { exit } from 'process'
 
 export enum VerbosityLevel {
@@ -122,5 +122,11 @@ export class CommandLog {
     }
 
     return password
+  }
+
+  public async promptList(choices: string[], message: string): Promise<string> {
+    const result = await prompt({ name: 'value', type: 'list', message, choices })
+
+    return result.value
   }
 }
