@@ -2,10 +2,9 @@ import { Argument, LeafCommand } from 'furious-commander'
 import { exit } from 'process'
 import { Identity, IdentityType } from '../../service/identity/types'
 import { promptList } from '../../utils'
-import { RootCommand } from '../root-command'
-import { printNoIdentitiesError } from './common'
+import { IdentityCommand } from './identity-command'
 
-export class Export extends RootCommand implements LeafCommand {
+export class Export extends IdentityCommand implements LeafCommand {
   // CLI FIELDS
 
   public readonly name = 'export'
@@ -62,7 +61,7 @@ export class Export extends RootCommand implements LeafCommand {
 
   private checkForNoIdentities(): void {
     if (!this.commandConfig.config.identities) {
-      printNoIdentitiesError(this)
+      this.printNoIdentitiesError()
 
       exit(1)
     }

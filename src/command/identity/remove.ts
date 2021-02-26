@@ -2,10 +2,9 @@ import { Argument, LeafCommand, Option } from 'furious-commander'
 import inquirer from 'inquirer'
 import { exit } from 'process'
 import { promptList } from '../../utils'
-import { RootCommand } from '../root-command'
-import { printNoIdentitiesError } from './common'
+import { IdentityCommand } from './identity-command'
 
-export class Remove extends RootCommand implements LeafCommand {
+export class Remove extends IdentityCommand implements LeafCommand {
   // CLI FIELDS
 
   public readonly name = 'remove'
@@ -22,7 +21,7 @@ export class Remove extends RootCommand implements LeafCommand {
     this.initCommand()
 
     if (!this.commandConfig.config.identities) {
-      printNoIdentitiesError(this)
+      this.printNoIdentitiesError()
 
       return
     }
