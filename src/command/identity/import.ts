@@ -1,10 +1,12 @@
 import Wallet from 'ethereumjs-wallet'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
+import ora from 'ora'
 import { exit } from 'process'
 import { IdentityType } from '../../service/identity/types'
 import { fileExists } from '../../utils'
 import { RootCommand } from '../root-command'
+import { VerbosityLevel } from '../root-command/command-log'
 
 export class Import extends RootCommand implements LeafCommand {
   // CLI FIELDS
@@ -27,9 +29,16 @@ export class Import extends RootCommand implements LeafCommand {
     this.checkForValidPath()
     await this.ensurePasswordIsProvided()
     const data = readFileSync(this.path).toString()
-    const wallet: Wallet = await this.decryptV3Wallet(data)
     await this.ensureIdentityNameIsProvided()
+    const spinner: ora.Ora = ora('Decrypting V3 wallet...')
+
+    if (this.verbosity === VerbosityLevel.Verbose) {
+      spinner.start()
+    }
+    const wallet: Wallet = await this.decryptV3Wallet(data)
+    spinner.text = 'Importing V3 wallet...'
     await this.saveWallet(wallet)
+    spinner.stop()
     this.console.log(`V3 Wallet imported as identity '${this.identityName}' successfully`)
   }
 
@@ -60,14 +69,16 @@ export class Import extends RootCommand implements LeafCommand {
   private async ensureIdentityNameIsProvided(): Promise<void> {
     if (!this.identityName) {
       this.console.log('You have not defined the identity name with the "--identity-name" option.')
-      while (!this.identityName) {
-        const value = await this.console.askForValue('Please specify an identity name now.')
+    } else if (this.commandConfig.config.identities[this.identityName]) {
+      this.console.error('An identity with that name already exists, please try again.')
+    }
+    while (!this.identityName || this.commandConfig.config.identities[this.identityName]) {
+      const value = await this.console.askForValue('Please specify an identity name now.')
 
-        if (this.commandConfig.config.identities[value]) {
-          this.console.error('An identity with that name already exists, please try again.')
-        } else {
-          this.identityName = value
-        }
+      if (this.commandConfig.config.identities[value]) {
+        this.console.error('An identity with that name already exists, please try again.')
+      } else {
+        this.identityName = value
       }
     }
   }
