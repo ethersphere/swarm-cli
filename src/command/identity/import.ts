@@ -1,8 +1,9 @@
 import Wallet from 'ethereumjs-wallet'
-import { readFileSync, statSync } from 'fs'
+import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { IdentityType } from '../../service/identity/types'
+import { fileExists } from '../../utils'
 import { RootCommand } from '../root-command'
 
 export class Import extends RootCommand implements LeafCommand {
@@ -85,20 +86,10 @@ export class Import extends RootCommand implements LeafCommand {
   }
 
   private checkForValidPath(): void {
-    if (!this.exists(this.path)) {
+    if (!fileExists(this.path)) {
       this.console.error('There is no file at the specified path')
 
       exit(1)
-    }
-  }
-
-  private exists(path: string): boolean {
-    try {
-      const stat = statSync(path)
-
-      return stat.isFile()
-    } catch {
-      return false
     }
   }
 }
