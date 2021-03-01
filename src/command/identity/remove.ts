@@ -1,9 +1,9 @@
-import { LeafCommand, Option, Argument } from 'furious-commander'
-import { RootCommand } from '../root-command'
+import { Argument, LeafCommand, Option } from 'furious-commander'
 import inquirer from 'inquirer'
 import { exit } from 'process'
+import { IdentityCommand } from './identity-command'
 
-export class Remove extends RootCommand implements LeafCommand {
+export class Remove extends IdentityCommand implements LeafCommand {
   // CLI FIELDS
 
   public readonly name = 'remove'
@@ -20,8 +20,7 @@ export class Remove extends RootCommand implements LeafCommand {
     this.initCommand()
 
     if (!this.commandConfig.config.identities) {
-      this.console.error("You don't have any identity yet")
-      this.console.info(`You can create one with command '${this.appName} identity create'`)
+      this.printNoIdentitiesError()
 
       return
     }
@@ -29,13 +28,7 @@ export class Remove extends RootCommand implements LeafCommand {
     const identityNames = Object.keys(this.commandConfig.config.identities)
 
     if (!this.identityName) {
-      const identityNameChoice = await inquirer.prompt({
-        message: `Which identity that you would like to delete?`,
-        name: 'identityName',
-        choices: identityNames,
-        type: 'list',
-      })
-      this.identityName = identityNameChoice.identityName
+      this.identityName = await this.console.promptList(identityNames, `Which identity that you would like to delete?`)
     }
 
     //check identityName does exist

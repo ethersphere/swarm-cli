@@ -1,9 +1,10 @@
-import { rootCommandClasses, optionParameters } from '../../src/config'
+import Wallet from 'ethereumjs-wallet'
+import { access, existsSync, unlinkSync, writeFileSync } from 'fs'
 import { cli, Utils } from 'furious-commander'
 import { join } from 'path'
-import { access, unlinkSync, existsSync } from 'fs'
 import { promisify } from 'util'
 import { List } from '../../src/command/identity/list'
+import { optionParameters, rootCommandClasses } from '../../src/config'
 
 describe('Test Identity command', () => {
   const commandKey = 'identity'
@@ -67,13 +68,13 @@ describe('Test Identity command', () => {
       optionParameters,
       testArguments: [commandKey, 'list'],
     })
-    expect(consoleMessages[0]).toBe('List of your identities')
-    expect(consoleMessages[2].includes('Identity name') && consoleMessages[2].includes('main')).toBeTruthy()
-    expect(
-      consoleMessages[6].includes('Identity name') && consoleMessages[6].includes('temporary-identity'),
-    ).toBeTruthy()
+    expect(consoleMessages[0]).toContain('List of your identities')
+    expect(consoleMessages[2]).toContain('Identity name')
+    expect(consoleMessages[2]).toContain('main')
+    expect(consoleMessages[6]).toContain('Identity name')
+    expect(consoleMessages[6]).toContain('temporary-identity')
     const listCommand = Utils.getCommandInstance(commandBuilder.initedCommands, ['identity', 'list']) as List
-    expect(Object.keys(listCommand.commandConfig.config.identities).length).toBe(2)
+    expect(Object.keys(listCommand.commandConfig.config.identities)).toHaveLength(2)
     expect(listCommand.commandConfig.config.identities.main).toBeDefined()
     expect(listCommand.commandConfig.config.identities['temporary-identity']).toBeDefined()
   })
@@ -93,7 +94,44 @@ describe('Test Identity command', () => {
       testArguments: [commandKey, 'list'],
     })
     const listCommand = Utils.getCommandInstance(commandBuilder.initedCommands, ['identity', 'list']) as List
-    expect(Object.keys(listCommand.commandConfig.config.identities).length).toBe(1)
+    expect(Object.keys(listCommand.commandConfig.config.identities)).toHaveLength(1)
     expect(listCommand.commandConfig.config.identities['temporary-identity']).toBeUndefined()
+  })
+
+  it('should export v3 identity', async () => {
+    // first create a v3 identity
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: [commandKey, 'create', 'v3-identity', '--password', 'test'],
+    })
+    // then export it
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: [commandKey, 'export', 'v3-identity'],
+    })
+    // and check if the last console message looked like a v3 wallet json
+    const exportIndex = consoleMessages.length - 1
+    expect(consoleMessages[exportIndex]).toContain('"ciphertext"')
+  })
+
+  it('should import v3 identity', async () => {
+    // first save a v3 keystore to a file
+    const wallet = Wallet.generate()
+    const v3string = await wallet.toV3String('123')
+    const path = join(configFolderPath, 'v3-keystore.json')
+    writeFileSync(path, v3string)
+    // then import it
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: [commandKey, 'import', path, '--identity-name', 'import-test', '--password', '123'],
+    })
+    // and check for successful import message
+    const successfulImportIndex = consoleMessages.length - 1
+    expect(consoleMessages[successfulImportIndex]).toContain(
+      "V3 Wallet imported as identity 'import-test' successfully",
+    )
   })
 })

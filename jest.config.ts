@@ -34,5 +34,8 @@ export default (): Config.InitialOptions => {
 
     // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
     testPathIgnorePatterns: ["/node_modules/"],
+
+    // Increase timeout since we have long running cryptographic functions
+    testTimeout: 15000,
   }
 }

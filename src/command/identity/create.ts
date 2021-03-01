@@ -46,7 +46,7 @@ export class Create extends RootCommand implements LeafCommand {
       if (!this.password) {
         this.console.log('You have not defined password with the "--password" option.')
         this.console.info('If you want to create disposable keypair, use "only-keypair" option')
-        this.password = await this.console.askForPassword()
+        this.password = await this.console.askForPasswordWithConfirmation()
       }
       let spinner: ora.Ora
 
