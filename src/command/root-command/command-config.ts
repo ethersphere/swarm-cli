@@ -1,9 +1,9 @@
-import { Identity } from '../../service/identity/types'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { homedir, platform } from 'os'
 import { join } from 'path'
-import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs'
-import { beeApiUrl } from '../../config'
 import { exit } from 'process'
+import { beeApiUrl } from '../../config'
+import { Identity } from '../../service/identity/types'
 import { CommandLog } from './command-log'
 
 export interface Config {
@@ -28,7 +28,7 @@ export class CommandConfig {
       identities: {},
     }
     this.configFolderPath = this.getConfigFolderPath(appName, configFolder)
-    this.configFilePath = join(this.configFolderPath, 'config.json')
+    this.configFilePath = join(this.configFolderPath, process.env.SWARM_CLI_CONFIG_FILE || 'config.json')
     this.prepareConfig()
   }
 

@@ -1,12 +1,12 @@
-import { Option, LeafCommand, Argument } from 'furious-commander'
-import { RootCommand } from './root-command'
+import { Tag } from '@ethersphere/bee-js'
+import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
-import * as Path from 'path'
-import { sleep } from '../utils'
-import { Tag } from '@ethersphere/bee-js/dist/types'
-import { SingleBar, Presets } from 'cli-progress'
+import { Argument, LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
+import * as Path from 'path'
 import { exit } from 'process'
+import { sleep } from '../utils'
+import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
 export class Upload extends RootCommand implements LeafCommand {

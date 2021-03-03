@@ -1,7 +1,8 @@
 import { IOption } from 'furious-commander/dist/option'
-import { Upload } from './command/upload'
+import { Feed } from './command/feed'
 import { Identity } from './command/identity'
 import { VerbosityLevel } from './command/root-command/command-log'
+import { Upload } from './command/upload'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -24,4 +25,4 @@ export const verbosity: IOption<string> = {
 
 export const optionParameters: IOption<unknown>[] = [beeApiUrl, configFolder, verbosity]
 
-export const rootCommandClasses = [Upload, Identity]
+export const rootCommandClasses = [Upload, Identity, Feed]
