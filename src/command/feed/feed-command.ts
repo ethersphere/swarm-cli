@@ -36,7 +36,24 @@ export class FeedCommand extends RootCommand {
   }
 
   private getTopic(): string | Topic {
+    if (!this.hashTopic) {
+      this.enforceValidHexTopic()
+    }
+
     return this.hashTopic ? this.bee.makeFeedTopic(this.topic) : this.topic
+  }
+
+  private enforceValidHexTopic(): void {
+    const hasCorrectLength = this.topic.startsWith('0x') ? this.topic.length === 66 : this.topic.length === 64
+    const hasCorrectPattern = new RegExp(/^(0x)?[a-f0-9]+$/g).test(this.topic)
+
+    if (!hasCorrectLength || !hasCorrectPattern) {
+      this.console.error('Error parsing topic!')
+      this.console.log('You can have it hashed to 32 bytes by passing the --hash-topic option.')
+      this.console.log('To provide the 32 bytes, please specify it in lower case hexadecimal format.')
+      this.console.log('The 0x prefix may be omitted.')
+      exit(1)
+    }
   }
 
   private getIdentity(): Identity {
