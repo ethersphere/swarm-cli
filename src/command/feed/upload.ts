@@ -27,6 +27,7 @@ export class Upload extends FeedCommand implements LeafCommand {
     upload.path = this.path
     upload.tagPollingTime = 500
     upload.tagPollingTrials = 15
+    upload.beeApiUrl = this.beeApiUrl
     upload.verbosity = this.verbosity
     await upload.run()
 
