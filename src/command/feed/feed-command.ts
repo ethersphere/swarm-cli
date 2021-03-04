@@ -1,5 +1,6 @@
 import { FeedReader, FeedWriter } from '@ethersphere/bee-js/dist/feed'
 import { Topic } from '@ethersphere/bee-js/dist/feed/topic'
+import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { exit } from 'process'
 import { getWalletFromIdentity } from '../../service/identity'
@@ -20,16 +21,14 @@ export class FeedCommand extends RootCommand {
   public hashTopic!: boolean
 
   protected async getFeedWriter(): Promise<FeedWriter> {
-    const identity = this.getIdentity()
-    const wallet = await getWalletFromIdentity(identity, this.password)
+    const wallet = await this.getWallet()
     const topic = this.getTopic()
 
     return this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
   }
 
   protected async getFeedReader(): Promise<FeedReader> {
-    const identity = this.getIdentity()
-    const wallet = await getWalletFromIdentity(identity, this.password)
+    const wallet = await this.getWallet()
     const topic = this.getTopic()
 
     return this.bee.makeFeedReader('sequence', topic, wallet.getAddressString())
@@ -41,6 +40,13 @@ export class FeedCommand extends RootCommand {
     }
 
     return this.hashTopic ? this.bee.makeFeedTopic(this.topic) : this.topic
+  }
+
+  private async getWallet(): Promise<Wallet> {
+    const identity = this.getIdentity()
+    const wallet = await getWalletFromIdentity(identity, this.password)
+
+    return wallet
   }
 
   private enforceValidHexTopic(): void {
