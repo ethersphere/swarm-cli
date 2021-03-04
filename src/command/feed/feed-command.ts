@@ -16,7 +16,7 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'password', describe: 'Password for the wallet' })
   public password!: string
 
-  @Option({ key: 'hash-topic', describe: 'Hash the topic to 32 bytes' })
+  @Option({ key: 'hash-topic', type: 'boolean', describe: 'Hash the topic to 32 bytes' })
   public hashTopic!: boolean
 
   protected async getFeedWriter(): Promise<FeedWriter> {
