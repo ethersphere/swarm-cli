@@ -27,7 +27,7 @@ describe('Test Feed command', () => {
     consoleMessages = []
   })
 
-  it('should upload file, update feed and verify it', async () => {
+  it('should upload file, update feed and print it', async () => {
     // first create identity
     await cli({
       rootCommandClasses,
@@ -59,7 +59,7 @@ describe('Test Feed command', () => {
       optionParameters,
       testArguments: [
         'feed',
-        'verify',
+        'print',
         '--identity',
         'test',
         '--topic',

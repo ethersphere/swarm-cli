@@ -2,10 +2,10 @@ import { LeafCommand } from 'furious-commander'
 import { bold, green } from 'kleur'
 import { FeedCommand } from './feed-command'
 
-export class Verify extends FeedCommand implements LeafCommand {
-  public readonly name = 'verify'
+export class Print extends FeedCommand implements LeafCommand {
+  public readonly name = 'print'
 
-  public readonly description = 'Verify feed'
+  public readonly description = 'Print feed'
 
   public async run(): Promise<void> {
     super.init()
