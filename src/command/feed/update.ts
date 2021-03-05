@@ -1,5 +1,4 @@
 import { LeafCommand, Option } from 'furious-commander'
-import { bold, green } from 'kleur'
 import { FeedCommand } from './feed-command'
 
 export class Update extends FeedCommand implements LeafCommand {
@@ -13,11 +12,8 @@ export class Update extends FeedCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const feedWriter = await this.getFeedWriter()
-    const referenceResponse = await feedWriter.upload(this.reference)
+    await this.updateFeedAndPrint(this.reference)
 
-    const url = `${this.beeApiUrl}/bzz/${referenceResponse.reference}`
-    this.console.dim('Updating feed was successful!')
-    this.console.log(bold(`Reference URL -> ${green(url)}`))
+    this.console.dim('Successfully updated feed.')
   }
 }

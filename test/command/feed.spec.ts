@@ -71,13 +71,24 @@ describe('Test Feed command', () => {
       ],
     })
     const length = consoleMessages.length
-    expect(consoleMessages[length - 8]).toContain('Uploading was successful!')
-    expect(consoleMessages[length - 7]).toContain('URL ->')
-    expect(consoleMessages[length - 6]).toContain('Uploading feed was successful!')
-    expect(consoleMessages[length - 5]).toContain('Reference URL ->')
-    expect(consoleMessages[length - 4]).toContain('Reference ->')
-    expect(consoleMessages[length - 3]).toContain('Reference URL ->')
-    expect(consoleMessages[length - 2]).toContain('Feed Index ->')
-    expect(consoleMessages[length - 1]).toContain('Next Index ->')
+    let i = length - 15
+    // check chunk upload output
+    expect(consoleMessages[i++]).toContain('Uploading was successful!')
+    expect(consoleMessages[i++]).toContain('URL ->')
+    // check feed upload output
+    expect(consoleMessages[i++]).toContain('Updating feed...')
+    expect(consoleMessages[i++]).toContain('Chunk Reference ->')
+    expect(consoleMessages[i++]).toContain('Chunk Reference URL ->')
+    expect(consoleMessages[i++]).toContain('Feed Reference ->')
+    expect(consoleMessages[i++]).toContain('Feed Manifest ->')
+    expect(consoleMessages[i++]).toContain('Feed Manifest URL ->')
+    expect(consoleMessages[i++]).toContain('Successfully uploaded to feed.')
+    // check print output
+    expect(consoleMessages[i++]).toContain('Chunk Reference ->')
+    expect(consoleMessages[i++]).toContain('Chunk Reference URL ->')
+    expect(consoleMessages[i++]).toContain('Feed Index ->')
+    expect(consoleMessages[i++]).toContain('Next Index ->')
+    expect(consoleMessages[i++]).toContain('Feed Manifest ->')
+    expect(consoleMessages[i++]).toContain('Feed Manifest URL ->')
   })
 })

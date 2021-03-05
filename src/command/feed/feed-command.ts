@@ -1,7 +1,7 @@
-import { FeedReader, FeedWriter } from '@ethersphere/bee-js/dist/feed'
 import { Topic } from '@ethersphere/bee-js/dist/feed/topic'
 import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
+import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { getWalletFromIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
@@ -20,21 +20,22 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'hash-topic', type: 'boolean', describe: 'Hash the topic to 32 bytes' })
   public hashTopic!: boolean
 
-  protected async getFeedWriter(): Promise<FeedWriter> {
+  protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
+    this.console.dim('Updating feed...')
     const wallet = await this.getWallet()
     const topic = this.getTopic()
+    const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
+    const { reference } = await writer.upload(chunkReference)
+    const manifest = await this.bee.createFeedManifest('sequence', topic, wallet.getAddressString())
 
-    return this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
+    this.console.log(bold(`Chunk Reference -> ${green(chunkReference)}`))
+    this.console.log(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${chunkReference}`)}`))
+    this.console.log(bold(`Feed Reference -> ${green(reference)}`))
+    this.console.log(bold(`Feed Manifest -> ${green(manifest)}`))
+    this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}`)}`))
   }
 
-  protected async getFeedReader(): Promise<FeedReader> {
-    const wallet = await this.getWallet()
-    const topic = this.getTopic()
-
-    return this.bee.makeFeedReader('sequence', topic, wallet.getAddressString())
-  }
-
-  private getTopic(): string | Topic {
+  protected getTopic(): string | Topic {
     if (!this.hashTopic) {
       this.enforceValidHexTopic()
     }
@@ -42,7 +43,7 @@ export class FeedCommand extends RootCommand {
     return this.hashTopic ? this.bee.makeFeedTopic(this.topic) : this.topic
   }
 
-  private async getWallet(): Promise<Wallet> {
+  protected async getWallet(): Promise<Wallet> {
     const identity = this.getIdentity()
     const wallet = await getWalletFromIdentity(identity, this.password)
 

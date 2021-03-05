@@ -1,5 +1,4 @@
 import { LeafCommand, Option } from 'furious-commander'
-import { bold, green } from 'kleur'
 import { Upload as FileUpload } from '../upload'
 import { FeedCommand } from './feed-command'
 
@@ -14,12 +13,10 @@ export class Upload extends FeedCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const feedWriter = await this.getFeedWriter()
     const reference = await this.runUpload()
-    const referenceResponse = await feedWriter.upload(reference)
-    const url = `${this.beeApiUrl}/bzz/${referenceResponse.reference}`
-    this.console.dim('Uploading feed was successful!')
-    this.console.log(bold(`Reference URL -> ${green(url)}`))
+    await this.updateFeedAndPrint(reference)
+
+    this.console.dim('Successfully uploaded to feed.')
   }
 
   private async runUpload(): Promise<string> {
