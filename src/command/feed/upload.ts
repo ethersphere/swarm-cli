@@ -19,7 +19,7 @@ export class Upload extends FeedCommand implements LeafCommand {
     const referenceResponse = await feedWriter.upload(reference)
     const url = `${this.beeApiUrl}/bzz/${referenceResponse.reference}`
     this.console.dim('Uploading feed was successful!')
-    this.console.log(bold(`Manifest -> ${green(url)}`))
+    this.console.log(bold(`Reference URL -> ${green(url)}`))
   }
 
   private async runUpload(): Promise<string> {

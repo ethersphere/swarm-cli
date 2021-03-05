@@ -18,6 +18,6 @@ export class Update extends FeedCommand implements LeafCommand {
 
     const url = `${this.beeApiUrl}/bzz/${referenceResponse.reference}`
     this.console.dim('Updating feed was successful!')
-    this.console.log(bold(`URL -> ${green(url)}`))
+    this.console.log(bold(`Reference URL -> ${green(url)}`))
   }
 }
