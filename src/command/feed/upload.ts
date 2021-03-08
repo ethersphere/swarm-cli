@@ -10,6 +10,13 @@ export class Upload extends FeedCommand implements LeafCommand {
   @Option({ key: 'path', describe: 'Path of the file', required: true })
   public path!: string
 
+  @Option({
+    key: 'index-document',
+    describe: 'Default retrieval file on bzz request without provided filepath',
+    default: 'index.html',
+  })
+  public indexDocument!: string
+
   public async run(): Promise<void> {
     super.init()
 
@@ -26,6 +33,7 @@ export class Upload extends FeedCommand implements LeafCommand {
     upload.tagPollingTrials = 15
     upload.beeApiUrl = this.beeApiUrl
     upload.verbosity = this.verbosity
+    upload.indexDocument = this.indexDocument
     await upload.run()
 
     return upload.hash
