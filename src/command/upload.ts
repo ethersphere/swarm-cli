@@ -1,9 +1,11 @@
 import { Tag } from '@ethersphere/bee-js'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
+import { readFile } from 'fs/promises'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import * as Path from 'path'
+import { basename } from 'path'
 import { exit } from 'process'
 import { sleep } from '../utils'
 import { RootCommand } from './root-command'
@@ -30,6 +32,8 @@ export class Upload extends RootCommand implements LeafCommand {
 
   @Option({ key: 'tag-polling-trials', describe: 'After the given trials the tag polling will stop', default: 15 })
   public tagPollingTrials!: number
+
+  public uploadAsFileList = false
 
   @Option({
     key: 'index-document',
@@ -60,28 +64,13 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (FS.lstatSync(this.path).isDirectory()) {
-      this.console.log('Starting to upload the given folder')
-      this.console.dim('Send data to the Bee node...')
-
-      if (this.pin) this.console.dim('Pin the uploaded data')
-
-      this.hash = await this.bee.uploadFilesFromDirectory(this.path, this.recursive, {
-        indexDocument: this.indexDocument,
-        errorDocument: this.errorDocument,
-        tag: tag.uid,
-        pin: this.pin,
-      })
-      url = `${this.beeApiUrl}/bzz/${this.hash}`
+      url = await this.uploadDirectory(tag)
+    } else if (this.uploadAsFileList) {
+      url = await this.uploadSingleFileAsFileList(tag)
     } else {
-      this.console.log('Starting to upload the given file')
-      this.console.dim('Send data to the Bee node...')
-
-      this.hash = await this.bee.uploadFile(FS.createReadStream(this.path), Path.basename(this.path), {
-        tag: tag.uid,
-        pin: this.pin,
-      })
-      url = `${this.beeApiUrl}/files/${this.hash}`
+      url = await this.uploadSingleFile(tag)
     }
+
     this.console.dim('Data have been sent to the Bee node successfully!')
     this.console.log(bold(`Swarm root hash -> ${green(this.hash)}`))
 
@@ -105,6 +94,54 @@ export class Upload extends RootCommand implements LeafCommand {
   /** Init additional properties of class, that are not handled by the CLI framework */
   private initCommand(): void {
     super.init()
+  }
+
+  private async uploadDirectory(tag: Tag): Promise<string> {
+    this.console.log('Starting to upload the given folder')
+    this.console.dim('Send data to the Bee node...')
+
+    if (this.pin) this.console.dim('Pin the uploaded data')
+
+    this.hash = await this.bee.uploadFilesFromDirectory(this.path, this.recursive, {
+      indexDocument: this.indexDocument,
+      errorDocument: this.errorDocument,
+      tag: tag.uid,
+      pin: this.pin,
+    })
+
+    return `${this.beeApiUrl}/bzz/${this.hash}`
+  }
+
+  private async uploadSingleFile(tag: Tag): Promise<string> {
+    this.console.log('Starting to upload the given file')
+    this.console.dim('Send data to the Bee node...')
+
+    this.hash = await this.bee.uploadFile(FS.createReadStream(this.path), Path.basename(this.path), {
+      tag: tag.uid,
+      pin: this.pin,
+    })
+
+    return `${this.beeApiUrl}/files/${this.hash}`
+  }
+
+  private async uploadSingleFileAsFileList(tag: Tag): Promise<string> {
+    this.console.log('Starting to upload the given file')
+    this.console.dim('Send data to the Bee node...')
+
+    const buffer = await readFile(this.path)
+    // eslint-disable-next-line
+    // @ts-ignore
+    const fakeFile: File = {
+      name: basename(this.path),
+      arrayBuffer: () => new Promise(resolve => resolve(new Uint8Array(buffer).buffer)),
+    }
+    this.hash = await this.bee.uploadFiles([fakeFile], {
+      tag: tag.uid,
+      pin: this.pin,
+      indexDocument: basename(this.path),
+    })
+
+    return `${this.beeApiUrl}/files/${this.hash}`
   }
 
   /**
