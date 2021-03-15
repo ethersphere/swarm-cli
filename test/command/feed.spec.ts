@@ -71,18 +71,13 @@ describe('Test Feed command', () => {
       ],
     })
     const length = consoleMessages.length
-    let i = length - 15
-    // check chunk upload output
-    expect(consoleMessages[i++]).toContain('Uploading was successful!')
-    expect(consoleMessages[i++]).toContain('URL ->')
+    let i = length - 11
     // check feed upload output
-    expect(consoleMessages[i++]).toContain('Updating feed...')
     expect(consoleMessages[i++]).toContain('Chunk Reference ->')
     expect(consoleMessages[i++]).toContain('Chunk Reference URL ->')
     expect(consoleMessages[i++]).toContain('Feed Reference ->')
     expect(consoleMessages[i++]).toContain('Feed Manifest ->')
     expect(consoleMessages[i++]).toContain('Feed Manifest URL ->')
-    expect(consoleMessages[i++]).toContain('Successfully uploaded to feed.')
     // check print output
     expect(consoleMessages[i++]).toContain('Chunk Reference ->')
     expect(consoleMessages[i++]).toContain('Chunk Reference URL ->')
