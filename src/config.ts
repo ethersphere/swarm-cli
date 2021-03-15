@@ -20,7 +20,7 @@ export const verbosity: IOption<string> = {
   alias: 'v',
   describe: 'Print console messages in the given relevance level',
   choices: [...Object.keys(VerbosityLevel)],
-  default: String(VerbosityLevel.Verbose),
+  default: String(VerbosityLevel.Normal),
 }
 
 export const optionParameters: IOption<unknown>[] = [beeApiUrl, configFolder, verbosity]
