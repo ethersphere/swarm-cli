@@ -43,7 +43,7 @@ export class CommandLog {
     switch (verbosityLevel) {
       case VerbosityLevel.Verbose:
         this.error = error
-        this.important = info
+        this.important = log
         this.log = log
         this.info = info
         this.dim = dimFunction
@@ -51,7 +51,7 @@ export class CommandLog {
         break
       case VerbosityLevel.Normal:
         this.error = error
-        this.important = info
+        this.important = log
         this.log = log
         this.info = info
         this.divider = divider
@@ -60,7 +60,7 @@ export class CommandLog {
       default:
         // quiet
         this.error = error
-        this.important = info
+        this.important = log
         this.log = emptyFunction
         this.info = emptyFunction
         this.dim = emptyFunction
