@@ -41,6 +41,7 @@ export class Upload extends FeedCommand implements LeafCommand {
     upload.tagPollingTrials = 15
     upload.beeApiUrl = this.beeApiUrl
     upload.verbosity = this.verbosity
+    upload.usedFromOtherCommand = true
     await upload.run()
 
     return upload.hash

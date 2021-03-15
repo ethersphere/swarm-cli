@@ -33,8 +33,6 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({ key: 'tag-polling-trials', describe: 'After the given trials the tag polling will stop', default: 15 })
   public tagPollingTrials!: number
 
-  public uploadAsFileList = false
-
   @Option({
     key: 'index-document',
     describe: 'Default retrieval file on bzz request without provided filepath',
@@ -51,6 +49,10 @@ export class Upload extends RootCommand implements LeafCommand {
   // CLASS FIELDS
 
   public hash!: string
+
+  public uploadAsFileList = false
+
+  public usedFromOtherCommand = false
 
   public async run(): Promise<void> {
     this.initCommand()
@@ -84,10 +86,8 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(bold(`URL -> ${green(url)}`))
 
-    if (this.verbosity === VerbosityLevel.Quiet) {
-      // Put hash of the file to the output regardless the verbosity level
-      // eslint-disable-next-line no-console
-      console.log(this.hash)
+    if (this.verbosity === VerbosityLevel.Quiet && !this.usedFromOtherCommand) {
+      this.console.important(this.hash)
     }
   }
 
@@ -158,7 +158,10 @@ export class Upload extends RootCommand implements LeafCommand {
     let synced = false
     let updateState = 0
     const syncedBar = new SingleBar({}, Presets.rect)
-    syncedBar.start(tag.total, 0)
+
+    if (this.verbosity !== VerbosityLevel.Quiet) {
+      syncedBar.start(tag.total, 0)
+    }
     for (let i = 0; i < pollingTrials; i++) {
       tag = await this.bee.retrieveTag(tagUid)
 
@@ -168,7 +171,7 @@ export class Upload extends RootCommand implements LeafCommand {
       }
       syncedBar.update(updateState)
 
-      if (tag.total === tag.processed) {
+      if (tag.processed >= tag.total) {
         synced = true
         break
       }
