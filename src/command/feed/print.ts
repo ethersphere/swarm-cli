@@ -10,6 +10,7 @@ export class Print extends FeedCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
+    await this.checkIdentity()
     const wallet = await this.getWallet()
     const topic = this.getTopic()
     const reader = this.bee.makeFeedReader('sequence', topic, wallet.getAddressString())

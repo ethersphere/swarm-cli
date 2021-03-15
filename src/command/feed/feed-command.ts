@@ -14,7 +14,7 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'topic', describe: 'Feed topic', required: true })
   public topic!: string
 
-  @Option({ key: 'password', describe: 'Password for the wallet', required: true })
+  @Option({ key: 'password', describe: 'Password for the wallet' })
   public password!: string
 
   @Option({ key: 'hash-topic', type: 'boolean', describe: 'Hash the topic to 32 bytes' })
@@ -73,5 +73,14 @@ export class FeedCommand extends RootCommand {
     }
 
     return identity
+  }
+
+  protected async checkIdentity(): Promise<void> {
+    try {
+      await this.getWallet()
+    } catch (error) {
+      this.console.error(error.message)
+      exit(1)
+    }
   }
 }

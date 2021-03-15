@@ -20,10 +20,9 @@ export class Upload extends FeedCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
-
+    await this.checkIdentity()
     const reference = await this.runUpload()
     await this.updateFeedAndPrint(reference)
-
     this.console.dim('Successfully uploaded to feed.')
   }
 
