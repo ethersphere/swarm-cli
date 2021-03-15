@@ -56,7 +56,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     this.initCommand()
-    let tag = await this.bee.createTag()
+    const tag = await this.bee.createTag()
     let url: string
 
     if (!FS.existsSync(this.path)) {
@@ -75,13 +75,6 @@ export class Upload extends RootCommand implements LeafCommand {
 
     this.console.dim('Data have been sent to the Bee node successfully!')
     this.console.log(bold(`Swarm root hash -> ${green(this.hash)}`))
-
-    this.console.dim('Waiting for file chunks to be synced on Swarm network...')
-    //refresh tag before populate tracking
-    tag = await this.bee.retrieveTag(tag.uid)
-    const synced = await this.waitForFileSynced(tag)
-
-    if (!synced) return //error message printed before
 
     this.console.dim('Uploading was successful!')
     this.console.log(bold(`URL -> ${green(url)}`))
