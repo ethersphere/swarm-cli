@@ -52,7 +52,7 @@ describe('Test Feed command', () => {
         '--path',
         `${__dirname}/../testpage/images/swarm.png`,
         '--verbosity',
-        '2',
+        '0',
       ],
     })
     // finally verify
@@ -71,23 +71,10 @@ describe('Test Feed command', () => {
         '--hash-topic',
         'true',
         '--verbosity',
-        '2',
+        '0',
       ],
     })
     const length = consoleMessages.length
-    let i = length - 10
-    // check feed upload output
-    expect(consoleMessages[i++]).toContain('Chunk Reference ->')
-    expect(consoleMessages[i++]).toContain('Chunk Reference URL ->')
-    expect(consoleMessages[i++]).toContain('Feed Reference ->')
-    expect(consoleMessages[i++]).toContain('Feed Manifest ->')
-    expect(consoleMessages[i++]).toContain('Feed Manifest URL ->')
-    // check print output
-    expect(consoleMessages[i++]).toContain('Chunk Reference ->')
-    expect(consoleMessages[i++]).toContain('Chunk Reference URL ->')
-    expect(consoleMessages[i++]).toContain('Feed Index ->')
-    expect(consoleMessages[i++]).toContain('Next Index ->')
-    expect(consoleMessages[i++]).toContain('Feed Manifest ->')
-    expect(consoleMessages[i++]).toContain('Feed Manifest URL ->')
+    expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
   })
 })
