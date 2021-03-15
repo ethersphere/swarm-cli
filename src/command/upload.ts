@@ -156,15 +156,19 @@ export class Upload extends RootCommand implements LeafCommand {
     const pollingTime = this.tagPollingTime
     const pollingTrials = this.tagPollingTrials
     let synced = false
+    let updateState = 0
     const syncedBar = new SingleBar({}, Presets.rect)
-    syncedBar.start(tag.processed, 0)
+    syncedBar.start(tag.total, 0)
     for (let i = 0; i < pollingTrials; i++) {
       tag = await this.bee.retrieveTag(tagUid)
-      const updateState = tag.synced
 
+      if (updateState !== tag.synced) {
+        i = 0
+        updateState = tag.synced
+      }
       syncedBar.update(updateState)
 
-      if (tag.processed === updateState) {
+      if (tag.total === tag.synced) {
         synced = true
         break
       }
