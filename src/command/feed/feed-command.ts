@@ -32,7 +32,7 @@ export class FeedCommand extends RootCommand {
     this.console.log(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${chunkReference}`)}`))
     this.console.log(bold(`Feed Reference -> ${green(reference)}`))
     this.console.log(bold(`Feed Manifest -> ${green(manifest)}`))
-    this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}`)}`))
+    this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}/`)}`))
   }
 
   protected getTopic(): string | Topic {

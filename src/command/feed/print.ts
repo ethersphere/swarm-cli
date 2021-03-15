@@ -21,6 +21,6 @@ export class Print extends FeedCommand implements LeafCommand {
     this.console.log(bold(`Feed Index -> ${green(feedIndex)}`))
     this.console.log(bold(`Next Index -> ${green(feedIndexNext)}`))
     this.console.log(bold(`Feed Manifest -> ${green(manifest)}`))
-    this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}`)}`))
+    this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}/`)}`))
   }
 }

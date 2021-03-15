@@ -109,7 +109,7 @@ export class Upload extends RootCommand implements LeafCommand {
       pin: this.pin,
     })
 
-    return `${this.beeApiUrl}/bzz/${this.hash}`
+    return `${this.beeApiUrl}/bzz/${this.hash}/`
   }
 
   private async uploadSingleFile(tag: Tag): Promise<string> {
