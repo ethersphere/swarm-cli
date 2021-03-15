@@ -51,6 +51,8 @@ describe('Test Feed command', () => {
         'true',
         '--path',
         `${__dirname}/../testpage/images/swarm.png`,
+        '--verbosity',
+        '2',
       ],
     })
     // finally verify
@@ -68,10 +70,12 @@ describe('Test Feed command', () => {
         'test',
         '--hash-topic',
         'true',
+        '--verbosity',
+        '2',
       ],
     })
     const length = consoleMessages.length
-    let i = length - 11
+    let i = length - 10
     // check feed upload output
     expect(consoleMessages[i++]).toContain('Chunk Reference ->')
     expect(consoleMessages[i++]).toContain('Chunk Reference URL ->')
