@@ -38,7 +38,7 @@ export class Upload extends RootCommand implements LeafCommand {
     describe: 'Default retrieval file on bzz request without provided filepath',
     default: 'index.html',
   })
-  public indexDocument!: string
+  public indexDocument!: string | undefined
 
   @Option({
     key: 'error-document',

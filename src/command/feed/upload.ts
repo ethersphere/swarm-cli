@@ -1,5 +1,7 @@
 import { stat } from 'fs/promises'
 import { LeafCommand, Option } from 'furious-commander'
+import { join } from 'path'
+import { fileExists } from '../../utils'
 import { Upload as FileUpload } from '../upload'
 import { FeedCommand } from './feed-command'
 
@@ -14,9 +16,8 @@ export class Upload extends FeedCommand implements LeafCommand {
   @Option({
     key: 'index-document',
     describe: 'Default retrieval file on bzz request without provided filepath',
-    default: 'index.html',
   })
-  public indexDocument!: string
+  public indexDocument!: string | undefined
 
   public async run(): Promise<void> {
     super.init()
@@ -34,6 +35,10 @@ export class Upload extends FeedCommand implements LeafCommand {
       upload.uploadAsFileList = true
       upload.indexDocument = this.path
     } else {
+      if (!this.indexDocument && fileExists(join(this.path, 'index.html'))) {
+        this.console.info('Setting --index-document to index.html')
+        this.indexDocument = 'index.html'
+      }
       upload.indexDocument = this.indexDocument
     }
     upload.path = this.path
