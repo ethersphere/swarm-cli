@@ -1,4 +1,5 @@
 import { Tag } from '@ethersphere/bee-js'
+import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { readFile } from 'fs/promises'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -6,6 +7,7 @@ import { bold, green } from 'kleur'
 import * as Path from 'path'
 import { basename } from 'path'
 import { exit } from 'process'
+import { sleep } from '../utils'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
@@ -133,5 +135,51 @@ export class Upload extends RootCommand implements LeafCommand {
     })
 
     return `${this.beeApiUrl}/files/${this.hash}`
+  }
+
+  /**
+   * Waits until the data syncing is successful on Swarm network
+   *
+   * @param tag had to be attached to the uploaded file
+   *
+   * @returns whether the file sync was successful or not.
+   */
+  private async waitForFileSynced(tag: Tag): Promise<boolean> {
+    const tagUid = tag.uid
+    const pollingTime = this.tagPollingTime
+    const pollingTrials = this.tagPollingTrials
+    let synced = false
+    let updateState = 0
+    const syncedBar = new SingleBar({}, Presets.rect)
+
+    if (this.verbosity !== VerbosityLevel.Quiet) {
+      syncedBar.start(tag.total, 0)
+    }
+    for (let i = 0; i < pollingTrials; i++) {
+      tag = await this.bee.retrieveTag(tagUid)
+
+      if (updateState !== tag.processed) {
+        i = 0
+        updateState = tag.processed
+      }
+      syncedBar.update(updateState)
+
+      if (tag.processed >= tag.total) {
+        synced = true
+        break
+      }
+      await sleep(pollingTime)
+    }
+    syncedBar.stop()
+
+    if (!synced) {
+      this.console.error('Data syncing timeout.')
+
+      return false
+    } else {
+      this.console.dim('Data has been synced on Swarm network')
+
+      return true
+    }
   }
 }
