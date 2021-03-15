@@ -14,7 +14,7 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'topic', describe: 'Feed topic', required: true })
   public topic!: string
 
-  @Option({ key: 'password', describe: 'Password for the wallet' })
+  @Option({ key: 'password', describe: 'Password for the wallet', required: true })
   public password!: string
 
   @Option({ key: 'hash-topic', type: 'boolean', describe: 'Hash the topic to 32 bytes' })
