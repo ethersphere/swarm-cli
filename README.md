@@ -36,10 +36,6 @@ The general usage is to provide a command, optionally a subcommand, then argumen
 
 `swarm-cli command [subcommand] <arguments> [options]`
 
-For example for uploading a file or folder to Swarm and updating the feed:
-
-`swarm-cli feed upload --identity main --topic a --hash-topic --path dist/index.js --password "$PASSWORD"`
-
 Running a command with the `--help` option prints out the usage of a command.
 
 ## Commands
@@ -65,7 +61,7 @@ Let's say we want to upload a directory of our website to Swarm and update a fee
 swarm-cli identity create
 ```
 
-This command will ask for a password that we have to repeat. After that a new identity is created (named `main`). Now we can use this identity to sign updates. It's also possible to import and export Ethereum JSON V3 format identities that works with other apps (e.g. wallets).
+This command will ask for a password. After that a new identity is created (named `main`). Now we can use this identity to sign updates. It's also possible to import and export Ethereum JSON V3 format identities that works with other apps (e.g. wallets).
 
 For uploading to a feed we can use the `feed upload` command. It expects an `identity` to be provided along with the `password` belonging to it and the `path` of the directory (or file) we want to upload.
 
@@ -73,9 +69,9 @@ For uploading to a feed we can use the `feed upload` command. It expects an `ide
 swarm-cli feed upload --identity main --password my-secret-password --path dist
 ```
 
-In this example we are uploading the content of the `dist` folder. If it contains an `index.html` file then it will be automatically added as a default file to be displayed when visiting the URL.
+In this example we are uploading the content of the `dist` folder. If the uploading was successful the last printed line will contain a `Feed Manifest URL`. This URL can be opened in the browser. If the uploaded folder contains an `index.html` file then it will be automatically added as a default file to be displayed when visiting the URL.
 
-If the uploading was successful the last printed line will contain a `Feed Manifest URL`. This URL can be opened in the browser. We can also put this URL into an ENS record or reverse proxy configuration, because it will stay the same when you update the feed. The uploaded content can be found on the link in the line starting with `URL`.
+We can also put this URL into an ENS record or reverse proxy configuration, because it will stay the same when the feed is updated. The uploaded content can be found on the link in the line starting with `URL`. This will change every time the content is modified.
 
 ## Config
 
