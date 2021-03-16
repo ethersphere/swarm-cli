@@ -12,13 +12,18 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'identity', describe: 'Name of the identity', required: true })
   public identity!: string
 
-  @Option({ key: 'topic', describe: 'Feed topic', required: true })
+  @Option({
+    key: 'topic',
+    describe: 'Feed topic',
+    default: '0'.repeat(64),
+    defaultDescription: '32 zero bytes',
+  })
   public topic!: string
 
   @Option({ key: 'password', describe: 'Password for the wallet' })
   public password!: string
 
-  @Option({ key: 'hash-topic', type: 'boolean', describe: 'Hash the topic to 32 bytes' })
+  @Option({ key: 'hash-topic', type: 'boolean', describe: 'Hash the topic to 32 bytes', default: false })
   public hashTopic!: boolean
 
   protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
