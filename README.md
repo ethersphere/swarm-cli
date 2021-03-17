@@ -69,9 +69,9 @@ For uploading to a feed we can use the `feed upload` command. It expects an `ide
 swarm-cli feed upload --identity main --password my-secret-password --path dist
 ```
 
-In this example we are uploading the content of the `dist` folder. If the uploading was successful the last printed line will contain a `Feed Manifest URL`. This URL can be opened in the browser. If the uploaded folder contains an `index.html` file then it will be automatically added as a default file to be displayed when visiting the URL.
+In this example we are uploading the content of the `dist` folder. If the uploading was successful the last printed line will contain a `Feed Manifest URL`. This URL can be opened in the browser. If the uploaded folder contains an `index.html` file then it will be automatically displayed when visiting the URL.
 
-We can also put this URL into an ENS record or reverse proxy configuration, because it will stay the same when the feed is updated. The uploaded content can be found on the link in the line starting with `URL`. This will change every time the content is modified.
+This URL will stay the same when we upload an updated version of the website. Because of this we can also put this URL into a reverse proxy configuration or use the reference (the hex string after the `/bzz/`) in an ENS record. There is more information about that in the [Bee documentation](https://docs.ethswarm.org/docs/getting-started/host-your-website-using-ens). The uploaded content can be found on the link in the line starting with `URL`. This will change every time the content is modified.
 
 ## Config
 
