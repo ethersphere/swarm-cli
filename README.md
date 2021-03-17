@@ -55,7 +55,7 @@ Commands:
 
 ## Example usage
 
-Let's say we want to upload a directory of our website to Swarm and update a feed to point to the newest version. For updating a feed we would need to sign it with an Ethereum key, so first we need to create one with the `identity create` command:
+Let's say we want to upload our website to Swarm and update a feed to point to the newest version. For updating a feed we would need to sign it with an Ethereum key, so first we need to create one with the `identity create` command:
 
 ```
 swarm-cli identity create
@@ -63,7 +63,7 @@ swarm-cli identity create
 
 This command will ask for a password. After that a new identity is created (named `main`). Now we can use this identity to sign updates. It's also possible to import and export Ethereum JSON V3 format identities that works with other apps (e.g. wallets).
 
-For uploading to a feed we can use the `feed upload` command. It expects an `identity` to be provided along with the `password` belonging to it and the `path` of the directory (or file) we want to upload.
+For uploading to a feed we can use the `feed upload` command. It expects an `identity` to be provided along with the `password` that belongs to it and the `path` of the folder (or file) we want to upload.
 
 ```
 swarm-cli feed upload --identity main --password my-secret-password --path dist
