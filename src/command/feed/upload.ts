@@ -1,4 +1,4 @@
-import { stat } from 'fs/promises'
+import { statSync } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
 import { join } from 'path'
 import { fileExists } from '../../utils'
@@ -29,7 +29,7 @@ export class Upload extends FeedCommand implements LeafCommand {
 
   private async runUpload(): Promise<string> {
     const upload = new FileUpload()
-    const stats = await stat(this.path)
+    const stats = statSync(this.path)
 
     if (stats.isFile()) {
       upload.uploadAsFileList = true

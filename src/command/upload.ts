@@ -1,7 +1,7 @@
 import { Tag } from '@ethersphere/bee-js'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
-import { readFile } from 'fs/promises'
+import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import * as Path from 'path'
@@ -128,7 +128,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.log('Starting to upload the given file')
     this.console.dim('Send data to the Bee node...')
 
-    const buffer = await readFile(this.path)
+    const buffer = readFileSync(this.path)
     // eslint-disable-next-line
     // @ts-ignore
     const fakeFile: File = {
