@@ -156,28 +156,28 @@ export class Upload extends RootCommand implements LeafCommand {
     const pollingTime = this.tagPollingTime
     const pollingTrials = this.tagPollingTrials
     let synced = false
-    let updateState = 0
-    const syncedBar = new SingleBar({}, Presets.rect)
+    let syncStatus = 0
+    const progressBar = new SingleBar({}, Presets.rect)
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
-      syncedBar.start(tag.total, 0)
+      progressBar.start(tag.total, 0)
     }
     for (let i = 0; i < pollingTrials; i++) {
       tag = await this.bee.retrieveTag(tagUid)
 
-      if (updateState !== tag.processed) {
+      if (syncStatus !== tag.processed) {
         i = 0
-        updateState = tag.processed
+        syncStatus = tag.processed
       }
-      syncedBar.update(updateState)
+      progressBar.update(syncStatus)
 
-      if (tag.processed >= tag.total) {
+      if (syncStatus >= tag.total) {
         synced = true
         break
       }
       await sleep(pollingTime)
     }
-    syncedBar.stop()
+    progressBar.stop()
 
     if (!synced) {
       this.console.error('Data syncing timeout.')

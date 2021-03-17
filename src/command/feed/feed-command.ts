@@ -48,11 +48,12 @@ export class FeedCommand extends RootCommand {
   }
 
   protected getTopic(): string | Topic {
-    if (!this.hashTopic) {
-      this.enforceValidHexTopic()
+    if (this.hashTopic) {
+      return this.bee.makeFeedTopic(this.topic)
     }
+    this.enforceValidHexTopic()
 
-    return this.hashTopic ? this.bee.makeFeedTopic(this.topic) : this.topic
+    return this.topic
   }
 
   protected async getWallet(): Promise<Wallet> {
