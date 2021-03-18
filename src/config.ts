@@ -1,7 +1,8 @@
 import { IOption } from 'furious-commander/dist/option'
-import { Upload } from './command/upload'
+import { Feed } from './command/feed'
 import { Identity } from './command/identity'
 import { VerbosityLevel } from './command/root-command/command-log'
+import { Upload } from './command/upload'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -19,9 +20,9 @@ export const verbosity: IOption<string> = {
   alias: 'v',
   describe: 'Print console messages in the given relevance level',
   choices: [...Object.keys(VerbosityLevel)],
-  default: String(VerbosityLevel.Verbose),
+  default: String(VerbosityLevel.Normal),
 }
 
 export const optionParameters: IOption<unknown>[] = [beeApiUrl, configFolder, verbosity]
 
-export const rootCommandClasses = [Upload, Identity]
+export const rootCommandClasses = [Upload, Identity, Feed]

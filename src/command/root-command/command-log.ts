@@ -21,6 +21,10 @@ export class CommandLog {
   public log: (message: string, ...args: unknown[]) => void
   /** Informal messages (e.g. Tips) */
   public info: (message: string, ...args: unknown[]) => void
+  /** Messages shown in quiet */
+  public quiet: (message: string, ...args: unknown[]) => void
+  /** Messages shown in verbose */
+  public verbose: (message: string, ...args: unknown[]) => void
   /** Additional info, state of the process */
   public dim: (message: string, ...args: unknown[]) => void
   /** Draw divider line to separate content in output */
@@ -41,6 +45,8 @@ export class CommandLog {
     switch (verbosityLevel) {
       case VerbosityLevel.Verbose:
         this.error = error
+        this.quiet = emptyFunction
+        this.verbose = log
         this.log = log
         this.info = info
         this.dim = dimFunction
@@ -48,6 +54,8 @@ export class CommandLog {
         break
       case VerbosityLevel.Normal:
         this.error = error
+        this.quiet = emptyFunction
+        this.verbose = emptyFunction
         this.log = log
         this.info = info
         this.divider = divider
@@ -56,6 +64,8 @@ export class CommandLog {
       default:
         // quiet
         this.error = error
+        this.quiet = log
+        this.verbose = emptyFunction
         this.log = emptyFunction
         this.info = emptyFunction
         this.dim = emptyFunction

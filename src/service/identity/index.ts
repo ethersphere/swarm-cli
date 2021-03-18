@@ -42,7 +42,7 @@ export function getWalletFromIdentity(identity: Identity, password?: string): Pr
   if (isSimpleWallet(wallet, identityType)) {
     return new Promise(resolve => resolve(getSimpleWallet(wallet)))
   } else if (isV3Wallet(wallet, identityType)) {
-    if (!password) throw new Error(`There is no  password passed for V3 wallet initialization`)
+    if (!password) throw new Error(`There is no password passed for V3 wallet initialization`)
 
     return getV3Wallet(wallet, password)
   }
