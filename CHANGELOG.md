@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.5.1](https://www.github.com/ethersphere/swarm-cli/compare/v0.5.0...v0.5.1) (2021-03-18)
+
+
+### Bug Fixes
+
+* readme usage ([#47](https://www.github.com/ethersphere/swarm-cli/issues/47)) ([03b15d2](https://www.github.com/ethersphere/swarm-cli/commit/03b15d2fca6216439530a89d32bc7208c1be1cba))
+
 ## 0.5.0 (2021-03-18)
 
 
