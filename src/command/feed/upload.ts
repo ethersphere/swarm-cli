@@ -1,6 +1,6 @@
 import { statSync } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
-import { join } from 'path'
+import { basename, join } from 'path'
 import { fileExists } from '../../utils'
 import { Upload as FileUpload } from '../upload'
 import { FeedCommand } from './feed-command'
@@ -33,7 +33,7 @@ export class Upload extends FeedCommand implements LeafCommand {
 
     if (stats.isFile()) {
       upload.uploadAsFileList = true
-      upload.indexDocument = this.path
+      upload.indexDocument = basename(this.path)
     } else {
       if (!this.indexDocument && fileExists(join(this.path, 'index.html'))) {
         this.console.info('Setting --index-document to index.html')

@@ -138,7 +138,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.hash = await this.bee.uploadFiles([fakeFile], {
       tag: tag.uid,
       pin: this.pin,
-      indexDocument: basename(this.path),
+      indexDocument: this.indexDocument,
     })
 
     return `${this.beeApiUrl}/files/${this.hash}`
