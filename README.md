@@ -18,13 +18,60 @@
 The goal of this project is to handle most of the Swarm operations through CLI at some point in the future.
 For currently supported operations, see [Commands](##Commands) section.
 
+## Installation
+
+### From npm
+
+```sh
+ $ npm install -g @ethersphere/swarm-cli
+```
+
+### From source
+
+See the [Development](##Development) section.
+
+## Usage
+
+The general usage is to provide a command, optionally a subcommand, then arguments and options.
+
+`swarm-cli command [subcommand] <arguments> [options]`
+
+Running a command with the `--help` option prints out the usage of a command.
+
 ## Commands
 
-`swarm-cli` can perform commands:
-- upload # upload files (even directories) to Swarm network by passing the file's path
-- identity # manage keys (which can be compatible with Ethereum V3 keystore standard) that you can use mostly for signing chunks
+Running `swarm-cli` without arguments prints the available commands:
 
-for more info execute `swarm-cli --help` after installation.
+```
+$ swarm-cli
+swarm-cli <command>
+
+Commands:
+  index.js upload <path>  - Upload file to Swarm
+  index.js identity       - Keypair management interface
+  index.js feed           - Feed utilities
+
+```
+
+## Example usage
+
+Let's say we want to upload our website to Swarm and update a feed to point to the newest version. For updating a feed we would need to sign it with an Ethereum key, so first we need to create one with the `identity create` command:
+
+```
+swarm-cli identity create
+```
+
+This command will ask for a password. After that a new identity is created (named `main`). Now we can use this identity to sign updates. It's also possible to import and export Ethereum JSON V3 format identities that works with other apps (e.g. wallets).
+
+For uploading to a feed we can use the `feed upload` command. It expects an `identity` to be provided along with the `password` that belongs to it and the `path` of the folder (or file) we want to upload.
+
+```
+swarm-cli feed upload --identity main --password my-secret-password --path dist
+```
+
+In this example we are uploading the content of the `dist` folder. If the uploading was successful the last printed line will contain a `Feed Manifest URL`. This URL can be opened in the browser. If the uploaded folder contains an `index.html` file then it will be automatically displayed when visiting the URL.
+
+This URL will stay the same when we upload an updated version of the website. Because of this we can also put this URL into a reverse proxy configuration or use the reference (the hex string after the `/bzz/`) in an ENS record. There is more information about that in the [Bee documentation](https://docs.ethswarm.org/docs/getting-started/host-your-website-using-ens). The uploaded content can be found on the link in the line starting with `URL`. This will change every time the content is modified.
 
 ## Config
 
@@ -55,17 +102,9 @@ With specific system environment variables you can alter the behaviour of the CL
 * `SWARM_CLI_CONFIG_FOLDER` - full path to a configuration folder
 * `SWARM_CLI_CONFIG_FILE` - configuration file name, defaults to config.json
 
-# Install
+# Development
 
-## npm
-
-```sh
- $ npm install -g @ethersphere/swarm-cli
-```
-
-# Compile code
-
-Install project dependencies with
+After cloning the project, install dependencies with:
 
 ```sh
  $ npm i
