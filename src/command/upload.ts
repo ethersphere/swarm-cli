@@ -86,8 +86,8 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(bold(`URL -> ${green(url)}`))
 
-    if (this.verbosity === VerbosityLevel.Quiet && !this.usedFromOtherCommand) {
-      this.console.important(this.hash)
+    if (!this.usedFromOtherCommand) {
+      this.console.quiet(this.hash)
     }
   }
 

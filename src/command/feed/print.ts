@@ -1,6 +1,5 @@
 import { LeafCommand } from 'furious-commander'
 import { bold, green } from 'kleur'
-import { VerbosityLevel } from '../root-command/command-log'
 import { FeedCommand } from './feed-command'
 
 export class Print extends FeedCommand implements LeafCommand {
@@ -18,18 +17,13 @@ export class Print extends FeedCommand implements LeafCommand {
     const { reference, feedIndex, feedIndexNext } = await reader.download()
     const manifest = await this.bee.createFeedManifest('sequence', topic, wallet.getAddressString())
 
-    if (this.verbosity === VerbosityLevel.Verbose) {
-      this.console.log(bold(`Chunk Reference -> ${green(reference)}`))
-      this.console.log(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${reference}`)}`))
-      this.console.log(bold(`Feed Index -> ${green(feedIndex)}`))
-      this.console.log(bold(`Next Index -> ${green(feedIndexNext)}`))
-      this.console.log(bold(`Feed Manifest -> ${green(manifest)}`))
-    }
+    this.console.verbose(bold(`Chunk Reference -> ${green(reference)}`))
+    this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${reference}`)}`))
+    this.console.verbose(bold(`Feed Index -> ${green(feedIndex)}`))
+    this.console.verbose(bold(`Next Index -> ${green(feedIndexNext)}`))
+    this.console.verbose(bold(`Feed Manifest -> ${green(manifest)}`))
 
-    if (this.verbosity === VerbosityLevel.Quiet) {
-      this.console.important(manifest)
-    } else {
-      this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}/`)}`))
-    }
+    this.console.quiet(manifest)
+    this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}/`)}`))
   }
 }

@@ -6,7 +6,6 @@ import { exit } from 'process'
 import { getWalletFromIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { RootCommand } from '../root-command'
-import { VerbosityLevel } from '../root-command/command-log'
 
 export class FeedCommand extends RootCommand {
   @Option({ key: 'identity', describe: 'Name of the identity', required: true })
@@ -34,17 +33,13 @@ export class FeedCommand extends RootCommand {
     const { reference } = await writer.upload(chunkReference)
     const manifest = await this.bee.createFeedManifest('sequence', topic, wallet.getAddressString())
 
-    if (this.verbosity === VerbosityLevel.Verbose) {
-      this.console.log(bold(`Chunk Reference -> ${green(chunkReference)}`))
-      this.console.log(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${chunkReference}`)}`))
-      this.console.log(bold(`Feed Reference -> ${green(reference)}`))
-      this.console.log(bold(`Feed Manifest -> ${green(manifest)}`))
-    }
+    this.console.verbose(bold(`Chunk Reference -> ${green(chunkReference)}`))
+    this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${chunkReference}`)}`))
+    this.console.verbose(bold(`Feed Reference -> ${green(reference)}`))
+    this.console.verbose(bold(`Feed Manifest -> ${green(manifest)}`))
     this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}/`)}`))
 
-    if (this.verbosity === VerbosityLevel.Quiet) {
-      this.console.important(manifest)
-    }
+    this.console.quiet(manifest)
   }
 
   protected getTopic(): string | Topic {
