@@ -1,6 +1,6 @@
-import { rootCommandClasses, optionParameters } from '../../src/config'
 import { cli } from 'furious-commander'
 import type { Upload } from '../../src/command/upload'
+import { optionParameters, rootCommandClasses } from '../../src/config'
 
 describe('Test Upload command', () => {
   let consoleMessages: string[] = []
@@ -29,7 +29,6 @@ describe('Test Upload command', () => {
     expect(commandBuilder.initedCommands[0].command.name).toBe('upload')
     const command = commandBuilder.initedCommands[0].command as Upload
     expect(command.hash?.length).toBe(64)
-    expect(consoleMessages[0]).toBe('Starting to upload the given folder')
   })
 
   it('should upload file', async () => {
@@ -44,6 +43,5 @@ describe('Test Upload command', () => {
     expect(commandBuilder.initedCommands[0].command.name).toBe('upload')
     const command = commandBuilder.initedCommands[0].command as Upload
     expect(command.hash?.length).toBe(64)
-    expect(consoleMessages[0]).toBe('Starting to upload the given file')
   })
 })
