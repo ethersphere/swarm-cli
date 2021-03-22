@@ -4,6 +4,7 @@ import * as FS from 'fs'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
+import ora from 'ora'
 import * as Path from 'path'
 import { basename } from 'path'
 import { exit } from 'process'
@@ -62,12 +63,22 @@ export class Upload extends RootCommand implements LeafCommand {
       exit(1)
     }
 
+    const spinner: ora.Ora = ora('Uploading files...')
+
+    if (this.verbosity !== VerbosityLevel.Quiet) {
+      spinner.start()
+    }
+
     if (FS.lstatSync(this.path).isDirectory()) {
       url = await this.uploadDirectory(tag)
     } else if (this.uploadAsFileList) {
       url = await this.uploadSingleFileAsFileList(tag)
     } else {
       url = await this.uploadSingleFile(tag)
+    }
+
+    if (spinner.isSpinning) {
+      spinner.stop()
     }
 
     this.console.dim('Data have been sent to the Bee node successfully!')
@@ -94,11 +105,6 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadDirectory(tag: Tag): Promise<string> {
-    this.console.log('Starting to upload the given folder')
-    this.console.dim('Send data to the Bee node...')
-
-    if (this.pin) this.console.dim('Pin the uploaded data')
-
     this.hash = await this.bee.uploadFilesFromDirectory(this.path, true, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
@@ -110,9 +116,6 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadSingleFile(tag: Tag): Promise<string> {
-    this.console.log('Starting to upload the given file')
-    this.console.dim('Send data to the Bee node...')
-
     this.hash = await this.bee.uploadFile(FS.createReadStream(this.path), Path.basename(this.path), {
       tag: tag.uid,
       pin: this.pin,
@@ -122,9 +125,6 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadSingleFileAsFileList(tag: Tag): Promise<string> {
-    this.console.log('Starting to upload the given file')
-    this.console.dim('Send data to the Bee node...')
-
     const buffer = readFileSync(this.path)
     // eslint-disable-next-line
     // @ts-ignore
