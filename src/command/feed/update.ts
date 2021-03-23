@@ -6,7 +6,7 @@ export class Update extends FeedCommand implements LeafCommand {
 
   public readonly description = 'Update feed'
 
-  @Option({ key: 'reference', describe: 'The new reference', required: true })
+  @Option({ key: 'reference', alias: 'r', describe: 'The new reference', required: true })
   public reference!: string
 
   public async run(): Promise<void> {

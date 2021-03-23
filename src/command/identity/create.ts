@@ -1,12 +1,12 @@
-import { LeafCommand, Argument, Option } from 'furious-commander'
-import { RootCommand } from '../root-command'
-import Wallet from 'ethereumjs-wallet'
 import { randomBytes } from 'crypto'
+import Wallet from 'ethereumjs-wallet'
+import { Argument, LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
+import ora from 'ora'
+import { exit } from 'process'
 import { IdentityType, SimpleWallet, V3Keystore } from '../../service/identity/types'
 import { bytesToHex } from '../../utils/hex'
-import { exit } from 'process'
-import ora from 'ora'
+import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
 
 export class Create extends RootCommand implements LeafCommand {
@@ -16,10 +16,10 @@ export class Create extends RootCommand implements LeafCommand {
 
   public readonly description = 'Create Ethereum compatible keypair to sign chunks'
 
-  @Argument({ key: 'identity-name', default: 'main', describe: 'Reference name of the generated identity' })
+  @Argument({ key: 'identity-name', alias: 'i', default: 'main', describe: 'Reference name of the generated identity' })
   public identityName!: string
 
-  @Option({ key: 'password', describe: 'Password for the wallet' })
+  @Option({ key: 'password', alias: 'P', describe: 'Password for the wallet' })
   public password!: string
 
   @Option({
