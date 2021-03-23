@@ -19,7 +19,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public readonly description = 'Upload file to Swarm'
 
-  @Argument({ key: 'path', describe: 'Path of the file (even directory)', required: true })
+  @Argument({ key: 'path', describe: 'Path to the file or folder', required: true })
   public path!: string
 
   @Option({ key: 'pin', type: 'boolean', describe: 'Persist the uploaded data on the gateway node' })
@@ -70,7 +70,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (FS.lstatSync(this.path).isDirectory()) {
-      url = await this.uploadDirectory(tag)
+      url = await this.uploadFolder(tag)
     } else if (this.uploadAsFileList) {
       url = await this.uploadSingleFileAsFileList(tag)
     } else {
@@ -104,7 +104,7 @@ export class Upload extends RootCommand implements LeafCommand {
     super.init()
   }
 
-  private async uploadDirectory(tag: Tag): Promise<string> {
+  private async uploadFolder(tag: Tag): Promise<string> {
     this.hash = await this.bee.uploadFilesFromDirectory(this.path, true, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,

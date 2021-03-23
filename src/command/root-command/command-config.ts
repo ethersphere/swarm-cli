@@ -52,7 +52,7 @@ export class CommandConfig {
     writeFileSync(this.configFilePath, JSON.stringify(this.config), { mode: 0o600 })
   }
 
-  /** Load configuration from config path or creates config directory */
+  /** Load configuration from config path or creates config folder */
   private prepareConfig() {
     if (!existsSync(this.configFilePath)) {
       if (!existsSync(this.configFolderPath)) mkdirSync(this.configFolderPath, { mode: 0o700, recursive: true })
