@@ -23,7 +23,7 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'password', alias: 'P', describe: 'Password for the wallet' })
   public password!: string
 
-  @Option({ key: 'hash-topic', type: 'boolean', describe: 'Hash the topic to 32 bytes', default: false })
+  @Option({ key: 'hash-topic', alias: 'H', type: 'boolean', describe: 'Hash the topic to 32 bytes', default: false })
   public hashTopic!: boolean
 
   protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
