@@ -10,12 +10,11 @@ export class Print extends FeedCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    await this.checkIdentity()
-    const wallet = await this.getWallet()
     const topic = this.getTopic()
-    const reader = this.bee.makeFeedReader('sequence', topic, wallet.getAddressString())
+    const addressString = await this.getAddressString()
+    const reader = this.bee.makeFeedReader('sequence', topic, addressString)
     const { reference, feedIndex, feedIndexNext } = await reader.download()
-    const manifest = await this.bee.createFeedManifest('sequence', topic, wallet.getAddressString())
+    const manifest = await this.bee.createFeedManifest('sequence', topic, addressString)
 
     this.console.verbose(bold(`Chunk Reference -> ${green(reference)}`))
     this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${reference}`)}`))
@@ -25,5 +24,16 @@ export class Print extends FeedCommand implements LeafCommand {
 
     this.console.quiet(manifest)
     this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}/`)}`))
+  }
+
+  private async getAddressString(): Promise<string> {
+    if (this.commandConfig.config.identities[this.identity]) {
+      await this.checkIdentity()
+      const wallet = await this.getWallet()
+
+      return wallet.getAddressString()
+    }
+
+    return this.identity
   }
 }
