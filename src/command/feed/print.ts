@@ -1,5 +1,9 @@
+import Wallet from 'ethereumjs-wallet'
 import { LeafCommand } from 'furious-commander'
 import { bold, green } from 'kleur'
+import { exit } from 'process'
+import { isSimpleWallet, isV3Wallet } from '../../service/identity'
+import { Identity } from '../../service/identity/types'
 import { FeedCommand } from './feed-command'
 
 export class Print extends FeedCommand implements LeafCommand {
@@ -27,13 +31,38 @@ export class Print extends FeedCommand implements LeafCommand {
   }
 
   private async getAddressString(): Promise<string> {
-    if (this.commandConfig.config.identities[this.identity]) {
-      await this.checkIdentity()
-      const wallet = await this.getWallet()
+    const identity = this.commandConfig.config.identities[this.identity]
 
-      return wallet.getAddressString()
+    if (identity) {
+      if (this.password) {
+        const wallet = await this.getWallet()
+
+        return wallet.getAddressString()
+      } else {
+        return this.getAddressStringFromIdentity(identity)
+      }
     }
 
     return this.identity
+  }
+
+  private getAddressStringFromIdentity(identity: Identity): string {
+    const { wallet, identityType } = identity
+
+    if (isV3Wallet(wallet, identityType)) {
+      if (!wallet.address) {
+        this.console.error('No address in V3 wallet, please provide password so it can be decrypted.')
+        exit(1)
+      }
+
+      return wallet.address
+    } else if (isSimpleWallet(wallet, identityType)) {
+      const ethereumWallet = Wallet.fromPrivateKey(Buffer.from(wallet.privateKey, 'hex'))
+
+      return ethereumWallet.getAddressString()
+    } else {
+      this.console.error('Address type is not supported.')
+      exit(1)
+    }
   }
 }
