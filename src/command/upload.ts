@@ -5,10 +5,9 @@ import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import ora from 'ora'
-import * as Path from 'path'
-import { basename } from 'path'
+import { basename, join } from 'path'
 import { exit } from 'process'
-import { sleep } from '../utils'
+import { fileExists, sleep } from '../utils'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
@@ -34,7 +33,6 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({
     key: 'index-document',
     describe: 'Default retrieval file on bzz request without provided filepath',
-    default: 'index.html',
   })
   public indexDocument!: string | undefined
 
@@ -47,8 +45,6 @@ export class Upload extends RootCommand implements LeafCommand {
   // CLASS FIELDS
 
   public hash!: string
-
-  public uploadAsFileList = false
 
   public usedFromOtherCommand = false
 
@@ -71,10 +67,8 @@ export class Upload extends RootCommand implements LeafCommand {
 
     if (FS.lstatSync(this.path).isDirectory()) {
       url = await this.uploadFolder(tag)
-    } else if (this.uploadAsFileList) {
-      url = await this.uploadSingleFileAsFileList(tag)
     } else {
-      url = await this.uploadSingleFile(tag)
+      url = await this.uploadSingleFileAsFileList(tag)
     }
 
     if (spinner.isSpinning) {
@@ -105,6 +99,11 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadFolder(tag: Tag): Promise<string> {
+    if (!this.indexDocument && fileExists(join(this.path, 'index.html'))) {
+      this.console.info('Setting --index-document to index.html')
+      this.indexDocument = 'index.html'
+    }
+
     this.hash = await this.bee.uploadFilesFromDirectory(this.path, true, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
@@ -113,15 +112,6 @@ export class Upload extends RootCommand implements LeafCommand {
     })
 
     return `${this.beeApiUrl}/bzz/${this.hash}/`
-  }
-
-  private async uploadSingleFile(tag: Tag): Promise<string> {
-    this.hash = await this.bee.uploadFile(FS.createReadStream(this.path), Path.basename(this.path), {
-      tag: tag.uid,
-      pin: this.pin,
-    })
-
-    return `${this.beeApiUrl}/files/${this.hash}`
   }
 
   private async uploadSingleFileAsFileList(tag: Tag): Promise<string> {
@@ -135,10 +125,10 @@ export class Upload extends RootCommand implements LeafCommand {
     this.hash = await this.bee.uploadFiles([fakeFile], {
       tag: tag.uid,
       pin: this.pin,
-      indexDocument: this.indexDocument,
+      indexDocument: basename(this.path),
     })
 
-    return `${this.beeApiUrl}/files/${this.hash}`
+    return `${this.beeApiUrl}/bzz/${this.hash}`
   }
 
   /**

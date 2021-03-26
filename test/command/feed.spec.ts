@@ -41,6 +41,7 @@ describe('Test Feed command', () => {
       testArguments: [
         'feed',
         'upload',
+        `${__dirname}/../testpage/images/swarm.png`,
         '--identity',
         'test',
         '--topic',
@@ -48,9 +49,6 @@ describe('Test Feed command', () => {
         '--password',
         'test',
         '--hash-topic',
-        'true',
-        '--path',
-        `${__dirname}/../testpage/images/swarm.png`,
         '--quiet',
       ],
     })
