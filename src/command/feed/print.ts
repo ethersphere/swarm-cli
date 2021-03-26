@@ -1,5 +1,5 @@
 import Wallet from 'ethereumjs-wallet'
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
@@ -11,11 +11,19 @@ export class Print extends FeedCommand implements LeafCommand {
 
   public readonly description = 'Print feed'
 
+  @Option({
+    key: 'address',
+    alias: 'a',
+    describe: 'Public Ethereum Address for feed lookup',
+    conflicts: 'identity',
+  })
+  public address!: string
+
   public async run(): Promise<void> {
     super.init()
 
     const topic = this.getTopic()
-    const addressString = await this.getAddressString()
+    const addressString = this.address || (await this.getAddressString())
     const reader = this.bee.makeFeedReader('sequence', topic, addressString)
     const { reference, feedIndex, feedIndexNext } = await reader.download()
     const manifest = await this.bee.createFeedManifest('sequence', topic, addressString)
