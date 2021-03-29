@@ -1,11 +1,12 @@
 import Wallet from 'ethereumjs-wallet'
-import { LeafCommand, Option } from 'furious-commander'
+import { EitherOneParam, LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { FeedCommand } from './feed-command'
 
+@EitherOneParam(['address', 'identity'])
 export class Print extends FeedCommand implements LeafCommand {
   public readonly name = 'print'
 
@@ -15,7 +16,6 @@ export class Print extends FeedCommand implements LeafCommand {
     key: 'address',
     alias: 'a',
     describe: 'Public Ethereum Address for feed lookup',
-    conflicts: 'identity',
   })
   public address!: string
 
