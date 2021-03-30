@@ -41,6 +41,7 @@ describe('Test Feed command', () => {
       testArguments: [
         'feed',
         'upload',
+        `${__dirname}/../testpage/images/swarm.png`,
         '--identity',
         'test',
         '--topic',
@@ -48,11 +49,7 @@ describe('Test Feed command', () => {
         '--password',
         'test',
         '--hash-topic',
-        'true',
-        '--path',
-        `${__dirname}/../testpage/images/swarm.png`,
-        '--verbosity',
-        '0',
+        '--quiet',
       ],
     })
     // finally verify
@@ -70,8 +67,7 @@ describe('Test Feed command', () => {
         'test',
         '--hash-topic',
         'true',
-        '--verbosity',
-        '0',
+        '--quiet',
       ],
     })
     const length = consoleMessages.length

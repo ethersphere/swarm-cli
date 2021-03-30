@@ -1,7 +1,7 @@
 import { Bee } from '@ethersphere/bee-js'
 import { ExternalOption } from 'furious-commander'
-import { beeApiUrl, configFolder } from '../../config'
 import { IOption } from 'furious-commander/dist/option'
+import { beeApiUrl, configFolder, quiet, verbose } from '../../config'
 import { CommandConfig } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 
@@ -21,6 +21,12 @@ export class RootCommand {
   @ExternalOption('verbosity')
   public verbosity!: VerbosityLevel
 
+  @ExternalOption('verbose')
+  public verbose!: boolean
+
+  @ExternalOption('quiet')
+  public quiet!: boolean
+
   // CLASS FIELDS
 
   public appName = 'swarm-cli'
@@ -38,10 +44,15 @@ export class RootCommand {
    */
   protected init(): void {
     // Console logs of default commands
-    // cast given verbosity to enum type
-    this.verbosity = isNaN(Number(this.verbosity))
-      ? ((VerbosityLevel[this.verbosity] as unknown) as number)
-      : Number(this.verbosity)
+    this.verbosity = VerbosityLevel.Normal
+
+    if (this.optionPassed(quiet)) {
+      this.verbosity = VerbosityLevel.Quiet
+    }
+
+    if (this.optionPassed(verbose)) {
+      this.verbosity = VerbosityLevel.Verbose
+    }
     this.console = new CommandLog(this.verbosity)
 
     // CLI Configuration
@@ -59,6 +70,6 @@ export class RootCommand {
   }
 
   protected optionPassed(option: IOption): boolean {
-    return process.argv.includes(`--${option.key}`)
+    return process.argv.includes(`--${option.key}`) || process.argv.includes(`-${option.alias}`)
   }
 }
