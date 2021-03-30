@@ -19,6 +19,9 @@ export class Print extends FeedCommand implements LeafCommand {
   })
   public address!: string
 
+  @Option({ key: 'identity', alias: 'i', describe: 'Name of the identity' })
+  public identity!: string
+
   public async run(): Promise<void> {
     super.init()
 

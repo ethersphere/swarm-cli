@@ -1,4 +1,4 @@
-import { Aggregation, LeafCommand } from 'furious-commander'
+import { Aggregation, LeafCommand, Option } from 'furious-commander'
 import { Upload as FileUpload } from '../upload'
 import { FeedCommand } from './feed-command'
 
@@ -6,6 +6,9 @@ export class Upload extends FeedCommand implements LeafCommand {
   public readonly name = 'upload'
 
   public readonly description = 'Upload to a feed'
+
+  @Option({ key: 'identity', alias: 'i', describe: 'Name of the identity', required: true })
+  public identity!: string
 
   @Aggregation(['upload'])
   public fileUpload!: FileUpload

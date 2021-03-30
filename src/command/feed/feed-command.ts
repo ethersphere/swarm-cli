@@ -8,7 +8,7 @@ import { Identity } from '../../service/identity/types'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
-  @Option({ key: 'identity', alias: 'i', describe: 'Name of the identity', conflicts: 'address', required: true })
+  @Option({ key: 'identity', alias: 'i', describe: 'Name of the identity', required: true })
   public identity!: string
 
   @Option({
