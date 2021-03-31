@@ -1,12 +1,14 @@
 import { LeafCommand } from 'furious-commander'
-import { RootCommand } from '../root-command'
 import { bold } from 'kleur'
 import { getPrintableIdentityType, getSimpleWallet, isSimpleWallet, isV3Wallet } from '../../service/identity'
+import { RootCommand } from '../root-command'
 
 export class List extends RootCommand implements LeafCommand {
   // CLI FIELDS
 
   public readonly name = 'list'
+
+  public readonly aliases = ['l', 'ls']
 
   public readonly description = 'List keypairs which can be used to sign chunks'
 

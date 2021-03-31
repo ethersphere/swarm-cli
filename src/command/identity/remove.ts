@@ -8,6 +8,8 @@ export class Remove extends IdentityCommand implements LeafCommand {
 
   public readonly name = 'remove'
 
+  public readonly aliases = ['rm']
+
   public readonly description = 'Remove identity'
 
   @Argument({ key: 'identity-name', describe: 'Name of the designated identity for delete' })
