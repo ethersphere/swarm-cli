@@ -16,7 +16,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public readonly name = 'upload'
 
-  public readonly aliases = ['up']
+  public readonly aliases = ['u', 'up']
 
   public readonly description = 'Upload file to Swarm'
 
