@@ -14,19 +14,14 @@ export class Cashout extends ChequeCommand implements LeafCommand {
   @Option({ key: 'all', alias: 'a', type: 'boolean', describe: 'Cashout all cheques', default: false })
   public all!: boolean
 
-  @Option({ key: 'minimum', alias: 'm', type: 'number', describe: 'Minimum balance to cashout', default: 0 })
-  public minimum!: number
-
   public async run(): Promise<void> {
     super.init()
 
     if (this.all) {
-      const cheques = await this.getCashableCheques()
+      this.console.info(`Cashing out all cheques with value at least ${this.minimum}...`)
+      const cheques = await this.getFilteredCheques()
+      this.console.info('Cashing out ' + cheques.length + ' cheques.')
       for (const { amount, address } of cheques) {
-        if (amount === 0 || (this.minimum && amount < this.minimum)) {
-          this.console.verbose('Skipping: ' + address + ' - ' + amount)
-          continue
-        }
         await this.checkoutOne(address, amount)
       }
     } else if (this.peer) {
@@ -37,10 +32,18 @@ export class Cashout extends ChequeCommand implements LeafCommand {
   }
 
   private async checkoutOne(address: string, amount: number | 'N/A'): Promise<void> {
-    this.console.info('Cashing out: ' + address + ' - ' + amount)
-    this.console.quiet('Cashing out: ' + address + ' - ' + amount)
-    const response = await this.beeDebug.cashoutLastCheque(address)
-    this.console.info('Tx: ' + response.transactionHash)
-    this.console.quiet('Tx: ' + response.transactionHash)
+    try {
+      this.console.info('Cashing out: ' + address + ' - ' + amount)
+      this.console.quiet('Cashing out: ' + address + ' - ' + amount)
+      const response = await this.beeDebug.cashoutLastCheque(address)
+      this.console.info('Tx: ' + response.transactionHash)
+      this.console.quiet('Tx: ' + response.transactionHash)
+    } catch (error) {
+      if (error.message === 'Not Found') {
+        this.console.error('Peer not found')
+      } else {
+        throw error
+      }
+    }
   }
 }

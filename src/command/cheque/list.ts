@@ -8,21 +8,17 @@ export class List extends ChequeCommand implements LeafCommand {
 
   public readonly aliases = ['l', 'ls']
 
-  public readonly description = 'List pending cheques'
+  public readonly description = 'List cashable cheques'
 
   public async run(): Promise<void> {
     super.init()
-    this.console.verbose('Looking up cheques...')
-    const cheques = await this.getCashableCheques()
+    this.console.info(`Looking up cheques with value at least ${this.minimum}...`)
+    const cheques = await this.getFilteredCheques()
 
     if (!cheques.length) {
-      this.console.log('No cheques found.')
+      this.console.log('No uncashed cheques found.')
     }
     for (const { amount, address } of cheques) {
-      if (amount === 0) {
-        this.console.verbose(address + ' - ' + amount)
-        continue
-      }
       this.console.log(address + ' - ' + amount)
       this.console.quiet(address + ' - ' + amount)
     }

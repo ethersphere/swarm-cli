@@ -1,3 +1,4 @@
+import { Option } from 'furious-commander'
 import { RootCommand } from '../root-command'
 
 interface Cashable {
@@ -6,6 +7,15 @@ interface Cashable {
 }
 
 export class ChequeCommand extends RootCommand {
+  @Option({ key: 'minimum', alias: 'm', type: 'number', describe: 'Filter based on minimum balance', default: 1 })
+  public minimum = 1
+
+  protected async getFilteredCheques(): Promise<Cashable[]> {
+    const cheques = await this.getCashableCheques()
+
+    return cheques.filter(({ amount }) => amount >= this.minimum)
+  }
+
   protected async getCashableCheques(): Promise<Cashable[]> {
     const { lastcheques } = await this.beeDebug.getLastCheques()
 
