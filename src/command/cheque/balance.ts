@@ -7,7 +7,7 @@ export class Balance extends ChequeCommand implements LeafCommand {
 
   public readonly name = 'balance'
 
-  public readonly aliases = ['b', 'ba,', 'bal']
+  public readonly aliases = ['b', 'ba', 'bal']
 
   public readonly description = 'Show balance'
 
