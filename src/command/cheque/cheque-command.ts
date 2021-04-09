@@ -1,4 +1,6 @@
 import { Option } from 'furious-commander'
+import { bold, dim, italic } from 'kleur'
+import { exit } from 'process'
 import { RootCommand } from '../root-command'
 
 interface Cashable {
@@ -9,6 +11,18 @@ interface Cashable {
 export class ChequeCommand extends RootCommand {
   @Option({ key: 'minimum', alias: 'm', type: 'number', describe: 'Filter based on minimum balance', default: 1 })
   public minimum = 1
+
+  protected async checkDebugApiHealth(): Promise<void | never> {
+    try {
+      this.console.verbose(italic(dim('Checking Debug API health...')))
+      await this.beeDebug.getHealth()
+    } catch (error) {
+      this.console.error('Could not reach Debug API at ' + this.beeDebugApiUrl)
+      this.console.error('Make sure you have the Debug API enabled in your Bee config')
+      this.console.error('or correct the URL with the --bee-debug-api-url option.')
+      exit(1)
+    }
+  }
 
   protected async getFilteredCheques(): Promise<Cashable[]> {
     const cheques = await this.getCashableCheques()
@@ -32,6 +46,13 @@ export class ChequeCommand extends RootCommand {
     }
 
     return results
+  }
+
+  protected printCheque(cashable: Cashable): void {
+    this.console.divider('-')
+    this.console.log(bold('Peer Address: ') + cashable.address)
+    this.console.log(bold('Cheque Value: ') + cashable.amount)
+    this.console.quiet(cashable.address + ' ' + cashable.amount)
   }
 
   private async getUncashedAmount(address: string): Promise<number> {

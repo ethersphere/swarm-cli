@@ -1,4 +1,5 @@
 import { GroupCommand } from 'furious-commander'
+import { Balance } from './balance'
 import { Cashout } from './cashout'
 import { List } from './list'
 
@@ -7,5 +8,5 @@ export class Cheque implements GroupCommand {
 
   public readonly description = 'Cheque'
 
-  public subCommandClasses = [List, Cashout]
+  public subCommandClasses = [List, Cashout, Balance]
 }

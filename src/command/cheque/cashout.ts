@@ -1,10 +1,14 @@
-import { LeafCommand, Option } from 'furious-commander'
+import { EitherOneParam, LeafCommand, Option } from 'furious-commander'
+import { bold, green } from 'kleur'
 import { ChequeCommand } from './cheque-command'
 
+@EitherOneParam(['all', 'peer'])
 export class Cashout extends ChequeCommand implements LeafCommand {
   // CLI FIELDS
 
   public readonly name = 'cashout'
+
+  public readonly aliases = ['co']
 
   public readonly description = 'Cashout one or all pending cheques'
 
@@ -16,28 +20,33 @@ export class Cashout extends ChequeCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
+    await this.checkDebugApiHealth()
 
     if (this.all) {
-      this.console.info(`Cashing out all cheques with value at least ${this.minimum}...`)
-      const cheques = await this.getFilteredCheques()
-      this.console.info('Cashing out ' + cheques.length + ' cheques.')
-      for (const { amount, address } of cheques) {
-        await this.checkoutOne(address, amount)
-      }
-    } else if (this.peer) {
-      await this.checkoutOne(this.peer, 'N/A')
-    } else {
-      this.console.error('Either specify --all or a --peer')
+      await this.cashoutAll()
+    }
+
+    if (this.peer) {
+      await this.checkoutOne(this.peer, -1) // FIXME
     }
   }
 
-  private async checkoutOne(address: string, amount: number | 'N/A'): Promise<void> {
+  private async cashoutAll(): Promise<void> {
+    this.console.info(`Collecting cheques with value at least ${this.minimum}...`)
+    const cheques = await this.getFilteredCheques()
+    this.console.info('Found ' + cheques.length + ' cheques.')
+    for (const { amount, address } of cheques) {
+      await this.checkoutOne(address, amount)
+    }
+  }
+
+  private async checkoutOne(address: string, amount: number): Promise<void> {
     try {
-      this.console.info('Cashing out: ' + address + ' - ' + amount)
-      this.console.quiet('Cashing out: ' + address + ' - ' + amount)
+      this.console.log(green('Cashing out:'))
+      this.printCheque({ address, amount })
       const response = await this.beeDebug.cashoutLastCheque(address)
-      this.console.info('Tx: ' + response.transactionHash)
-      this.console.quiet('Tx: ' + response.transactionHash)
+      this.console.log(green(bold('Tx:'.padEnd(14))) + response.transactionHash)
+      this.console.quiet(response.transactionHash)
     } catch (error) {
       if (error.message === 'Not Found') {
         this.console.error('Peer not found')
