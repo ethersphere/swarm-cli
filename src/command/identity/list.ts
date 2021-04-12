@@ -8,7 +8,7 @@ export class List extends RootCommand implements LeafCommand {
 
   public readonly name = 'list'
 
-  public readonly aliases = ['l', 'ls']
+  public readonly aliases = ['ls']
 
   public readonly description = 'List keypairs which can be used to sign chunks'
 

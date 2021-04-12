@@ -5,8 +5,6 @@ import { FeedCommand } from './feed-command'
 export class Upload extends FeedCommand implements LeafCommand {
   public readonly name = 'upload'
 
-  public readonly aliases = ['u', 'up']
-
   public readonly description = 'Upload to a feed'
 
   @Option({ key: 'identity', alias: 'i', describe: 'Name of the identity', required: true })
