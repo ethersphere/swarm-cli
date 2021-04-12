@@ -16,6 +16,8 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public readonly name = 'upload'
 
+  public readonly aliases = ['up']
+
   public readonly description = 'Upload file to Swarm'
 
   @Argument({ key: 'path', describe: 'Path to the file or folder', required: true })
