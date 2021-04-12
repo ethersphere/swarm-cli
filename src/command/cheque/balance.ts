@@ -13,7 +13,10 @@ export class Balance extends ChequeCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
-    await this.checkDebugApiHealth()
+
+    if (!(await this.checkDebugApiHealth())) {
+      return
+    }
 
     this.console.info('Looking up balance...')
     const balance = await this.beeDebug.getChequebookBalance()
