@@ -30,7 +30,8 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     }
 
     if (this.peer) {
-      await this.checkoutOne(this.peer, -1) // FIXME
+      const amount = await this.getUncashedAmount(this.peer)
+      await this.checkoutOne(this.peer, amount)
     }
   }
 

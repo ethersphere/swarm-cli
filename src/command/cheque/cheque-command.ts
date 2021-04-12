@@ -57,7 +57,7 @@ export class ChequeCommand extends RootCommand {
     this.console.quiet(cashable.address + ' ' + cashable.amount)
   }
 
-  private async getUncashedAmount(address: string): Promise<number> {
+  protected async getUncashedAmount(address: string): Promise<number> {
     const cumulativePayout = await this.getCumulativePayout(address)
     const lastCashedPayout = await this.getLastCashedPayout(address)
 
