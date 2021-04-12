@@ -6,7 +6,7 @@ export class List extends ChequeCommand implements LeafCommand {
 
   public readonly name = 'list'
 
-  public readonly aliases = ['l', 'ls']
+  public readonly aliases = ['ls']
 
   public readonly description = 'List cashable cheques'
 
