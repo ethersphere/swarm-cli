@@ -26,6 +26,14 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({ key: 'pin', type: 'boolean', describe: 'Persist the uploaded data on the gateway node' })
   public pin!: boolean
 
+  @Option({
+    key: 'skip-sync',
+    type: 'boolean',
+    describe: 'Skip waiting for synchronization over the network',
+    default: false,
+  })
+  public skipSync!: boolean
+
   @Option({ key: 'tag-polling-time', describe: 'Waiting time in ms between tag pollings', default: 500 })
   public tagPollingTime!: number
 
@@ -83,9 +91,14 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
     //refresh tag before populate tracking
     tag = await this.bee.retrieveTag(tag.uid)
-    const synced = await this.waitForFileSynced(tag)
 
-    if (!synced) return //error message printed before
+    if (this.skipSync) {
+      this.console.info('Skipping synchronization')
+    } else {
+      const synced = await this.waitForFileSynced(tag)
+
+      if (!synced) return //error message printed before
+    }
 
     this.console.dim('Uploading was successful!')
     this.console.log(bold(`URL -> ${green(url)}`))
