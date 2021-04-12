@@ -1,5 +1,11 @@
 import { createServer, Server } from 'http'
 
+/**
+ * Starts a mock HTTP server with predefined cheque responses.
+ *
+ * Can be run in standalone mode:
+ * ts-node test/http-mock/cheque-mock.ts run 1333
+ */
 export function createChequeMockHttpServer(port: number): Server {
   const server = createServer((request, response) => {
     response.writeHead(200, { 'Content-Type': 'application/json' })
