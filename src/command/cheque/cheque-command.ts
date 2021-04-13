@@ -64,6 +64,20 @@ export class ChequeCommand extends RootCommand {
     return cumulativePayout - lastCashedPayout
   }
 
+  protected parsePositiveBigInt(value: string): BigInt | null {
+    try {
+      const bigInt = BigInt(value)
+
+      if (bigInt <= 0) {
+        return null
+      }
+
+      return bigInt
+    } catch {
+      return null
+    }
+  }
+
   private async getCumulativePayout(address: string): Promise<number> {
     const lastCheques = await this.beeDebug.getLastChequesForPeer(address)
 
