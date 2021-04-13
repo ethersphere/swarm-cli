@@ -103,7 +103,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
       if (!synced) return //error message printed before
     }
-    
+
     this.console.dim('Uploading was successful!')
     this.console.log(bold(`URL -> ${green(url)}`))
 
