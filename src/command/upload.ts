@@ -102,10 +102,8 @@ export class Upload extends RootCommand implements LeafCommand {
       const synced = await this.waitForFileSynced(tag)
 
       if (!synced) return //error message printed before
-    } else {
-      this.console.error('Tag was not created')
     }
-
+    
     this.console.dim('Uploading was successful!')
     this.console.log(bold(`URL -> ${green(url)}`))
 
