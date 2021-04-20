@@ -26,6 +26,14 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({ key: 'pin', type: 'boolean', describe: 'Persist the uploaded data on the gateway node' })
   public pin!: boolean
 
+  @Option({
+    key: 'skip-sync',
+    type: 'boolean',
+    describe: 'Skip waiting for synchronization over the network',
+    default: false,
+  })
+  public skipSync!: boolean
+
   @Option({ key: 'tag-polling-time', describe: 'Waiting time in ms between tag pollings', default: 500 })
   public tagPollingTime!: number
 
@@ -52,8 +60,12 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     this.initCommand()
-    let tag = await this.bee.createTag()
     let url: string
+    let tag: Tag | undefined
+
+    if (!this.skipSync) {
+      tag = await this.bee.createTag()
+    }
 
     if (!FS.existsSync(this.path)) {
       this.console.error(`Given filepath '${this.path}' doesn't exist`)
@@ -82,10 +94,15 @@ export class Upload extends RootCommand implements LeafCommand {
 
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
     //refresh tag before populate tracking
-    tag = await this.bee.retrieveTag(tag.uid)
-    const synced = await this.waitForFileSynced(tag)
 
-    if (!synced) return //error message printed before
+    if (this.skipSync) {
+      this.console.info('Skipping synchronization')
+    } else if (tag) {
+      tag = await this.bee.retrieveTag(tag.uid)
+      const synced = await this.waitForFileSynced(tag)
+
+      if (!synced) return //error message printed before
+    }
 
     this.console.dim('Uploading was successful!')
     this.console.log(bold(`URL -> ${green(url)}`))
@@ -100,7 +117,7 @@ export class Upload extends RootCommand implements LeafCommand {
     super.init()
   }
 
-  private async uploadFolder(tag: Tag): Promise<string> {
+  private async uploadFolder(tag?: Tag): Promise<string> {
     if (!this.indexDocument && fileExists(join(this.path, 'index.html'))) {
       this.console.info('Setting --index-document to index.html')
       this.indexDocument = 'index.html'
@@ -109,14 +126,14 @@ export class Upload extends RootCommand implements LeafCommand {
     this.hash = await this.bee.uploadFilesFromDirectory(this.path, true, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
-      tag: tag.uid,
+      tag: tag && tag.uid,
       pin: this.pin,
     })
 
     return `${this.beeApiUrl}/bzz/${this.hash}/`
   }
 
-  private async uploadSingleFileAsFileList(tag: Tag): Promise<string> {
+  private async uploadSingleFileAsFileList(tag?: Tag): Promise<string> {
     const buffer = readFileSync(this.path)
     // eslint-disable-next-line
     // @ts-ignore
@@ -125,7 +142,7 @@ export class Upload extends RootCommand implements LeafCommand {
       arrayBuffer: () => new Promise(resolve => resolve(new Uint8Array(buffer).buffer)),
     }
     this.hash = await this.bee.uploadFiles([fakeFile], {
-      tag: tag.uid,
+      tag: tag && tag.uid,
       pin: this.pin,
       indexDocument: basename(this.path),
     })
