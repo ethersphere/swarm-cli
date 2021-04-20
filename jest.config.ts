@@ -34,6 +34,6 @@ export default (): Config.InitialOptions => {
     testPathIgnorePatterns: ['/node_modules/'],
 
     // Increase timeout since we have long running cryptographic functions
-    testTimeout: 2 * 60 * 1000,
+    testTimeout: 4 * 60 * 1000,
   }
 }

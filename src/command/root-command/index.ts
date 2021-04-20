@@ -1,4 +1,4 @@
-import { Bee } from '@ethersphere/bee-js'
+import { Bee, BeeDebug } from '@ethersphere/bee-js'
 import { ExternalOption } from 'furious-commander'
 import { IOption } from 'furious-commander/dist/option'
 import { beeApiUrl, configFolder, quiet, verbose } from '../../config'
@@ -14,6 +14,9 @@ export class RootCommand {
   /** API URL of Bee */
   @ExternalOption('bee-api-url')
   public beeApiUrl!: string
+
+  @ExternalOption('bee-debug-api-url')
+  public beeDebugApiUrl!: string
 
   @ExternalOption('config-folder')
   public configFolder!: string
@@ -32,6 +35,8 @@ export class RootCommand {
   public appName = 'swarm-cli'
 
   public bee!: Bee
+
+  public beeDebug!: BeeDebug
 
   public commandConfig!: CommandConfig
 
@@ -67,6 +72,7 @@ export class RootCommand {
     } // else it gets its default option value
 
     this.bee = new Bee(this.beeApiUrl)
+    this.beeDebug = new BeeDebug(this.beeDebugApiUrl)
   }
 
   protected optionPassed(option: IOption): boolean {
