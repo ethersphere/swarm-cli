@@ -29,7 +29,7 @@ export class Withdraw extends ChequeCommand implements LeafCommand {
     const amount = this.parsePositiveBigInt(this.amount)
 
     if (!amount) {
-      this.console.error('Could not parse amount. Is it a positive number?')
+      this.console.error('Invalid amount. The amount must be a positive integer.')
 
       return
     }
