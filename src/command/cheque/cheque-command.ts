@@ -78,12 +78,18 @@ export class ChequeCommand extends RootCommand {
     }
   }
 
+  /**
+   * Get the total cheque value incoming from a specific peer, both cashed and uncashed.
+   */
   private async getCumulativePayout(address: string): Promise<number> {
     const lastCheques = await this.beeDebug.getLastChequesForPeer(address)
 
     return lastCheques.lastreceived.payout
   }
 
+  /**
+   * Get the total cashed out amount (a.k.a payout) for a specific peer.
+   */
   private async getLastCashedPayout(address: string): Promise<number> {
     try {
       const lastCashout = await this.beeDebug.getLastCashoutAction(address)
