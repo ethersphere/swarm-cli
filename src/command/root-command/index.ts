@@ -1,7 +1,7 @@
 import { Bee, BeeDebug } from '@ethersphere/bee-js'
 import { ExternalOption } from 'furious-commander'
 import { IOption } from 'furious-commander/dist/option'
-import { beeApiUrl, configFolder, quiet, verbose } from '../../config'
+import { beeApiUrl, beeDebugApiUrl, configFolder, quiet, verbose } from '../../config'
 import { CommandConfig } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 
@@ -69,6 +69,11 @@ export class RootCommand {
     if (!this.optionPassed(beeApiUrl)) {
       if (process.env.BEE_API_URL) this.beeApiUrl = process.env.BEE_API_URL
       else if (this.commandConfig.config.beeApiUrl) this.beeApiUrl = this.commandConfig.config.beeApiUrl
+    } // else it gets its default option value
+
+    if (!this.optionPassed(beeDebugApiUrl)) {
+      if (process.env.BEE_DEBUG_API_URL) this.beeDebugApiUrl = process.env.BEE_DEBUG_API_URL
+      else if (this.commandConfig.config.beeDebugApiUrl) this.beeDebugApiUrl = this.commandConfig.config.beeDebugApiUrl
     } // else it gets its default option value
 
     this.bee = new Bee(this.beeApiUrl)
