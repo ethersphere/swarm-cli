@@ -1,4 +1,4 @@
-import { Topic } from '@ethersphere/bee-js/dist/feed/topic'
+import { Reference, Topic } from '@ethersphere/bee-js'
 import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { bold, green } from 'kleur'
@@ -8,7 +8,7 @@ import { Identity } from '../../service/identity/types'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
-  @Option({ key: 'identity', alias: 'i', describe: 'Name of the identity', required: true })
+  @Option({ key: 'identity', alias: 'i', describe: 'Name of the identity', required: true, conflicts: 'address' })
   public identity!: string
 
   @Option({
@@ -31,7 +31,7 @@ export class FeedCommand extends RootCommand {
     const wallet = await this.getWallet()
     const topic = this.getTopic()
     const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-    const { reference } = await writer.upload(chunkReference)
+    const { reference } = await writer.upload(chunkReference as Reference)
     const manifest = await this.bee.createFeedManifest('sequence', topic, wallet.getAddressString())
 
     this.console.verbose(bold(`Chunk Reference -> ${green(chunkReference)}`))
