@@ -1,8 +1,7 @@
-import { EitherOneParam, LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import { ChequeCommand } from './cheque-command'
 
-@EitherOneParam(['all', 'peer'])
 export class Cashout extends ChequeCommand implements LeafCommand {
   // CLI FIELDS
 
@@ -12,10 +11,17 @@ export class Cashout extends ChequeCommand implements LeafCommand {
 
   public readonly description = 'Cashout one or all pending cheques'
 
-  @Option({ key: 'peer', alias: 'p', type: 'string', describe: 'Peer address', default: null })
+  @Option({ key: 'peer', alias: 'p', type: 'string', describe: 'Peer address', required: true, conflicts: 'all' })
   public peer!: string | null
 
-  @Option({ key: 'all', alias: 'a', type: 'boolean', describe: 'Cashout all cheques', default: false })
+  @Option({
+    key: 'all',
+    alias: 'a',
+    type: 'boolean',
+    describe: 'Cashout all cheques',
+    required: true,
+    conflicts: 'peer',
+  })
   public all!: boolean
 
   public async run(): Promise<void> {
@@ -44,7 +50,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     }
   }
 
-  private async checkoutOne(address: string, amount: number): Promise<void> {
+  private async checkoutOne(address: string, amount: bigint): Promise<void> {
     try {
       this.console.log(green('Cashing out:'))
       this.printCheque({ address, amount })
