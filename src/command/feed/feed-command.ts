@@ -8,22 +8,22 @@ import { Identity } from '../../service/identity/types'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
-  @Option({ key: 'identity', alias: 'i', describe: 'Name of the identity', required: true, conflicts: 'address' })
+  @Option({ key: 'identity', alias: 'i', description: 'Name of the identity', required: true, conflicts: 'address' })
   public identity!: string
 
   @Option({
     key: 'topic',
     alias: 't',
-    describe: 'Feed topic',
+    description: 'Feed topic',
     default: '0'.repeat(64),
     defaultDescription: '32 zero bytes',
   })
   public topic!: string
 
-  @Option({ key: 'password', alias: 'P', describe: 'Password for the wallet' })
+  @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
 
-  @Option({ key: 'hash-topic', alias: 'H', type: 'boolean', describe: 'Hash the topic to 32 bytes', default: false })
+  @Option({ key: 'hash-topic', alias: 'H', type: 'boolean', description: 'Hash the topic to 32 bytes', default: false })
   public hashTopic!: boolean
 
   protected async updateFeedAndPrint(chunkReference: string): Promise<void> {

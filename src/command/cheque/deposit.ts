@@ -14,7 +14,7 @@ export class Deposit extends ChequeCommand implements LeafCommand {
   @Argument({
     key: 'amount',
     type: 'bigint',
-    describe: 'Amount of tokens to deposit',
+    description: 'Amount of tokens to deposit',
     required: true,
     minimum: BigInt(1),
   })

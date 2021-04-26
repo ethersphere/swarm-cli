@@ -12,10 +12,10 @@ export class Remove extends IdentityCommand implements LeafCommand {
 
   public readonly description = 'Remove identity'
 
-  @Argument({ key: 'identity-name', describe: 'Name of the designated identity for delete' })
+  @Argument({ key: 'identity-name', description: 'Name of the designated identity for delete' })
   public identityName!: string
 
-  @Option({ key: 'force', alias: 'f', type: 'boolean', describe: 'Perform action without confirm input prompt' })
+  @Option({ key: 'force', alias: 'f', type: 'boolean', description: 'Perform action without confirm input prompt' })
   public force!: boolean
 
   public async run(): Promise<void> {

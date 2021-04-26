@@ -15,13 +15,13 @@ export class Import extends RootCommand implements LeafCommand {
 
   public readonly description = 'Import V3 wallet as a new identity'
 
-  @Argument({ key: 'path', required: true, describe: 'Path to the V3 wallet file' })
+  @Argument({ key: 'path', required: true, description: 'Path to the V3 wallet file' })
   public path!: string
 
-  @Option({ key: 'identity-name', alias: 'i', describe: 'Name of the identity to be saved as' })
+  @Option({ key: 'identity-name', alias: 'i', description: 'Name of the identity to be saved as' })
   public identityName!: string
 
-  @Option({ key: 'password', alias: 'P', describe: 'Password for the V3 wallet' })
+  @Option({ key: 'password', alias: 'P', description: 'Password for the V3 wallet' })
   public password!: string
 
   public async run(): Promise<void> {

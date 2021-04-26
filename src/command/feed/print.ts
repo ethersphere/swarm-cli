@@ -14,7 +14,7 @@ export class Print extends FeedCommand implements LeafCommand {
   @Option({
     key: 'address',
     alias: 'a',
-    describe: 'Public Ethereum Address for feed lookup',
+    description: 'Public Ethereum Address for feed lookup',
     required: true,
     conflicts: 'identity',
   })
