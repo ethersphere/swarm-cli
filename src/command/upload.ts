@@ -34,17 +34,27 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public skipSync!: boolean
 
-  @Option({ key: 'tag-polling-time', describe: 'Waiting time in ms between tag pollings', default: 500 })
+  @Option({
+    key: 'tag-polling-time',
+    describe: 'Waiting time in ms between tag pollings',
+    type: 'number',
+    default: 500,
+  })
   public tagPollingTime!: number
 
-  @Option({ key: 'tag-polling-trials', describe: 'After the given trials the tag polling will stop', default: 15 })
+  @Option({
+    key: 'tag-polling-trials',
+    describe: 'After the given trials the tag polling will stop',
+    type: 'number',
+    default: 15,
+  })
   public tagPollingTrials!: number
 
   @Option({
     key: 'index-document',
     describe: 'Default retrieval file on bzz request without provided filepath',
   })
-  public indexDocument!: string | undefined
+  public indexDocument!: string
 
   @Option({
     key: 'error-document',
