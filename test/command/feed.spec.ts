@@ -32,7 +32,7 @@ describe('Test Feed command', () => {
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['identity', 'create', '--identity-name', 'test', '--password', 'test'],
+      testArguments: ['identity', 'create', 'test', '--password', 'test'],
     })
     // upload
     await cli({
@@ -66,7 +66,6 @@ describe('Test Feed command', () => {
         '--password',
         'test',
         '--hash-topic',
-        'true',
         '--quiet',
       ],
     })
@@ -79,7 +78,7 @@ describe('Test Feed command', () => {
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['identity', 'create', '--identity-name', 'test2', '--password', 'test'],
+      testArguments: ['identity', 'create', 'test2', '--password', 'test'],
     })
     const config = JSON.parse(readFileSync('test/testconfig/feed.config.json').toString())
     const address = config?.identities?.test2?.wallet?.address
@@ -101,7 +100,7 @@ describe('Test Feed command', () => {
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['feed', 'print', '--address', address],
+      testArguments: ['feed', 'print', '--address', address, '--quiet'],
     })
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
