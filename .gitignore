@@ -21,6 +21,7 @@ coverage
 
 build
 dist
+bin
 
 # Dependency directory
 node_modules
