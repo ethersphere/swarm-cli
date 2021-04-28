@@ -2,6 +2,7 @@ import { IOption } from 'furious-commander/dist/option'
 import { Cheque } from './command/cheque'
 import { Feed } from './command/feed'
 import { Identity } from './command/identity'
+import { Pinning } from './command/pinning'
 import { Upload } from './command/upload'
 
 export const beeApiUrl: IOption<string> = {
@@ -37,4 +38,4 @@ export const quiet: IOption<boolean> = {
 
 export const optionParameters: IOption<unknown>[] = [beeApiUrl, beeDebugApiUrl, configFolder, verbose, quiet]
 
-export const rootCommandClasses = [Upload, Identity, Feed, Cheque]
+export const rootCommandClasses = [Upload, Pinning, Identity, Feed, Cheque]
