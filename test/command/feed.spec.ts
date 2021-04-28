@@ -1,5 +1,5 @@
 import { existsSync, unlinkSync } from 'fs'
-import { cli, Utils } from 'furious-commander'
+import { cli } from 'furious-commander'
 import { join } from 'path'
 import { Create } from '../../src/command/identity/create'
 import { optionParameters, rootCommandClasses } from '../../src/config'
@@ -79,9 +79,9 @@ describe('Test Feed command', () => {
     const commandBuilder = await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['identity', 'create', '--identity-name', 'test2', '--password', 'test'],
+      testArguments: ['identity', 'create', 'test2', '--password', 'test'],
     })
-    const identityCreate = Utils.getCommandInstance(commandBuilder.initedCommands, ['identity', 'create']) as Create
+    const identityCreate = commandBuilder.runnable as Create
     const address = identityCreate.wallet.getAddressString()
     // upload
     await cli({
