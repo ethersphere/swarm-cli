@@ -5,5 +5,5 @@ import { createPrinter } from './printer'
 cli({
   rootCommandClasses,
   optionParameters,
-  printer: createPrinter()
+  printer: createPrinter(),
 })
