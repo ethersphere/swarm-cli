@@ -78,4 +78,32 @@ describe('Test Pinning command', () => {
     expect(consoleMessages[2]).toContain('Could not pin')
     expect(consoleMessages[3]).toContain('currently not supported')
   })
+
+  it('should list less pinned items after unpinning', async () => {
+    const hash = await uploadAndGetHash('test/command')
+    consoleMessages = []
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['pinning', 'list'],
+    })
+    const countOfItemsBefore = consoleMessages.length
+    expect(countOfItemsBefore).toBeGreaterThanOrEqual(1)
+    consoleMessages = []
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['pinning', 'unpin', hash],
+    })
+    expect(consoleMessages.length).toBe(1)
+    expect(consoleMessages[0]).toContain('Unpinned successfully')
+    consoleMessages = []
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['pinning', 'list'],
+    })
+    const countOfItemsAfter = consoleMessages.length
+    expect(countOfItemsAfter).toBeLessThan(countOfItemsBefore)
+  })
 })
