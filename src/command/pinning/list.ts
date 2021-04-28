@@ -19,10 +19,6 @@ export class List extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    if (this.offset === undefined) {
-      this.offset = 0
-    }
-
     this.console.info(`Getting pinned chunks ${this.offset} - ${this.offset + this.limit}...`)
 
     const { chunks } = await this.bee.getPinnedChunks({

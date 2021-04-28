@@ -99,6 +99,7 @@ The assignment priority of how option gets its value in question is the followin
 With specific system environment variables you can alter the behaviour of the CLI
 
 * `BEE_API_URL` - API URL of Bee client
+* `BEE_DEBUG_API_URL` - Debug API URL of Bee client
 * `SWARM_CLI_CONFIG_FOLDER` - full path to a configuration folder
 * `SWARM_CLI_CONFIG_FILE` - configuration file name, defaults to config.json
 

@@ -2,12 +2,14 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { homedir, platform } from 'os'
 import { join } from 'path'
 import { exit } from 'process'
-import { beeApiUrl } from '../../config'
+import { beeApiUrl, beeDebugApiUrl } from '../../config'
 import { Identity } from '../../service/identity/types'
 import { CommandLog } from './command-log'
 
 export interface Config {
   beeApiUrl: string
+
+  beeDebugApiUrl: string
 
   identities: { [name: string]: Identity }
 }
@@ -25,6 +27,7 @@ export class CommandConfig {
     this.console = console
     this.config = {
       beeApiUrl: beeApiUrl.default || '',
+      beeDebugApiUrl: beeDebugApiUrl.default || '',
       identities: {},
     }
     this.configFolderPath = this.getConfigFolderPath(appName, configFolder)
