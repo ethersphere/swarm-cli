@@ -40,7 +40,7 @@ describe('Test Pinning command', () => {
     consoleMessages = []
   })
 
-  it('should pin a collection with index.html index document', async () => {
+  it('should handle error > pin a collection with index.html index document', async () => {
     const hash = await uploadAndGetHash('test/testpage')
     expect(hash).toMatch(/[a-z0-9]{64}/)
     await cli({
@@ -48,9 +48,9 @@ describe('Test Pinning command', () => {
       optionParameters,
       testArguments: ['pinning', 'pin', hash],
     })
-    expect(consoleMessages).toHaveLength(4)
-    const successMessage = consoleMessages[3]
-    expect(successMessage).toBe('Pinned successfully')
+    expect(consoleMessages).toHaveLength(5)
+    expect(consoleMessages[3]).toContain('Could not pin')
+    expect(consoleMessages[4]).toContain('currently not supported')
   })
 
   it('should pin a collection with no index document', async () => {
@@ -66,7 +66,7 @@ describe('Test Pinning command', () => {
     expect(successMessage).toBe('Pinned successfully')
   })
 
-  it('should pin a collection with explicit index document', async () => {
+  it('should handle error > pin a collection with explicit index document', async () => {
     const hash = await uploadAndGetHash('test/command', 'pinning.spec.ts')
     expect(hash).toMatch(/[a-z0-9]{64}/)
     await cli({
@@ -74,8 +74,8 @@ describe('Test Pinning command', () => {
       optionParameters,
       testArguments: ['pinning', 'pin', hash],
     })
-    expect(consoleMessages).toHaveLength(3)
-    const successMessage = consoleMessages[2]
-    expect(successMessage).toBe('Pinned successfully')
+    expect(consoleMessages).toHaveLength(4)
+    expect(consoleMessages[2]).toContain('Could not pin')
+    expect(consoleMessages[3]).toContain('currently not supported')
   })
 })
