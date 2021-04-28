@@ -1,6 +1,7 @@
-import { existsSync, readFileSync, unlinkSync } from 'fs'
-import { cli } from 'furious-commander'
+import { existsSync, unlinkSync } from 'fs'
+import { cli, Utils } from 'furious-commander'
 import { join } from 'path'
+import { Create } from '../../src/command/identity/create'
 import { optionParameters, rootCommandClasses } from '../../src/config'
 
 describe('Test Feed command', () => {
@@ -76,13 +77,13 @@ describe('Test Feed command', () => {
 
   it('should print feed using address only', async () => {
     // create identity
-    await cli({
+    const commandBuilder = await cli({
       rootCommandClasses,
       optionParameters,
       testArguments: ['identity', 'create', '--identity-name', 'test2', '--password', 'test'],
     })
-    const config = JSON.parse(readFileSync('test/testconfig/feed.config.json').toString())
-    const address = config?.identities?.test2?.wallet?.address
+    const identityCreate = Utils.getCommandInstance(commandBuilder.initedCommands, ['identity', 'create']) as Create
+    const address = identityCreate.wallet.getAddressString()
     // upload
     await cli({
       rootCommandClasses,
