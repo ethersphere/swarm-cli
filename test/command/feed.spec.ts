@@ -1,6 +1,7 @@
 import { existsSync, unlinkSync } from 'fs'
-import { cli } from 'furious-commander'
+import { cli, Utils } from 'furious-commander'
 import { join } from 'path'
+import { Create } from '../../src/command/identity/create'
 import { optionParameters, rootCommandClasses } from '../../src/config'
 
 describe('Test Feed command', () => {
@@ -28,13 +29,13 @@ describe('Test Feed command', () => {
   })
 
   it('should upload file, update feed and print it', async () => {
-    // first create identity
+    // create identity
     await cli({
       rootCommandClasses,
       optionParameters,
       testArguments: ['identity', 'create', '--identity-name', 'test', '--password', 'test'],
     })
-    // then upload
+    // upload
     await cli({
       rootCommandClasses,
       optionParameters,
@@ -52,7 +53,7 @@ describe('Test Feed command', () => {
         '--quiet',
       ],
     })
-    // finally verify
+    // print with identity and password
     await cli({
       rootCommandClasses,
       optionParameters,
@@ -69,6 +70,39 @@ describe('Test Feed command', () => {
         'true',
         '--quiet',
       ],
+    })
+    const length = consoleMessages.length
+    expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
+  })
+
+  it('should print feed using address only', async () => {
+    // create identity
+    const commandBuilder = await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['identity', 'create', '--identity-name', 'test2', '--password', 'test'],
+    })
+    const identityCreate = Utils.getCommandInstance(commandBuilder.initedCommands, ['identity', 'create']) as Create
+    const address = identityCreate.wallet.getAddressString()
+    // upload
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: [
+        'feed',
+        'upload',
+        `${__dirname}/../testpage/index.html`,
+        '--identity',
+        'test2',
+        '--password',
+        'test',
+      ],
+    })
+    // print with address
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['feed', 'print', '--address', address],
     })
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
