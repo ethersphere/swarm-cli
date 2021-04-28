@@ -57,7 +57,7 @@ export const version: IOption<boolean> = {
   type: 'boolean',
   default: false,
   handler: () => {
-    console.log(PackageJson.version)
+    process.stdout.write(PackageJson.version + '\n')
   },
 }
 

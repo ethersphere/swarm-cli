@@ -25,7 +25,8 @@ export class Create extends RootCommand implements LeafCommand {
   @Option({
     key: 'only-keypair',
     type: 'boolean',
-    description: 'Generate only the keypair for the identity. The private key will be stored cleartext. Fast to generate',
+    description:
+      'Generate only the keypair for the identity. The private key will be stored cleartext. Fast to generate',
   })
   public onlyKeypair!: boolean
 
