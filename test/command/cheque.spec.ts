@@ -37,10 +37,11 @@ describe('Test Cheque command', () => {
   })
 
   it('should print helpful error message when api is unavailable', async () => {
+    process.env.BEE_DEBUG_API_URL = 'http://localhost:16737'
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['cheque', 'list', '--bee-debug-api-url', 'http://localhost:16737'],
+      testArguments: ['cheque', 'list'],
     })
     const length = consoleMessages.length
     expect(consoleMessages[length - 3]).toBe(
@@ -55,20 +56,22 @@ describe('Test Cheque command', () => {
   })
 
   it('should print cheques', async () => {
+    process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['cheque', 'list', '--bee-debug-api-url', 'http://localhost:1377'],
+      testArguments: ['cheque', 'list'],
     })
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toBe(bold('Cheque Value: ') + '8944000000000')
   })
 
   it('should print balance', async () => {
+    process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['cheque', 'balance', '--bee-debug-api-url', 'http://localhost:1377'],
+      testArguments: ['cheque', 'balance'],
     })
     const length = consoleMessages.length
     expect(consoleMessages[length - 2]).toBe(bold('Total: ') + '100026853000000000')
@@ -76,10 +79,11 @@ describe('Test Cheque command', () => {
   })
 
   it('should cashout all cheques', async () => {
+    process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['cheque', 'cashout', '--all', '--bee-debug-api-url', 'http://localhost:1377'],
+      testArguments: ['cheque', 'cashout', '--all'],
     })
     const length = consoleMessages.length
     expect(consoleMessages[length - 3]).toBe(
@@ -92,6 +96,7 @@ describe('Test Cheque command', () => {
   })
 
   it('should cashout one specific cheque', async () => {
+    process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
     await cli({
       rootCommandClasses,
       optionParameters,
@@ -100,8 +105,6 @@ describe('Test Cheque command', () => {
         'cashout',
         '--peer',
         '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
-        '--bee-debug-api-url',
-        'http://localhost:1377',
       ],
     })
     const length = consoleMessages.length
