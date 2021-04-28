@@ -87,6 +87,8 @@ describe('Test Pinning command', () => {
       optionParameters,
       testArguments: ['pinning', 'list'],
     })
+    const containsHash = consoleMessages.some(message => message.includes(hash))
+    expect(containsHash).toBe(true)
     const countOfItemsBefore = consoleMessages.length
     expect(countOfItemsBefore).toBeGreaterThanOrEqual(1)
     consoleMessages = []
@@ -103,6 +105,8 @@ describe('Test Pinning command', () => {
       optionParameters,
       testArguments: ['pinning', 'list'],
     })
+    const containsHashAfterUnpin = consoleMessages.some(message => message.includes(hash))
+    expect(containsHashAfterUnpin).toBe(false)
     const countOfItemsAfter = consoleMessages.length
     expect(countOfItemsAfter).toBeLessThan(countOfItemsBefore)
   })
