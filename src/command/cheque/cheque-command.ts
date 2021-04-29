@@ -1,4 +1,3 @@
-import { Option } from 'furious-commander'
 import { bold, dim, italic } from 'kleur'
 import { RootCommand } from '../root-command'
 
@@ -8,9 +7,6 @@ interface Cashable {
 }
 
 export class ChequeCommand extends RootCommand {
-  @Option({ key: 'minimum', alias: 'm', type: 'number', describe: 'Filter based on minimum balance', default: 1 })
-  public minimum = 1
-
   protected async checkDebugApiHealth(): Promise<boolean> {
     try {
       this.console.verbose(italic(dim('Checking Debug API health...')))
