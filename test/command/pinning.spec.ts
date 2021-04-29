@@ -110,4 +110,17 @@ describe('Test Pinning command', () => {
     const countOfItemsAfter = consoleMessages.length
     expect(countOfItemsAfter).toBeLessThan(countOfItemsBefore)
   })
+
+  it('should print custom 404 when unpinning chunk that does not exist', async () => {
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['pinning', 'unpin', 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'],
+    })
+    expect(consoleMessages).toHaveLength(2)
+    expect(consoleMessages[0]).toContain(
+      'Could not unpin ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+    )
+    expect(consoleMessages[1]).toContain('No pinned chunks found with that address.')
+  })
 })
