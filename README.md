@@ -134,7 +134,7 @@ There are some ways you can make this module better:
 # Maintainers
 
 - [nugaon](https://github.com/nugaon)
-- [vojtechsimetka](https://github.com/vojtechsimetka)
+- [Cafe137](https://github.com/Cafe137)
 
 # License
 
