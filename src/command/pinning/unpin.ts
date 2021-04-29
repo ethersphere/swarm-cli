@@ -23,7 +23,7 @@ export class Unpin extends RootCommand implements LeafCommand {
       if (error.message === 'Bad Request') {
         this.console.error('Only root chunks can be unpinned.')
       } else if (error.message === 'Not Found') {
-        this.console.error('No pinned chunks found with that address.')
+        this.console.error('No pinned chunk found with that address.')
       } else {
         this.console.error(error.message)
       }

@@ -121,7 +121,7 @@ describe('Test Pinning command', () => {
     expect(consoleMessages[0]).toContain(
       'Could not pin ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
     )
-    expect(consoleMessages[1]).toContain('No root chunks found with that address.')
+    expect(consoleMessages[1]).toContain('No root chunk found with that address.')
   })
 
   it('should print custom 404 when unpinning chunk that does not exist', async () => {
@@ -134,6 +134,6 @@ describe('Test Pinning command', () => {
     expect(consoleMessages[0]).toContain(
       'Could not unpin ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
     )
-    expect(consoleMessages[1]).toContain('No pinned chunks found with that address.')
+    expect(consoleMessages[1]).toContain('No pinned chunk found with that address.')
   })
 })

@@ -21,7 +21,7 @@ export class Pin extends RootCommand implements LeafCommand {
       this.console.error('Could not pin ' + this.address)
 
       if (error.message === 'Not Found') {
-        this.console.error('No root chunks found with that address.')
+        this.console.error('No root chunk found with that address.')
       } else if (error.message === 'Internal Server Error') {
         this.console.error(
           'Pinning root chunks which were uploaded with --index-document header are currently not supported.',
