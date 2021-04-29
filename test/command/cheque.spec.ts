@@ -66,6 +66,28 @@ describe('Test Cheque command', () => {
     expect(consoleMessages[length - 1]).toBe(bold('Cheque Value: ') + '8944000000000')
   })
 
+  it('should not print cheques when --minimum is higher', async () => {
+    process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['cheque', 'list', '--minimum', '10000000000000000000'],
+    })
+    const length = consoleMessages.length
+    expect(consoleMessages[length - 1]).toContain('No uncashed cheques found')
+  })
+
+  it('should print cheques when --minimum is lower', async () => {
+    process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['cheque', 'list', '--minimum', '1000'],
+    })
+    const length = consoleMessages.length
+    expect(consoleMessages[length - 1]).toContain('Cheque Value')
+  })
+
   it('should print balance', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
     await cli({
@@ -93,6 +115,17 @@ describe('Test Cheque command', () => {
     expect(consoleMessages[length - 1]).toBe(
       green(bold('Tx:           ')) + '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
     )
+  })
+
+  it('should not cashout any cheques when --minimum is higher', async () => {
+    process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['cheque', 'cashout', '--all', '--minimum', '10000000000000000000'],
+    })
+    const length = consoleMessages.length
+    expect(consoleMessages[length - 1]).toContain('Found 0 cheques')
   })
 
   it('should cashout one specific cheque', async () => {
