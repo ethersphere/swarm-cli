@@ -14,7 +14,7 @@ export class ChequeCommand extends RootCommand {
     type: 'bigint',
     minimum: BigInt(0),
     description: 'Filter based on minimum balance',
-    default: 0,
+    default: BigInt(0),
   })
   public minimum!: bigint
 
