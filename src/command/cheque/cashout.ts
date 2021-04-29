@@ -18,6 +18,9 @@ export class Cashout extends ChequeCommand implements LeafCommand {
   @Option({ key: 'all', alias: 'a', type: 'boolean', describe: 'Cashout all cheques', default: false })
   public all!: boolean
 
+  @Option({ key: 'minimum', alias: 'm', type: 'number', describe: 'Filter based on minimum balance', default: 1 })
+  public minimum = 1
+
   public async run(): Promise<void> {
     super.init()
 
