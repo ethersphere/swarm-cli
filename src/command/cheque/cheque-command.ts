@@ -1,4 +1,3 @@
-import { Option } from 'furious-commander'
 import { bold, dim, italic } from 'kleur'
 import { RootCommand } from '../root-command'
 
@@ -8,16 +7,6 @@ interface Cashable {
 }
 
 export class ChequeCommand extends RootCommand {
-  @Option({
-    key: 'minimum',
-    alias: 'm',
-    type: 'bigint',
-    minimum: BigInt(0),
-    description: 'Filter based on minimum balance',
-    default: BigInt(0),
-  })
-  public minimum!: bigint
-
   protected async checkDebugApiHealth(): Promise<boolean> {
     try {
       this.console.verbose(italic(dim('Checking Debug API health...')))
@@ -33,10 +22,10 @@ export class ChequeCommand extends RootCommand {
     }
   }
 
-  protected async getFilteredCheques(): Promise<Cashable[]> {
+  protected async getFilteredCheques(minimum: bigint): Promise<Cashable[]> {
     const cheques = await this.getCashableCheques()
 
-    return cheques.filter(({ amount }) => amount >= this.minimum)
+    return cheques.filter(({ amount }) => amount >= minimum)
   }
 
   protected async getCashableCheques(): Promise<Cashable[]> {

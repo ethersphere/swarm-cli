@@ -1,4 +1,4 @@
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand, Option } from 'furious-commander'
 import { ChequeCommand } from './cheque-command'
 
 export class List extends ChequeCommand implements LeafCommand {
@@ -9,6 +9,9 @@ export class List extends ChequeCommand implements LeafCommand {
   public readonly aliases = ['ls']
 
   public readonly description = 'List cashable cheques'
+
+  @Option({ key: 'minimum', alias: 'm', type: 'number', describe: 'Filter based on minimum balance', default: 1 })
+  public minimum = 1
 
   public async run(): Promise<void> {
     super.init()
