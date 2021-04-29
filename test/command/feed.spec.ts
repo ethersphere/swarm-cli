@@ -2,6 +2,7 @@ import { existsSync, unlinkSync } from 'fs'
 import { cli } from 'furious-commander'
 import { join } from 'path'
 import { Create } from '../../src/command/identity/create'
+import { Upload } from '../../src/command/upload'
 import { optionParameters, rootCommandClasses } from '../../src/config'
 
 describe('Test Feed command', () => {
@@ -105,5 +106,41 @@ describe('Test Feed command', () => {
     })
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
+  })
+
+  it('should update feeds', async () => {
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['identity', 'create', 'update-feed-test', '-P', '1234', '-v'],
+    })
+    const uploadCommand = await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['upload', 'README.md', '--skip-sync'],
+    })
+    const upload = uploadCommand.runnable as Upload
+    const { hash } = upload
+    consoleMessages = []
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: [
+        'feed',
+        'update',
+        '--topic',
+        'test-topic',
+        '--hash-topic',
+        '-i',
+        'update-feed-test',
+        '-P',
+        '1234',
+        '-r',
+        hash,
+      ],
+    })
+    expect(consoleMessages).toHaveLength(1)
+    expect(consoleMessages[0]).toContain('Feed Manifest URL')
+    expect(consoleMessages[0]).toContain('http://localhost:1633/bzz/')
   })
 })
