@@ -111,6 +111,19 @@ describe('Test Pinning command', () => {
     expect(countOfItemsAfter).toBeLessThan(countOfItemsBefore)
   })
 
+  it('should print custom 404 when pinning chunk that does not exist', async () => {
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['pinning', 'pin', 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'],
+    })
+    expect(consoleMessages).toHaveLength(2)
+    expect(consoleMessages[0]).toContain(
+      'Could not pin ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+    )
+    expect(consoleMessages[1]).toContain('No root chunks found with that address.')
+  })
+
   it('should print custom 404 when unpinning chunk that does not exist', async () => {
     await cli({
       rootCommandClasses,
