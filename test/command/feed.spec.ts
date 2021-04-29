@@ -141,6 +141,6 @@ describe('Test Feed command', () => {
     })
     expect(consoleMessages).toHaveLength(1)
     expect(consoleMessages[0]).toContain('Feed Manifest URL')
-    expect(consoleMessages[0]).toContain('http://localhost:1633/bzz/')
+    expect(consoleMessages[0]).toContain('/bzz/')
   })
 })
