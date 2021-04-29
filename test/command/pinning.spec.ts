@@ -1,5 +1,5 @@
 import { existsSync, unlinkSync } from 'fs'
-import { cli, Utils } from 'furious-commander'
+import { cli } from 'furious-commander'
 import { join } from 'path'
 import { Upload } from '../../src/command/upload'
 import { optionParameters, rootCommandClasses } from '../../src/config'
@@ -11,7 +11,7 @@ async function uploadAndGetHash(path: string, indexDocument?: string): Promise<s
     optionParameters,
     testArguments: ['upload', path, ...extras],
   })
-  const { hash } = Utils.getCommandInstance(builder.initedCommands, ['upload']) as Upload
+  const { hash } = builder.runnable as Upload
 
   return hash
 }
