@@ -1,5 +1,6 @@
 import { Bee, BeeDebug } from '@ethersphere/bee-js'
-import { ExternalOption } from 'furious-commander'
+import { ExternalOption, Utils } from 'furious-commander'
+import { beeApiUrl, beeDebugApiUrl } from '../../config'
 import { CommandConfig } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 
@@ -40,5 +41,13 @@ export class RootCommand {
       this.verbosity = VerbosityLevel.Verbose
     }
     this.console = new CommandLog(this.verbosity)
+
+    if (Utils.sourcemap[beeApiUrl.key] === 'default' && this.commandConfig.config.beeApiUrl) {
+      this.beeApiUrl = this.commandConfig.config.beeApiUrl
+    }
+
+    if (Utils.sourcemap[beeDebugApiUrl.key] === 'default' && this.commandConfig.config.beeDebugApiUrl) {
+      this.beeDebugApiUrl = this.commandConfig.config.beeDebugApiUrl
+    }
   }
 }
