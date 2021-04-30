@@ -20,35 +20,45 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public readonly description = 'Upload file to Swarm'
 
-  @Argument({ key: 'path', describe: 'Path to the file or folder', required: true })
+  @Argument({ key: 'path', description: 'Path to the file or folder', required: true })
   public path!: string
 
-  @Option({ key: 'pin', type: 'boolean', describe: 'Persist the uploaded data on the gateway node' })
+  @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the gateway node' })
   public pin!: boolean
 
   @Option({
     key: 'skip-sync',
     type: 'boolean',
-    describe: 'Skip waiting for synchronization over the network',
+    description: 'Skip waiting for synchronization over the network',
     default: false,
   })
   public skipSync!: boolean
 
-  @Option({ key: 'tag-polling-time', describe: 'Waiting time in ms between tag pollings', default: 500 })
+  @Option({
+    key: 'tag-polling-time',
+    description: 'Waiting time in ms between tag pollings',
+    type: 'number',
+    default: 500,
+  })
   public tagPollingTime!: number
 
-  @Option({ key: 'tag-polling-trials', describe: 'After the given trials the tag polling will stop', default: 15 })
+  @Option({
+    key: 'tag-polling-trials',
+    description: 'After the given trials the tag polling will stop',
+    type: 'number',
+    default: 15,
+  })
   public tagPollingTrials!: number
 
   @Option({
     key: 'index-document',
-    describe: 'Default retrieval file on bzz request without provided filepath',
+    description: 'Default retrieval file on bzz request without provided filepath',
   })
-  public indexDocument!: string | undefined
+  public indexDocument!: string
 
   @Option({
     key: 'error-document',
-    describe: 'Default error file on bzz request without with wrong filepath',
+    description: 'Default error file on bzz request without with wrong filepath',
   })
   public errorDocument!: string
 

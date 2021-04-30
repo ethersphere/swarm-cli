@@ -10,7 +10,7 @@ export class Export extends IdentityCommand implements LeafCommand {
 
   public readonly description = 'Export identity'
 
-  @Argument({ key: 'identity-name', alias: 'i', describe: 'Name of the identity to be exported' })
+  @Argument({ key: 'identity-name', description: 'Name of the identity to be exported' })
   public identityName!: string
 
   public async run(): Promise<void> {

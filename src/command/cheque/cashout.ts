@@ -1,8 +1,7 @@
-import { EitherOneParam, LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import { ChequeCommand } from './cheque-command'
 
-@EitherOneParam(['all', 'peer'])
 export class Cashout extends ChequeCommand implements LeafCommand {
   // CLI FIELDS
 
@@ -12,14 +11,28 @@ export class Cashout extends ChequeCommand implements LeafCommand {
 
   public readonly description = 'Cashout one or all pending cheques'
 
-  @Option({ key: 'peer', alias: 'p', type: 'string', describe: 'Peer address', default: null })
+  @Option({ key: 'peer', alias: 'p', type: 'string', description: 'Peer address', required: true, conflicts: 'all' })
   public peer!: string | null
 
-  @Option({ key: 'all', alias: 'a', type: 'boolean', describe: 'Cashout all cheques', default: false })
+  @Option({
+    key: 'all',
+    alias: 'a',
+    type: 'boolean',
+    description: 'Cashout all cheques',
+    required: true,
+    conflicts: 'peer',
+  })
   public all!: boolean
 
-  @Option({ key: 'minimum', alias: 'm', type: 'number', describe: 'Filter based on minimum balance', default: 1 })
-  public minimum = 1
+  @Option({
+    key: 'minimum',
+    alias: 'm',
+    type: 'bigint',
+    minimum: BigInt(0),
+    description: 'Cashout cheques with balance above this value',
+    default: BigInt(0),
+  })
+  public minimum!: bigint
 
   public async run(): Promise<void> {
     super.init()
@@ -40,14 +53,14 @@ export class Cashout extends ChequeCommand implements LeafCommand {
 
   private async cashoutAll(): Promise<void> {
     this.console.info(`Collecting cheques with value at least ${this.minimum}...`)
-    const cheques = await this.getFilteredCheques()
+    const cheques = await this.getFilteredCheques(this.minimum)
     this.console.info('Found ' + cheques.length + ' cheques.')
     for (const { amount, address } of cheques) {
       await this.checkoutOne(address, amount)
     }
   }
 
-  private async checkoutOne(address: string, amount: number): Promise<void> {
+  private async checkoutOne(address: string, amount: bigint): Promise<void> {
     try {
       this.console.log(green('Cashing out:'))
       this.printCheque({ address, amount })

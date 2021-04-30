@@ -13,11 +13,12 @@ export class Deposit extends ChequeCommand implements LeafCommand {
 
   @Argument({
     key: 'amount',
-    type: 'string',
-    describe: 'Amount of tokens to deposit (must be positive integer)',
+    type: 'bigint',
+    description: 'Amount of tokens to deposit',
     required: true,
+    minimum: BigInt(1),
   })
-  public amount!: string
+  public amount!: bigint
 
   public async run(): Promise<void> {
     super.init()
@@ -26,15 +27,7 @@ export class Deposit extends ChequeCommand implements LeafCommand {
       return
     }
 
-    const amount = this.parsePositiveBigInt(this.amount)
-
-    if (!amount) {
-      this.console.error('Invalid amount. The amount must be a positive integer.')
-
-      return
-    }
-
-    const response = await this.beeDebug.depositTokens(amount)
+    const response = await this.beeDebug.depositTokens(this.amount)
     this.console.log(green(bold('Tx: ')) + response.transactionHash)
     this.console.quiet(response.transactionHash)
   }

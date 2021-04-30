@@ -1,7 +1,8 @@
 import { existsSync, unlinkSync } from 'fs'
-import { cli, Utils } from 'furious-commander'
+import { cli } from 'furious-commander'
 import { join } from 'path'
 import { Create } from '../../src/command/identity/create'
+import { Upload } from '../../src/command/upload'
 import { optionParameters, rootCommandClasses } from '../../src/config'
 
 describe('Test Feed command', () => {
@@ -33,7 +34,7 @@ describe('Test Feed command', () => {
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['identity', 'create', '--identity-name', 'test', '--password', 'test'],
+      testArguments: ['identity', 'create', 'test', '--password', 'test'],
     })
     // upload
     await cli({
@@ -67,7 +68,6 @@ describe('Test Feed command', () => {
         '--password',
         'test',
         '--hash-topic',
-        'true',
         '--quiet',
       ],
     })
@@ -80,9 +80,9 @@ describe('Test Feed command', () => {
     const commandBuilder = await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['identity', 'create', '--identity-name', 'test2', '--password', 'test'],
+      testArguments: ['identity', 'create', 'test2', '--password', 'test'],
     })
-    const identityCreate = Utils.getCommandInstance(commandBuilder.initedCommands, ['identity', 'create']) as Create
+    const identityCreate = commandBuilder.runnable as Create
     const address = identityCreate.wallet.getAddressString()
     // upload
     await cli({
@@ -102,9 +102,45 @@ describe('Test Feed command', () => {
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['feed', 'print', '--address', address],
+      testArguments: ['feed', 'print', '--address', address, '--quiet'],
     })
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
+  })
+
+  it('should update feeds', async () => {
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['identity', 'create', 'update-feed-test', '-P', '1234', '-v'],
+    })
+    const uploadCommand = await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: ['upload', 'README.md', '--skip-sync'],
+    })
+    const upload = uploadCommand.runnable as Upload
+    const { hash } = upload
+    consoleMessages = []
+    await cli({
+      rootCommandClasses,
+      optionParameters,
+      testArguments: [
+        'feed',
+        'update',
+        '--topic',
+        'test-topic',
+        '--hash-topic',
+        '-i',
+        'update-feed-test',
+        '-P',
+        '1234',
+        '-r',
+        hash,
+      ],
+    })
+    expect(consoleMessages).toHaveLength(1)
+    expect(consoleMessages[0]).toContain('Feed Manifest URL')
+    expect(consoleMessages[0]).toContain('/bzz/')
   })
 })

@@ -16,16 +16,17 @@ export class Create extends RootCommand implements LeafCommand {
 
   public readonly description = 'Create Ethereum compatible keypair to sign chunks'
 
-  @Argument({ key: 'identity-name', alias: 'i', default: 'main', describe: 'Reference name of the generated identity' })
+  @Argument({ key: 'identity-name', default: 'main', description: 'Reference name of the generated identity' })
   public identityName!: string
 
-  @Option({ key: 'password', alias: 'P', describe: 'Password for the wallet' })
+  @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
 
   @Option({
     key: 'only-keypair',
     type: 'boolean',
-    describe: 'Generate only the keypair for the identity. The private key will be stored cleartext. Fast to generate',
+    description:
+      'Generate only the keypair for the identity. The private key will be stored cleartext. Fast to generate',
   })
   public onlyKeypair!: boolean
 

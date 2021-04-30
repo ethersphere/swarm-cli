@@ -6,6 +6,20 @@ import { join } from 'path'
 import { optionParameters, rootCommandClasses } from '../../src/config'
 import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 
+async function runCommandAndExpectError(
+  argv: string[],
+  errorPattern: string,
+  consoleMessages: string[],
+): Promise<void> {
+  await cli({
+    rootCommandClasses,
+    optionParameters,
+    testArguments: argv,
+  })
+  const lastConsoleMessage = consoleMessages[consoleMessages.length - 1]
+  expect(lastConsoleMessage).toContain(errorPattern)
+}
+
 describe('Test Cheque command', () => {
   const configFolderPath = join(__dirname, '..', 'testconfig')
   const configFileName = 'cheque.config.json'
@@ -16,6 +30,9 @@ describe('Test Cheque command', () => {
   beforeAll(() => {
     server = createChequeMockHttpServer(1377)
     global.console.log = jest.fn(message => {
+      consoleMessages.push(message)
+    })
+    global.console.error = jest.fn(message => {
       consoleMessages.push(message)
     })
     jest.spyOn(global.console, 'warn')
@@ -148,5 +165,21 @@ describe('Test Cheque command', () => {
     expect(consoleMessages[length - 1]).toBe(
       green(bold('Tx:           ')) + '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
     )
+  })
+
+  it('should raise error when withdrawing negative amount', async () => {
+    await runCommandAndExpectError(['cheque', 'withdraw', '-1'], '[amount] must be at least 1', consoleMessages)
+  })
+
+  it('should raise error when depositing negative amount', async () => {
+    await runCommandAndExpectError(['cheque', 'deposit', '-42000000'], '[amount] must be at least 1', consoleMessages)
+  })
+
+  it('should raise error when withdrawing zero', async () => {
+    await runCommandAndExpectError(['cheque', 'withdraw', '0'], '[amount] must be at least 1', consoleMessages)
+  })
+
+  it('should raise error when depositing zero', async () => {
+    await runCommandAndExpectError(['cheque', 'deposit', '0'], '[amount] must be at least 1', consoleMessages)
   })
 })

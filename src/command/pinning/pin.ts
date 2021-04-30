@@ -8,7 +8,7 @@ export class Pin extends RootCommand implements LeafCommand {
 
   public readonly description = 'Pin a collection or feed'
 
-  @Argument({ key: 'address', describe: 'Reference of the collection or feed', required: true })
+  @Argument({ key: 'address', description: 'Reference of the collection or feed', required: true })
   public address!: string
 
   public async run(): Promise<void> {

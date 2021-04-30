@@ -10,8 +10,15 @@ export class List extends ChequeCommand implements LeafCommand {
 
   public readonly description = 'List cashable cheques'
 
-  @Option({ key: 'minimum', alias: 'm', type: 'number', describe: 'Filter based on minimum balance', default: 1 })
-  public minimum = 1
+  @Option({
+    key: 'minimum',
+    alias: 'm',
+    type: 'bigint',
+    minimum: BigInt(0),
+    description: 'List cheques with balance above this value',
+    default: BigInt(0),
+  })
+  public minimum!: bigint
 
   public async run(): Promise<void> {
     super.init()
@@ -21,7 +28,7 @@ export class List extends ChequeCommand implements LeafCommand {
     }
 
     this.console.info(`Looking up cheques with value at least ${this.minimum}...`)
-    const cheques = await this.getFilteredCheques()
+    const cheques = await this.getFilteredCheques(this.minimum)
 
     if (!cheques.length) {
       this.console.log('No uncashed cheques found.')

@@ -1,12 +1,9 @@
-import { cli, Utils } from 'furious-commander'
-import PackageJson from '../package.json'
+import { cli } from 'furious-commander'
 import { optionParameters, rootCommandClasses } from './config'
-
-Utils.yargs.alias('V', 'version')
-Utils.yargs.alias('h', 'help')
-Utils.yargs.version(PackageJson.version)
+import { createPrinter } from './printer'
 
 cli({
   rootCommandClasses,
   optionParameters,
+  printer: createPrinter(),
 })

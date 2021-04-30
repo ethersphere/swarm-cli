@@ -3,7 +3,7 @@ import { RootCommand } from '../root-command'
 
 interface Cashable {
   address: string
-  amount: number
+  amount: bigint
 }
 
 export class ChequeCommand extends RootCommand {
@@ -22,10 +22,10 @@ export class ChequeCommand extends RootCommand {
     }
   }
 
-  protected async getFilteredCheques(): Promise<Cashable[]> {
+  protected async getFilteredCheques(minimum: bigint): Promise<Cashable[]> {
     const cheques = await this.getCashableCheques()
 
-    return cheques.filter(({ amount }) => amount >= this.minimum)
+    return cheques.filter(({ amount }) => amount >= minimum)
   }
 
   protected async getCashableCheques(): Promise<Cashable[]> {
@@ -53,47 +53,33 @@ export class ChequeCommand extends RootCommand {
     this.console.quiet(cashable.address + ' ' + cashable.amount)
   }
 
-  protected async getUncashedAmount(address: string): Promise<number> {
+  protected async getUncashedAmount(address: string): Promise<bigint> {
     const cumulativePayout = await this.getCumulativePayout(address)
     const lastCashedPayout = await this.getLastCashedPayout(address)
 
     return cumulativePayout - lastCashedPayout
   }
 
-  protected parsePositiveBigInt(value: string): BigInt | null {
-    try {
-      const bigInt = BigInt(value)
-
-      if (bigInt <= 0) {
-        return null
-      }
-
-      return bigInt
-    } catch {
-      return null
-    }
-  }
-
   /**
    * Get the total cheque value incoming from a specific peer, both cashed and uncashed.
    */
-  private async getCumulativePayout(address: string): Promise<number> {
+  private async getCumulativePayout(address: string): Promise<bigint> {
     const lastCheques = await this.beeDebug.getLastChequesForPeer(address)
 
-    return lastCheques.lastreceived.payout
+    return lastCheques.lastreceived.payout as bigint
   }
 
   /**
    * Get the total cashed out amount (a.k.a payout) for a specific peer.
    */
-  private async getLastCashedPayout(address: string): Promise<number> {
+  private async getLastCashedPayout(address: string): Promise<bigint> {
     try {
       const lastCashout = await this.beeDebug.getLastCashoutAction(address)
 
-      return lastCashout.cumulativePayout
+      return lastCashout.cumulativePayout as bigint
     } catch (error) {
       if (error.message === 'Not Found') {
-        return 0
+        return BigInt(0)
       }
       throw error
     }
