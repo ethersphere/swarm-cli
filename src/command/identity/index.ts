@@ -8,7 +8,7 @@ import { Remove } from './remove'
 export class Identity implements GroupCommand {
   public readonly name = 'identity'
 
-  public readonly description = 'Keypair management interface'
+  public readonly description = 'Import, export and manage keypairs, identities'
 
   public subCommandClasses = [Create, List, Remove, Import, Export]
 }
