@@ -32,6 +32,7 @@ export class RootCommand {
   protected init(): void {
     this.commandConfig = new CommandConfig(this.appName, this.console, this.configFolder)
     const sourcemap = Utils.getSourcemap()
+
     if (sourcemap[beeApiUrl.key] === 'default' && this.commandConfig.config.beeApiUrl) {
       this.beeApiUrl = this.commandConfig.config.beeApiUrl
     }
@@ -39,7 +40,7 @@ export class RootCommand {
     if (sourcemap[beeDebugApiUrl.key] === 'default' && this.commandConfig.config.beeDebugApiUrl) {
       this.beeDebugApiUrl = this.commandConfig.config.beeDebugApiUrl
     }
-    
+
     this.bee = new Bee(this.beeApiUrl)
     this.beeDebug = new BeeDebug(this.beeDebugApiUrl)
     this.verbosity = VerbosityLevel.Normal
