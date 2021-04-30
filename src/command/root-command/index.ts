@@ -30,9 +30,18 @@ export class RootCommand {
   public commandConfig!: CommandConfig
 
   protected init(): void {
+    this.commandConfig = new CommandConfig(this.appName, this.console, this.configFolder)
+    const sourcemap = Utils.getSourcemap()
+    if (sourcemap[beeApiUrl.key] === 'default' && this.commandConfig.config.beeApiUrl) {
+      this.beeApiUrl = this.commandConfig.config.beeApiUrl
+    }
+
+    if (sourcemap[beeDebugApiUrl.key] === 'default' && this.commandConfig.config.beeDebugApiUrl) {
+      this.beeDebugApiUrl = this.commandConfig.config.beeDebugApiUrl
+    }
+    
     this.bee = new Bee(this.beeApiUrl)
     this.beeDebug = new BeeDebug(this.beeDebugApiUrl)
-    this.commandConfig = new CommandConfig(this.appName, this.console, this.configFolder)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
@@ -41,13 +50,5 @@ export class RootCommand {
       this.verbosity = VerbosityLevel.Verbose
     }
     this.console = new CommandLog(this.verbosity)
-
-    if (Utils.sourcemap[beeApiUrl.key] === 'default' && this.commandConfig.config.beeApiUrl) {
-      this.beeApiUrl = this.commandConfig.config.beeApiUrl
-    }
-
-    if (Utils.sourcemap[beeDebugApiUrl.key] === 'default' && this.commandConfig.config.beeDebugApiUrl) {
-      this.beeDebugApiUrl = this.commandConfig.config.beeDebugApiUrl
-    }
   }
 }
