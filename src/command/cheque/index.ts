@@ -8,7 +8,7 @@ import { Withdraw } from './withdraw'
 export class Cheque implements GroupCommand {
   public readonly name = 'cheque'
 
-  public readonly description = 'Cheque'
+  public readonly description = 'Deposit, withdraw and manage cheques'
 
   public subCommandClasses = [List, Cashout, Balance, Deposit, Withdraw]
 }
