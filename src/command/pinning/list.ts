@@ -1,7 +1,7 @@
 import { LeafCommand, Option } from 'furious-commander'
-import { RootCommand } from '../root-command'
+import { PinningCommand } from './pinning-command'
 
-export class List extends RootCommand implements LeafCommand {
+export class List extends PinningCommand implements LeafCommand {
   // CLI FIELDS
 
   public readonly name = 'list'
