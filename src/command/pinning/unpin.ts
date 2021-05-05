@@ -1,7 +1,7 @@
 import { Argument, LeafCommand } from 'furious-commander'
-import { RootCommand } from '../root-command'
+import { PinningCommand } from './pinning-command'
 
-export class Unpin extends RootCommand implements LeafCommand {
+export class Unpin extends PinningCommand implements LeafCommand {
   // CLI FIELDS
 
   public readonly name = 'unpin'

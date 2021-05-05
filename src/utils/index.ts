@@ -18,3 +18,7 @@ export function fileExists(path: string): boolean {
     return false
   }
 }
+
+export function isGateway(url: string): boolean {
+  return url.includes('gateway.ethswarm.org')
+}
