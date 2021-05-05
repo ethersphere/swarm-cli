@@ -1,13 +1,11 @@
 # Swarm-CLI
 
 ![Node.js tests](https://github.com/ethersphere/swarm-cli/workflows/Node.js%20tests/badge.svg?branch=master)
-[![Dependency Status](https://david-dm.org/ethersphere/swarm-cli.svg?style=flat-square)](https://david-dm.org/ethersphere/swarm-cli)
 [![](https://img.shields.io/badge/made%20by-Swarm-blue.svg?style=flat-square)](https://swarm.ethereum.org/)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 ![](https://img.shields.io/badge/npm-%3E%3D6.0.0-orange.svg?style=flat-square)
 ![](https://img.shields.io/badge/Node.js-%3E%3D12.0.0-orange.svg?style=flat-square)
-![](https://img.shields.io/badge/runs%20in-node)
 
 **Warning: This project is in alpha state. There might (and most probably will) be changes in the future to its API and working. Also, no guarantees can be made about its stability, efficiency, and security at this stage.**
 
@@ -44,12 +42,26 @@ Running `swarm-cli` without arguments prints the available commands:
 
 ```
 $ swarm-cli
-swarm-cli <command>
+Swarm CLI 0.5.1 - Manage your Bee node and interact with the Swarm network via the CLI
 
-Commands:
-  index.js upload <path>  - Upload file to Swarm
-  index.js identity       - Keypair management interface
-  index.js feed           - Feed utilities
+█ Usage:
+
+swarm-cli COMMAND [OPTIONS]
+
+█ Available Groups:
+
+pinning    Pin, unpin and check pinned chunks
+identity   Import, export and manage keypairs, identities
+feed       Upload, update and view feeds
+cheque     Deposit, withdraw and manage cheques
+
+Run 'swarm-cli GROUP --help' to see available commands in a group
+
+█ Available Commands:
+
+upload   Upload file to Swarm
+
+Run 'swarm-cli COMMAND --help' for more information on a command
 
 ```
 
@@ -63,10 +75,10 @@ swarm-cli identity create
 
 This command will ask for a password. After that a new identity is created (named `main`). Now we can use this identity to sign updates. It's also possible to import and export Ethereum JSON V3 format identities that works with other apps (e.g. wallets).
 
-For uploading to a feed we can use the `feed upload` command. It expects an `identity` to be provided along with the `password` that belongs to it and the `path` of the folder (or file) we want to upload.
+For uploading to a feed we can use the `feed upload` command. It expects the path of the folder (or file) we want to upload and as options it expects `identity` to be provided along with the `password` that belongs to it.
 
 ```
-swarm-cli feed upload --identity main --password my-secret-password --path dist
+swarm-cli feed upload path-to-be-uploaded --identity my-identity --password my-secret-password
 ```
 
 In this example we are uploading the content of the `dist` folder. If the uploading was successful the last printed line will contain a `Feed Manifest URL`. This URL can be opened in the browser. If the uploaded folder contains an `index.html` file then it will be automatically displayed when visiting the URL.
