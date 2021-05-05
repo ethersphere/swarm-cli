@@ -75,10 +75,10 @@ swarm-cli identity create
 
 This command will ask for a password. After that a new identity is created (named `main`). Now we can use this identity to sign updates. It's also possible to import and export Ethereum JSON V3 format identities that works with other apps (e.g. wallets).
 
-For uploading to a feed we can use the `feed upload` command. It expects an `identity` to be provided along with the `password` that belongs to it and the `path` of the folder (or file) we want to upload.
+For uploading to a feed we can use the `feed upload` command. It expects the path of the folder (or file) we want to upload and as options it expects `identity` to be provided along with the `password` that belongs to it.
 
 ```
-swarm-cli feed upload --identity main --password my-secret-password --path dist
+swarm-cli feed upload path-to-be-uploaded --identity my-identity --password my-secret-password
 ```
 
 In this example we are uploading the content of the `dist` folder. If the uploading was successful the last printed line will contain a `Feed Manifest URL`. This URL can be opened in the browser. If the uploaded folder contains an `index.html` file then it will be automatically displayed when visiting the URL.
