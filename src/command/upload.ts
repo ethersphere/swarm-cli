@@ -7,7 +7,7 @@ import { bold, green } from 'kleur'
 import ora from 'ora'
 import { basename, join } from 'path'
 import { exit } from 'process'
-import { fileExists, sleep } from '../utils'
+import { fileExists, isGateway, sleep } from '../utils'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
@@ -23,7 +23,7 @@ export class Upload extends RootCommand implements LeafCommand {
   @Argument({ key: 'path', description: 'Path to the file or folder', required: true })
   public path!: string
 
-  @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the gateway node' })
+  @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the node' })
   public pin!: boolean
 
   @Option({
@@ -35,20 +35,20 @@ export class Upload extends RootCommand implements LeafCommand {
   public skipSync!: boolean
 
   @Option({
-    key: 'tag-polling-time',
-    description: 'Waiting time in ms between tag pollings',
+    key: 'sync-polling-time',
+    description: 'Waiting time in ms between sync pollings',
     type: 'number',
     default: 500,
   })
-  public tagPollingTime!: number
+  public syncPollingTime!: number
 
   @Option({
-    key: 'tag-polling-trials',
-    description: 'After the given trials the tag polling will stop',
+    key: 'sync-polling-trials',
+    description: 'After the given trials the sync polling will stop',
     type: 'number',
     default: 15,
   })
-  public tagPollingTrials!: number
+  public syncPollingTrials!: number
 
   @Option({
     key: 'index-document',
@@ -72,6 +72,20 @@ export class Upload extends RootCommand implements LeafCommand {
     this.initCommand()
     let url: string
     let tag: Tag | undefined
+
+    if (isGateway(this.beeApiUrl) && this.pin) {
+      this.console.error('You are trying to upload to the gateway which does not support pinning.')
+      this.console.error('Please try again without the --pin option.')
+
+      return
+    }
+
+    if (isGateway(this.beeApiUrl) && !this.skipSync) {
+      this.console.error('You are trying to upload to the gateway which does not support syncing.')
+      this.console.error('Please try again with the --skip-sync option.')
+
+      return
+    }
 
     if (!this.skipSync) {
       tag = await this.bee.createTag()
@@ -169,8 +183,8 @@ export class Upload extends RootCommand implements LeafCommand {
    */
   private async waitForFileSynced(tag: Tag): Promise<boolean> {
     const tagUid = tag.uid
-    const pollingTime = this.tagPollingTime
-    const pollingTrials = this.tagPollingTrials
+    const pollingTime = this.syncPollingTime
+    const pollingTrials = this.syncPollingTrials
     let synced = false
     let syncStatus = 0
     const progressBar = new SingleBar({}, Presets.rect)
