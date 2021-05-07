@@ -23,6 +23,24 @@ export class Upload extends RootCommand implements LeafCommand {
   @Argument({ key: 'path', description: 'Path to the file or folder', required: true })
   public path!: string
 
+  @Option({
+    key: 'stamp',
+    type: 'string',
+    description: 'Postage stamp to use for the upload',
+    required: true,
+    conflicts: 'autostamp',
+  })
+  public stamp!: string
+
+  @Option({
+    key: 'autostamp',
+    type: 'boolean',
+    description: 'Automatically pick a postage stamp',
+    required: true,
+    conflicts: 'stamp',
+  })
+  public autostamp!: boolean
+
   @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the node' })
   public pin!: boolean
 
