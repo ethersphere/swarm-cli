@@ -34,7 +34,7 @@ export class RootCommand {
     this.commandConfig = new CommandConfig(this.appName, this.console, this.configFolder)
     this.sourcemap = Utils.getSourcemap()
 
-    CONFIG_KEYS.forEach(this.maybeSetFromConfig)
+    CONFIG_KEYS.forEach(key => this.maybeSetFromConfig(key))
 
     this.bee = new Bee(this.beeApiUrl)
     this.beeDebug = new BeeDebug(this.beeDebugApiUrl)
