@@ -6,6 +6,8 @@ import { beeApiUrl, beeDebugApiUrl } from '../../config'
 import { Identity } from '../../service/identity/types'
 import { CommandLog } from './command-log'
 
+export const CONFIG_KEYS = ['beeApiUrl', 'beeDebugApiUrl']
+
 export interface Config {
   beeApiUrl: string
 

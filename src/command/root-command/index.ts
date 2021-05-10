@@ -1,7 +1,6 @@
 import { Bee, BeeDebug } from '@ethersphere/bee-js'
-import { ExternalOption, Utils } from 'furious-commander'
-import { beeApiUrl, beeDebugApiUrl } from '../../config'
-import { CommandConfig } from './command-config'
+import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
+import { CommandConfig, CONFIG_KEYS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 
 export class RootCommand {
@@ -29,17 +28,13 @@ export class RootCommand {
   public appName = 'swarm-cli'
   public commandConfig!: CommandConfig
 
+  private sourcemap!: Sourcemap
+
   protected init(): void {
     this.commandConfig = new CommandConfig(this.appName, this.console, this.configFolder)
-    const sourcemap = Utils.getSourcemap()
+    this.sourcemap = Utils.getSourcemap()
 
-    if (sourcemap[beeApiUrl.key] === 'default' && this.commandConfig.config.beeApiUrl) {
-      this.beeApiUrl = this.commandConfig.config.beeApiUrl
-    }
-
-    if (sourcemap[beeDebugApiUrl.key] === 'default' && this.commandConfig.config.beeDebugApiUrl) {
-      this.beeDebugApiUrl = this.commandConfig.config.beeDebugApiUrl
-    }
+    CONFIG_KEYS.forEach(this.maybeSetFromConfig)
 
     this.bee = new Bee(this.beeApiUrl)
     this.beeDebug = new BeeDebug(this.beeDebugApiUrl)
@@ -51,5 +46,15 @@ export class RootCommand {
       this.verbosity = VerbosityLevel.Verbose
     }
     this.console = new CommandLog(this.verbosity)
+  }
+
+  private maybeSetFromConfig(key: string): void {
+    if (this.sourcemap[key] === 'default') {
+      const value = Reflect.get(this.commandConfig.config, key)
+
+      if (value !== undefined) {
+        Reflect.set(this, key, value)
+      }
+    }
   }
 }
