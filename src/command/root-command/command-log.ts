@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { prompt } from 'inquirer'
-import { bold, dim, italic } from 'kleur'
 import { exit } from 'process'
+import { Printer } from './printer'
 
 export enum VerbosityLevel {
   /** No output message, only at errors or result strings (e.g. hash of uploaded file) */
@@ -31,45 +31,34 @@ export class CommandLog {
   public divider: (char?: string) => void
 
   constructor(verbosityLevel: VerbosityLevel) {
-    const emptyFunction = () => {
-      return
-    }
-    const divider = (char = '-') => {
-      console.log(char.repeat(process.stdout.columns))
-    }
-    const error = (message: string, ...args: unknown[]) => console.log(bold().white().bgRed(message), ...args)
-    const log = (message: string, ...args: unknown[]) => console.log(message, ...args)
-    const info = (message: string, ...args: unknown[]) => console.log(italic().dim(message), ...args)
-    const dimFunction = (message: string, ...args: unknown[]) => console.log(dim(message), ...args)
-
     switch (verbosityLevel) {
       case VerbosityLevel.Verbose:
-        this.error = error
-        this.quiet = emptyFunction
-        this.verbose = log
-        this.log = log
-        this.info = info
-        this.dim = dimFunction
-        this.divider = divider
+        this.error = Printer.error
+        this.quiet = Printer.emptyFunction
+        this.verbose = Printer.log
+        this.log = Printer.log
+        this.info = Printer.info
+        this.dim = Printer.dimFunction
+        this.divider = Printer.divider
         break
       case VerbosityLevel.Normal:
-        this.error = error
-        this.quiet = emptyFunction
-        this.verbose = emptyFunction
-        this.log = log
-        this.info = info
-        this.divider = divider
-        this.dim = emptyFunction
+        this.error = Printer.error
+        this.quiet = Printer.emptyFunction
+        this.verbose = Printer.emptyFunction
+        this.log = Printer.log
+        this.info = Printer.info
+        this.divider = Printer.divider
+        this.dim = Printer.emptyFunction
         break
       default:
         // quiet
-        this.error = error
-        this.quiet = log
-        this.verbose = emptyFunction
-        this.log = emptyFunction
-        this.info = emptyFunction
-        this.dim = emptyFunction
-        this.divider = emptyFunction
+        this.error = Printer.error
+        this.quiet = Printer.log
+        this.verbose = Printer.emptyFunction
+        this.log = Printer.emptyFunction
+        this.info = Printer.emptyFunction
+        this.dim = Printer.emptyFunction
+        this.divider = Printer.emptyFunction
     }
   }
 
