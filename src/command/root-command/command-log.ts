@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { prompt } from 'inquirer'
 import { exit } from 'process'
 import { Printer } from './printer'
