@@ -6,7 +6,15 @@ import { beeApiUrl, beeDebugApiUrl } from '../../config'
 import { Identity } from '../../service/identity/types'
 import { CommandLog } from './command-log'
 
-export const CONFIG_KEYS = ['beeApiUrl', 'beeDebugApiUrl']
+export interface ConfigOption {
+  optionKey: string
+  propertyKey: string
+}
+
+export const CONFIG_OPTIONS: ConfigOption[] = [
+  { optionKey: 'bee-api-url', propertyKey: 'beeApiUrl' },
+  { optionKey: 'bee-debug-api-url', propertyKey: 'beeDebugApiUrl' },
+]
 
 export interface Config {
   beeApiUrl: string
