@@ -18,8 +18,6 @@ describe('Test configuration loading', () => {
     //set config environment variable
     process.env.SWARM_CLI_CONFIG_FOLDER = configFolderPath
     process.env.SWARM_CLI_CONFIG_FILE = configFileName
-
-    //remove config file if it exists
   })
 
   beforeEach(() => {
