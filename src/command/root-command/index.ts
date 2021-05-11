@@ -1,6 +1,6 @@
 import { Bee, BeeDebug } from '@ethersphere/bee-js'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
-import { CommandConfig, ConfigOption, CONFIG_OPTIONS } from './command-config'
+import { CommandConfig, Config, ConfigOption, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 
 export class RootCommand {
@@ -52,10 +52,11 @@ export class RootCommand {
 
   private maybeSetFromConfig(option: ConfigOption): void {
     if (this.sourcemap[option.optionKey] === 'default') {
-      const value = Reflect.get(this.commandConfig.config, option.propertyKey)
+      const key = option.propertyKey as keyof Config & keyof RootCommand
+      const value = this.commandConfig.config[key]
 
       if (value !== undefined) {
-        Reflect.set(this, option.propertyKey, value)
+        this[key] = value
       }
     }
   }
