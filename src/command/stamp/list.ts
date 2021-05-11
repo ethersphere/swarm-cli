@@ -1,7 +1,7 @@
 import { LeafCommand } from 'furious-commander'
-import { RootCommand } from '../root-command'
+import { StampCommand } from './stamp-command'
 
-export class List extends RootCommand implements LeafCommand {
+export class List extends StampCommand implements LeafCommand {
   public readonly name = 'list'
 
   public readonly aliases = ['ls']
@@ -11,6 +11,10 @@ export class List extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    this.console.info(`Listing postage stamps...`)
+    this.console.verbose(`Listing postage stamps...`)
+
+    const stamps = await this.bee.getAllStamps()
+
+    stamps.forEach(stamp => this.printStamp(stamp))
   }
 }
