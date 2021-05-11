@@ -46,8 +46,8 @@ export class CommandLog {
         this.verbose = Printer.emptyFunction
         this.log = Printer.log
         this.info = Printer.info
-        this.divider = Printer.divider
         this.dim = Printer.emptyFunction
+        this.divider = Printer.divider
         break
       default:
         // quiet
