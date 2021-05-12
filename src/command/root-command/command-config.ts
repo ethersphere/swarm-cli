@@ -4,12 +4,8 @@ import { join } from 'path'
 import { exit } from 'process'
 import { beeApiUrl, beeDebugApiUrl } from '../../config'
 import { Identity } from '../../service/identity/types'
+import { ConfigOption } from '../../utils/types/config-option'
 import { CommandLog } from './command-log'
-
-export interface ConfigOption {
-  optionKey: string
-  propertyKey: string
-}
 
 export const CONFIG_OPTIONS: ConfigOption[] = [
   { optionKey: 'bee-api-url', propertyKey: 'beeApiUrl' },
