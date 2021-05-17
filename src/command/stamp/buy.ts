@@ -17,6 +17,10 @@ export class Buy extends StampCommand implements LeafCommand {
   @Option({ key: 'label', description: 'Label of the postage stamp' })
   public label!: string
 
+  // CLASS FIELDS
+
+  public postageBatchId!: string
+
   public async run(): Promise<void> {
     super.init()
 
@@ -25,5 +29,7 @@ export class Buy extends StampCommand implements LeafCommand {
     const batchId = await this.bee.createStampBatch(this.amount, this.depth, this.label)
 
     this.printBatchId(batchId)
+
+    this.postageBatchId = batchId
   }
 }
