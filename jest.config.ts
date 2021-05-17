@@ -3,8 +3,11 @@
  * https://jestjs.io/docs/en/configuration.html
  */
 import type { Config } from '@jest/types'
+import { buyStamp } from './test/utility/stamp'
 
-export default (): Config.InitialOptions => {
+export default async (): Promise<Config.InitialOptions> => {
+  process.env.STAMP = await buyStamp()
+
   return {
     // Indicates whether the coverage information should be collected while executing the test
     // collectCoverage: false,
@@ -19,13 +22,13 @@ export default (): Config.InitialOptions => {
     moduleDirectories: ['node_modules'],
 
     // Run tests from one or more projects
-    projects: ([
+    projects: [
       {
         displayName: 'node',
         testEnvironment: 'node',
         testRegex: 'test/.*\\.spec\\.ts',
       },
-    ] as unknown[]) as string[], // bad types
+    ] as unknown[] as string[], // bad types
 
     // The root directory that Jest should scan for tests and modules within
     rootDir: 'test',
