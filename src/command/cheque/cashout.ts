@@ -11,7 +11,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
 
   public readonly description = 'Cashout one or all pending cheques'
 
-  @Option({ key: 'peer', alias: 'p', type: 'string', description: 'Peer address', required: true, conflicts: 'all' })
+  @Option({ key: 'peer', alias: 'p', description: 'Peer address', required: true, conflicts: 'all' })
   public peer!: string | null
 
   @Option({
