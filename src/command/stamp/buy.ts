@@ -11,7 +11,7 @@ export class Buy extends StampCommand implements LeafCommand {
   @Option({ key: 'depth', description: 'Depth of the postage stamp', type: 'number', required: true, minimum: 17 })
   public depth!: number
 
-  @Option({ key: 'amount', description: 'Amount of the postage stamp', type: 'bigint', required: true })
+  @Option({ key: 'amount', description: 'Amount of the postage stamp', type: 'bigint', required: true, minimum: 1 })
   public amount!: bigint
 
   @Option({ key: 'label', description: 'Label of the postage stamp' })
@@ -20,7 +20,7 @@ export class Buy extends StampCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    this.console.verbose('Buying postage stamp...')
+    this.console.info('Buying postage stamp. This may take a while.')
 
     const batchId = await this.bee.createStampBatch(this.amount, this.depth, this.label)
 
