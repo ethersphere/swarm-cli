@@ -1,9 +1,10 @@
-import { existsSync, unlinkSync } from 'fs'
+import { existsSync, unlinkSync, writeFileSync } from 'fs'
 import { cli } from 'furious-commander'
 import { join } from 'path'
 import { Create } from '../../src/command/identity/create'
 import { Upload } from '../../src/command/upload'
 import { optionParameters, rootCommandClasses } from '../../src/config'
+import { getStampOption } from '../utility/stamp'
 
 describe('Test Feed command', () => {
   const configFolderPath = join(__dirname, '..', 'testconfig')
@@ -52,6 +53,7 @@ describe('Test Feed command', () => {
         'test',
         '--hash-topic',
         '--quiet',
+        ...getStampOption(),
       ],
     })
     // print with identity and password
@@ -69,9 +71,11 @@ describe('Test Feed command', () => {
         'test',
         '--hash-topic',
         '--quiet',
+        ...getStampOption(),
       ],
     })
     const length = consoleMessages.length
+    writeFileSync('aaaa.json', JSON.stringify(consoleMessages))
     expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
   })
 
@@ -96,13 +100,14 @@ describe('Test Feed command', () => {
         'test2',
         '--password',
         'test',
+        ...getStampOption(),
       ],
     })
     // print with address
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['feed', 'print', '--address', address, '--quiet'],
+      testArguments: ['feed', 'print', '--address', address, '--quiet', ...getStampOption()],
     })
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
@@ -117,7 +122,7 @@ describe('Test Feed command', () => {
     const uploadCommand = await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['upload', 'README.md', '--skip-sync'],
+      testArguments: ['upload', 'README.md', '--skip-sync', ...getStampOption()],
     })
     const upload = uploadCommand.runnable as Upload
     const { hash } = upload
@@ -137,6 +142,7 @@ describe('Test Feed command', () => {
         '1234',
         '-r',
         hash,
+        ...getStampOption(),
       ],
     })
     expect(consoleMessages).toHaveLength(1)

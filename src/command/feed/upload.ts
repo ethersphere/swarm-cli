@@ -1,4 +1,4 @@
-import { Aggregation, LeafCommand, Option } from 'furious-commander'
+import { Aggregation, LeafCommand } from 'furious-commander'
 import { Upload as FileUpload } from '../upload'
 import { FeedCommand } from './feed-command'
 
@@ -9,13 +9,6 @@ export class Upload extends FeedCommand implements LeafCommand {
 
   @Aggregation(['upload'])
   public fileUpload!: FileUpload
-
-  @Option({
-    key: 'stamp',
-    description: 'Postage stamp to use for the upload',
-    required: true,
-  })
-  public stamp!: string
 
   public async run(): Promise<void> {
     super.init()

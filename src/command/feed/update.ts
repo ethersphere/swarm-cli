@@ -9,13 +9,6 @@ export class Update extends FeedCommand implements LeafCommand {
   @Option({ key: 'reference', alias: 'r', description: 'The new reference', required: true })
   public reference!: string
 
-  @Option({
-    key: 'stamp',
-    description: 'Postage stamp to use for the upload',
-    required: true,
-  })
-  public stamp!: string
-
   public async run(): Promise<void> {
     super.init()
     await this.checkIdentity()

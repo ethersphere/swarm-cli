@@ -8,6 +8,13 @@ import { Identity } from '../../service/identity/types'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
+  @Option({
+    key: 'stamp',
+    description: 'Postage stamp to use for the upload',
+    required: true,
+  })
+  public stamp!: string
+
   @Option({ key: 'identity', alias: 'i', description: 'Name of the identity', required: true, conflicts: 'address' })
   public identity!: string
 
