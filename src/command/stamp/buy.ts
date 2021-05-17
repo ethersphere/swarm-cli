@@ -20,7 +20,7 @@ export class Buy extends StampCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    this.console.verbose('Buying postage stamp...')
+    this.console.info('Buying postage stamp. This may take a while.')
 
     const batchId = await this.bee.createStampBatch(this.amount, this.depth, this.label)
 
