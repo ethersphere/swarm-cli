@@ -32,15 +32,6 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public stamp!: string
 
-  @Option({
-    key: 'autostamp',
-    type: 'boolean',
-    description: 'Automatically pick a postage stamp',
-    required: true,
-    conflicts: 'stamp',
-  })
-  public autostamp!: boolean
-
   @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the node' })
   public pin!: boolean
 
@@ -122,9 +113,9 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (FS.lstatSync(this.path).isDirectory()) {
-      url = await this.uploadFolder(tag)
+      url = await this.uploadFolder(this.stamp, tag)
     } else {
-      url = await this.uploadSingleFileAsFileList(tag)
+      url = await this.uploadSingleFileAsFileList(this.stamp, tag)
     }
 
     if (spinner.isSpinning) {
@@ -159,13 +150,14 @@ export class Upload extends RootCommand implements LeafCommand {
     super.init()
   }
 
-  private async uploadFolder(tag?: Tag): Promise<string> {
+  private async uploadFolder(postageBatchId: string, tag?: Tag): Promise<string> {
     if (!this.indexDocument && fileExists(join(this.path, 'index.html'))) {
       this.console.info('Setting --index-document to index.html')
       this.indexDocument = 'index.html'
     }
 
-    this.hash = await this.bee.uploadFilesFromDirectory(this.path, true, {
+    this.hash = await this.bee.uploadFilesFromDirectory(this.path, {
+      postageBatchId,
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
@@ -175,7 +167,7 @@ export class Upload extends RootCommand implements LeafCommand {
     return `${this.beeApiUrl}/bzz/${this.hash}/`
   }
 
-  private async uploadSingleFileAsFileList(tag?: Tag): Promise<string> {
+  private async uploadSingleFileAsFileList(postageBatchId: string, tag?: Tag): Promise<string> {
     const buffer = readFileSync(this.path)
     // eslint-disable-next-line
     // @ts-ignore
@@ -184,6 +176,7 @@ export class Upload extends RootCommand implements LeafCommand {
       arrayBuffer: () => new Promise(resolve => resolve(new Uint8Array(buffer).buffer)),
     }
     this.hash = await this.bee.uploadFiles([fakeFile], {
+      postageBatchId,
       tag: tag && tag.uid,
       pin: this.pin,
       indexDocument: basename(this.path),

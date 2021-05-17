@@ -16,7 +16,7 @@ export class Show extends StampCommand implements LeafCommand {
 
     this.console.verbose(`Looking up postage stamp ${this.batchId}...`)
 
-    const stamp = await this.bee.getStamp(this.batchId)
+    const stamp = await this.bee.getStampBatch(this.batchId)
 
     this.printStamp(stamp)
   }
