@@ -33,7 +33,7 @@ export class ChequeCommand extends RootCommand {
 
     const results: Cashable[] = []
     for (const cheque of lastcheques) {
-      if (cheque.lastreceived === null) {
+      if (cheque.lastReceived === null) {
         continue
       }
       const uncashedAmount = await this.getUncashedAmount(cheque.peer)
@@ -66,7 +66,7 @@ export class ChequeCommand extends RootCommand {
   private async getCumulativePayout(address: string): Promise<bigint> {
     const lastCheques = await this.beeDebug.getLastChequesForPeer(address)
 
-    return lastCheques.lastreceived.payout as bigint
+    return lastCheques.lastReceived.payout as bigint
   }
 
   /**

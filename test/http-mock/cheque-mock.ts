@@ -41,12 +41,12 @@ const lastCheques = {
   lastcheques: [
     {
       peer: '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
-      lastreceived: {
+      lastReceived: {
         beneficiary: '0x1A66fd26F38819A96CA24404eA50A601Fa1Cb0c3',
         chequebook: '0x7789F00C8cc0Aaa10D2fC50d9c7d74383fD9AA4d',
         payout: 8944000000000,
       },
-      lastsent: {
+      lastSent: {
         beneficiary: '0xe9dF78C7bd5162F93535657E7405143F2E9Cc260',
         chequebook: '0x4f16B90D43aa1f9fd3c2fe17DACD9b21417A4134',
         payout: 8293000000000,
@@ -57,12 +57,12 @@ const lastCheques = {
 
 const cumulativeCheque1 = {
   peer: '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
-  lastreceived: {
+  lastReceived: {
     beneficiary: '0x1A66fd26F38819A96CA24404eA50A601Fa1Cb0c3',
     chequebook: '0x7789F00C8cc0Aaa10D2fC50d9c7d74383fD9AA4d',
     payout: 8944000000000,
   },
-  lastsent: {
+  lastSent: {
     beneficiary: '0xe9dF78C7bd5162F93535657E7405143F2E9Cc260',
     chequebook: '0x4f16B90D43aa1f9fd3c2fe17DACD9b21417A4134',
     payout: 8293000000000,
