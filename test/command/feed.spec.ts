@@ -1,4 +1,4 @@
-import { existsSync, unlinkSync, writeFileSync } from 'fs'
+import { existsSync, unlinkSync } from 'fs'
 import { cli } from 'furious-commander'
 import { join } from 'path'
 import { Create } from '../../src/command/identity/create'
@@ -75,7 +75,6 @@ describe('Test Feed command', () => {
       ],
     })
     const length = consoleMessages.length
-    writeFileSync('aaaa.json', JSON.stringify(consoleMessages))
     expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
   })
 
