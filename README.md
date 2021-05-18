@@ -42,7 +42,7 @@ Running `swarm-cli` without arguments prints the available commands:
 
 ```
 $ swarm-cli
-Swarm CLI 0.5.1 - Manage your Bee node and interact with the Swarm network via the CLI
+Swarm CLI 0.6.0 - Manage your Bee node and interact with the Swarm network via the CLI
 
 █ Usage:
 
@@ -54,6 +54,7 @@ pinning    Pin, unpin and check pinned chunks
 identity   Import, export and manage keypairs, identities
 feed       Upload, update and view feeds
 cheque     Deposit, withdraw and manage cheques
+stamp      Buy, list and show postage stamps
 
 Run 'swarm-cli GROUP --help' to see available commands in a group
 
@@ -75,10 +76,12 @@ swarm-cli identity create
 
 This command will ask for a password. After that a new identity is created (named `main`). Now we can use this identity to sign updates. It's also possible to import and export Ethereum JSON V3 format identities that works with other apps (e.g. wallets).
 
-For uploading to a feed we can use the `feed upload` command. It expects the path of the folder (or file) we want to upload and as options it expects `identity` to be provided along with the `password` that belongs to it.
+Another requirement for uploading to the Swarm network is a valid postage batch, also called a postage stamp or simply a stamp. Stamps need to be purchased with BZZ tokens. We can use the `stamp buy` command to take care of this step. The `--amount` and `--depth` options alter the capacity of the postage stamp. For example, running `stamp buy --amount 1 --depth 20` will get back with a Batch ID after a while. We will be using that with the `--stamp` option in commands which upload files, or write feeds.
+
+For uploading to a feed we can use the `feed upload` command. It expects the path of the folder (or file) we want to upload and as options it expects `identity` to be provided along with the `password` that belongs to it, as well as the earlier mentioned `stamp`.
 
 ```
-swarm-cli feed upload path-to-be-uploaded --identity my-identity --password my-secret-password
+swarm-cli feed upload path-to-be-uploaded --identity my-identity --password my-secret-password --stamp batch-id
 ```
 
 In this example we are uploading the content of the `dist` folder. If the uploading was successful the last printed line will contain a `Feed Manifest URL`. This URL can be opened in the browser. If the uploaded folder contains an `index.html` file then it will be automatically displayed when visiting the URL.
