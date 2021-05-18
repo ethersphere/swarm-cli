@@ -10,7 +10,7 @@ import { RootCommand } from '../root-command'
 export class FeedCommand extends RootCommand {
   @Option({
     key: 'stamp',
-    description: 'Postage stamp to use for the upload',
+    description: 'Batch ID of the postage stamp to use',
     required: true,
   })
   public stamp!: string

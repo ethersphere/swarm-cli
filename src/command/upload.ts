@@ -25,7 +25,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   @Option({
     key: 'stamp',
-    description: 'Postage stamp to use for the upload',
+    description: 'Batch ID of the postage stamp to use',
     required: true,
   })
   public stamp!: string
