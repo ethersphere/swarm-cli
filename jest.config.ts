@@ -6,7 +6,9 @@ import type { Config } from '@jest/types'
 import { buyStamp } from './test/utility/stamp'
 
 export default async (): Promise<Config.InitialOptions> => {
-  process.env.STAMP = await buyStamp()
+  if (!process.env.STAMP) {
+    process.env.STAMP = await buyStamp()
+  }
 
   return {
     // Indicates whether the coverage information should be collected while executing the test
