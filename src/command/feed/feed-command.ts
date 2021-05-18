@@ -1,4 +1,4 @@
-import { Address, Reference, Topic } from '@ethersphere/bee-js'
+import { Reference, Topic } from '@ethersphere/bee-js'
 import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { bold, green } from 'kleur'
@@ -38,13 +38,8 @@ export class FeedCommand extends RootCommand {
     const wallet = await this.getWallet()
     const topic = this.getTopic()
     const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-    const { reference } = await writer.upload(chunkReference as Reference, { postageBatchId })
-    const manifest = await this.bee.createFeedManifest(
-      'sequence',
-      topic,
-      wallet.getAddressString(),
-      postageBatchId as Address,
-    )
+    const { reference } = await writer.upload(postageBatchId, chunkReference as Reference)
+    const manifest = await this.bee.createFeedManifest(postageBatchId, 'sequence', topic, wallet.getAddressString())
 
     this.console.verbose(bold(`Chunk Reference -> ${green(chunkReference)}`))
     this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${chunkReference}`)}`))

@@ -1,4 +1,3 @@
-import { Address } from '@ethersphere/bee-js'
 import Wallet from 'ethereumjs-wallet'
 import { LeafCommand, Option } from 'furious-commander'
 import { bold, green } from 'kleur'
@@ -28,7 +27,7 @@ export class Print extends FeedCommand implements LeafCommand {
     const addressString = this.address || (await this.getAddressString())
     const reader = this.bee.makeFeedReader('sequence', topic, addressString)
     const { reference, feedIndex, feedIndexNext } = await reader.download()
-    const manifest = await this.bee.createFeedManifest('sequence', topic, addressString, this.stamp as Address)
+    const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
 
     this.console.verbose(bold(`Chunk Reference -> ${green(reference)}`))
     this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${reference}`)}`))

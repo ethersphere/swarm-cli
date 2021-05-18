@@ -154,8 +154,7 @@ export class Upload extends RootCommand implements LeafCommand {
       this.indexDocument = 'index.html'
     }
 
-    this.hash = await this.bee.uploadFilesFromDirectory(this.path, {
-      postageBatchId,
+    this.hash = await this.bee.uploadFilesFromDirectory(postageBatchId, this.path, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
@@ -173,8 +172,7 @@ export class Upload extends RootCommand implements LeafCommand {
       name: basename(this.path),
       arrayBuffer: () => new Promise(resolve => resolve(new Uint8Array(buffer).buffer)),
     }
-    this.hash = await this.bee.uploadFiles([fakeFile], {
-      postageBatchId,
+    this.hash = await this.bee.uploadFiles(postageBatchId, [fakeFile], {
       tag: tag && tag.uid,
       pin: this.pin,
       indexDocument: basename(this.path),
