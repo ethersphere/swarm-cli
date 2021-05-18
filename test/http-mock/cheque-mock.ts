@@ -72,7 +72,7 @@ const cumulativeCheque1 = {
 const lastCashoutCheque1 = {
   peer: '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
   chequebook: '0x7789f00c8cc0aaa10d2fc50d9c7d74383fd9aa4d',
-  cumulativePayout: 0,
+  uncashedAmount: 0,
   beneficiary: '0x1a66fd26f38819a96ca24404ea50a601fa1cb0c3',
   transactionHash: '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
   result: { recipient: '0x4f16b90d43aa1f9fd3c2fe17dacd9b21417a4134', lastPayout: 0, bounced: false },

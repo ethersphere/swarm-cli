@@ -76,7 +76,7 @@ export class ChequeCommand extends RootCommand {
     try {
       const lastCashout = await this.beeDebug.getLastCashoutAction(address)
 
-      return lastCashout.cumulativePayout as bigint
+      return lastCashout.uncashedAmount as bigint
     } catch (error) {
       if (error.message === 'Not Found') {
         return BigInt(0)
