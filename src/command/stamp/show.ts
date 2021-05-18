@@ -8,7 +8,7 @@ export class Show extends StampCommand implements LeafCommand {
 
   public readonly description = 'Show a specific postage stamp'
 
-  @Argument({ key: 'stamp', description: 'Batch ID of the postage stamp', required: true })
+  @Argument({ key: 'stamp', description: 'ID of the postage stamp', required: true })
   public stamp!: string
 
   public async run(): Promise<void> {
