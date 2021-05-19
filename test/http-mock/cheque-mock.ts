@@ -22,10 +22,6 @@ export function createChequeMockHttpServer(port: number): Server {
       response.end(JSON.stringify(balance))
     }
 
-    if (request.url === '/chequebook/cheque/1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad') {
-      response.end(JSON.stringify(cumulativeCheque1))
-    }
-
     if (request.url === '/chequebook/cashout/1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad') {
       response.end(JSON.stringify(lastCashoutCheque1))
     }
