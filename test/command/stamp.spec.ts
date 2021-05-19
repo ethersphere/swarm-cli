@@ -24,7 +24,7 @@ describe('Test Stamp command', () => {
       optionParameters,
       testArguments: ['stamp', 'list'],
     })
-    expect(consoleMessages[1]).toContain('Batch ID:')
+    expect(consoleMessages[1]).toContain('Stamp ID:')
     expect(consoleMessages[2]).toContain('Utilization:')
   })
 
@@ -34,7 +34,7 @@ describe('Test Stamp command', () => {
       optionParameters,
       testArguments: ['stamp', 'show', process.env.STAMP || ''],
     })
-    expect(consoleMessages[1]).toContain('Batch ID:')
+    expect(consoleMessages[1]).toContain('Stamp ID:')
     expect(consoleMessages[1]).toContain(process.env.STAMP)
     expect(consoleMessages[2]).toContain('Utilization:')
   })
