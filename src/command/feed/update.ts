@@ -12,7 +12,7 @@ export class Update extends FeedCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
     await this.checkIdentity()
-    await this.updateFeedAndPrint(this.reference, this.stamp)
+    await this.updateFeedAndPrint(this.reference)
     this.console.dim('Successfully updated feed.')
   }
 }

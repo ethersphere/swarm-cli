@@ -110,14 +110,16 @@ export class Upload extends RootCommand implements LeafCommand {
       spinner.start()
     }
 
-    if (FS.lstatSync(this.path).isDirectory()) {
-      url = await this.uploadFolder(this.stamp, tag)
-    } else {
-      url = await this.uploadSingleFileAsFileList(this.stamp, tag)
-    }
-
-    if (spinner.isSpinning) {
-      spinner.stop()
+    try {
+      if (FS.lstatSync(this.path).isDirectory()) {
+        url = await this.uploadFolder(this.stamp, tag)
+      } else {
+        url = await this.uploadSingleFileAsFileList(this.stamp, tag)
+      }
+    } finally {
+      if (spinner.isSpinning) {
+        spinner.stop()
+      }
     }
 
     this.console.dim('Data have been sent to the Bee node successfully!')

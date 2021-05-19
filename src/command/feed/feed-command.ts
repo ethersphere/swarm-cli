@@ -33,13 +33,13 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'hash-topic', alias: 'H', type: 'boolean', description: 'Hash the topic to 32 bytes', default: false })
   public hashTopic!: boolean
 
-  protected async updateFeedAndPrint(chunkReference: string, postageBatchId: string): Promise<void> {
+  protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
     this.console.dim('Updating feed...')
     const wallet = await this.getWallet()
     const topic = this.getTopic()
     const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-    const { reference } = await writer.upload(postageBatchId, chunkReference as Reference)
-    const manifest = await this.bee.createFeedManifest(postageBatchId, 'sequence', topic, wallet.getAddressString())
+    const { reference } = await writer.upload(this.stamp, chunkReference as Reference)
+    const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())
 
     this.console.verbose(bold(`Chunk Reference -> ${green(chunkReference)}`))
     this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${chunkReference}`)}`))
