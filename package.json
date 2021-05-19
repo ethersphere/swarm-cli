@@ -74,7 +74,7 @@
     "@ethersphere/bee-js": "ethersphere/bee-js#bee-0.6.0",
     "cli-progress": "^3.8.2",
     "ethereumjs-wallet": "^1.0.1",
-    "furious-commander": "1.0.5",
+    "furious-commander": "1.0.9",
     "inquirer": "^7.3.3",
     "kleur": "^4.1.4",
     "ora": "^5.3.0"

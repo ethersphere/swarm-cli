@@ -8,7 +8,14 @@ export class Buy extends StampCommand implements LeafCommand {
 
   public readonly description = 'Buy postage stamp'
 
-  @Option({ key: 'depth', description: 'Depth of the postage stamp', type: 'number', required: true, minimum: 17 })
+  @Option({
+    key: 'depth',
+    description: 'Depth of the postage stamp',
+    type: 'number',
+    required: true,
+    minimum: 17,
+    maximum: 255,
+  })
   public depth!: number
 
   @Option({
