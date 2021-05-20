@@ -52,8 +52,8 @@ describe('Test Stamp command', () => {
     await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: ['stamp', 'buy', '--amount', '1', '--depth', '16'],
+      testArguments: ['stamp', 'buy', '--amount', '1', '--depth', '15'],
     })
-    expect(getLastMessage()).toContain('[depth] must be at least 17')
+    expect(getLastMessage()).toContain('[depth] must be at least 16')
   })
 })
