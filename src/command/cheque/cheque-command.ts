@@ -33,7 +33,7 @@ export class ChequeCommand extends RootCommand {
 
     const results: Cashable[] = []
     for (const cheque of lastcheques) {
-      if (cheque.lastReceived === null) {
+      if (cheque.lastreceived === null) {
         continue
       }
       const uncashedAmount = await this.getUncashedAmount(cheque.peer)
