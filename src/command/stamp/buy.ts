@@ -56,6 +56,10 @@ export class Buy extends StampCommand implements LeafCommand {
         label: this.label,
         gasPrice: this.gasPrice,
       })
+
+      if (spinner.isSpinning) {
+        spinner.stop()
+      }
       this.printBatchId(batchId)
       this.postageBatchId = batchId
     } finally {
