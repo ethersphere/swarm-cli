@@ -27,6 +27,14 @@ export class Buy extends StampCommand implements LeafCommand {
   })
   public amount!: bigint
 
+  @Option({
+    key: 'gas-price',
+    description: 'Gas price of the transaction',
+    type: 'bigint',
+    minimum: 0,
+  })
+  public gasPrice!: bigint
+
   @Option({ key: 'label', description: 'Label of the postage stamp' })
   public label!: string
 
@@ -44,7 +52,10 @@ export class Buy extends StampCommand implements LeafCommand {
     }
 
     try {
-      const batchId = await this.bee.createPostageBatch(this.amount, this.depth, this.label)
+      const batchId = await this.bee.createPostageBatch(this.amount, this.depth, {
+        label: this.label,
+        gasPrice: this.gasPrice,
+      })
       this.printBatchId(batchId)
       this.postageBatchId = batchId
     } finally {
