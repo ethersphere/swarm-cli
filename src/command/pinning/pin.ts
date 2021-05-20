@@ -15,20 +15,13 @@ export class Pin extends PinningCommand implements LeafCommand {
     super.init()
 
     try {
-      await this.bee.pinCollection(this.address)
+      await this.bee.pin(this.address)
       this.console.log('Pinned successfully')
     } catch (error) {
       this.console.error('Could not pin ' + this.address)
 
       if (error.message === 'Not Found') {
         this.console.error('No root chunk found with that address.')
-      } else if (error.message === 'Bad Request') {
-        this.console.error('Could not pin that address.')
-        this.console.error('Only pinning collections is currently supported.')
-      } else if (error.message === 'Internal Server Error') {
-        this.console.error(
-          'Pinning root chunks which were uploaded with --index-document header are currently not supported.',
-        )
       } else {
         this.console.error(error.message)
       }

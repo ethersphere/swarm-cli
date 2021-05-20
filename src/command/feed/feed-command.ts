@@ -8,6 +8,13 @@ import { Identity } from '../../service/identity/types'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
+  @Option({
+    key: 'stamp',
+    description: 'ID of the postage stamp to use',
+    required: true,
+  })
+  public stamp!: string
+
   @Option({ key: 'identity', alias: 'i', description: 'Name of the identity', required: true, conflicts: 'address' })
   public identity!: string
 
@@ -31,8 +38,8 @@ export class FeedCommand extends RootCommand {
     const wallet = await this.getWallet()
     const topic = this.getTopic()
     const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-    const { reference } = await writer.upload(chunkReference as Reference)
-    const manifest = await this.bee.createFeedManifest('sequence', topic, wallet.getAddressString())
+    const { reference } = await writer.upload(this.stamp, chunkReference as Reference)
+    const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())
 
     this.console.verbose(bold(`Chunk Reference -> ${green(chunkReference)}`))
     this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${chunkReference}`)}`))

@@ -3,13 +3,14 @@ import { cli } from 'furious-commander'
 import { join } from 'path'
 import { Upload } from '../../src/command/upload'
 import { optionParameters, rootCommandClasses } from '../../src/config'
+import { getStampOption } from '../utility/stamp'
 
 async function uploadAndGetHash(path: string, indexDocument?: string): Promise<string> {
   const extras = indexDocument ? ['--index-document', indexDocument] : []
   const builder = await cli({
     rootCommandClasses,
     optionParameters,
-    testArguments: ['upload', path, ...extras],
+    testArguments: ['upload', path, ...getStampOption(), ...extras],
   })
   const { hash } = builder.runnable as Upload
 
@@ -40,7 +41,7 @@ describe('Test Pinning command', () => {
     consoleMessages = []
   })
 
-  it('should handle error > pin a collection with index.html index document', async () => {
+  it('should pin a collection with index.html index document', async () => {
     const hash = await uploadAndGetHash('test/testpage')
     expect(hash).toMatch(/[a-z0-9]{64}/)
     await cli({
@@ -48,9 +49,8 @@ describe('Test Pinning command', () => {
       optionParameters,
       testArguments: ['pinning', 'pin', hash],
     })
-    expect(consoleMessages).toHaveLength(5)
-    expect(consoleMessages[3]).toContain('Could not pin')
-    expect(consoleMessages[4]).toContain('currently not supported')
+    expect(consoleMessages).toHaveLength(4)
+    expect(consoleMessages[3]).toBe('Pinned successfully')
   })
 
   it('should pin a collection with no index document', async () => {
@@ -66,7 +66,7 @@ describe('Test Pinning command', () => {
     expect(successMessage).toBe('Pinned successfully')
   })
 
-  it('should handle error > pin a collection with explicit index document', async () => {
+  it('should pin a collection with explicit index document', async () => {
     const hash = await uploadAndGetHash('test/command', 'pinning.spec.ts')
     expect(hash).toMatch(/[a-z0-9]{64}/)
     await cli({
@@ -74,9 +74,9 @@ describe('Test Pinning command', () => {
       optionParameters,
       testArguments: ['pinning', 'pin', hash],
     })
-    expect(consoleMessages).toHaveLength(4)
-    expect(consoleMessages[2]).toContain('Could not pin')
-    expect(consoleMessages[3]).toContain('currently not supported')
+    expect(consoleMessages).toHaveLength(3)
+    const successMessage = consoleMessages[2]
+    expect(successMessage).toBe('Pinned successfully')
   })
 
   it('should list less pinned items after unpinning', async () => {

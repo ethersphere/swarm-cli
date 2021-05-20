@@ -27,7 +27,7 @@ export class Print extends FeedCommand implements LeafCommand {
     const addressString = this.address || (await this.getAddressString())
     const reader = this.bee.makeFeedReader('sequence', topic, addressString)
     const { reference, feedIndex, feedIndexNext } = await reader.download()
-    const manifest = await this.bee.createFeedManifest('sequence', topic, addressString)
+    const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
 
     this.console.verbose(bold(`Chunk Reference -> ${green(reference)}`))
     this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${reference}`)}`))

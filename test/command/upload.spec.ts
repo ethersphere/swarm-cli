@@ -1,6 +1,7 @@
 import { cli } from 'furious-commander'
 import type { Upload } from '../../src/command/upload'
 import { optionParameters, rootCommandClasses } from '../../src/config'
+import { getStampOption } from '../utility/stamp'
 
 describe('Test Upload command', () => {
   let consoleMessages: string[] = []
@@ -23,7 +24,7 @@ describe('Test Upload command', () => {
     const commandBuilder = await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: [commandKey, uploadFolderPath],
+      testArguments: [commandKey, uploadFolderPath, ...getStampOption()],
     })
 
     expect(commandBuilder.initedCommands[0].command.name).toBe('upload')
@@ -37,7 +38,7 @@ describe('Test Upload command', () => {
     const commandBuilder = await cli({
       rootCommandClasses,
       optionParameters,
-      testArguments: [commandKey, uploadFolderPath],
+      testArguments: [commandKey, uploadFolderPath, ...getStampOption()],
     })
 
     expect(commandBuilder.initedCommands[0].command.name).toBe('upload')
