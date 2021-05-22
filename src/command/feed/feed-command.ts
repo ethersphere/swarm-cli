@@ -12,6 +12,7 @@ export class FeedCommand extends RootCommand {
     key: 'stamp',
     description: 'ID of the postage stamp to use',
     required: true,
+    noErrors: true,
   })
   public stamp!: string
 

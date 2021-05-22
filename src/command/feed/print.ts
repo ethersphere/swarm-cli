@@ -4,6 +4,7 @@ import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
+import { pickStamp } from '../../service/stamp'
 import { FeedCommand } from './feed-command'
 
 export class Print extends FeedCommand implements LeafCommand {
@@ -27,6 +28,11 @@ export class Print extends FeedCommand implements LeafCommand {
     const addressString = this.address || (await this.getAddressString())
     const reader = this.bee.makeFeedReader('sequence', topic, addressString)
     const { reference, feedIndex, feedIndexNext } = await reader.download()
+
+    if (!this.stamp) {
+      this.stamp = await pickStamp(this.bee, this.console)
+    }
+
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
 
     this.console.verbose(bold(`Chunk Reference -> ${green(reference)}`))
