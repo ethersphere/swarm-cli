@@ -80,7 +80,7 @@ describe('Test Cheque command', () => {
       testArguments: ['cheque', 'list'],
     })
     const length = consoleMessages.length
-    expect(consoleMessages[length - 1]).toBe(bold('Cheque Value: ') + '8944000000000')
+    expect(consoleMessages[length - 1]).toBe(bold('Cheque Value: ') + '8944000000000 PLUR')
   })
 
   it('should not print cheques when --minimum is higher', async () => {
@@ -113,8 +113,8 @@ describe('Test Cheque command', () => {
       testArguments: ['cheque', 'balance'],
     })
     const length = consoleMessages.length
-    expect(consoleMessages[length - 2]).toBe(bold('Total: ') + '100026853000000000')
-    expect(consoleMessages[length - 1]).toBe(bold('Available: ') + '100018560000000000')
+    expect(consoleMessages[length - 2]).toBe(bold('Total: ') + '100026853000000000 PLUR')
+    expect(consoleMessages[length - 1]).toBe(bold('Available: ') + '100018560000000000 PLUR')
   })
 
   it('should cashout all cheques', async () => {
@@ -128,7 +128,7 @@ describe('Test Cheque command', () => {
     expect(consoleMessages[length - 3]).toBe(
       bold('Peer Address: ') + '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
     )
-    expect(consoleMessages[length - 2]).toBe(bold('Cheque Value: ') + '8944000000000')
+    expect(consoleMessages[length - 2]).toBe(bold('Cheque Value: ') + '8944000000000 PLUR')
     expect(consoleMessages[length - 1]).toBe(
       green(bold('Tx:           ')) + '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
     )
@@ -161,7 +161,7 @@ describe('Test Cheque command', () => {
     expect(consoleMessages[length - 3]).toBe(
       bold('Peer Address: ') + '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
     )
-    expect(consoleMessages[length - 2]).toBe(bold('Cheque Value: ') + '8944000000000')
+    expect(consoleMessages[length - 2]).toBe(bold('Cheque Value: ') + '8944000000000 PLUR')
     expect(consoleMessages[length - 1]).toBe(
       green(bold('Tx:           ')) + '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
     )

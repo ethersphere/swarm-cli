@@ -15,7 +15,7 @@ export class List extends ChequeCommand implements LeafCommand {
     alias: 'm',
     type: 'bigint',
     minimum: BigInt(0),
-    description: 'List cheques with balance above this value',
+    description: 'List cheques with balance above this value in PLUR',
     default: BigInt(0),
   })
   public minimum!: bigint

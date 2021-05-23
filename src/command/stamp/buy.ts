@@ -20,7 +20,7 @@ export class Buy extends StampCommand implements LeafCommand {
 
   @Option({
     key: 'amount',
-    description: 'Value per chunk, deprecates over time with new blocks mined',
+    description: 'Value per chunk in PLUR, deprecates over time with new blocks mined',
     type: 'bigint',
     required: true,
     minimum: 1,
@@ -29,7 +29,7 @@ export class Buy extends StampCommand implements LeafCommand {
 
   @Option({
     key: 'gas-price',
-    description: 'Gas price of the transaction',
+    description: 'Gas price of the transaction in Gwei',
     type: 'bigint',
     minimum: 0,
   })
