@@ -29,7 +29,7 @@ export class Buy extends StampCommand implements LeafCommand {
 
   @Option({
     key: 'gas-price',
-    description: 'Gas price of the transaction in Gwei',
+    description: 'Gas price of the transaction in wei',
     type: 'bigint',
     minimum: 0,
   })

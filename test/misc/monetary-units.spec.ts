@@ -39,7 +39,7 @@ describe('Test Monetary units', () => {
       testArguments: ['stamp', 'buy', '--help'],
     })
     expectSubstringsPrinted('--amount', 'in PLUR')
-    expectSubstringsPrinted('--gas-price', 'in Gwei')
+    expectSubstringsPrinted('--gas-price', 'in wei')
   })
 
   it('should show units in help: cheque list', async () => {
