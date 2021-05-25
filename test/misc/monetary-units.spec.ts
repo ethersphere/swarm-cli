@@ -1,6 +1,5 @@
-import cli from 'furious-commander'
-import { optionParameters, rootCommandClasses } from '../../src/config'
 import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
+import { invokeTestCli } from '../utility'
 
 const server = createChequeMockHttpServer(1378)
 const consoleMessages: string[] = []
@@ -33,75 +32,43 @@ describe('Test Monetary units', () => {
   })
 
   it('should show units in help: stamp buy', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['stamp', 'buy', '--help'],
-    })
+    await invokeTestCli(['stamp', 'buy', '--help'])
     expectSubstringsPrinted('--amount', 'in PLUR')
     expectSubstringsPrinted('--gas-price', 'in wei')
   })
 
   it('should show units in help: cheque list', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'list', '--help'],
-    })
+    await invokeTestCli(['cheque', 'list', '--help'])
     expectSubstringsPrinted('--minimum', 'in PLUR')
   })
 
   it('should show units in help: cheque cashout', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'cashout', '--help'],
-    })
+    await invokeTestCli(['cheque', 'cashout', '--help'])
     expectSubstringsPrinted('--minimum', 'in PLUR')
   })
 
   it('should show units in help: cheque withdraw', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'withdraw', '--help'],
-    })
+    await invokeTestCli(['cheque', 'withdraw', '--help'])
     expectSubstringsPrinted('amount', 'in PLUR')
   })
 
   it('should show units in help: cheque deposit', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'deposit', '--help'],
-    })
+    await invokeTestCli(['cheque', 'deposit', '--help'])
     expectSubstringsPrinted('amount', 'in PLUR')
   })
 
   it('should show units after running: cheque list', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'list', '--bee-debug-api-url', 'http://localhost:1378'],
-    })
+    await invokeTestCli(['cheque', 'list', '--bee-debug-api-url', 'http://localhost:1378'])
     expectSubstringsPrinted('Cheque Value', 'PLUR')
   })
 
   it('should show units after running: cheque cashout', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'cashout', '--all', '--bee-debug-api-url', 'http://localhost:1378'],
-    })
+    await invokeTestCli(['cheque', 'cashout', '--all', '--bee-debug-api-url', 'http://localhost:1378'])
     expectSubstringsPrinted('Cheque Value', 'PLUR')
   })
 
   it('should show units after running: cheque balance', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'balance', '--bee-debug-api-url', 'http://localhost:1378'],
-    })
+    await invokeTestCli(['cheque', 'balance', '--bee-debug-api-url', 'http://localhost:1378'])
     expectSubstringsPrinted('Total', 'PLUR')
     expectSubstringsPrinted('Available', 'PLUR')
   })
