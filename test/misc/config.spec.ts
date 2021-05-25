@@ -13,7 +13,9 @@ describe('Test configuration loading', () => {
     global.console.log = jest.fn(message => {
       consoleMessages.push(message)
     })
-    jest.spyOn(global.console, 'warn')
+    global.console.error = jest.fn(message => {
+      consoleMessages.push(message)
+    })
     //set config environment variable
     process.env.SWARM_CLI_CONFIG_FOLDER = configFolderPath
     process.env.SWARM_CLI_CONFIG_FILE = configFileName
@@ -32,19 +34,19 @@ describe('Test configuration loading', () => {
       }),
     )
 
-    await invokeTestCli(['cheque', 'list', '-q'])
+    await invokeTestCli(['cheque', 'list'])
     expect(consoleMessages[0]).toContain('http://localhost:30003')
   })
 
   it('should use env over config when specified', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:30002'
 
-    await invokeTestCli(['cheque', 'list', '-q'])
+    await invokeTestCli(['cheque', 'list'])
     expect(consoleMessages[0]).toContain('http://localhost:30002')
   })
 
   it('should use explicit option over all', async () => {
-    await invokeTestCli(['cheque', 'list', '--bee-debug-api-url', 'http://localhost:30001', '-q'])
+    await invokeTestCli(['cheque', 'list', '--bee-debug-api-url', 'http://localhost:30001'])
     expect(consoleMessages[0]).toContain('http://localhost:30001')
   })
 })
