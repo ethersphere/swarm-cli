@@ -32,19 +32,19 @@ describe('Test configuration loading', () => {
       }),
     )
 
-    await invokeTestCli(['cheque', 'list'])
+    await invokeTestCli(['cheque', 'list', '-q'])
     expect(consoleMessages[0]).toContain('http://localhost:30003')
   })
 
   it('should use env over config when specified', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:30002'
 
-    await invokeTestCli(['cheque', 'list'])
+    await invokeTestCli(['cheque', 'list', '-q'])
     expect(consoleMessages[0]).toContain('http://localhost:30002')
   })
 
   it('should use explicit option over all', async () => {
-    await invokeTestCli(['cheque', 'list', '--bee-debug-api-url', 'http://localhost:30001'])
+    await invokeTestCli(['cheque', 'list', '--bee-debug-api-url', 'http://localhost:30001', '-q'])
     expect(consoleMessages[0]).toContain('http://localhost:30001')
   })
 })
