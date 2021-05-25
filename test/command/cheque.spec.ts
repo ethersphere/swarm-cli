@@ -1,21 +1,16 @@
 import { existsSync, unlinkSync } from 'fs'
-import { cli } from 'furious-commander'
 import { Server } from 'http'
 import { bold, green } from 'kleur'
 import { join } from 'path'
-import { optionParameters, rootCommandClasses } from '../../src/config'
 import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
+import { invokeTestCli } from '../utility'
 
 async function runCommandAndExpectError(
   argv: string[],
   errorPattern: string,
   consoleMessages: string[],
 ): Promise<void> {
-  await cli({
-    rootCommandClasses,
-    optionParameters,
-    testArguments: argv,
-  })
+  await invokeTestCli(argv)
   const lastConsoleMessage = consoleMessages[consoleMessages.length - 1]
   expect(lastConsoleMessage).toContain(errorPattern)
 }
@@ -55,11 +50,7 @@ describe('Test Cheque command', () => {
 
   it('should print helpful error message when api is unavailable', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:16737'
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'list'],
-    })
+    await invokeTestCli(['cheque', 'list'])
     const length = consoleMessages.length
     expect(consoleMessages[length - 3]).toBe(
       bold().white().bgRed('Could not reach Debug API at http://localhost:16737'),
@@ -74,44 +65,28 @@ describe('Test Cheque command', () => {
 
   it('should print cheques', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'list'],
-    })
+    await invokeTestCli(['cheque', 'list'])
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toBe(bold('Cheque Value: ') + '8944000000000')
   })
 
   it('should not print cheques when --minimum is higher', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'list', '--minimum', '10000000000000000000'],
-    })
+    await invokeTestCli(['cheque', 'list', '--minimum', '10000000000000000000'])
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toContain('No uncashed cheques found')
   })
 
   it('should print cheques when --minimum is lower', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'list', '--minimum', '1000'],
-    })
+    await invokeTestCli(['cheque', 'list', '--minimum', '1000'])
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toContain('Cheque Value')
   })
 
   it('should print balance', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'balance'],
-    })
+    await invokeTestCli(['cheque', 'balance'])
     const length = consoleMessages.length
     expect(consoleMessages[length - 2]).toBe(bold('Total: ') + '100026853000000000')
     expect(consoleMessages[length - 1]).toBe(bold('Available: ') + '100018560000000000')
@@ -119,11 +94,7 @@ describe('Test Cheque command', () => {
 
   it('should cashout all cheques', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'cashout', '--all'],
-    })
+    await invokeTestCli(['cheque', 'cashout', '--all'])
     const length = consoleMessages.length
     expect(consoleMessages[length - 3]).toBe(
       bold('Peer Address: ') + '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
@@ -136,27 +107,19 @@ describe('Test Cheque command', () => {
 
   it('should not cashout any cheques when --minimum is higher', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'cashout', '--all', '--minimum', '10000000000000000000'],
-    })
+    await invokeTestCli(['cheque', 'cashout', '--all', '--minimum', '10000000000000000000'])
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toContain('Found 0 cheques')
   })
 
   it('should cashout one specific cheque', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: [
-        'cheque',
-        'cashout',
-        '--peer',
-        '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
-      ],
-    })
+    await invokeTestCli([
+      'cheque',
+      'cashout',
+      '--peer',
+      '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
+    ])
     const length = consoleMessages.length
     expect(consoleMessages[length - 3]).toBe(
       bold('Peer Address: ') + '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
