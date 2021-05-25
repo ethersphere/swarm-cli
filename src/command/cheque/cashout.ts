@@ -11,7 +11,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
 
   public readonly description = 'Cashout one or all pending cheques'
 
-  @Option({ key: 'peer', alias: 'p', type: 'string', description: 'Peer address', required: true, conflicts: 'all' })
+  @Option({ key: 'peer', alias: 'p', description: 'Peer address', required: true, conflicts: 'all' })
   public peer!: string | null
 
   @Option({
@@ -29,7 +29,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     alias: 'm',
     type: 'bigint',
     minimum: BigInt(0),
-    description: 'Cashout cheques with balance above this value',
+    description: 'Cashout cheques with balance above this value in PLUR',
     default: BigInt(0),
   })
   public minimum!: bigint
@@ -52,7 +52,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
   }
 
   private async cashoutAll(): Promise<void> {
-    this.console.info(`Collecting cheques with value at least ${this.minimum}...`)
+    this.console.info(`Collecting cheques with value at least ${this.minimum} PLUR...`)
     const cheques = await this.getFilteredCheques(this.minimum)
     this.console.info('Found ' + cheques.length + ' cheques.')
     for (const { amount, address } of cheques) {

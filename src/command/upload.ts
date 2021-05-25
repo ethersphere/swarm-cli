@@ -23,6 +23,13 @@ export class Upload extends RootCommand implements LeafCommand {
   @Argument({ key: 'path', description: 'Path to the file or folder', required: true })
   public path!: string
 
+  @Option({
+    key: 'stamp',
+    description: 'ID of the postage stamp to use',
+    required: true,
+  })
+  public stamp!: string
+
   @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the node' })
   public pin!: boolean
 
@@ -103,14 +110,16 @@ export class Upload extends RootCommand implements LeafCommand {
       spinner.start()
     }
 
-    if (FS.lstatSync(this.path).isDirectory()) {
-      url = await this.uploadFolder(tag)
-    } else {
-      url = await this.uploadSingleFileAsFileList(tag)
-    }
-
-    if (spinner.isSpinning) {
-      spinner.stop()
+    try {
+      if (FS.lstatSync(this.path).isDirectory()) {
+        url = await this.uploadFolder(this.stamp, tag)
+      } else {
+        url = await this.uploadSingleFileAsFileList(this.stamp, tag)
+      }
+    } finally {
+      if (spinner.isSpinning) {
+        spinner.stop()
+      }
     }
 
     this.console.dim('Data have been sent to the Bee node successfully!')
@@ -141,13 +150,13 @@ export class Upload extends RootCommand implements LeafCommand {
     super.init()
   }
 
-  private async uploadFolder(tag?: Tag): Promise<string> {
+  private async uploadFolder(postageBatchId: string, tag?: Tag): Promise<string> {
     if (!this.indexDocument && fileExists(join(this.path, 'index.html'))) {
       this.console.info('Setting --index-document to index.html')
       this.indexDocument = 'index.html'
     }
 
-    this.hash = await this.bee.uploadFilesFromDirectory(this.path, true, {
+    this.hash = await this.bee.uploadFilesFromDirectory(postageBatchId, this.path, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
@@ -157,7 +166,7 @@ export class Upload extends RootCommand implements LeafCommand {
     return `${this.beeApiUrl}/bzz/${this.hash}/`
   }
 
-  private async uploadSingleFileAsFileList(tag?: Tag): Promise<string> {
+  private async uploadSingleFileAsFileList(postageBatchId: string, tag?: Tag): Promise<string> {
     const buffer = readFileSync(this.path)
     // eslint-disable-next-line
     // @ts-ignore
@@ -165,7 +174,7 @@ export class Upload extends RootCommand implements LeafCommand {
       name: basename(this.path),
       arrayBuffer: () => new Promise(resolve => resolve(new Uint8Array(buffer).buffer)),
     }
-    this.hash = await this.bee.uploadFiles([fakeFile], {
+    this.hash = await this.bee.uploadFiles(postageBatchId, [fakeFile], {
       tag: tag && tag.uid,
       pin: this.pin,
       indexDocument: basename(this.path),

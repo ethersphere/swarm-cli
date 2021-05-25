@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v0.6.0...v0.7.0) (2021-05-20)
+
+
+### Features
+
+* add postage stamp commands ([#98](https://www.github.com/ethersphere/swarm-cli/issues/98)) ([44f961f](https://www.github.com/ethersphere/swarm-cli/commit/44f961fb8780dd8a557e40497e0c1d68d67e9ef6))
+
 ## [0.6.0](https://www.github.com/ethersphere/swarm-cli/compare/v0.5.1...v0.6.0) (2021-05-05)
 
 

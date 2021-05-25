@@ -1,6 +1,6 @@
 {
   "name": "@ethersphere/swarm-cli",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Cli tool for Bee",
   "keywords": [
     "Bee",
@@ -71,10 +71,10 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
-    "@ethersphere/bee-js": "^0.8.1",
+    "@ethersphere/bee-js": "^0.9.0",
     "cli-progress": "^3.8.2",
     "ethereumjs-wallet": "^1.0.1",
-    "furious-commander": "^1.0.4",
+    "furious-commander": "1.0.9",
     "inquirer": "^7.3.3",
     "kleur": "^4.1.4",
     "ora": "^5.3.0"

@@ -20,8 +20,8 @@ export class Balance extends ChequeCommand implements LeafCommand {
 
     this.console.info('Looking up balance...')
     const balance = await this.beeDebug.getChequebookBalance()
-    this.console.log(bold('Total: ') + balance.totalBalance)
-    this.console.log(bold('Available: ') + balance.availableBalance)
+    this.console.log(bold('Total: ') + balance.totalBalance + ' PLUR')
+    this.console.log(bold('Available: ') + balance.availableBalance + ' PLUR')
     this.console.quiet(balance.totalBalance + ' ' + balance.availableBalance)
   }
 }

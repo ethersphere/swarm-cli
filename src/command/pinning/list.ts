@@ -1,4 +1,4 @@
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand } from 'furious-commander'
 import { PinningCommand } from './pinning-command'
 
 export class List extends PinningCommand implements LeafCommand {
@@ -10,28 +10,19 @@ export class List extends PinningCommand implements LeafCommand {
 
   public readonly description = 'List pinned chunks'
 
-  @Option({ key: 'limit', type: 'number', description: 'Limits the number of item returned.', default: 1000 })
-  public limit!: number
-
-  @Option({ key: 'offset', type: 'number', description: 'Offset of the items returned.', default: 0 })
-  public offset!: number
-
   public async run(): Promise<void> {
     super.init()
 
-    this.console.info(`Getting pinned chunks ${this.offset} - ${this.offset + this.limit}...`)
+    this.console.info('Getting pinned chunks...')
 
-    const { chunks } = await this.bee.getPinnedChunks({
-      limit: this.limit,
-      offset: this.offset,
-    })
+    const chunks = await this.bee.getAllPins()
 
     this.console.log(`Found ${chunks.length} pinned chunks`)
     this.console.divider()
 
     for (const chunk of chunks) {
-      this.console.log(` - ${chunk.address}`)
-      this.console.quiet(chunk.address)
+      this.console.log(` - ${chunk}`)
+      this.console.quiet(chunk)
     }
   }
 }

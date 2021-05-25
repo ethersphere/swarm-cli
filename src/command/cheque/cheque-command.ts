@@ -49,34 +49,15 @@ export class ChequeCommand extends RootCommand {
   protected printCheque(cashable: Cashable): void {
     this.console.divider('-')
     this.console.log(bold('Peer Address: ') + cashable.address)
-    this.console.log(bold('Cheque Value: ') + cashable.amount)
+    this.console.log(bold('Cheque Value: ') + cashable.amount + ' PLUR')
     this.console.quiet(cashable.address + ' ' + cashable.amount)
   }
 
   protected async getUncashedAmount(address: string): Promise<bigint> {
-    const cumulativePayout = await this.getCumulativePayout(address)
-    const lastCashedPayout = await this.getLastCashedPayout(address)
-
-    return cumulativePayout - lastCashedPayout
-  }
-
-  /**
-   * Get the total cheque value incoming from a specific peer, both cashed and uncashed.
-   */
-  private async getCumulativePayout(address: string): Promise<bigint> {
-    const lastCheques = await this.beeDebug.getLastChequesForPeer(address)
-
-    return lastCheques.lastreceived.payout as bigint
-  }
-
-  /**
-   * Get the total cashed out amount (a.k.a payout) for a specific peer.
-   */
-  private async getLastCashedPayout(address: string): Promise<bigint> {
     try {
       const lastCashout = await this.beeDebug.getLastCashoutAction(address)
 
-      return lastCashout.cumulativePayout as bigint
+      return lastCashout.uncashedAmount
     } catch (error) {
       if (error.message === 'Not Found') {
         return BigInt(0)
