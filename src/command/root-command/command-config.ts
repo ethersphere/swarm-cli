@@ -7,6 +7,13 @@ import { Identity } from '../../service/identity/types'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CommandLog } from './command-log'
 
+/**
+ * Options listed here will be read from the config file
+ * when they are not set explicitly or via `process.env`.
+ *
+ * `optionKey` is the kebab-case variant of the argument used in the parser, a.k.a. the key,
+ * `propertyKey` is the camelCase variant used in TypeScript command classes, a.k.a. the property.
+ */
 export const CONFIG_OPTIONS: ConfigOption[] = [
   { optionKey: 'bee-api-url', propertyKey: 'beeApiUrl' },
   { optionKey: 'bee-debug-api-url', propertyKey: 'beeDebugApiUrl' },
