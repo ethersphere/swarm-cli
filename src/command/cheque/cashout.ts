@@ -29,7 +29,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     alias: 'm',
     type: 'bigint',
     minimum: BigInt(0),
-    description: 'Cashout cheques with balance above this value',
+    description: 'Cashout cheques with balance above this value in PLUR',
     default: BigInt(0),
   })
   public minimum!: bigint
@@ -52,7 +52,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
   }
 
   private async cashoutAll(): Promise<void> {
-    this.console.info(`Collecting cheques with value at least ${this.minimum}...`)
+    this.console.info(`Collecting cheques with value at least ${this.minimum} PLUR...`)
     const cheques = await this.getFilteredCheques(this.minimum)
     this.console.info('Found ' + cheques.length + ' cheques.')
     for (const { amount, address } of cheques) {

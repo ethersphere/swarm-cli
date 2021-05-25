@@ -49,7 +49,7 @@ export class ChequeCommand extends RootCommand {
   protected printCheque(cashable: Cashable): void {
     this.console.divider('-')
     this.console.log(bold('Peer Address: ') + cashable.address)
-    this.console.log(bold('Cheque Value: ') + cashable.amount)
+    this.console.log(bold('Cheque Value: ') + cashable.amount + ' PLUR')
     this.console.quiet(cashable.address + ' ' + cashable.amount)
   }
 
