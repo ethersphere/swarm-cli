@@ -1,9 +1,8 @@
 import { existsSync, unlinkSync } from 'fs'
-import { cli } from 'furious-commander'
 import { join } from 'path'
 import { Create } from '../../src/command/identity/create'
 import { Upload } from '../../src/command/upload'
-import { optionParameters, rootCommandClasses } from '../../src/config'
+import { invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
 describe('Test Feed command', () => {
@@ -32,118 +31,82 @@ describe('Test Feed command', () => {
 
   it('should upload file, update feed and print it', async () => {
     // create identity
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['identity', 'create', 'test', '--password', 'test'],
-    })
+    await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
     // upload
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: [
-        'feed',
-        'upload',
-        `${__dirname}/../testpage/images/swarm.png`,
-        '--identity',
-        'test',
-        '--topic',
-        'test',
-        '--password',
-        'test',
-        '--hash-topic',
-        '--quiet',
-        ...getStampOption(),
-      ],
-    })
+    await invokeTestCli([
+      'feed',
+      'upload',
+      `${__dirname}/../testpage/images/swarm.png`,
+      '--identity',
+      'test',
+      '--topic',
+      'test',
+      '--password',
+      'test',
+      '--hash-topic',
+      '--quiet',
+      ...getStampOption(),
+    ])
     // print with identity and password
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: [
-        'feed',
-        'print',
-        '--identity',
-        'test',
-        '--topic',
-        'test',
-        '--password',
-        'test',
-        '--hash-topic',
-        '--quiet',
-        ...getStampOption(),
-      ],
-    })
+    await invokeTestCli([
+      'feed',
+      'print',
+      '--identity',
+      'test',
+      '--topic',
+      'test',
+      '--password',
+      'test',
+      '--hash-topic',
+      '--quiet',
+      ...getStampOption(),
+    ])
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
   })
 
   it('should print feed using address only', async () => {
     // create identity
-    const commandBuilder = await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['identity', 'create', 'test2', '--password', 'test'],
-    })
+    const commandBuilder = await invokeTestCli(['identity', 'create', 'test2', '--password', 'test'])
     const identityCreate = commandBuilder.runnable as Create
     const address = identityCreate.wallet.getAddressString()
     // upload
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: [
-        'feed',
-        'upload',
-        `${__dirname}/../testpage/index.html`,
-        '--identity',
-        'test2',
-        '--password',
-        'test',
-        ...getStampOption(),
-      ],
-    })
+    await invokeTestCli([
+      'feed',
+      'upload',
+      `${__dirname}/../testpage/index.html`,
+      '--identity',
+      'test2',
+      '--password',
+      'test',
+      ...getStampOption(),
+    ])
     // print with address
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['feed', 'print', '--address', address, '--quiet', ...getStampOption()],
-    })
+    await invokeTestCli(['feed', 'print', '--address', address, '--quiet', ...getStampOption()])
     const length = consoleMessages.length
     expect(consoleMessages[length - 1]).toMatch(/[a-z0-9]{64}/)
   })
 
   it('should update feeds', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['identity', 'create', 'update-feed-test', '-P', '1234', '-v'],
-    })
-    const uploadCommand = await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['upload', 'README.md', '--skip-sync', ...getStampOption()],
-    })
+    await invokeTestCli(['identity', 'create', 'update-feed-test', '-P', '1234', '-v'])
+    const uploadCommand = await invokeTestCli(['upload', 'README.md', '--skip-sync', ...getStampOption()])
     const upload = uploadCommand.runnable as Upload
     const { hash } = upload
     consoleMessages = []
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: [
-        'feed',
-        'update',
-        '--topic',
-        'test-topic',
-        '--hash-topic',
-        '-i',
-        'update-feed-test',
-        '-P',
-        '1234',
-        '-r',
-        hash,
-        ...getStampOption(),
-      ],
-    })
+    await invokeTestCli([
+      'feed',
+      'update',
+      '--topic',
+      'test-topic',
+      '--hash-topic',
+      '-i',
+      'update-feed-test',
+      '-P',
+      '1234',
+      '-r',
+      hash,
+      ...getStampOption(),
+    ])
     expect(consoleMessages).toHaveLength(1)
     expect(consoleMessages[0]).toContain('Feed Manifest URL')
     expect(consoleMessages[0]).toContain('/bzz/')

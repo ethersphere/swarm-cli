@@ -14,7 +14,7 @@ export class Withdraw extends ChequeCommand implements LeafCommand {
   @Argument({
     key: 'amount',
     type: 'bigint',
-    description: 'Amount of tokens to withdraw',
+    description: 'Amount of tokens to withdraw in PLUR',
     required: true,
     minimum: BigInt(1),
   })
