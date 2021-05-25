@@ -14,6 +14,9 @@ export class RootCommand {
   @ExternalOption('config-folder')
   public configFolder!: string
 
+  @ExternalOption('config-file')
+  public configFile!: string
+
   @ExternalOption('verbosity')
   public verbosity!: VerbosityLevel
 
@@ -32,7 +35,7 @@ export class RootCommand {
   private sourcemap!: Sourcemap
 
   protected init(): void {
-    this.commandConfig = new CommandConfig(this.appName, this.console, this.configFolder)
+    this.commandConfig = new CommandConfig(this.appName, this.console, this.configFile, this.configFolder)
     this.sourcemap = Utils.getSourcemap()
 
     CONFIG_OPTIONS.forEach((option: ConfigOption) => {

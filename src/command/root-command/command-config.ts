@@ -36,7 +36,7 @@ export class CommandConfig {
 
   public console: CommandLog
 
-  constructor(appName: string, console: CommandLog, configFolder?: string) {
+  constructor(appName: string, console: CommandLog, configFile: string, configFolder?: string) {
     this.console = console
     this.config = {
       beeApiUrl: beeApiUrl.default || '',
@@ -44,7 +44,7 @@ export class CommandConfig {
       identities: {},
     }
     this.configFolderPath = this.getConfigFolderPath(appName, configFolder)
-    this.configFilePath = join(this.configFolderPath, process.env.SWARM_CLI_CONFIG_FILE || 'config.json')
+    this.configFilePath = join(this.configFolderPath, configFile)
     this.prepareConfig()
   }
 

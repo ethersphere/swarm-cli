@@ -13,9 +13,6 @@ describe('Test configuration loading', () => {
     global.console.log = jest.fn(message => {
       consoleMessages.push(message)
     })
-    global.console.error = jest.fn(message => {
-      consoleMessages.push(message)
-    })
     //set config environment variable
     process.env.SWARM_CLI_CONFIG_FOLDER = configFolderPath
     process.env.SWARM_CLI_CONFIG_FILE = configFileName
@@ -48,5 +45,19 @@ describe('Test configuration loading', () => {
   it('should use explicit option over all', async () => {
     await invokeTestCli(['cheque', 'list', '--bee-debug-api-url', 'http://localhost:30001'])
     expect(consoleMessages[0]).toContain('http://localhost:30001')
+  })
+
+  it('should read config path explicitly, then use it for url', async () => {
+    delete process.env.BEE_DEBUG_API_URL
+
+    writeFileSync(
+      join(configFolderPath, 'config2.config.json'),
+      JSON.stringify({
+        beeDebugApiUrl: 'http://localhost:30004',
+      }),
+    )
+
+    await invokeTestCli(['cheque', 'list', '--config-file', 'config2.config.json'])
+    expect(consoleMessages[0]).toContain('http://localhost:30004')
   })
 })
