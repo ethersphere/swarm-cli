@@ -1,7 +1,6 @@
 import { writeFileSync } from 'fs'
-import cli from 'furious-commander'
 import { join } from 'path'
-import { optionParameters, rootCommandClasses } from '../../src/config'
+import { invokeTestCli } from '../utility'
 
 describe('Test configuration loading', () => {
   let consoleMessages: string[] = []
@@ -32,31 +31,20 @@ describe('Test configuration loading', () => {
         beeDebugApiUrl: 'http://localhost:30003',
       }),
     )
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'list'],
-    })
+
+    await invokeTestCli(['cheque', 'list'])
     expect(consoleMessages[0]).toContain('http://localhost:30003')
   })
 
   it('should use env over config when specified', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:30002'
 
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'list'],
-    })
+    await invokeTestCli(['cheque', 'list'])
     expect(consoleMessages[0]).toContain('http://localhost:30002')
   })
 
   it('should use explicit option over all', async () => {
-    await cli({
-      rootCommandClasses,
-      optionParameters,
-      testArguments: ['cheque', 'list', '--bee-debug-api-url', 'http://localhost:30001'],
-    })
+    await invokeTestCli(['cheque', 'list', '--bee-debug-api-url', 'http://localhost:30001'])
     expect(consoleMessages[0]).toContain('http://localhost:30001')
   })
 })
