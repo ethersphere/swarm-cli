@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { join, parse } from 'path'
+import { writeFileSync } from 'fs'
+import { join } from 'path'
 import { invokeTestCli } from '../utility'
 
 describe('Test configuration loading', () => {
@@ -27,6 +27,8 @@ describe('Test configuration loading', () => {
   })
 
   it('should use config when env is not specified', async () => {
+    delete process.env.BEE_DEBUG_API_URL
+
     writeFileSync(
       configFilePath,
       JSON.stringify({
@@ -34,22 +36,8 @@ describe('Test configuration loading', () => {
       }),
     )
 
-    const parsedPath = parse(configFilePath)
-
-    process.env.SWARM_CLI_CONFIG_FOLDER = parsedPath.dir
-    process.env.SWARM_CLI_CONFIG_FILE = parsedPath.base
-
     await invokeTestCli(['cheque', 'list'])
-    expect(consoleMessages[0]).toContain(
-      'http://localhost:30003 ' +
-        JSON.stringify(parsedPath) +
-        ' ' +
-        process.env.SWARM_CLI_CONFIG_FOLDER +
-        ' ' +
-        process.env.SWARM_CLI_CONFIG_FILE +
-        ' ' +
-        readFileSync(configFilePath, 'utf-8'),
-    )
+    expect(consoleMessages[0]).toContain('http://localhost:30003')
   })
 
   it('should use env over config when specified', async () => {
