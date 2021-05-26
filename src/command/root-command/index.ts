@@ -1,7 +1,7 @@
 import { Bee, BeeDebug } from '@ethersphere/bee-js'
-import { ExternalOption, Utils } from 'furious-commander'
-import { beeApiUrl, beeDebugApiUrl } from '../../config'
-import { CommandConfig } from './command-config'
+import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
+import { ConfigOption } from '../../utils/types/config-option'
+import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 
 export class RootCommand {
@@ -13,6 +13,9 @@ export class RootCommand {
 
   @ExternalOption('config-folder')
   public configFolder!: string
+
+  @ExternalOption('config-file')
+  public configFile!: string
 
   @ExternalOption('verbosity')
   public verbosity!: VerbosityLevel
@@ -29,17 +32,15 @@ export class RootCommand {
   public appName = 'swarm-cli'
   public commandConfig!: CommandConfig
 
+  private sourcemap!: Sourcemap
+
   protected init(): void {
-    this.commandConfig = new CommandConfig(this.appName, this.console, this.configFolder)
-    const sourcemap = Utils.getSourcemap()
+    this.commandConfig = new CommandConfig(this.appName, this.console, this.configFile, this.configFolder)
+    this.sourcemap = Utils.getSourcemap()
 
-    if (sourcemap[beeApiUrl.key] === 'default' && this.commandConfig.config.beeApiUrl) {
-      this.beeApiUrl = this.commandConfig.config.beeApiUrl
-    }
-
-    if (sourcemap[beeDebugApiUrl.key] === 'default' && this.commandConfig.config.beeDebugApiUrl) {
-      this.beeDebugApiUrl = this.commandConfig.config.beeDebugApiUrl
-    }
+    CONFIG_OPTIONS.forEach((option: ConfigOption) => {
+      this.maybeSetFromConfig(option)
+    })
 
     this.bee = new Bee(this.beeApiUrl)
     this.beeDebug = new BeeDebug(this.beeDebugApiUrl)
@@ -51,5 +52,15 @@ export class RootCommand {
       this.verbosity = VerbosityLevel.Verbose
     }
     this.console = new CommandLog(this.verbosity)
+  }
+
+  private maybeSetFromConfig(option: ConfigOption): void {
+    if (this.sourcemap[option.optionKey] === 'default') {
+      const value = this.commandConfig.config[option.propertyKey]
+
+      if (value !== undefined) {
+        this[option.propertyKey] = value
+      }
+    }
   }
 }
