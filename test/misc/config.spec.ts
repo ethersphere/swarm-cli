@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs'
-import { join } from 'path'
+import { join, parse } from 'path'
 import { invokeTestCli } from '../utility'
 
 describe('Test configuration loading', () => {
@@ -34,6 +34,11 @@ describe('Test configuration loading', () => {
       }),
     )
 
+    const parsedPath = parse(configFilePath)
+
+    process.env.SWARM_CLI_CONFIG_FOLDER = parsedPath.dir
+    process.env.SWARM_CLI_CONFIG_FILE = parsedPath.base
+
     await invokeTestCli(['cheque', 'list'])
     expect(consoleMessages[0]).toContain('http://localhost:30003')
   })
@@ -62,10 +67,5 @@ describe('Test configuration loading', () => {
 
     await invokeTestCli(['cheque', 'list', '--config-file', 'config2.config.json'])
     expect(consoleMessages[0]).toContain('http://localhost:30004')
-  })
-
-  it('should raise error when receiving invalid configuration folder', async () => {
-    await invokeTestCli(['cheque', 'list', '--config-folder', '/no/such'])
-    expect(consoleMessages[2]).toContain("ENOENT: no such file or directory, mkdir '/no/such'")
   })
 })
