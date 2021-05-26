@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import { join, parse } from 'path'
 import { invokeTestCli } from '../utility'
 
@@ -40,7 +40,16 @@ describe('Test configuration loading', () => {
     process.env.SWARM_CLI_CONFIG_FILE = parsedPath.base
 
     await invokeTestCli(['cheque', 'list'])
-    expect(consoleMessages[0]).toContain('http://localhost:30003 ' + JSON.stringify(parsedPath))
+    expect(consoleMessages[0]).toContain(
+      'http://localhost:30003 ' +
+        JSON.stringify(parsedPath) +
+        ' ' +
+        process.env.SWARM_CLI_CONFIG_FOLDER +
+        ' ' +
+        process.env.SWARM_CLI_CONFIG_FILE +
+        ' ' +
+        readFileSync(configFilePath, 'utf-8'),
+    )
   })
 
   it('should use env over config when specified', async () => {
