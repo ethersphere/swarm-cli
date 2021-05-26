@@ -40,7 +40,7 @@ describe('Test configuration loading', () => {
     process.env.SWARM_CLI_CONFIG_FILE = parsedPath.base
 
     await invokeTestCli(['cheque', 'list'])
-    expect(consoleMessages[0]).toContain('http://localhost:30003')
+    expect(consoleMessages[0]).toContain('http://localhost:30003 ' + JSON.stringify(parsedPath))
   })
 
   it('should use env over config when specified', async () => {
