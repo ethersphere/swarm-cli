@@ -23,8 +23,15 @@ export const beeDebugApiUrl: IOption<string> = {
 
 export const configFolder: IOption<string> = {
   key: 'config-folder',
-  description: 'Path of the configuration files that the CLI uses',
+  description: 'Path to the configuration folder that the CLI uses',
   envKey: 'SWARM_CLI_CONFIG_FOLDER',
+}
+
+export const configFile: IOption<string> = {
+  key: 'config-file',
+  description: 'Name of the configuration file that the CLI uses',
+  envKey: 'SWARM_CLI_CONFIG_FILE',
+  default: 'config.json',
 }
 
 export const verbose: IOption<boolean> = {
@@ -66,6 +73,7 @@ export const optionParameters: IOption<unknown>[] = [
   beeApiUrl,
   beeDebugApiUrl,
   configFolder,
+  configFile,
   verbose,
   quiet,
   help,

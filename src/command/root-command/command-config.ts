@@ -4,7 +4,20 @@ import { join } from 'path'
 import { exit } from 'process'
 import { beeApiUrl, beeDebugApiUrl } from '../../config'
 import { Identity } from '../../service/identity/types'
+import { ConfigOption } from '../../utils/types/config-option'
 import { CommandLog } from './command-log'
+
+/**
+ * Options listed here will be read from the config file
+ * when they are not set explicitly or via `process.env`.
+ *
+ * `optionKey` is the kebab-case variant of the argument used in the parser, a.k.a. the key,
+ * `propertyKey` is the camelCase variant used in TypeScript command classes, a.k.a. the property.
+ */
+export const CONFIG_OPTIONS: ConfigOption[] = [
+  { optionKey: 'bee-api-url', propertyKey: 'beeApiUrl' },
+  { optionKey: 'bee-debug-api-url', propertyKey: 'beeDebugApiUrl' },
+]
 
 export interface Config {
   beeApiUrl: string
@@ -23,7 +36,7 @@ export class CommandConfig {
 
   public console: CommandLog
 
-  constructor(appName: string, console: CommandLog, configFolder?: string) {
+  constructor(appName: string, console: CommandLog, configFile: string, configFolder?: string) {
     this.console = console
     this.config = {
       beeApiUrl: beeApiUrl.default || '',
@@ -31,7 +44,7 @@ export class CommandConfig {
       identities: {},
     }
     this.configFolderPath = this.getConfigFolderPath(appName, configFolder)
-    this.configFilePath = join(this.configFolderPath, process.env.SWARM_CLI_CONFIG_FILE || 'config.json')
+    this.configFilePath = join(this.configFolderPath, configFile)
     this.prepareConfig()
   }
 
