@@ -123,7 +123,7 @@ export class CommandLog {
   }
 
   public async promptList(choices: string[], message: string): Promise<string> {
-    const result = await prompt({ name: 'value', type: 'list', message, choices })
+    const result = await prompt({ name: 'value', type: 'list', message, choices, loop: false })
 
     return result.value
   }
