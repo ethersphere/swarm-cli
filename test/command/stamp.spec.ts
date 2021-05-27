@@ -39,4 +39,9 @@ describe('Test Stamp command', () => {
     await invokeTestCli(['stamp', 'buy', '--amount', '1', '--depth', '15'])
     expect(getLastMessage()).toContain('[depth] must be at least 16')
   })
+
+  it('should buy stamp', async () => {
+    await invokeTestCli(['stamp', 'buy', '--amount', '100', '--depth', '20'])
+    expect(getLastMessage()).toContain('Stamp ID:')
+  })
 })
