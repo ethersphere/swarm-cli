@@ -21,7 +21,10 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
   }
 
   const choices = stamps.map(stamp => `${stamp.batchID} (${stamp.utilization})`)
-  const value = await console.promptList(choices, 'Please select a stamp for this action.')
+  const value = await console.promptList(
+    choices,
+    'Please select a stamp for this action.\n\n  Stamp ID' + ' '.repeat(56) + ' Utilization\n',
+  )
   const [hex] = value.split(' ')
 
   return hex
