@@ -39,7 +39,6 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     type: 'bigint',
     minimum: BigInt(0),
     description: 'Gas limit of each transaction in wei',
-    default: BigInt(0),
   })
   public gasLimit!: bigint
 
@@ -48,7 +47,6 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     type: 'bigint',
     minimum: BigInt(0),
     description: 'Gas price of each transaction in wei',
-    default: BigInt(0),
   })
   public gasPrice!: bigint
 
