@@ -1,5 +1,7 @@
 import { prompt } from 'inquirer'
 import { exit } from 'process'
+import { isNotFoundError } from '../../utils/error'
+import { ErrorWithStatus } from '../../utils/types'
 import { Printer } from './printer'
 
 export enum VerbosityLevel {
@@ -126,5 +128,13 @@ export class CommandLog {
     const result = await prompt({ name: 'value', type: 'list', message, choices })
 
     return result.value
+  }
+
+  public printError(error: ErrorWithStatus, notFoundMessage: string): void {
+    if (isNotFoundError(error)) {
+      this.error(notFoundMessage)
+    } else {
+      this.error(error.message)
+    }
   }
 }

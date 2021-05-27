@@ -47,7 +47,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
 
     if (this.peer) {
       const amount = await this.getUncashedAmount(this.peer)
-      await this.checkoutOne(this.peer, amount)
+      await this.cashoutOne(this.peer, amount)
     }
   }
 
@@ -56,23 +56,20 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     const cheques = await this.getFilteredCheques(this.minimum)
     this.console.info('Found ' + cheques.length + ' cheques.')
     for (const { amount, address } of cheques) {
-      await this.checkoutOne(address, amount)
+      await this.cashoutOne(address, amount)
     }
   }
 
-  private async checkoutOne(address: string, amount: bigint): Promise<void> {
+  private async cashoutOne(address: string, amount: bigint): Promise<void> {
     try {
       this.console.log(green('Cashing out:'))
       this.printCheque({ address, amount })
-      const response = await this.beeDebug.cashoutLastCheque(address)
-      this.console.log(green(bold('Tx:'.padEnd(14))) + response.transactionHash)
-      this.console.quiet(response.transactionHash)
+      const transaction = await this.beeDebug.cashoutLastCheque(address)
+      this.console.log(green(bold('Tx:'.padEnd(14))) + transaction)
+      this.console.quiet(transaction)
     } catch (error) {
-      if (error.message === 'Not Found') {
-        this.console.error('Peer not found')
-      } else {
-        throw error
-      }
+      this.console.error('Could not cashout ' + address)
+      this.console.printError(error, 'No peer found with that address.')
     }
   }
 }
