@@ -7,6 +7,7 @@ import { bold, green } from 'kleur'
 import ora from 'ora'
 import { basename, join } from 'path'
 import { exit } from 'process'
+import { pickStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
@@ -27,6 +28,7 @@ export class Upload extends RootCommand implements LeafCommand {
     key: 'stamp',
     description: 'ID of the postage stamp to use',
     required: true,
+    noErrors: true,
   })
   public stamp!: string
 
@@ -77,6 +79,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     this.initCommand()
+
     let url: string
     let tag: Tag | undefined
 
@@ -92,6 +95,10 @@ export class Upload extends RootCommand implements LeafCommand {
       this.console.error('Please try again with the --skip-sync option.')
 
       return
+    }
+
+    if (!this.stamp) {
+      this.stamp = await pickStamp(this.bee, this.console)
     }
 
     if (!this.skipSync) {
