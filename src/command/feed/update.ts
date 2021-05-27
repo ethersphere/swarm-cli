@@ -1,4 +1,5 @@
 import { LeafCommand, Option } from 'furious-commander'
+import { pickStamp } from '../../service/stamp'
 import { FeedCommand } from './feed-command'
 
 export class Update extends FeedCommand implements LeafCommand {
@@ -12,6 +13,11 @@ export class Update extends FeedCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
     await this.checkIdentity()
+
+    if (!this.stamp) {
+      this.stamp = await pickStamp(this.bee, this.console)
+    }
+
     await this.updateFeedAndPrint(this.reference)
     this.console.dim('Successfully updated feed.')
   }
