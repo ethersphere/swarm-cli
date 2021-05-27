@@ -14,7 +14,8 @@ export class Reupload extends PinningCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
+    this.console.log('Reuploading...')
     await this.bee.reuploadPinnedData(this.address)
-    this.console.log('Reuploaded successfully')
+    this.console.log('Reuploaded successfully.')
   }
 }
