@@ -34,6 +34,24 @@ export class Cashout extends ChequeCommand implements LeafCommand {
   })
   public minimum!: bigint
 
+  @Option({
+    key: 'gas-limit',
+    type: 'bigint',
+    minimum: BigInt(0),
+    description: 'Gas limit of each transaction in wei',
+    default: BigInt(0),
+  })
+  public gasLimit!: bigint
+
+  @Option({
+    key: 'gas-price',
+    type: 'bigint',
+    minimum: BigInt(0),
+    description: 'Gas price of each transaction in wei',
+    default: BigInt(0),
+  })
+  public gasPrice!: bigint
+
   public async run(): Promise<void> {
     super.init()
 
@@ -64,7 +82,10 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     try {
       this.console.log(green('Cashing out:'))
       this.printCheque({ address, amount })
-      const transaction = await this.beeDebug.cashoutLastCheque(address)
+      const transaction = await this.beeDebug.cashoutLastCheque(address, {
+        gasLimit: this.gasLimit,
+        gasPrice: this.gasPrice,
+      })
       this.console.log(green(bold('Tx:'.padEnd(14))) + transaction)
       this.console.quiet(transaction)
     } catch (error) {
