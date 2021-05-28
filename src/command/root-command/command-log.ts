@@ -1,6 +1,6 @@
 import { prompt } from 'inquirer'
 import { exit } from 'process'
-import { isNotFoundError } from '../../utils/error'
+import { isInternalServerError, isNotFoundError } from '../../utils/error'
 import { ErrorWithStatus } from '../../utils/types'
 import { Printer } from './printer'
 
@@ -131,7 +131,10 @@ export class CommandLog {
   }
 
   public printError(error: ErrorWithStatus, notFoundMessage: string): void {
-    if (isNotFoundError(error)) {
+    if (isInternalServerError(error)) {
+      this.error('Internal Server Error')
+      this.error('Check your Bee log to see what went wrong.')
+    } else if (isNotFoundError(error)) {
       this.error(notFoundMessage)
     } else {
       this.error(error.message)
