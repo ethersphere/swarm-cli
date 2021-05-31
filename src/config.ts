@@ -5,6 +5,7 @@ import { Feed } from './command/feed'
 import { Identity } from './command/identity'
 import { Pinning } from './command/pinning'
 import { Stamp } from './command/stamp'
+import { Status } from './command/status'
 import { Upload } from './command/upload'
 
 export const beeApiUrl: IOption<string> = {
@@ -80,4 +81,4 @@ export const optionParameters: IOption<unknown>[] = [
   version,
 ]
 
-export const rootCommandClasses = [Upload, Pinning, Identity, Feed, Cheque, Stamp]
+export const rootCommandClasses = [Upload, Status, Pinning, Identity, Feed, Cheque, Stamp]
