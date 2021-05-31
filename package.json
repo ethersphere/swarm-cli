@@ -10,7 +10,6 @@
     "Decentralised Storage"
   ],
   "bin": {
-    "@ethersphere/swarm-cli": "./dist/index.js",
     "swarm-cli": "./dist/index.js"
   },
   "homepage": "https://github.com/ethersphere/swarm-cli",
