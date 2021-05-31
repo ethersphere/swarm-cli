@@ -19,7 +19,7 @@ export class Pin extends PinningCommand implements LeafCommand {
       this.console.log('Pinned successfully')
     } catch (error) {
       this.console.error('Could not pin ' + this.address)
-      this.console.printError(error, 'No root chunk found with that address.')
+      this.console.printBeeError(error, { notFoundMessage: 'No root chunk found with that address.' })
     }
   }
 }

@@ -88,7 +88,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
       this.console.quiet(transaction)
     } catch (error) {
       this.console.error('Could not cashout ' + address)
-      this.console.printError(error, 'No peer found with that address.')
+      this.console.printBeeError(error, { notFoundMessage: 'No peer found with that address.' })
     }
   }
 }

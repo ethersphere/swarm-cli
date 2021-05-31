@@ -1,7 +1,7 @@
 import { prompt } from 'inquirer'
 import { exit } from 'process'
 import { isInternalServerError, isNotFoundError } from '../../utils/error'
-import { ErrorWithStatus } from '../../utils/types'
+import { BeeError } from '../../utils/types'
 import { Printer } from './printer'
 
 export enum VerbosityLevel {
@@ -11,6 +11,10 @@ export enum VerbosityLevel {
   Normal,
   /** dim messages, gives info about state of the operation frequently. Default */
   Verbose,
+}
+
+interface BeeErrorOptions {
+  notFoundMessage?: string
 }
 
 export class CommandLog {
@@ -130,12 +134,12 @@ export class CommandLog {
     return result.value
   }
 
-  public printError(error: ErrorWithStatus, notFoundMessage: string): void {
+  public printBeeError(error: BeeError, options?: BeeErrorOptions): void {
     if (isInternalServerError(error)) {
       this.error('Internal Server Error')
       this.error('Check your Bee log to see what went wrong.')
-    } else if (isNotFoundError(error)) {
-      this.error(notFoundMessage)
+    } else if (isNotFoundError(error) && options?.notFoundMessage) {
+      this.error(options.notFoundMessage)
     } else {
       this.error(error.message)
     }

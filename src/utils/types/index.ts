@@ -9,4 +9,4 @@ export type BrandedString<N> = BrandedType<string, N>
 
 export type FlavoredType<T, N> = T & { __tag__?: N }
 
-export type ErrorWithStatus = Error & { status?: number }
+export type BeeError = Error & { status?: number }

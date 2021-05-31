@@ -1,9 +1,9 @@
-import { ErrorWithStatus } from './types'
+import { BeeError } from './types'
 
-export function isNotFoundError(error: ErrorWithStatus): boolean {
-  return error.status === 404 || error.message.includes('Not Found')
+export function isNotFoundError(error: BeeError): boolean {
+  return error.status === 404
 }
 
-export function isInternalServerError(error: ErrorWithStatus): boolean {
-  return error.status === 500 || error.message.includes('Internal Server Error')
+export function isInternalServerError(error: BeeError): boolean {
+  return error.status === 500
 }

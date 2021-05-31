@@ -19,7 +19,7 @@ export class Reupload extends PinningCommand implements LeafCommand {
       await this.bee.reuploadPinnedData(this.address)
       this.console.log('Reuploaded successfully.')
     } catch (error) {
-      this.console.printError(error, 'No locally pinned content found with that address.')
+      this.console.printBeeError(error, { notFoundMessage: 'No locally pinned content found with that address.' })
     }
   }
 }
