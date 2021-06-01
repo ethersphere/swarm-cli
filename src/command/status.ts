@@ -1,3 +1,4 @@
+import { SUPPORTED_BEE_VERSION, SUPPORTED_BEE_VERSION_EXACT } from '@ethersphere/bee-js'
 import { LeafCommand } from 'furious-commander'
 import { bold, green, red, yellow } from 'kleur'
 import { RootCommand } from './root-command'
@@ -16,7 +17,11 @@ export class Status extends RootCommand implements LeafCommand {
 
     this.console.divider()
     this.console.log(bold('Bee Version: ' + yellow(version)))
-    this.console.quiet(version)
+    this.console.log(
+      bold('Supported Version: ' + yellow(SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')')),
+    )
+    this.console.quiet('Bee version - ' + version)
+    this.console.quiet('Supported version - ' + SUPPORTED_BEE_VERSION_EXACT)
   }
 
   private async checkBeeApiConnection(): Promise<void> {
