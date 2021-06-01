@@ -1,7 +1,9 @@
+import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 import { invokeTestCli } from '../utility'
 
 describe('Test Status command', () => {
   const consoleMessages: string[] = []
+  const server = createChequeMockHttpServer(1333)
 
   beforeAll(() => {
     global.console.log = jest.fn(message => {
@@ -10,6 +12,10 @@ describe('Test Status command', () => {
     global.console.error = jest.fn(message => {
       consoleMessages.push(message)
     })
+  })
+
+  afterAll(() => {
+    server.close()
   })
 
   beforeEach(() => {
@@ -46,5 +52,13 @@ describe('Test Status command', () => {
     expect(consoleMessages[1]).toContain('[FAILED]')
     expect(consoleMessages[2]).toContain('[FAILED]')
     expect(consoleMessages[4]).toContain('N/A')
+  })
+
+  it('should report when bee version does not match', async () => {
+    await invokeTestCli(['status', '--bee-debug-api-url', 'http://localhost:1333'])
+    expect(consoleMessages[0]).toContain('[OK]')
+    expect(consoleMessages[1]).toContain('[OK]')
+    expect(consoleMessages[2]).toContain('[FAILED]')
+    expect(consoleMessages[4]).toContain('0.5.3-acbd0e2')
   })
 })

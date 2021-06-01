@@ -43,8 +43,13 @@ export class Status extends RootCommand implements LeafCommand {
 
   private async checkBeeVersionCompatibility(): Promise<void> {
     try {
-      await this.beeDebug.isSupportedVersion()
-      this.printSuccessfulCheck('Bee Version Compatibility')
+      const compatible = await this.beeDebug.isSupportedVersion()
+
+      if (compatible) {
+        this.printSuccessfulCheck('Bee Version Compatibility')
+      } else {
+        this.printFailedCheck('Bee Version Compatibility')
+      }
     } catch {
       this.printFailedCheck('Bee Version Compatibility')
     }
