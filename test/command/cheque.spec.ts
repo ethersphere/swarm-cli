@@ -105,6 +105,15 @@ describe('Test Cheque command', () => {
     )
   })
 
+  it('should allow specifying gas price and limit for cashout', async () => {
+    process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
+    await invokeTestCli(['cheque', 'cashout', '--all', '--gas-price', '100', '--gas-limit', '100'])
+    const length = consoleMessages.length
+    expect(consoleMessages[length - 1]).toBe(
+      green(bold('Tx:           ')) + '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
+    )
+  })
+
   it('should not cashout any cheques when --minimum is higher', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
     await invokeTestCli(['cheque', 'cashout', '--all', '--minimum', '10000000000000000000'])

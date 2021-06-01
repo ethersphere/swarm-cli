@@ -45,6 +45,8 @@ describe('Test Monetary units', () => {
   it('should show units in help: cheque cashout', async () => {
     await invokeTestCli(['cheque', 'cashout', '--help'])
     expectSubstringsPrinted('--minimum', 'in PLUR')
+    expectSubstringsPrinted('--gas-price', 'in wei')
+    expectSubstringsPrinted('--gas-limit', 'in wei')
   })
 
   it('should show units in help: cheque withdraw', async () => {

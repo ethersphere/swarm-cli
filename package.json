@@ -27,6 +27,7 @@
     "dev": "webpack --progress --env mode=development",
     "compile": "webpack --progress --env mode=production",
     "test": "jest --config=jest.config.ts",
+    "test:coverage": "jest --config=jest.config.ts --coverage",
     "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\""
   },
@@ -70,7 +71,7 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
-    "@ethersphere/bee-js": "^0.9.0",
+    "@ethersphere/bee-js": "0.10.0",
     "cli-progress": "^3.8.2",
     "ethereumjs-wallet": "^1.0.1",
     "furious-commander": "1.1.0",

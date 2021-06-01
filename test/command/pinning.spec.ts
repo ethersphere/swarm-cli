@@ -22,6 +22,9 @@ describe('Test Pinning command', () => {
     global.console.log = jest.fn(message => {
       consoleMessages.push(message)
     })
+    global.console.error = jest.fn(message => {
+      consoleMessages.push(message)
+    })
     jest.spyOn(global.console, 'warn')
     //set config environment variable
     process.env.SWARM_CLI_CONFIG_FOLDER = configFolderPath
@@ -98,5 +101,24 @@ describe('Test Pinning command', () => {
       'Could not unpin ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
     )
     expect(consoleMessages[1]).toContain('No pinned chunk found with that address.')
+  })
+
+  it('should allow reuploading pinned file', async () => {
+    const invocation = await invokeTestCli(['upload', 'README.md', '--pin', ...getStampOption()])
+    const upload = invocation.runnable as Upload
+    const { hash } = upload
+    await invokeTestCli(['pinning', 'reupload', hash])
+    expect(consoleMessages).toHaveLength(4)
+    expect(consoleMessages[3]).toContain('Reuploaded successfully.')
+  })
+
+  // FIXME https://github.com/ethersphere/bee/issues/1897
+  test.skip('should allow reuploading pinned folder', async () => {
+    const invocation = await invokeTestCli(['upload', 'test', '--pin', ...getStampOption()])
+    const upload = invocation.runnable as Upload
+    const { hash } = upload
+    await invokeTestCli(['pinning', 'reupload', hash])
+    expect(consoleMessages).toHaveLength(4)
+    expect(consoleMessages[3]).toContain('Reuploaded successfully.')
   })
 })

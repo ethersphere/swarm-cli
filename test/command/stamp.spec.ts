@@ -39,4 +39,14 @@ describe('Test Stamp command', () => {
     await invokeTestCli(['stamp', 'buy', '--amount', '1', '--depth', '15'])
     expect(getLastMessage()).toContain('[depth] must be at least 16')
   })
+
+  it('should buy stamp', async () => {
+    await invokeTestCli(['stamp', 'buy', '--amount', '100', '--depth', '20'])
+    expect(getLastMessage()).toContain('Stamp ID:')
+  })
+
+  it('should print custom message when there are no stamps', async () => {
+    await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:11633'])
+    expect(getLastMessage()).toContain('You do not have any stamps.')
+  })
 })

@@ -15,7 +15,7 @@ export class List extends StampCommand implements LeafCommand {
 
     const stamps = await this.bee.getAllPostageBatch()
 
-    if (stamps === null) {
+    if (stamps === null || stamps.length === 0) {
       this.console.info('You do not have any stamps.')
     } else {
       stamps.forEach(stamp => this.printStamp(stamp))

@@ -19,12 +19,7 @@ export class Unpin extends PinningCommand implements LeafCommand {
       this.console.log('Unpinned successfully')
     } catch (error) {
       this.console.error('Could not unpin ' + this.address)
-
-      if (error.message === 'Not Found') {
-        this.console.error('No pinned chunk found with that address.')
-      } else {
-        this.console.error(error.message)
-      }
+      this.console.printBeeError(error, { notFoundMessage: 'No pinned chunk found with that address.' })
     }
   }
 }
