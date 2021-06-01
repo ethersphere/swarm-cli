@@ -5,8 +5,11 @@
 
 ### Features
 
-* bee-js update ([#121](https://www.github.com/ethersphere/swarm-cli/issues/121)) ([9ff1827](https://www.github.com/ethersphere/swarm-cli/commit/9ff18272eb1bce5e877ed05211b8d2456032b0ce))
-* core update and stamp picker ([#111](https://www.github.com/ethersphere/swarm-cli/issues/111)) ([6ad1963](https://www.github.com/ethersphere/swarm-cli/commit/6ad1963c0ca7a0bbe400e72b14ceb8962934c2a7))
+* add stamp reupload command ([#121](https://www.github.com/ethersphere/swarm-cli/issues/121)) ([9ff1827](https://www.github.com/ethersphere/swarm-cli/commit/9ff18272eb1bce5e877ed05211b8d2456032b0ce))
+* add status command ([#121](https://www.github.com/ethersphere/swarm-cli/issues/121)) ([9ff1827](https://www.github.com/ethersphere/swarm-cli/commit/9ff18272eb1bce5e877ed05211b8d2456032b0ce))
+* improve error reporting ([#121](https://www.github.com/ethersphere/swarm-cli/issues/121)) ([9ff1827](https://www.github.com/ethersphere/swarm-cli/commit/9ff18272eb1bce5e877ed05211b8d2456032b0ce))
+* add gas-price and gas-header options to cashout ([#121](https://www.github.com/ethersphere/swarm-cli/issues/121)) ([9ff1827](https://www.github.com/ethersphere/swarm-cli/commit/9ff18272eb1bce5e877ed05211b8d2456032b0ce))
+* add interactive stamp picker ([#111](https://www.github.com/ethersphere/swarm-cli/issues/111)) ([6ad1963](https://www.github.com/ethersphere/swarm-cli/commit/6ad1963c0ca7a0bbe400e72b14ceb8962934c2a7))
 
 
 ### Bug Fixes
