@@ -11,7 +11,7 @@ export class Status extends RootCommand implements LeafCommand {
     super.init()
 
     await this.checkBeeApiConnection()
-    const { version } = await this.checkBeeDebugApiConnection()
+    const version = await this.checkBeeDebugApiConnection()
     await this.checkBeeVersionCompatibility()
 
     this.console.divider()
@@ -28,16 +28,16 @@ export class Status extends RootCommand implements LeafCommand {
     }
   }
 
-  private async checkBeeDebugApiConnection(): Promise<{ version: string }> {
+  private async checkBeeDebugApiConnection(): Promise<string> {
     try {
       const health = await this.beeDebug.getHealth()
       this.printSuccessfulCheck('Bee Debug API Connection')
 
-      return health
+      return health.version
     } catch {
       this.printFailedCheck('Bee Debug API Connection')
 
-      return { version: 'N/A' }
+      return 'N/A'
     }
   }
 
