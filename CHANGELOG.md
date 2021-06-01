@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.8.0](https://www.github.com/ethersphere/swarm-cli/compare/v0.7.0...v0.8.0) (2021-06-01)
+
+
+### Features
+
+* add stamp reupload command ([#121](https://www.github.com/ethersphere/swarm-cli/issues/121)) ([9ff1827](https://www.github.com/ethersphere/swarm-cli/commit/9ff18272eb1bce5e877ed05211b8d2456032b0ce))
+* add status command ([#121](https://www.github.com/ethersphere/swarm-cli/issues/121)) ([9ff1827](https://www.github.com/ethersphere/swarm-cli/commit/9ff18272eb1bce5e877ed05211b8d2456032b0ce))
+* improve error reporting ([#121](https://www.github.com/ethersphere/swarm-cli/issues/121)) ([9ff1827](https://www.github.com/ethersphere/swarm-cli/commit/9ff18272eb1bce5e877ed05211b8d2456032b0ce))
+* add gas-price and gas-header options to cashout ([#121](https://www.github.com/ethersphere/swarm-cli/issues/121)) ([9ff1827](https://www.github.com/ethersphere/swarm-cli/commit/9ff18272eb1bce5e877ed05211b8d2456032b0ce))
+* add interactive stamp picker ([#111](https://www.github.com/ethersphere/swarm-cli/issues/111)) ([6ad1963](https://www.github.com/ethersphere/swarm-cli/commit/6ad1963c0ca7a0bbe400e72b14ceb8962934c2a7))
+
+
+### Bug Fixes
+
+* remove invalid bin field ([#115](https://www.github.com/ethersphere/swarm-cli/issues/115)) ([9304a04](https://www.github.com/ethersphere/swarm-cli/commit/9304a041e28464a86ad6ba4c2d20fd7cc5777b71))
+
 ## [0.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v0.6.0...v0.7.0) (2021-05-20)
 
 
