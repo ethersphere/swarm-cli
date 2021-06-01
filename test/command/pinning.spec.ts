@@ -108,8 +108,8 @@ describe('Test Pinning command', () => {
     const upload = invocation.runnable as Upload
     const { hash } = upload
     await invokeTestCli(['pinning', 'reupload', hash])
-    expect(consoleMessages).toHaveLength(6)
-    expect(consoleMessages[5]).toContain('Reuploaded successfully.')
+    expect(consoleMessages).toHaveLength(4)
+    expect(consoleMessages[3]).toContain('Reuploaded successfully.')
   })
 
   it('should allow reuploading pinned folder', async () => {
@@ -117,7 +117,7 @@ describe('Test Pinning command', () => {
     const upload = invocation.runnable as Upload
     const { hash } = upload
     await invokeTestCli(['pinning', 'reupload', hash])
-    expect(consoleMessages).toHaveLength(6)
-    expect(consoleMessages[5]).toContain('Reuploaded successfully.')
+    expect(consoleMessages).toHaveLength(4)
+    expect(consoleMessages[3]).toContain('Reuploaded successfully.')
   })
 })
