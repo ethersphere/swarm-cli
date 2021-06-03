@@ -1,6 +1,6 @@
 import { GroupCommand } from 'furious-commander'
 import { Receive } from './receive'
-import { Send } from './Send'
+import { Send } from './send'
 import { Subscribe } from './subscribe'
 
 export class Pss implements GroupCommand {
