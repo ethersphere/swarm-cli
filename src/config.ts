@@ -4,6 +4,7 @@ import { Cheque } from './command/cheque'
 import { Feed } from './command/feed'
 import { Identity } from './command/identity'
 import { Pinning } from './command/pinning'
+import { Pss } from './command/pss'
 import { Stamp } from './command/stamp'
 import { Status } from './command/status'
 import { Upload } from './command/upload'
@@ -81,4 +82,4 @@ export const optionParameters: IOption<unknown>[] = [
   version,
 ]
 
-export const rootCommandClasses = [Upload, Status, Pinning, Identity, Feed, Cheque, Stamp]
+export const rootCommandClasses = [Upload, Status, Pinning, Identity, Feed, Cheque, Stamp, Pss]
