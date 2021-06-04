@@ -1,3 +1,4 @@
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { Receive } from '../../src/command/pss/receive'
 import { sleep } from '../../src/utils'
 import { invokeTestCli } from '../utility'
@@ -33,6 +34,28 @@ describe('Test PSS command', () => {
     await invokeTestCli(['pss', 'send', '--target', '00', '--data', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
     const receive: Receive = (await invocation).runnable as Receive
     expect(receive.receivedMessage).toBe('Bzzz Bzzzz Bzzzz')
+  })
+
+  it('should receive sent pss message with in/out files', async () => {
+    if (existsSync('test/testconfig/out.txt')) {
+      unlinkSync('test/testconfig/out.txt')
+    }
+    writeFileSync('test/testconfig/in.txt', 'Message in a file')
+    invokeTestCli([
+      'pss',
+      'receive',
+      '--bee-api-url',
+      'http://localhost:11633',
+      '--timeout',
+      '10000',
+      '--out-file',
+      'test/testconfig/out.txt',
+    ])
+    await sleep(1000)
+    await invokeTestCli(['pss', 'send', '--target', '00', '--path', 'test/testconfig/in.txt', ...getStampOption()])
+    expect(existsSync('test/testconfig/out.txt')).toBeTruthy()
+    const messageFromFile = readFileSync('test/testconfig/out.txt', 'ascii')
+    expect(messageFromFile).toBe('Message in a file')
   })
 
   it('should not allow non-hex strings for target', async () => {
