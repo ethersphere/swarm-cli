@@ -17,11 +17,11 @@ export class Send extends PssCommand implements LeafCommand {
   public stamp!: string
 
   @Option({
-    key: 'address-prefix',
-    description: 'Even-length target message address prefix',
+    key: 'target',
+    description: 'Even-length target address prefix',
     required: true,
   })
-  public addressPrefix!: string
+  public target!: string
 
   @Option({
     key: 'data',
@@ -32,15 +32,15 @@ export class Send extends PssCommand implements LeafCommand {
 
   @Option({
     key: 'recipient',
-    description: 'Recipient public key',
+    description: 'Public PSS key of the recipient',
   })
   public recipient!: string
 
   public async run(): Promise<void> {
     super.init()
 
-    if (!isHexString(this.addressPrefix) || this.addressPrefix.length % 2 !== 0) {
-      this.console.error('Address-prefix must be an even-length hex string')
+    if (!isHexString(this.target) || this.target.length % 2 !== 0) {
+      this.console.error('Target must be an even-length hex string')
 
       return
     }
@@ -51,7 +51,7 @@ export class Send extends PssCommand implements LeafCommand {
 
     this.console.log('Sending PSS message on topic ' + this.topic)
 
-    await this.bee.pssSend(this.stamp, this.topic, this.addressPrefix, this.data, this.recipient)
+    await this.bee.pssSend(this.stamp, this.topic, this.target, this.data, this.recipient)
     this.console.log('Message sent successfully.')
   }
 }
