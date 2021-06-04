@@ -21,6 +21,9 @@ export class Receive extends PssCommand implements LeafCommand {
   })
   public outFile!: string
 
+  /**
+   * Used for testing. Received message is stored here so assertions can be made.
+   */
   public receivedMessage?: string
 
   public async run(): Promise<void> {
