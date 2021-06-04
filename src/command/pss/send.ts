@@ -1,5 +1,6 @@
 import { LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
+import { isHexString } from '../../utils/hex'
 import { PssCommand } from './pss-command'
 
 export class Send extends PssCommand implements LeafCommand {
@@ -17,7 +18,7 @@ export class Send extends PssCommand implements LeafCommand {
 
   @Option({
     key: 'address-prefix',
-    description: 'Odd-length target message address prefix',
+    description: 'Even-length target message address prefix',
     required: true,
   })
   public addressPrefix!: string
@@ -37,6 +38,12 @@ export class Send extends PssCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
+
+    if (!isHexString(this.addressPrefix) || this.addressPrefix.length % 2 !== 0) {
+      this.console.error('Address-prefix must be an even-length hex string')
+
+      return
+    }
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)

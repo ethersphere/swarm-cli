@@ -18,11 +18,19 @@ export class Receive extends PssCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const data = await this.bee.pssReceive(this.topic, this.timeout)
+    try {
+      const data = await this.bee.pssReceive(this.topic, this.timeout)
 
-    this.receivedMessage = data.text()
+      this.receivedMessage = data.text()
 
-    this.console.log(this.receivedMessage)
-    this.console.quiet(this.receivedMessage)
+      this.console.log(this.receivedMessage)
+      this.console.quiet(this.receivedMessage)
+    } catch (error) {
+      if (error.message === 'pssReceive timeout') {
+        this.console.error('Receive timed out')
+      } else {
+        this.console.printBeeError(error)
+      }
+    }
   }
 }
