@@ -28,7 +28,7 @@ export function isGateway(url: string): boolean {
 
 export function enforceValidHexTopic(console: CommandLog, topic: string): void {
   const hasCorrectLength = topic.startsWith('0x') ? topic.length === 66 : topic.length === 64
-  const hasCorrectPattern = new RegExp(/^(0x)?[a-f0-9]+$/g).test(topic)
+  const hasCorrectPattern = new RegExp(/^(0x)?[A-Fa-f0-9]+$/g).test(topic)
 
   if (!hasCorrectLength || !hasCorrectPattern) {
     console.error('Error parsing topic!')
@@ -45,5 +45,5 @@ export function getTopic(bee: Bee, console: CommandLog, topic: string, hash: boo
   }
   enforceValidHexTopic(console, topic)
 
-  return topic
+  return topic.toLowerCase()
 }
