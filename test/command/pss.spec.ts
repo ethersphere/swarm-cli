@@ -53,6 +53,7 @@ describe('Test PSS command', () => {
     ])
     await sleep(1000)
     await invokeTestCli(['pss', 'send', '--target', '00', '--path', 'test/testconfig/in.txt', ...getStampOption()])
+    await sleep(1000)
     expect(existsSync('test/testconfig/out.txt')).toBeTruthy()
     const messageFromFile = readFileSync('test/testconfig/out.txt', 'ascii')
     expect(messageFromFile).toBe('Message in a file')
