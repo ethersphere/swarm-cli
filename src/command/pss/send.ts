@@ -20,7 +20,7 @@ export class Send extends PssCommand implements LeafCommand {
 
   @Option({
     key: 'target',
-    description: "Target Bee node's overlay address prefix",
+    description: 'Overlay address prefix of the target Bee node',
     required: true,
   })
   public target!: string
@@ -43,7 +43,7 @@ export class Send extends PssCommand implements LeafCommand {
 
   @Option({
     key: 'recipient',
-    description: "Target Bee node's PSS public key for encryption",
+    description: 'PSS public key of the target Bee node for encryption',
   })
   public recipient!: string
 
