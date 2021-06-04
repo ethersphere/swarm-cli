@@ -8,7 +8,7 @@ import { PssCommand } from './pss-command'
 export class Send extends PssCommand implements LeafCommand {
   public readonly name = 'send'
 
-  public readonly description = 'Send to recipient or target with Postal Service for Swarm'
+  public readonly description = 'Send a message to a target Bee node with Postage Service for Swarm'
 
   @Option({
     key: 'stamp',
@@ -20,7 +20,7 @@ export class Send extends PssCommand implements LeafCommand {
 
   @Option({
     key: 'target',
-    description: 'Even-length target address prefix',
+    description: "Target Bee node's overlay address prefix",
     required: true,
   })
   public target!: string
@@ -43,7 +43,7 @@ export class Send extends PssCommand implements LeafCommand {
 
   @Option({
     key: 'recipient',
-    description: 'Public PSS key of the recipient',
+    description: "Target Bee node's PSS public key for encryption",
   })
   public recipient!: string
 
