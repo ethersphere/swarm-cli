@@ -42,9 +42,8 @@ export class Receive extends PssCommand implements LeafCommand {
         stream.write(data)
       } else {
         // TODO: utf-8 decoding may fail, text is probably not the best choice here
-        const text = data.text()
-        this.console.log(text)
-        this.console.quiet(text)
+        this.console.log(this.receivedMessage)
+        this.console.quiet(this.receivedMessage)
       }
     } catch (error) {
       if (error.message === 'pssReceive timeout') {
