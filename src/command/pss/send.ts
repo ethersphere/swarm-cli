@@ -64,7 +64,7 @@ export class Send extends PssCommand implements LeafCommand {
 
         return
       }
-      this.message = readFileSync(this.path, 'binary')
+      this.message = readFileSync(this.path)
     } else {
       this.message = this.data
     }
