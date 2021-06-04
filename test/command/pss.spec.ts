@@ -36,6 +36,21 @@ describe('Test PSS command', () => {
     expect(receive.receivedMessage).toBe('Bzzz Bzzzz Bzzzz')
   })
 
+  it('should receive sent pss message with 0x target format', async () => {
+    const invocation = invokeTestCli([
+      'pss',
+      'receive',
+      '--bee-api-url',
+      'http://localhost:11633',
+      '--timeout',
+      '10000',
+    ])
+    await sleep(1000)
+    await invokeTestCli(['pss', 'send', '--target', '0xAB', '--data', 'Hello Swarm', ...getStampOption()])
+    const receive: Receive = (await invocation).runnable as Receive
+    expect(receive.receivedMessage).toBe('Hello Swarm')
+  })
+
   it('should receive sent pss message with in/out files', async () => {
     if (existsSync('test/testconfig/out.txt')) {
       unlinkSync('test/testconfig/out.txt')
