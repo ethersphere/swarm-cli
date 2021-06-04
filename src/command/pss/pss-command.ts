@@ -6,7 +6,7 @@ export class PssCommand extends RootCommand {
   @Option({
     key: 'topic',
     alias: 't',
-    description: 'Feed topic',
+    description: 'PSS topic',
     default: '0'.repeat(64),
     defaultDescription: '32 zero bytes',
   })
