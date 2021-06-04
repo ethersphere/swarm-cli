@@ -10,6 +10,8 @@ export class Subscribe extends PssCommand implements LeafCommand {
   public run(): void {
     super.init()
 
+    this.console.log('Subscribing for PSS messages on topic ' + this.topic)
+
     this.bee.pssSubscribe(this.topic, {
       onMessage: data => {
         this.console.log(data.text())

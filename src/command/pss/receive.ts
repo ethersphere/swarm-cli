@@ -18,6 +18,8 @@ export class Receive extends PssCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
+    this.console.log('Waiting for one PSS message on topic ' + this.topic)
+
     try {
       const data = await this.bee.pssReceive(this.topic, this.timeout)
 
