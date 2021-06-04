@@ -42,7 +42,7 @@ Running `swarm-cli` without arguments prints the available commands:
 
 ```
 $ swarm-cli
-Swarm CLI 0.6.0 - Manage your Bee node and interact with the Swarm network via the CLI
+Swarm CLI 0.9.0 - Manage your Bee node and interact with the Swarm network via the CLI
 
 █ Usage:
 
@@ -55,6 +55,7 @@ identity   Import, export and manage keypairs, identities
 feed       Upload, update and view feeds
 cheque     Deposit, withdraw and manage cheques
 stamp      Buy, list and show postage stamps
+pss        Send, receive, or subscribe to PSS messages
 
 Run 'swarm-cli GROUP --help' to see available commands in a group
 

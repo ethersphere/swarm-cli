@@ -1,10 +1,11 @@
-import { Reference, Topic } from '@ethersphere/bee-js'
+import { Reference } from '@ethersphere/bee-js'
 import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { getWalletFromIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
+import { getTopic } from '../../utils'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
@@ -28,16 +29,16 @@ export class FeedCommand extends RootCommand {
   })
   public topic!: string
 
-  @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
-  public password!: string
-
   @Option({ key: 'hash-topic', alias: 'H', type: 'boolean', description: 'Hash the topic to 32 bytes', default: false })
   public hashTopic!: boolean
+
+  @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
+  public password!: string
 
   protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
     this.console.dim('Updating feed...')
     const wallet = await this.getWallet()
-    const topic = this.getTopic()
+    const topic = getTopic(this.bee, this.console, this.topic, this.hashTopic)
     const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
     const { reference } = await writer.upload(this.stamp, chunkReference as Reference)
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())
@@ -51,33 +52,11 @@ export class FeedCommand extends RootCommand {
     this.console.quiet(manifest)
   }
 
-  protected getTopic(): string | Topic {
-    if (this.hashTopic) {
-      return this.bee.makeFeedTopic(this.topic)
-    }
-    this.enforceValidHexTopic()
-
-    return this.topic
-  }
-
   protected async getWallet(): Promise<Wallet> {
     const identity = this.getIdentity()
     const wallet = await getWalletFromIdentity(identity, this.password)
 
     return wallet
-  }
-
-  private enforceValidHexTopic(): void {
-    const hasCorrectLength = this.topic.startsWith('0x') ? this.topic.length === 66 : this.topic.length === 64
-    const hasCorrectPattern = new RegExp(/^(0x)?[a-f0-9]+$/g).test(this.topic)
-
-    if (!hasCorrectLength || !hasCorrectPattern) {
-      this.console.error('Error parsing topic!')
-      this.console.log('You can have it hashed to 32 bytes by passing the --hash-topic option.')
-      this.console.log('To provide the 32 bytes, please specify it in lower case hexadecimal format.')
-      this.console.log('The 0x prefix may be omitted.')
-      exit(1)
-    }
   }
 
   private getIdentity(): Identity {
