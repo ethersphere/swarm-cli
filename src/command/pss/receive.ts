@@ -38,6 +38,7 @@ export class Receive extends PssCommand implements LeafCommand {
       if (stream) {
         stream.write(data)
       } else {
+        // TODO: utf-8 decoding may fail, text is probably not the best choice here
         const text = data.text()
         this.console.log(text)
         this.console.quiet(text)
