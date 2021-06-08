@@ -133,7 +133,7 @@ You may need to pass topics on multiple occasions - for example, when uploading 
 
 Topics are 32-byte long identifiers, so you need 64 characters to write them out in hexadecimal string format.
 
-You can do that with the `--topic` or `-t` option, or alternatively take a shortcut and use a passphrase which will be hashed by `swarm-cli` for your convenience. It is available via the `--topic-passphrase` or `-T` option.
+You can do that with the `--topic` or `-t` option, or alternatively take a shortcut and use a human readable string which will be hashed by `swarm-cli` for your convenience. It is available via the `--topic-string` or `-T` option.
 
 Example:
 
@@ -144,10 +144,10 @@ swarm-cli feed upload [...] -T "Awesome Swarm Website"
 This is also indicated in the `--help` section:
 
 ```
--t --topic             32-byte long identifier in hexadecimal format    [hex-string][default all zeroes]
--T --topic-passphrase  Construct the topic from human readable strings                          [string]
+-t --topic         32-byte long identifier in hexadecimal format    [hex-string][default all zeroes]
+-T --topic-string  Construct the topic from human readable strings                          [string]
 
-Only one is required: [topic] or [topic-passphrase]
+Only one is required: [topic] or [topic-string]
 ```
 
 ## Config

@@ -13,11 +13,11 @@ export const topicProperties: IOption = {
   description: '32-byte long identifier in hexadecimal format',
   default: '0'.repeat(64),
   defaultDescription: 'all zeroes',
-  conflicts: 'topic-passphrase',
+  conflicts: 'topic-string',
 }
 
-export const topicPassphraseProperties: IOption = {
-  key: 'topic-passphrase',
+export const topicStringProperties: IOption = {
+  key: 'topic-string',
   alias: 'T',
   description: 'Construct the topic from human readable strings',
   conflicts: 'topic',

@@ -5,7 +5,7 @@ import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { getWalletFromIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
-import { stampProperties, topicPassphraseProperties, topicProperties } from '../../utils/option'
+import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
@@ -18,8 +18,8 @@ export class FeedCommand extends RootCommand {
   @Option(topicProperties)
   public topic!: string
 
-  @Option(topicPassphraseProperties)
-  public topicPassphrase!: string
+  @Option(topicStringProperties)
+  public topicString!: string
 
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
@@ -27,7 +27,7 @@ export class FeedCommand extends RootCommand {
   protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
     this.console.dim('Updating feed...')
     const wallet = await this.getWallet()
-    const topic = this.topic || this.bee.makeFeedTopic(this.topicPassphrase)
+    const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
     const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
     const { reference } = await writer.upload(this.stamp, chunkReference as Reference)
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())

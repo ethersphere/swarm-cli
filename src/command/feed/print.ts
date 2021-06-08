@@ -24,7 +24,7 @@ export class Print extends FeedCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const topic = this.topic || this.bee.makeFeedTopic(this.topicPassphrase)
+    const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
     const addressString = this.address || (await this.getAddressString())
     const reader = this.bee.makeFeedReader('sequence', topic, addressString)
     const { reference, feedIndex, feedIndexNext } = await reader.download()
