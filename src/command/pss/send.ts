@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
 import { fileExists } from '../../utils'
-import { isHexString } from '../../utils/hex'
+import { stampProperties } from '../../utils/option'
 import { PssCommand } from './pss-command'
 
 export class Send extends PssCommand implements LeafCommand {
@@ -10,18 +10,14 @@ export class Send extends PssCommand implements LeafCommand {
 
   public readonly description = 'Send a message to a target Bee node with Postage Service for Swarm'
 
-  @Option({
-    key: 'stamp',
-    description: 'ID of the postage stamp to use',
-    required: true,
-    noErrors: true,
-  })
+  @Option(stampProperties)
   public stamp!: string
 
   @Option({
     key: 'target',
     description: 'Overlay address prefix of the target Bee node',
     required: true,
+    type: 'hex-string',
   })
   public target!: string
 
@@ -51,12 +47,6 @@ export class Send extends PssCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
-
-    if (!isHexString(this.target) || this.target.length % 2 !== 0) {
-      this.console.error('Target must be an even-length hex string')
-
-      return
-    }
 
     if (this.path) {
       if (!fileExists(this.path)) {

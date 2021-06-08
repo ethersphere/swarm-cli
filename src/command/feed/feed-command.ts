@@ -5,32 +5,21 @@ import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { getWalletFromIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
-import { getTopic } from '../../utils'
+import { stampProperties, topicPassphraseProperties, topicProperties } from '../../utils/option'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
-  @Option({
-    key: 'stamp',
-    description: 'ID of the postage stamp to use',
-    required: true,
-    noErrors: true,
-  })
+  @Option(stampProperties)
   public stamp!: string
 
   @Option({ key: 'identity', alias: 'i', description: 'Name of the identity', required: true, conflicts: 'address' })
   public identity!: string
 
-  @Option({
-    key: 'topic',
-    alias: 't',
-    description: 'Feed topic',
-    default: '0'.repeat(64),
-    defaultDescription: '32 zero bytes',
-  })
+  @Option(topicProperties)
   public topic!: string
 
-  @Option({ key: 'hash-topic', alias: 'H', type: 'boolean', description: 'Hash the topic to 32 bytes', default: false })
-  public hashTopic!: boolean
+  @Option(topicPassphraseProperties)
+  public topicPassphrase!: string
 
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
@@ -38,7 +27,7 @@ export class FeedCommand extends RootCommand {
   protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
     this.console.dim('Updating feed...')
     const wallet = await this.getWallet()
-    const topic = getTopic(this.bee, this.console, this.topic, this.hashTopic)
+    const topic = this.topic || this.bee.makeFeedTopic(this.topicPassphrase)
     const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
     const { reference } = await writer.upload(this.stamp, chunkReference as Reference)
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())

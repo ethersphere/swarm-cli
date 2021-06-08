@@ -5,7 +5,6 @@ import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { pickStamp } from '../../service/stamp'
-import { getTopic } from '../../utils'
 import { FeedCommand } from './feed-command'
 
 export class Print extends FeedCommand implements LeafCommand {
@@ -25,7 +24,7 @@ export class Print extends FeedCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const topic = getTopic(this.bee, this.console, this.topic, this.hashTopic)
+    const topic = this.topic || this.bee.makeFeedTopic(this.topicPassphrase)
     const addressString = this.address || (await this.getAddressString())
     const reader = this.bee.makeFeedReader('sequence', topic, addressString)
     const { reference, feedIndex, feedIndexNext } = await reader.download()
