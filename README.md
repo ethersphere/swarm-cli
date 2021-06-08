@@ -89,6 +89,67 @@ In this example we are uploading the content of the `dist` folder. If the upload
 
 This URL will stay the same when we upload an updated version of the website. Because of this we can also put this URL into a reverse proxy configuration or use the reference (the hex string after the `/bzz/`) in an ENS record. There is more information about that in the [Bee documentation](https://docs.ethswarm.org/docs/getting-started/host-your-website-using-ens). The uploaded content can be found on the link in the line starting with `URL`. This will change every time the content is modified.
 
+## Usability Features
+
+### Numerical Separator and Units
+
+As most of the units are specified in wei and PLUR - the smallest denominations of currencies - they are a bit difficult to write out.
+
+To aid this, you may use underscores (`_`) and `K`, `M`, `B` and `T` units to make your numbers more comprehensible.
+
+Example:
+
+```
+swarm-cli stamp buy --amount 10M --depth 16 --gas-price 10_000_000_000_000
+```
+
+You may combine the two: `100_000T`.
+
+### Stamp Picker
+
+Unless you are running in `--quiet` mode, some options are not hard-required.
+
+Look for hints in the `--help` sections. Take the `upload` command for example:
+
+```
+█ Required Options:
+
+   --stamp   ID of the postage stamp to use  [required when quiet][string]
+```
+
+That means, you don't have to provide the postage stamp ID beforehand. Simply running `swarm-cli upload <path>` will prompt you with an interactive stamp picker:
+
+```
+? Please select a stamp for this action.
+
+  Stamp ID                                                         Utilization
+ (Use arrow keys)
+❯ b9d5bb548c2c209cb99cbb27b0bef59b8f0cd3558363e307f45177b5a64ad0c8 (1)
+```
+
+### Human Readable Topics
+
+You may need to pass topics on multiple occasions - for example, when uploading to feeds.
+
+Topics are 32-byte long identifiers, so you need 64 characters to write them out in hexadecimal string format.
+
+You can do that with the `--topic` or `-t` option, or alternatively take a shortcut and use a passphrase which will be hashed by `swarm-cli` for your convenience. It is available via the `--topic-passphrase` or `-T` option.
+
+Example:
+
+```
+swarm-cli feed upload [...] -T "Awesome Swarm Website"
+```
+
+This is also indicated in the `--help` section:
+
+```
+-t --topic             32-byte long identifier in hexadecimal format    [hex-string][default all zeroes]
+-T --topic-passphrase  Construct the topic from human readable strings                          [string]
+
+Only one is required: [topic] or [topic-passphrase]
+```
+
 ## Config
 
 The configuration file is placed in a hidden folder named swarm-cli.
