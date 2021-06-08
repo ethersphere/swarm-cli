@@ -26,7 +26,18 @@ describe('Specifying Topics', () => {
 
   beforeAll(async () => {
     await invokeTestCli(['identity', 'create', 'topic', '-P', 'topic'])
-    await invokeTestCli(['feed', 'upload', '-t', TOPIC_HEX, '-i', 'topic', '-P', 'topic', '.babelrc.js'])
+    await invokeTestCli([
+      'feed',
+      'upload',
+      '-t',
+      TOPIC_HEX,
+      '-i',
+      'topic',
+      '-P',
+      'topic',
+      '.babelrc.js',
+      ...getStampOption(),
+    ])
   })
 
   it('should be possible with --topic in pss', async () => {
