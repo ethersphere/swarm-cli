@@ -121,4 +121,10 @@ describe('Test Pinning command', () => {
     expect(consoleMessages).toHaveLength(4)
     expect(consoleMessages[3]).toContain('Reuploaded successfully.')
   })
+
+  it('should reupload all pinned content', async () => {
+    await invokeTestCli(['pinning', 'reupload-all'])
+    const last = consoleMessages[consoleMessages.length - 1]
+    expect(last).toMatch(/Reuploaded \d+ out of \d+ pinned chunks/)
+  })
 })
