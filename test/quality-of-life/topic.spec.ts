@@ -14,6 +14,9 @@ describe('Specifying Topics', () => {
   global.console.log = jest.fn(message => {
     consoleMessages.push(message)
   })
+  global.console.error = jest.fn(message => {
+    consoleMessages.push(message)
+  })
 
   if (existsSync(configFilePath)) unlinkSync(configFilePath)
 
@@ -58,5 +61,31 @@ describe('Specifying Topics', () => {
   it('should be possible with --topic-string in feed', async () => {
     await invokeTestCli(['feed', 'print', '-T', 'Awesome PSS Topic', '-i', 'topic', '-P', 'topic', ...getStampOption()])
     expect(consoleMessages[0]).toContain('052ea901df6cdb4d5b2244ff46d0a4988f208541fe34beadc69906b86b4b2b29')
+  })
+
+  it('should not be possible with both --topic and --topic-string in feed', async () => {
+    await invokeTestCli([
+      'feed',
+      'print',
+      '-t',
+      TOPIC_HEX,
+      '-T',
+      'Awesome PSS Topic',
+      '-i',
+      'topic',
+      '-P',
+      'topic',
+      ...getStampOption(),
+    ])
+    expect(consoleMessages[consoleMessages.length - 1]).toContain(
+      'topic and topic-string are incompatible, please only specify one.',
+    )
+  })
+
+  it('should not be possible with both --topic and --topic-string in pss', async () => {
+    await invokeTestCli(['pss', 'receive', '-T', 'Awesome PSS Topic', '-t', TOPIC_HEX, '--timeout', '1'])
+    expect(consoleMessages[consoleMessages.length - 1]).toContain(
+      'topic and topic-string are incompatible, please only specify one.',
+    )
   })
 })
