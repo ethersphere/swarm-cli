@@ -39,7 +39,7 @@ export class ChequeCommand extends RootCommand {
       const uncashedAmount = await this.getUncashedAmount(cheque.peer)
       results.push({
         address: cheque.peer,
-        amount: uncashedAmount,
+        amount: uncashedAmount && BigInt(uncashedAmount),
       })
     }
 
@@ -57,7 +57,7 @@ export class ChequeCommand extends RootCommand {
     try {
       const lastCashout = await this.beeDebug.getLastCashoutAction(address)
 
-      return lastCashout.uncashedAmount
+      return BigInt(lastCashout.uncashedAmount)
     } catch (error) {
       if (error.message === 'Not Found') {
         return BigInt(0)
