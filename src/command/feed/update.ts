@@ -12,7 +12,6 @@ export class Update extends FeedCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
-    await this.checkIdentity()
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)

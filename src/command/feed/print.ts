@@ -14,6 +14,7 @@ export class Print extends FeedCommand implements LeafCommand {
 
   @Option({
     key: 'address',
+    type: 'hex-string',
     alias: 'a',
     description: 'Public Ethereum Address for feed lookup',
     required: true,
@@ -48,6 +49,11 @@ export class Print extends FeedCommand implements LeafCommand {
 
   private async getAddressString(): Promise<string> {
     const identity = this.commandConfig.config.identities[this.identity]
+
+    if (!identity) {
+      this.console.error('No such identity')
+      exit(1)
+    }
 
     if (identity) {
       if (this.password) {

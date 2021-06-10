@@ -3,7 +3,7 @@ import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import { exit } from 'process'
-import { getWalletFromIdentity } from '../../service/identity'
+import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
 import { RootCommand } from '../root-command'
@@ -12,7 +12,13 @@ export class FeedCommand extends RootCommand {
   @Option(stampProperties)
   public stamp!: string
 
-  @Option({ key: 'identity', alias: 'i', description: 'Name of the identity', required: true, conflicts: 'address' })
+  @Option({
+    key: 'identity',
+    alias: 'i',
+    description: 'Name of the identity',
+    required: { when: 'quiet' },
+    conflicts: 'address',
+  })
   public identity!: string
 
   @Option(topicProperties)
@@ -42,30 +48,23 @@ export class FeedCommand extends RootCommand {
   }
 
   protected async getWallet(): Promise<Wallet> {
-    const identity = this.getIdentity()
-    const wallet = await getWalletFromIdentity(identity, this.password)
+    const identity = await this.getIdentity()
+    const wallet = await getWalletFromIdentity(this.console, this.quiet, identity, this.password)
 
     return wallet
   }
 
-  private getIdentity(): Identity {
-    const identity = this.commandConfig.config.identities[this.identity]
+  private async getIdentity(): Promise<Identity> {
+    const { identities } = this.commandConfig.config
 
-    if (!identity) {
-      this.console.error(`Invalid identity name: '${this.identity}'`)
-
-      exit(1)
+    if (this.identity && !identities[this.identity]) {
+      if (this.quiet) {
+        this.console.error('The provided identity does not exist.')
+        exit(1)
+      }
+      this.console.error('The provided identity does not exist. Please select one that exists.')
     }
 
-    return identity
-  }
-
-  protected async checkIdentity(): Promise<void> {
-    try {
-      await this.getWallet()
-    } catch (error) {
-      this.console.error(error.message)
-      exit(1)
-    }
+    return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
   }
 }
