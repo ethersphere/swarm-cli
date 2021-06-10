@@ -94,20 +94,19 @@ export class CommandLog {
    * @returns password
    */
   public async askForPassword(message: string): Promise<string> {
-    const passwordInput = await prompt({
+    const { value } = await prompt({
       type: 'password',
-      name: 'question',
+      name: 'value',
       message,
     })
-    const password = passwordInput.question
 
-    if (!password) {
+    if (!value) {
       this.error('You did not specify any password')
 
       exit(1)
     }
 
-    return password
+    return value
   }
 
   /**
