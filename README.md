@@ -127,6 +127,22 @@ That means, you don't have to provide the postage stamp ID beforehand. Simply ru
 ❯ b9d5bb548c2c209cb99cbb27b0bef59b8f0cd3558363e307f45177b5a64ad0c8 (1)
 ```
 
+### Identity Picker
+
+Similarly to Stamp Picker, when an identity is not provided, an interactive picker will be prompted.
+
+Take the command `feed upload` for example. Albeit it takes quite a lot of options, you can run it with typing as little as `feed upload <path>`.
+
+`swarm-cli` will take you through some prompts to interactively specify all required options, such as `identity`, `password` of the identity, and the mandatory `stamp`.
+
+Passing identities is also tolerant to errors, so if you provide one which does not exist, the output will tell you and you can correct it:
+
+```
+The provided identity does not exist. Please select one that exists.
+? Please select an identity for this action (Use arrow keys)
+❯ main 
+```
+
 ### Human Readable Topics
 
 You may need to pass topics on multiple occasions - for example, when uploading to feeds.
