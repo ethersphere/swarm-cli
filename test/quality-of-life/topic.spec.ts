@@ -43,12 +43,14 @@ describe('Specifying Topics', () => {
     ])
   })
 
-  it('should be possible with --topic in pss', async () => {
+  // TODO: https://github.com/ethersphere/bee/issues/2041
+  test.skip('should be possible with --topic in pss', async () => {
     await invokeTestCli(['pss', 'receive', '-t', TOPIC_HEX, '--timeout', '1'])
     expect(consoleMessages[0]).toContain('052ea901df6cdb4d5b2244ff46d0a4988f208541fe34beadc69906b86b4b2b29')
   })
 
-  it('should be possible with --topic-string in pss', async () => {
+  // TODO: https://github.com/ethersphere/bee/issues/2041
+  test.skip('should be possible with --topic-string in pss', async () => {
     await invokeTestCli(['pss', 'receive', '-T', 'Awesome PSS Topic', '--timeout', '1'])
     expect(consoleMessages[0]).toContain('052ea901df6cdb4d5b2244ff46d0a4988f208541fe34beadc69906b86b4b2b29')
   })

@@ -60,17 +60,37 @@ describe('Test PSS command', () => {
   })
 
   it('should not allow non-hex strings for target', async () => {
-    await invokeTestCli(['pss', 'send', '--target', 'bzzz', '--data', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'Test Topic',
+      '--target',
+      'bzzz',
+      '--data',
+      'Bzzz Bzzzz Bzzzz',
+      ...getStampOption(),
+    ])
     expect(getLastMessage()).toContain('Expected hex string for target, got bzzz')
   })
 
   it('should not allow odd-length strings for target', async () => {
-    await invokeTestCli(['pss', 'send', '--target', 'abc', '--data', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'Test Topic',
+      '--target',
+      'abc',
+      '--data',
+      'Bzzz Bzzzz Bzzzz',
+      ...getStampOption(),
+    ])
     expect(getLastMessage()).toContain('[target] must have even length')
   })
 
   it('should timeout during receive', async () => {
-    await invokeTestCli(['pss', 'receive', '--timeout', '1'])
+    await invokeTestCli(['pss', 'receive', '-T', 'Test Topic', '--timeout', '1'])
     expect(getLastMessage()).toContain('Receive timed out')
   })
 })
