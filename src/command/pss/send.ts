@@ -22,18 +22,18 @@ export class Send extends PssCommand implements LeafCommand {
   public target!: string
 
   @Option({
-    key: 'data',
+    key: 'message',
     description: 'Text message to send',
     required: true,
     conflicts: 'path',
   })
-  public data!: string
+  public message!: string
 
   @Option({
     key: 'path',
     description: 'Send raw data from file',
     required: true,
-    conflicts: 'data',
+    conflicts: 'message',
   })
   public path!: string
 
@@ -43,7 +43,7 @@ export class Send extends PssCommand implements LeafCommand {
   })
   public recipient!: string
 
-  message?: string | Uint8Array
+  sendable?: string | Uint8Array
 
   public async run(): Promise<void> {
     super.init()
@@ -54,9 +54,9 @@ export class Send extends PssCommand implements LeafCommand {
 
         return
       }
-      this.message = readFileSync(this.path)
+      this.sendable = readFileSync(this.path)
     } else {
-      this.message = this.data
+      this.sendable = this.message
     }
 
     if (!this.stamp) {
@@ -65,7 +65,7 @@ export class Send extends PssCommand implements LeafCommand {
 
     this.console.log('Sending PSS message on topic ' + this.topic)
 
-    await this.bee.pssSend(this.stamp, this.topic, this.target, this.message, this.recipient)
+    await this.bee.pssSend(this.stamp, this.topic, this.target, this.sendable, this.recipient)
     this.console.log('Message sent successfully.')
   }
 }
