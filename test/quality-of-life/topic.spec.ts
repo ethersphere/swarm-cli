@@ -84,7 +84,8 @@ describe('Specifying Topics', () => {
     )
   })
 
-  it('should not be possible with both --topic and --topic-string in pss', async () => {
+  // TODO: https://github.com/ethersphere/bee/issues/2041
+  test.skip('should not be possible with both --topic and --topic-string in pss', async () => {
     await invokeTestCli(['pss', 'receive', '-T', 'Awesome PSS Topic', '-t', TOPIC_HEX, '--timeout', '1'])
     expect(consoleMessages[consoleMessages.length - 1]).toContain(
       'topic and topic-string are incompatible, please only specify one.',
