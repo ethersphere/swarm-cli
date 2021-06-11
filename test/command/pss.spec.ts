@@ -68,7 +68,7 @@ describe('Test PSS command', () => {
       'pss',
       'send',
       '-T',
-      'Test Topic',
+      'PSS Test',
       '--target',
       'bzzz',
       '--message',
@@ -83,7 +83,7 @@ describe('Test PSS command', () => {
       'pss',
       'send',
       '-T',
-      'Test Topic',
+      'PSS Test',
       '--target',
       'abc',
       '--message',
@@ -94,7 +94,7 @@ describe('Test PSS command', () => {
   })
 
   it('should timeout during receive', async () => {
-    await invokeTestCli(['pss', 'receive', '-T', 'Test Topic', '--timeout', '1'])
+    await invokeTestCli(['pss', 'receive', '-T', 'PSS Test', '--timeout', '1'])
     expect(getLastMessage()).toContain('Receive timed out')
   })
 })
