@@ -3,34 +3,29 @@ import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { bold, green } from 'kleur'
 import { exit } from 'process'
-import { getWalletFromIdentity } from '../../service/identity'
+import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
-import { getTopic } from '../../utils'
+import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
-  @Option({
-    key: 'stamp',
-    description: 'ID of the postage stamp to use',
-    required: true,
-    noErrors: true,
-  })
+  @Option(stampProperties)
   public stamp!: string
 
-  @Option({ key: 'identity', alias: 'i', description: 'Name of the identity', required: true, conflicts: 'address' })
+  @Option({
+    key: 'identity',
+    alias: 'i',
+    description: 'Name of the identity',
+    required: { when: 'quiet' },
+    conflicts: 'address',
+  })
   public identity!: string
 
-  @Option({
-    key: 'topic',
-    alias: 't',
-    description: 'Feed topic',
-    default: '0'.repeat(64),
-    defaultDescription: '32 zero bytes',
-  })
+  @Option(topicProperties)
   public topic!: string
 
-  @Option({ key: 'hash-topic', alias: 'H', type: 'boolean', description: 'Hash the topic to 32 bytes', default: false })
-  public hashTopic!: boolean
+  @Option(topicStringProperties)
+  public topicString!: string
 
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
@@ -38,7 +33,7 @@ export class FeedCommand extends RootCommand {
   protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
     this.console.dim('Updating feed...')
     const wallet = await this.getWallet()
-    const topic = getTopic(this.bee, this.console, this.topic, this.hashTopic)
+    const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
     const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
     const { reference } = await writer.upload(this.stamp, chunkReference as Reference)
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())
@@ -53,30 +48,23 @@ export class FeedCommand extends RootCommand {
   }
 
   protected async getWallet(): Promise<Wallet> {
-    const identity = this.getIdentity()
-    const wallet = await getWalletFromIdentity(identity, this.password)
+    const identity = await this.getIdentity()
+    const wallet = await getWalletFromIdentity(this.console, this.quiet, identity, this.password)
 
     return wallet
   }
 
-  private getIdentity(): Identity {
-    const identity = this.commandConfig.config.identities[this.identity]
+  private async getIdentity(): Promise<Identity> {
+    const { identities } = this.commandConfig.config
 
-    if (!identity) {
-      this.console.error(`Invalid identity name: '${this.identity}'`)
-
-      exit(1)
+    if (this.identity && !identities[this.identity]) {
+      if (this.quiet) {
+        this.console.error('The provided identity does not exist.')
+        exit(1)
+      }
+      this.console.error('The provided identity does not exist. Please select one that exists.')
     }
 
-    return identity
-  }
-
-  protected async checkIdentity(): Promise<void> {
-    try {
-      await this.getWallet()
-    } catch (error) {
-      this.console.error(error.message)
-      exit(1)
-    }
+    return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
   }
 }

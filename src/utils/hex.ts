@@ -45,26 +45,3 @@ export function bytesToHex(bytes: Uint8Array, withPrefix = false): HexString {
 
   return `${prefix}${hex}` as HexString
 }
-
-/**
- * Type guard for HexStrings
- *
- * @param s string input
- */
-export function isHexString(s: string): s is HexString {
-  return /^(0x)?[0-9a-fA-F]+$/i.test(s)
-}
-
-/**
- * Verifies if the provided input is a HexString.
- *
- * @param s string input
- *
- * @returns HexString or throws error
- */
-export function verifyHex(s: string): HexString | never {
-  if (isHexString(s)) {
-    return s
-  }
-  throw new Error(`verifyHex: not valid hex string: ${s}`)
-}

@@ -94,20 +94,19 @@ export class CommandLog {
    * @returns password
    */
   public async askForPassword(message: string): Promise<string> {
-    const passwordInput = await prompt({
+    const { value } = await prompt({
       type: 'password',
-      name: 'question',
+      name: 'value',
       message,
     })
-    const password = passwordInput.question
 
-    if (!password) {
+    if (!value) {
       this.error('You did not specify any password')
 
       exit(1)
     }
 
-    return password
+    return value
   }
 
   /**
@@ -134,14 +133,20 @@ export class CommandLog {
     return result.value
   }
 
-  public printBeeError(error: BeeError, options?: BeeErrorOptions): void {
-    if (isInternalServerError(error)) {
+  public printBeeError(error: Error | BeeError | string, options?: BeeErrorOptions): void {
+    if (typeof error === 'string') {
+      this.error(error)
+    } else if (isInternalServerError(error)) {
       this.error('Internal Server Error')
       this.error('Check your Bee log to see what went wrong.')
     } else if (isNotFoundError(error) && options?.notFoundMessage) {
       this.error(options.notFoundMessage)
-    } else {
+    } else if (error.message) {
       this.error(error.message)
+    } else {
+      this.error('Failed to run command!')
+      this.error('')
+      this.error('Check your Bee log to see what went wrong.')
     }
   }
 }

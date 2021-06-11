@@ -61,12 +61,12 @@ describe('Test PSS command', () => {
 
   it('should not allow non-hex strings for target', async () => {
     await invokeTestCli(['pss', 'send', '--target', 'bzzz', '--data', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
-    expect(getLastMessage()).toContain('Target must be an even-length hex string')
+    expect(getLastMessage()).toContain('Expected hex string for target, got bzzz')
   })
 
   it('should not allow odd-length strings for target', async () => {
     await invokeTestCli(['pss', 'send', '--target', 'abc', '--data', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
-    expect(getLastMessage()).toContain('Target must be an even-length hex string')
+    expect(getLastMessage()).toContain('[target] must have even length')
   })
 
   it('should timeout during receive', async () => {

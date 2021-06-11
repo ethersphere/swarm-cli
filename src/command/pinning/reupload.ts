@@ -8,7 +8,13 @@ export class Reupload extends PinningCommand implements LeafCommand {
 
   public readonly description = 'Reupload locally pinned content'
 
-  @Argument({ key: 'address', description: 'Pin address, reference of the collection or feed', required: true })
+  @Argument({
+    key: 'address',
+    type: 'hex-string',
+    description: 'Pin address, reference of the collection or feed',
+    required: true,
+    length: 64,
+  })
   public address!: string
 
   public async run(): Promise<void> {

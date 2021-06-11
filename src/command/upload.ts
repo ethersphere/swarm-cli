@@ -9,6 +9,7 @@ import { basename, join } from 'path'
 import { exit } from 'process'
 import { pickStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
+import { stampProperties } from '../utils/option'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
@@ -24,12 +25,7 @@ export class Upload extends RootCommand implements LeafCommand {
   @Argument({ key: 'path', description: 'Path to the file or folder', required: true })
   public path!: string
 
-  @Option({
-    key: 'stamp',
-    description: 'ID of the postage stamp to use',
-    required: true,
-    noErrors: true,
-  })
+  @Option(stampProperties)
   public stamp!: string
 
   @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the node' })
