@@ -103,7 +103,8 @@ describe('Test Pinning command', () => {
     expect(consoleMessages[1]).toContain('No pinned chunk found with that address.')
   })
 
-  it('should allow reuploading pinned file', async () => {
+  // FIXME https://github.com/ethersphere/bee/issues/1897
+  test.skip('should allow reuploading pinned file', async () => {
     const invocation = await invokeTestCli(['upload', 'README.md', '--pin', ...getStampOption()])
     const upload = invocation.runnable as Upload
     const { hash } = upload
