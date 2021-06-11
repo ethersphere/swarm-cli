@@ -33,7 +33,17 @@ describe('Test PSS command', () => {
       '10000',
     ])
     await sleep(1000)
-    await invokeTestCli(['pss', 'send', '--target', '00', '--message', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
+    await invokeTestCli([
+      'pss',
+      'send',
+      '--topic-string',
+      'PSS Test',
+      '--target',
+      '00',
+      '--message',
+      'Bzzz Bzzzz Bzzzz',
+      ...getStampOption(),
+    ])
     const receive: Receive = (await invocation).runnable as Receive
     expect(receive.receivedMessage).toBe('Bzzz Bzzzz Bzzzz')
   })
@@ -56,7 +66,17 @@ describe('Test PSS command', () => {
       'test/testconfig/out.txt',
     ])
     await sleep(1000)
-    await invokeTestCli(['pss', 'send', '--target', '00', '--path', 'test/testconfig/in.txt', ...getStampOption()])
+    await invokeTestCli([
+      'pss',
+      'send',
+      '--topic-string',
+      'PSS Test',
+      '--target',
+      '00',
+      '--path',
+      'test/testconfig/in.txt',
+      ...getStampOption(),
+    ])
     await sleep(1000)
     expect(existsSync('test/testconfig/out.txt')).toBeTruthy()
     const messageFromFile = readFileSync('test/testconfig/out.txt', 'ascii')
