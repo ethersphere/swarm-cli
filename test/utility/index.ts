@@ -28,9 +28,12 @@ export function describeCommand(
   describe(description, () => {
     const consoleMessages: string[] = []
     const configFileName = options?.configFileName
-    const configFolderPath = join(__dirname, '..', 'testconfig')
     const getNthLastMessage = (n: number) => consoleMessages[consoleMessages.length - n]
     const getLastMessage = () => consoleMessages[consoleMessages.length - 1]
+    const configFolderPath = join(__dirname, '..', 'testconfig')
+
+    //set config environment variable
+    process.env.SWARM_CLI_CONFIG_FOLDER = configFolderPath
 
     global.console.log = jest.fn(message => {
       consoleMessages.push(message)
@@ -58,7 +61,6 @@ export function describeCommand(
       const configFilePath = join(configFolderPath, fileName)
 
       //set config environment variable
-      process.env.SWARM_CLI_CONFIG_FOLDER = configFolderPath
       process.env.SWARM_CLI_CONFIG_FILE = fileName
       process.env.SWARM_CLI_CONFIG_FILE_PATH = configFilePath
 
