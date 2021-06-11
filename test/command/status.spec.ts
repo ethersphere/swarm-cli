@@ -1,25 +1,11 @@
 import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
-import { invokeTestCli } from '../utility'
+import { describeCommand, invokeTestCli } from '../utility'
 
-describe('Test Status command', () => {
-  const consoleMessages: string[] = []
+describeCommand('Test Status command', ({ consoleMessages }) => {
   const server = createChequeMockHttpServer(1333)
-
-  beforeAll(() => {
-    global.console.log = jest.fn(message => {
-      consoleMessages.push(message)
-    })
-    global.console.error = jest.fn(message => {
-      consoleMessages.push(message)
-    })
-  })
 
   afterAll(() => {
     server.close()
-  })
-
-  beforeEach(() => {
-    consoleMessages.length = 0
   })
 
   it('should succeed with all checks', async () => {

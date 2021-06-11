@@ -1,31 +1,20 @@
 import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
-import { invokeTestCli } from '../utility'
+import { describeCommand, invokeTestCli } from '../utility'
 
-const server = createChequeMockHttpServer(1378)
-const consoleMessages: string[] = []
+describeCommand('Test Monetary units', ({ consoleMessages }) => {
+  const server = createChequeMockHttpServer(1378)
 
-const containsAllSubstrings = (string: string, substrings: string[]): boolean => {
-  return substrings.every(substring => string.includes(substring))
-}
+  const containsAllSubstrings = (string: string, substrings: string[]): boolean => {
+    return substrings.every(substring => string.includes(substring))
+  }
 
-const substringsPrinted = (substrings: string[]): boolean => {
-  return Boolean(consoleMessages.find(message => containsAllSubstrings(message, substrings)))
-}
+  const substringsPrinted = (substrings: string[]): boolean => {
+    return Boolean(consoleMessages.find(message => containsAllSubstrings(message, substrings)))
+  }
 
-const expectSubstringsPrinted = (...substrings: string[]): void => {
-  expect(substringsPrinted(substrings)).toBe(true)
-}
-
-describe('Test Monetary units', () => {
-  beforeAll(() => {
-    global.console.log = jest.fn(message => {
-      consoleMessages.push(message)
-    })
-  })
-
-  beforeEach(() => {
-    consoleMessages.length = 0
-  })
+  const expectSubstringsPrinted = (...substrings: string[]): void => {
+    expect(substringsPrinted(substrings)).toBe(true)
+  }
 
   afterAll(() => {
     server.close()

@@ -1,22 +1,8 @@
 import type { Upload } from '../../src/command/upload'
-import { invokeTestCli } from '../utility'
+import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
-describe('Test Upload command', () => {
-  let consoleMessages: string[] = []
-
-  beforeAll(() => {
-    global.console.log = jest.fn(message => {
-      consoleMessages.push(message)
-    })
-    jest.spyOn(global.console, 'warn')
-  })
-
-  beforeEach(() => {
-    //clear stored console messages
-    consoleMessages = []
-  })
-
+describeCommand('Test Upload command', () => {
   it('should upload testpage folder', async () => {
     const commandKey = 'upload'
     const uploadFolderPath = `${__dirname}/../testpage`
