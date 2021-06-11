@@ -25,6 +25,8 @@ describe('Test PSS command', () => {
     const invocation = invokeTestCli([
       'pss',
       'receive',
+      '--topic-string',
+      'PSS Test',
       '--bee-api-url',
       'http://localhost:11633',
       '--timeout',
@@ -44,6 +46,8 @@ describe('Test PSS command', () => {
     invokeTestCli([
       'pss',
       'receive',
+      '--topic-string',
+      'PSS Test',
       '--bee-api-url',
       'http://localhost:11633',
       '--timeout',
@@ -90,7 +94,7 @@ describe('Test PSS command', () => {
   })
 
   it('should timeout during receive', async () => {
-    await invokeTestCli(['pss', 'receive', '-T', 'Test Topic', '--timeout', '1'])
+    await invokeTestCli(['pss', 'receive', '--topic-string', 'PSS Test', '-T', 'Test Topic', '--timeout', '1'])
     expect(getLastMessage()).toContain('Receive timed out')
   })
 })
