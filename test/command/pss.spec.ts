@@ -25,13 +25,25 @@ describe('Test PSS command', () => {
     const invocation = invokeTestCli([
       'pss',
       'receive',
+      '--topic-string',
+      'PSS Test',
       '--bee-api-url',
       'http://localhost:11633',
       '--timeout',
       '10000',
     ])
     await sleep(1000)
-    await invokeTestCli(['pss', 'send', '--target', '00', '--data', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
+    await invokeTestCli([
+      'pss',
+      'send',
+      '--topic-string',
+      'PSS Test',
+      '--target',
+      '00',
+      '--message',
+      'Bzzz Bzzzz Bzzzz',
+      ...getStampOption(),
+    ])
     const receive: Receive = (await invocation).runnable as Receive
     expect(receive.receivedMessage).toBe('Bzzz Bzzzz Bzzzz')
   })
@@ -44,6 +56,8 @@ describe('Test PSS command', () => {
     invokeTestCli([
       'pss',
       'receive',
+      '--topic-string',
+      'PSS Test',
       '--bee-api-url',
       'http://localhost:11633',
       '--timeout',
@@ -52,7 +66,17 @@ describe('Test PSS command', () => {
       'test/testconfig/out.txt',
     ])
     await sleep(1000)
-    await invokeTestCli(['pss', 'send', '--target', '00', '--path', 'test/testconfig/in.txt', ...getStampOption()])
+    await invokeTestCli([
+      'pss',
+      'send',
+      '--topic-string',
+      'PSS Test',
+      '--target',
+      '00',
+      '--path',
+      'test/testconfig/in.txt',
+      ...getStampOption(),
+    ])
     await sleep(1000)
     expect(existsSync('test/testconfig/out.txt')).toBeTruthy()
     const messageFromFile = readFileSync('test/testconfig/out.txt', 'ascii')
@@ -60,17 +84,37 @@ describe('Test PSS command', () => {
   })
 
   it('should not allow non-hex strings for target', async () => {
-    await invokeTestCli(['pss', 'send', '--target', 'bzzz', '--data', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'PSS Test',
+      '--target',
+      'bzzz',
+      '--message',
+      'Bzzz Bzzzz Bzzzz',
+      ...getStampOption(),
+    ])
     expect(getLastMessage()).toContain('Expected hex string for target, got bzzz')
   })
 
   it('should not allow odd-length strings for target', async () => {
-    await invokeTestCli(['pss', 'send', '--target', 'abc', '--data', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'PSS Test',
+      '--target',
+      'abc',
+      '--message',
+      'Bzzz Bzzzz Bzzzz',
+      ...getStampOption(),
+    ])
     expect(getLastMessage()).toContain('[target] must have even length')
   })
 
   it('should timeout during receive', async () => {
-    await invokeTestCli(['pss', 'receive', '--timeout', '1'])
+    await invokeTestCli(['pss', 'receive', '-T', 'PSS Test', '--timeout', '1'])
     expect(getLastMessage()).toContain('Receive timed out')
   })
 })
