@@ -31,7 +31,7 @@ describe('Test PSS command', () => {
       '10000',
     ])
     await sleep(1000)
-    await invokeTestCli(['pss', 'send', '--target', '00', '--data', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
+    await invokeTestCli(['pss', 'send', '--target', '00', '--message', 'Bzzz Bzzzz Bzzzz', ...getStampOption()])
     const receive: Receive = (await invocation).runnable as Receive
     expect(receive.receivedMessage).toBe('Bzzz Bzzzz Bzzzz')
   })
@@ -67,7 +67,7 @@ describe('Test PSS command', () => {
       'Test Topic',
       '--target',
       'bzzz',
-      '--data',
+      '--message',
       'Bzzz Bzzzz Bzzzz',
       ...getStampOption(),
     ])
@@ -82,7 +82,7 @@ describe('Test PSS command', () => {
       'Test Topic',
       '--target',
       'abc',
-      '--data',
+      '--message',
       'Bzzz Bzzzz Bzzzz',
       ...getStampOption(),
     ])
