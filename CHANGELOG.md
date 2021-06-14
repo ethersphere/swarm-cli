@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.0](https://www.github.com/ethersphere/swarm-cli/compare/v0.9.0...v0.10.0) (2021-06-11)
+
+
+### Features
+
+* add number separators, units, conditional required, hex strings ([#137](https://www.github.com/ethersphere/swarm-cli/issues/137)) ([397680d](https://www.github.com/ethersphere/swarm-cli/commit/397680d5e7a239b3c41b8da4d406e349f1bea76a))
+* add pinning reupload-all ([#138](https://www.github.com/ethersphere/swarm-cli/issues/138)) ([31a69ea](https://www.github.com/ethersphere/swarm-cli/commit/31a69ea8de92cc3066f55188f30d9390028e4f7a))
+
+
+### Bug Fixes
+
+* remove topic option from pss commands ([#144](https://www.github.com/ethersphere/swarm-cli/issues/144)) ([76e7f51](https://www.github.com/ethersphere/swarm-cli/commit/76e7f51d4c2129e7cf1e57f47cda2b76a29af10d))
+
 ## [0.9.0](https://www.github.com/ethersphere/swarm-cli/compare/v0.8.0...v0.9.0) (2021-06-04)
 
 
