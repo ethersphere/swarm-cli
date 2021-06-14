@@ -11,7 +11,7 @@
 
 # Description
 
-> Command line interface tool for manage Bee node and utilize its functionalities
+> Manage your Bee node and interact with the Swarm network via the CLI
 
 The goal of this project is to handle most of the Swarm operations through CLI at some point in the future.
 For currently supported operations, see [Commands](##Commands) section.
@@ -164,6 +164,57 @@ This is also indicated in the `--help` section:
 -T --topic-string  Construct the topic from human readable strings                          [string]
 
 Only one is required: [topic] or [topic-string]
+```
+
+### Automatizing tasks with Swarm-CLI
+
+Running `swarm-cli` with the flag `--quiet` (or `-q` for short) disables all interactive features, and makes commands print information in an easily parsable format. The exit code also indicates whether running the command was successful or not. These may be useful for automatizing tasks both in CI environments and in your terminal too.
+
+Below you will find a few snippets to give an idea how it can be used to compose tasks.
+
+#### Connectivity
+
+Exit if not all status checks succeed:
+
+```
+swarm-cli status -q || exit 1
+```
+
+Check Bee API connection, compatibility does not matter:
+
+```
+swarm-cli status -q | head -n 1 | grep "^OK"
+```
+
+#### Postage Stamps
+
+Grab the first postage stamp:
+
+```
+swarm-cli stamp list -q | head -n 1 | awk '{ print $1 }'
+```
+
+
+List all postage stamps with zero utilization:
+
+```
+swarm-cli stamp list -q | awk '{ if ($2 == 0) print $1 }'
+```
+
+
+Sort postage stamps based on utilization (least utilized comes first):
+
+```
+swarm-cli stamp list -q | sort -k 2
+```
+
+#### Uploading
+
+Upload a file with the least utilized postage stamp:
+
+```
+STAMP=$(swarm-cli stamp list -q | sort -k 2 | head -n 1 | awk '{ print $1 }')
+swarm-cli upload -q README.md --stamp $STAMP
 ```
 
 ## Config
