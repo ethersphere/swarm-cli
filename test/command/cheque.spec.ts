@@ -15,7 +15,7 @@ async function runCommandAndExpectError(
 
 describeCommand(
   'Test Cheque command',
-  ({ consoleMessages }) => {
+  ({ consoleMessages, getNthLastMessage, getLastMessage }) => {
     let server: Server
 
     beforeAll(() => {
@@ -29,56 +29,46 @@ describeCommand(
     it('should print helpful error message when api is unavailable', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:16737'
       await invokeTestCli(['cheque', 'list'])
-      const length = consoleMessages.length
-      expect(consoleMessages[length - 3]).toBe(
-        bold().white().bgRed('Could not reach Debug API at http://localhost:16737'),
-      )
-      expect(consoleMessages[length - 2]).toBe(
+      expect(getNthLastMessage(3)).toBe(bold().white().bgRed('Could not reach Debug API at http://localhost:16737'))
+      expect(getNthLastMessage(2)).toBe(
         bold().white().bgRed('Make sure you have the Debug API enabled in your Bee config'),
       )
-      expect(consoleMessages[length - 1]).toBe(
-        bold().white().bgRed('or correct the URL with the --bee-debug-api-url option.'),
-      )
+      expect(getLastMessage()).toBe(bold().white().bgRed('or correct the URL with the --bee-debug-api-url option.'))
     })
 
     it('should print cheques', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
       await invokeTestCli(['cheque', 'list'])
-      const length = consoleMessages.length
-      expect(consoleMessages[length - 1]).toBe(bold('Cheque Value: ') + '8944000000000 PLUR')
+      expect(getLastMessage()).toBe(bold('Cheque Value: ') + '8944000000000 PLUR')
     })
 
     it('should not print cheques when --minimum is higher', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
       await invokeTestCli(['cheque', 'list', '--minimum', '10000000000000000000'])
-      const length = consoleMessages.length
-      expect(consoleMessages[length - 1]).toContain('No uncashed cheques found')
+      expect(getLastMessage()).toContain('No uncashed cheques found')
     })
 
     it('should print cheques when --minimum is lower', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
       await invokeTestCli(['cheque', 'list', '--minimum', '1000'])
-      const length = consoleMessages.length
-      expect(consoleMessages[length - 1]).toContain('Cheque Value')
+      expect(getLastMessage()).toContain('Cheque Value')
     })
 
     it('should print balance', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
       await invokeTestCli(['cheque', 'balance'])
-      const length = consoleMessages.length
-      expect(consoleMessages[length - 2]).toBe(bold('Total: ') + '100026853000000000 PLUR')
-      expect(consoleMessages[length - 1]).toBe(bold('Available: ') + '100018560000000000 PLUR')
+      expect(getNthLastMessage(2)).toBe(bold('Total: ') + '100026853000000000 PLUR')
+      expect(getLastMessage()).toBe(bold('Available: ') + '100018560000000000 PLUR')
     })
 
     it('should cashout all cheques', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
       await invokeTestCli(['cheque', 'cashout', '--all'])
-      const length = consoleMessages.length
-      expect(consoleMessages[length - 3]).toBe(
+      expect(getNthLastMessage(3)).toBe(
         bold('Peer Address: ') + '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
       )
-      expect(consoleMessages[length - 2]).toBe(bold('Cheque Value: ') + '8944000000000 PLUR')
-      expect(consoleMessages[length - 1]).toBe(
+      expect(getNthLastMessage(2)).toBe(bold('Cheque Value: ') + '8944000000000 PLUR')
+      expect(getLastMessage()).toBe(
         green(bold('Tx:           ')) + '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
       )
     })
@@ -86,8 +76,7 @@ describeCommand(
     it('should allow specifying gas price and limit for cashout', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
       await invokeTestCli(['cheque', 'cashout', '--all', '--gas-price', '100', '--gas-limit', '100'])
-      const length = consoleMessages.length
-      expect(consoleMessages[length - 1]).toBe(
+      expect(getLastMessage()).toBe(
         green(bold('Tx:           ')) + '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
       )
     })
@@ -95,8 +84,7 @@ describeCommand(
     it('should not cashout any cheques when --minimum is higher', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
       await invokeTestCli(['cheque', 'cashout', '--all', '--minimum', '10000000000000000000'])
-      const length = consoleMessages.length
-      expect(consoleMessages[length - 1]).toContain('Found 0 cheques')
+      expect(getLastMessage()).toContain('Found 0 cheques')
     })
 
     it('should cashout one specific cheque', async () => {
@@ -107,12 +95,11 @@ describeCommand(
         '--peer',
         '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
       ])
-      const length = consoleMessages.length
-      expect(consoleMessages[length - 3]).toBe(
+      expect(getNthLastMessage(3)).toBe(
         bold('Peer Address: ') + '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
       )
-      expect(consoleMessages[length - 2]).toBe(bold('Cheque Value: ') + '8944000000000 PLUR')
-      expect(consoleMessages[length - 1]).toBe(
+      expect(getNthLastMessage(2)).toBe(bold('Cheque Value: ') + '8944000000000 PLUR')
+      expect(getLastMessage()).toBe(
         green(bold('Tx:           ')) + '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
       )
     })

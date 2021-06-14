@@ -7,7 +7,7 @@ import { describeCommand, invokeTestCli } from '../utility'
 
 describeCommand(
   'Test Identity command',
-  ({ consoleMessages, configFolderPath }) => {
+  ({ consoleMessages, configFolderPath, getLastMessage }) => {
     const existFile = promisify(access)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const configFilePath = process.env.SWARM_CLI_CONFIG_FILE_PATH!
@@ -61,8 +61,7 @@ describeCommand(
       // then export it
       await invokeTestCli(['identity', 'export', 'v3-identity'])
       // and check if the last console message looked like a v3 wallet json
-      const exportIndex = consoleMessages.length - 1
-      expect(consoleMessages[exportIndex]).toContain('"ciphertext"')
+      expect(getLastMessage()).toContain('"ciphertext"')
     })
 
     it('should import v3 identity', async () => {

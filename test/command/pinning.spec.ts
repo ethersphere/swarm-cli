@@ -12,7 +12,7 @@ async function uploadAndGetHash(path: string, indexDocument?: string): Promise<s
 
 describeCommand(
   'Test Pinning command',
-  ({ consoleMessages }) => {
+  ({ consoleMessages, getLastMessage }) => {
     it('should pin a collection with index.html index document', async () => {
       const hash = await uploadAndGetHash('test/testpage')
       expect(hash).toMatch(/[a-z0-9]{64}/)
@@ -99,8 +99,7 @@ describeCommand(
 
     it('should reupload all pinned content', async () => {
       await invokeTestCli(['pinning', 'reupload-all'])
-      const last = consoleMessages[consoleMessages.length - 1]
-      expect(last).toMatch(/Reuploaded \d+ out of \d+ pinned chunks/)
+      expect(getLastMessage()).toMatch(/Reuploaded \d+ out of \d+ pinned chunks/)
     })
   },
   { configFileName: 'pinning' },

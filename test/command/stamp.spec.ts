@@ -25,7 +25,7 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
   })
 
   it('should buy stamp', async () => {
-    await invokeTestCli(['stamp', 'buy', '--amount', '100', '--depth', '20'])
+    await invokeTestCli(['stamp', 'buy', '--amount', '100000', '--depth', '20'])
     expect(getLastMessage()).toContain('Stamp ID:')
   })
 
