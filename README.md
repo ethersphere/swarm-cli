@@ -9,6 +9,34 @@
 
 **Warning: This project is in alpha state. There might (and most probably will) be changes in the future to its API and working. Also, no guarantees can be made about its stability, efficiency, and security at this stage.**
 
+# Table of Contents
+
+* [Swarm-CLI](#swarm-cli)
+* [Table of Contents](#table-of-contents)
+* [Description](#description)
+   * [Installation](#installation)
+      * [From npm](#from-npm)
+      * [From source](#from-source)
+   * [Usage](#usage)
+   * [Commands](#commands)
+   * [Example usage](#example-usage)
+   * [Usability Features](#usability-features)
+      * [Numerical Separator and Units](#numerical-separator-and-units)
+      * [Stamp Picker](#stamp-picker)
+      * [Identity Picker](#identity-picker)
+      * [Human Readable Topics](#human-readable-topics)
+      * [Automatizing tasks with Swarm-CLI](#automatizing-tasks-with-swarm-cli)
+         * [Connectivity](#connectivity)
+         * [Postage Stamps](#postage-stamps)
+         * [Uploading](#uploading)
+   * [Config](#config)
+   * [Assignment priority](#assignment-priority)
+   * [System environment](#system-environment)
+* [Development](#development)
+* [Contribute](#contribute)
+* [Maintainers](#maintainers)
+* [License](#license)
+
 # Description
 
 > Manage your Bee node and interact with the Swarm network via the CLI
