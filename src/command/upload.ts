@@ -3,6 +3,8 @@ import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
+import getFolderSize from 'get-folder-size'
+import inquirer from 'inquirer'
 import { bold, green } from 'kleur'
 import ora from 'ora'
 import { basename, join } from 'path'
@@ -12,6 +14,8 @@ import { fileExists, isGateway, sleep } from '../utils'
 import { stampProperties } from '../utils/option'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
+
+const MAX_SIZE = 100 * 1000 * 1000 // 100 megabytes
 
 export class Upload extends RootCommand implements LeafCommand {
   // CLI FIELDS
@@ -30,6 +34,14 @@ export class Upload extends RootCommand implements LeafCommand {
 
   @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the node' })
   public pin!: boolean
+
+  @Option({
+    key: 'size-check',
+    type: 'boolean',
+    description: 'Check for optimal file or folder sizes before uploading',
+    default: true,
+  })
+  public sizeCheck!: boolean
 
   @Option({
     key: 'skip-sync',
@@ -107,6 +119,8 @@ export class Upload extends RootCommand implements LeafCommand {
       exit(1)
     }
 
+    await this.maybeRunSizeChecks()
+
     const spinner: ora.Ora = ora('Uploading files...')
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
@@ -114,7 +128,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     try {
-      if (FS.lstatSync(this.path).isDirectory()) {
+      if (FS.statSync(this.path).isDirectory()) {
         url = await this.uploadFolder(this.stamp, tag)
       } else {
         url = await this.uploadSingleFileAsFileList(this.stamp, tag)
@@ -229,6 +243,48 @@ export class Upload extends RootCommand implements LeafCommand {
       this.console.dim('Data has been synced on Swarm network')
 
       return true
+    }
+  }
+
+  private async maybeRunSizeChecks(): Promise<void> {
+    if (!this.sizeCheck) {
+      return
+    }
+    const { size, isDirectory } = await this.getUploadableInfo()
+
+    if (size < MAX_SIZE) {
+      return
+    }
+
+    const message = `${isDirectory ? 'Folder' : 'File'} size is larger than recommended value.`
+
+    if (this.quiet) {
+      this.console.error(message)
+      this.console.error('Pass --size-check false to ignore this warning.')
+      exit(1)
+    }
+    const { value } = await inquirer.prompt({
+      type: 'confirm',
+      name: 'value',
+      message: message + ' Do you want to proceed?',
+    })
+
+    if (!value) {
+      exit(1)
+    }
+  }
+
+  private async getUploadableInfo(): Promise<{
+    size: number
+    isDirectory: boolean
+  }> {
+    const stats = FS.lstatSync(this.path)
+    const size = stats.isDirectory() ? await getFolderSize.loose(this.path) : stats.size
+    this.console.verbose('Upload size is approximately ' + (size / 1000 / 1000).toFixed(2) + ' megabytes')
+
+    return {
+      size,
+      isDirectory: stats.isDirectory(),
     }
   }
 }
