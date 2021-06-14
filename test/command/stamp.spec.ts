@@ -1,22 +1,6 @@
-import { invokeTestCli } from '../utility'
+import { describeCommand, invokeTestCli } from '../utility'
 
-describe('Test Stamp command', () => {
-  const consoleMessages: string[] = []
-  const getLastMessage = () => consoleMessages[consoleMessages.length - 1]
-
-  beforeAll(() => {
-    global.console.log = jest.fn(message => {
-      consoleMessages.push(message)
-    })
-    global.console.error = jest.fn(message => {
-      consoleMessages.push(message)
-    })
-  })
-
-  beforeEach(() => {
-    consoleMessages.length = 0
-  })
-
+describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
   it('should list stamps', async () => {
     await invokeTestCli(['stamp', 'list'])
     expect(consoleMessages[1]).toContain('Stamp ID:')
@@ -41,7 +25,7 @@ describe('Test Stamp command', () => {
   })
 
   it('should buy stamp', async () => {
-    await invokeTestCli(['stamp', 'buy', '--amount', '100', '--depth', '20'])
+    await invokeTestCli(['stamp', 'buy', '--amount', '100000', '--depth', '20'])
     expect(getLastMessage()).toContain('Stamp ID:')
   })
 

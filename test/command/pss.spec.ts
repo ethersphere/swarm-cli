@@ -1,26 +1,10 @@
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { Receive } from '../../src/command/pss/receive'
 import { sleep } from '../../src/utils'
-import { invokeTestCli } from '../utility'
+import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
-describe('Test PSS command', () => {
-  const consoleMessages: string[] = []
-  const getLastMessage = () => consoleMessages[consoleMessages.length - 1]
-
-  beforeAll(() => {
-    global.console.log = jest.fn(message => {
-      consoleMessages.push(message)
-    })
-    global.console.error = jest.fn(message => {
-      consoleMessages.push(message)
-    })
-  })
-
-  beforeEach(() => {
-    consoleMessages.length = 0
-  })
-
+describeCommand('Test PSS command', ({ getLastMessage }) => {
   it('should receive sent pss message', async () => {
     const invocation = invokeTestCli([
       'pss',
