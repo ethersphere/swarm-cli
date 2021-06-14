@@ -77,8 +77,7 @@ describeCommand(
       expect(consoleMessages[1]).toContain('No pinned chunk found with that address.')
     })
 
-    // FIXME https://github.com/ethersphere/bee/issues/1897
-    test.skip('should allow reuploading pinned file', async () => {
+    it('should allow reuploading pinned file', async () => {
       const invocation = await invokeTestCli(['upload', 'README.md', '--pin', ...getStampOption()])
       const upload = invocation.runnable as Upload
       const { hash } = upload
@@ -87,8 +86,7 @@ describeCommand(
       expect(consoleMessages[3]).toContain('Reuploaded successfully.')
     })
 
-    // FIXME https://github.com/ethersphere/bee/issues/1897
-    test.skip('should allow reuploading pinned folder', async () => {
+    it('should allow reuploading pinned folder', async () => {
       const invocation = await invokeTestCli(['upload', 'test', '--pin', ...getStampOption()])
       const upload = invocation.runnable as Upload
       const { hash } = upload
