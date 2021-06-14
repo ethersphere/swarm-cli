@@ -5,7 +5,7 @@ const TOPIC_HEX = '0x052ea901df6cdb4d5b2244ff46d0a4988f208541fe34beadc69906b86b4
 
 describeCommand(
   'Specifying Topics',
-  ({ consoleMessages }) => {
+  ({ consoleMessages, getLastMessage }) => {
     beforeAll(async () => {
       await invokeTestCli(['identity', 'create', 'topic', '-P', 'topic'])
       await invokeTestCli([
@@ -68,17 +68,13 @@ describeCommand(
         'topic',
         ...getStampOption(),
       ])
-      expect(consoleMessages[consoleMessages.length - 1]).toContain(
-        'topic and topic-string are incompatible, please only specify one.',
-      )
+      expect(getLastMessage()).toContain('topic and topic-string are incompatible, please only specify one.')
     })
 
     // TODO: https://github.com/ethersphere/bee/issues/2041
     test.skip('should not be possible with both --topic and --topic-string in pss', async () => {
       await invokeTestCli(['pss', 'receive', '-T', 'Awesome PSS Topic', '-t', TOPIC_HEX, '--timeout', '1'])
-      expect(consoleMessages[consoleMessages.length - 1]).toContain(
-        'topic and topic-string are incompatible, please only specify one.',
-      )
+      expect(getLastMessage()).toContain('topic and topic-string are incompatible, please only specify one.')
     })
   },
   { configFileName: 'topic' },

@@ -1,21 +1,19 @@
 import Wallet from 'ethereumjs-wallet'
-import { access, writeFileSync } from 'fs'
+import { writeFileSync } from 'fs'
 import { join } from 'path'
-import { promisify } from 'util'
 import { List } from '../../src/command/identity/list'
+import { fileExists } from '../../src/utils'
 import { describeCommand, invokeTestCli } from '../utility'
 
 describeCommand(
   'Test Identity command',
   ({ consoleMessages, configFolderPath, getLastMessage }) => {
-    const existFile = promisify(access)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const configFilePath = process.env.SWARM_CLI_CONFIG_FILE_PATH!
 
     it('should create default config on the first run', async () => {
       await invokeTestCli(['identity', 'list'])
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      expect(await existFile(configFilePath)).toBeUndefined() //TODO why is it true for undefined?
+      expect(fileExists(configFilePath)).toBe(true)
     })
 
     it('should create V3 identity "main"', async () => {
@@ -73,10 +71,7 @@ describeCommand(
       // then import it
       await invokeTestCli(['identity', 'import', path, '--identity-name', 'import-test', '--password', '123'])
       // and check for successful import message
-      const successfulImportIndex = consoleMessages.length - 1
-      expect(consoleMessages[successfulImportIndex]).toContain(
-        "V3 Wallet imported as identity 'import-test' successfully",
-      )
+      expect(getLastMessage()).toContain("V3 Wallet imported as identity 'import-test' successfully")
     })
   },
   { configFileName: 'config' },

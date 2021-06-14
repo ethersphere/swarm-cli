@@ -2,10 +2,10 @@ import { describeCommand, invokeTestCli } from '../utility'
 
 describeCommand(
   'Specifying Large Numbers',
-  ({ consoleMessages }) => {
+  ({ getLastMessage }) => {
     it('should be possible with underscores and units', async () => {
       await invokeTestCli(['stamp', 'buy', '--amount', '1_000K', '--depth', '16', '--gas-price', '100_000_000'])
-      expect(consoleMessages[consoleMessages.length - 1]).toContain('Stamp ID:')
+      expect(getLastMessage()).toContain('Stamp ID:')
     })
   },
   { configFileName: 'numerical' },
