@@ -25,7 +25,7 @@
       * [Stamp Picker](#stamp-picker)
       * [Identity Picker](#identity-picker)
       * [Human Readable Topics](#human-readable-topics)
-      * [Automatizing tasks with Swarm-CLI](#automatizing-tasks-with-swarm-cli)
+      * [Automating tasks with Swarm-CLI](#automating-tasks-with-swarm-cli)
          * [Connectivity](#connectivity)
          * [Postage Stamps](#postage-stamps)
          * [Uploading](#uploading)
@@ -194,9 +194,9 @@ This is also indicated in the `--help` section:
 Only one is required: [topic] or [topic-string]
 ```
 
-### Automatizing tasks with Swarm-CLI
+### Automating tasks with Swarm-CLI
 
-Running `swarm-cli` with the flag `--quiet` (or `-q` for short) disables all interactive features, and makes commands print information in an easily parsable format. The exit code also indicates whether running the command was successful or not. These may be useful for automatizing tasks both in CI environments and in your terminal too.
+Running `swarm-cli` with the flag `--quiet` (or `-q` for short) disables all interactive features, and makes commands print information in an easily parsable format. The exit code also indicates whether running the command was successful or not. These may be useful for automating tasks both in CI environments and in your terminal too.
 
 Below you will find a few snippets to give an idea how it can be used to compose tasks.
 
