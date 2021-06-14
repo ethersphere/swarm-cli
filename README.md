@@ -70,7 +70,7 @@ Running `swarm-cli` without arguments prints the available commands:
 
 ```
 $ swarm-cli
-Swarm CLI 0.9.0 - Manage your Bee node and interact with the Swarm network via the CLI
+Swarm CLI 0.10.0 - Manage your Bee node and interact with the Swarm network via the CLI
 
 █ Usage:
 
@@ -90,6 +90,7 @@ Run 'swarm-cli GROUP --help' to see available commands in a group
 █ Available Commands:
 
 upload   Upload file to Swarm
+status   Check API availability and Bee compatibility
 
 Run 'swarm-cli COMMAND --help' for more information on a command
 
