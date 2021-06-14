@@ -219,11 +219,11 @@ swarm-cli upload -q README.md --stamp $STAMP
 
 ## Config
 
-The configuration file is placed in a hidden folder named swarm-cli.
-In case of Unix-based systems this config path will be: $HOME/.swarm-cli
-On Windows systems: $HOME\AppData\swarm-cli
+The configuration file is placed in a hidden folder named `swarm-cli`.
+In case of Unix-based systems this config path will be: `$HOME/.swarm-cli`
+On Windows systems: `$HOME\AppData\swarm-cli`
 
-The configuration file is saved with 600 file permission.
+The configuration file is saved with `600` file permission.
 
 On first run, this configuration will be generated with default values, that you are able to change on your demand under the before mentioned path.
 
