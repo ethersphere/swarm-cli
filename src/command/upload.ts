@@ -1,4 +1,4 @@
-import { Tag } from '@ethersphere/bee-js'
+import { Tag, Utils } from '@ethersphere/bee-js'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { readFileSync } from 'fs'
@@ -278,7 +278,7 @@ export class Upload extends RootCommand implements LeafCommand {
     isDirectory: boolean
   }> {
     const stats = FS.lstatSync(this.path)
-    const size = stats.isDirectory() ? await this.bee.getFolderSize(this.path) : stats.size
+    const size = stats.isDirectory() ? await Utils.Collections.getFolderSize(this.path) : stats.size
     this.console.verbose('Upload size is approximately ' + (size / 1000 / 1000).toFixed(2) + ' megabytes')
 
     return {
