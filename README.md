@@ -9,9 +9,37 @@
 
 **Warning: This project is in alpha state. There might (and most probably will) be changes in the future to its API and working. Also, no guarantees can be made about its stability, efficiency, and security at this stage.**
 
+# Table of Contents
+
+* [Swarm-CLI](#swarm-cli)
+* [Table of Contents](#table-of-contents)
+* [Description](#description)
+   * [Installation](#installation)
+      * [From npm](#from-npm)
+      * [From source](#from-source)
+   * [Usage](#usage)
+   * [Commands](#commands)
+   * [Example usage](#example-usage)
+   * [Usability Features](#usability-features)
+      * [Numerical Separator and Units](#numerical-separator-and-units)
+      * [Stamp Picker](#stamp-picker)
+      * [Identity Picker](#identity-picker)
+      * [Human Readable Topics](#human-readable-topics)
+      * [Automating tasks with Swarm-CLI](#automating-tasks-with-swarm-cli)
+         * [Connectivity](#connectivity)
+         * [Postage Stamps](#postage-stamps)
+         * [Uploading](#uploading)
+   * [Config](#config)
+   * [Assignment priority](#assignment-priority)
+   * [System environment](#system-environment)
+* [Development](#development)
+* [Contribute](#contribute)
+* [Maintainers](#maintainers)
+* [License](#license)
+
 # Description
 
-> Command line interface tool for manage Bee node and utilize its functionalities
+> Manage your Bee node and interact with the Swarm network via the CLI
 
 The goal of this project is to handle most of the Swarm operations through CLI at some point in the future.
 For currently supported operations, see [Commands](##Commands) section.
@@ -42,7 +70,7 @@ Running `swarm-cli` without arguments prints the available commands:
 
 ```
 $ swarm-cli
-Swarm CLI 0.9.0 - Manage your Bee node and interact with the Swarm network via the CLI
+Swarm CLI 0.10.0 - Manage your Bee node and interact with the Swarm network via the CLI
 
 █ Usage:
 
@@ -62,6 +90,7 @@ Run 'swarm-cli GROUP --help' to see available commands in a group
 █ Available Commands:
 
 upload   Upload file to Swarm
+status   Check API availability and Bee compatibility
 
 Run 'swarm-cli COMMAND --help' for more information on a command
 
@@ -166,13 +195,66 @@ This is also indicated in the `--help` section:
 Only one is required: [topic] or [topic-string]
 ```
 
+### Automating tasks with Swarm-CLI
+
+Running `swarm-cli` with the flag `--quiet` (or `-q` for short) disables all interactive features, and makes commands print information in an easily parsable format. The exit code also indicates whether running the command was successful or not. These may be useful for automating tasks both in CI environments and in your terminal too.
+
+Below you will find a few snippets to give an idea how it can be used to compose tasks.
+
+#### Connectivity
+
+Exit if not all status checks succeed:
+
+```
+swarm-cli status -q || exit 1
+```
+
+Check Bee API connection, compatibility does not matter:
+
+```
+swarm-cli status -q | head -n 1 | grep "^OK"
+```
+
+#### Postage Stamps
+
+Grab the first postage stamp:
+
+```
+swarm-cli stamp list -q | head -n 1 | awk '{ print $1 }'
+```
+
+
+List all postage stamps with zero utilization:
+
+```
+swarm-cli stamp list -q | awk '{ if ($2 == 0) print $1 }'
+```
+
+
+Sort postage stamps based on utilization (least utilized comes first):
+
+```
+swarm-cli stamp list -q | sort -k 2
+```
+
+#### Uploading
+
+Upload a file with the least utilized postage stamp:
+
+```
+STAMP=$(swarm-cli stamp list -q | sort -k 2 | head -n 1 | awk '{ print $1 }')
+swarm-cli upload -q README.md --stamp $STAMP
+```
+
 ## Config
 
-The configuration file is placed in a hidden folder named swarm-cli.
-In case of Unix-based systems this config path will be: $HOME/.swarm-cli
-On Windows systems: $HOME\AppData\swarm-cli
+The configuration file is placed in a hidden folder named `swarm-cli`.
 
-The configuration file is saved with 600 file permission.
+In case of Unix-based systems this config path will be: `$HOME/.swarm-cli`
+
+On Windows systems: `$HOME\AppData\swarm-cli`
+
+The configuration file is saved with `600` file permission.
 
 On first run, this configuration will be generated with default values, that you are able to change on your demand under the before mentioned path.
 

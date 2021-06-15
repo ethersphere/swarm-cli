@@ -29,7 +29,7 @@ export class Status extends RootCommand implements LeafCommand {
       await this.bee.checkConnection()
       this.printSuccessfulCheck('Bee API Connection')
     } catch {
-      this.printFailedCheck('Bee API Connection')
+      this.handleFailedCheck('Bee API Connection')
     }
   }
 
@@ -40,7 +40,7 @@ export class Status extends RootCommand implements LeafCommand {
 
       return health.version
     } catch {
-      this.printFailedCheck('Bee Debug API Connection')
+      this.handleFailedCheck('Bee Debug API Connection')
 
       return 'N/A'
     }
@@ -53,10 +53,10 @@ export class Status extends RootCommand implements LeafCommand {
       if (compatible) {
         this.printSuccessfulCheck('Bee Version Compatibility')
       } else {
-        this.printFailedCheck('Bee Version Compatibility')
+        this.handleFailedCheck('Bee Version Compatibility')
       }
     } catch {
-      this.printFailedCheck('Bee Version Compatibility')
+      this.handleFailedCheck('Bee Version Compatibility')
     }
   }
 
@@ -65,8 +65,9 @@ export class Status extends RootCommand implements LeafCommand {
     this.console.quiet('OK - ' + message)
   }
 
-  private printFailedCheck(message: string): void {
+  private handleFailedCheck(message: string): void {
     this.console.log(bold(red('[FAILED]')) + ' ' + message)
     this.console.quiet('FAILED - ' + message)
+    process.exitCode = 1
   }
 }
