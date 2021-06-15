@@ -14,7 +14,7 @@ import { stampProperties } from '../utils/option'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
-const MAX_SIZE = 100 * 1000 * 1000 // 100 megabytes
+const MAX_UPLOAD_SIZE = parseInt(process.env.MAX_UPLOAD_SIZE || '', 10) || 100 * 1000 * 1000 // 100 megabytes
 
 export class Upload extends RootCommand implements LeafCommand {
   // CLI FIELDS
@@ -251,7 +251,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
     const { size, isDirectory } = await this.getUploadableInfo()
 
-    if (size < MAX_SIZE) {
+    if (size < MAX_UPLOAD_SIZE) {
       return
     }
 
