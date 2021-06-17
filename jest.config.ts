@@ -6,6 +6,8 @@ import type { Config } from '@jest/types'
 import { buyStamp } from './test/utility/stamp'
 
 export default async (): Promise<Config.InitialOptions> => {
+  process.env.MAX_UPLOAD_SIZE = '5000000' // 5 megabytes
+
   if (!process.env.STAMP) {
     process.env.STAMP = await buyStamp()
   }
