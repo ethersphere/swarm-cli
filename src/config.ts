@@ -1,5 +1,6 @@
 import { IOption } from 'furious-commander'
 import PackageJson from '../package.json'
+import { Addresses } from './command/addresses'
 import { Cheque } from './command/cheque'
 import { Feed } from './command/feed'
 import { Identity } from './command/identity'
@@ -82,4 +83,4 @@ export const optionParameters: IOption<unknown>[] = [
   version,
 ]
 
-export const rootCommandClasses = [Upload, Status, Pinning, Identity, Feed, Cheque, Stamp, Pss]
+export const rootCommandClasses = [Upload, Status, Pinning, Identity, Feed, Cheque, Stamp, Pss, Addresses]
