@@ -35,7 +35,7 @@ export class FeedCommand extends RootCommand {
     const wallet = await this.getWallet()
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
     const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-    const { reference } = await writer.upload(this.stamp, chunkReference as Reference)
+    const reference = await writer.upload(this.stamp, chunkReference as Reference)
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())
 
     this.console.verbose(bold(`Chunk Reference -> ${green(chunkReference)}`))

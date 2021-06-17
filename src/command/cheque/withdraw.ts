@@ -27,7 +27,7 @@ export class Withdraw extends ChequeCommand implements LeafCommand {
       return
     }
 
-    const response = await this.beeDebug.withdrawTokens(this.amount)
+    const response = await this.beeDebug.withdrawTokens(this.amount.toString())
     this.console.log(green(bold('Tx: ')) + response)
     this.console.quiet(response)
   }
