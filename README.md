@@ -49,7 +49,7 @@ For currently supported operations, see [Commands](##Commands) section.
 ### From npm
 
 ```sh
- $ npm install -g @ethersphere/swarm-cli
+npm install -g @ethersphere/swarm-cli
 ```
 
 ### From source
