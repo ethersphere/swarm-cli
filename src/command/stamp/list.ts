@@ -49,9 +49,7 @@ export class List extends StampCommand implements LeafCommand {
       return
     }
 
-    const limitedStamps = stamps.slice(0, this.limit)
-
-    const enrichedStamps = limitedStamps.map(enrichStamp)
+    const enrichedStamps = stamps.map(enrichStamp)
 
     const filteredStamps = enrichedStamps.filter(x => x.usageNormal >= this.minUsage && x.usageNormal <= this.maxUsage)
 
@@ -61,7 +59,9 @@ export class List extends StampCommand implements LeafCommand {
       return
     }
 
-    const orderedStamps = this.leastUsed ? filteredStamps.sort((a, b) => a.usage - b.usage) : filteredStamps
+    const limitedStamps = filteredStamps.slice(0, this.limit)
+
+    const orderedStamps = this.leastUsed ? limitedStamps.sort((a, b) => a.usage - b.usage) : limitedStamps
     orderedStamps.forEach(stamp => this.printStamp(stamp))
   }
 }
