@@ -4,14 +4,14 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
   it('should list stamps', async () => {
     await invokeTestCli(['stamp', 'list'])
     expect(consoleMessages[1]).toContain('Stamp ID:')
-    expect(consoleMessages[2]).toContain('Utilization:')
+    expect(consoleMessages[2]).toContain('Usage:')
   })
 
   it('should show a specific stamp', async () => {
     await invokeTestCli(['stamp', 'show', process.env.STAMP || ''])
     expect(consoleMessages[1]).toContain('Stamp ID:')
     expect(consoleMessages[1]).toContain(process.env.STAMP)
-    expect(consoleMessages[2]).toContain('Utilization:')
+    expect(consoleMessages[2]).toContain('Usage:')
   })
 
   it('should not allow buying stamp with amount 0', async () => {
@@ -32,5 +32,10 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
   it('should print custom message when there are no stamps', async () => {
     await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:11633'])
     expect(getLastMessage()).toContain('You do not have any stamps.')
+  })
+
+  it('should list with sorting and filter', async () => {
+    await invokeTestCli(['stamp', 'list', '--min-usage', '0', '--max-usage', '100', '--least-used', '--limit', '1'])
+    expect(getLastMessage()).toContain('Usage:')
   })
 })
