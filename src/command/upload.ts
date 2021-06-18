@@ -192,7 +192,7 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadSingleFile(postageBatchId: string, tag?: Tag): Promise<string> {
-    const readable = FS.createReadStream(this.path)
+    const readable = FS.readFileSync(this.path)
     const parsedPath = parse(this.path)
     this.hash = await this.bee.uploadFile(postageBatchId, readable, this.keepName ? parsedPath.base : undefined, {
       tag: tag && tag.uid,
@@ -223,9 +223,9 @@ export class Upload extends RootCommand implements LeafCommand {
     for (let i = 0; i < pollingTrials; i++) {
       tag = await this.bee.retrieveTag(tagUid)
 
-      if (syncStatus !== tag.processed) {
+      if (syncStatus !== tag.synced) {
         i = 0
-        syncStatus = tag.processed
+        syncStatus = tag.synced
       }
       progressBar.update(syncStatus)
 
