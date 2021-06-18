@@ -50,12 +50,11 @@ export class Upload extends RootCommand implements LeafCommand {
   public skipSync!: boolean
 
   @Option({
-    key: 'keep-name',
+    key: 'drop-name',
     type: 'boolean',
-    description: 'Keep file name when upliading a single file',
-    default: true,
+    description: 'Erase file name when upliading a single file',
   })
-  public keepName!: boolean
+  public dropName!: boolean
 
   @Option({
     key: 'sync-polling-time',
@@ -194,7 +193,7 @@ export class Upload extends RootCommand implements LeafCommand {
   private async uploadSingleFile(postageBatchId: string, tag?: Tag): Promise<string> {
     const readable = FS.readFileSync(this.path)
     const parsedPath = parse(this.path)
-    this.hash = await this.bee.uploadFile(postageBatchId, readable, this.keepName ? parsedPath.base : undefined, {
+    this.hash = await this.bee.uploadFile(postageBatchId, readable, this.dropName ? undefined : parsedPath.base, {
       tag: tag && tag.uid,
       pin: this.pin,
     })
