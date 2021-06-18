@@ -1,5 +1,4 @@
 import { LeafCommand, Option } from 'furious-commander'
-import { exit } from 'process'
 import { enrichStamp } from '../../service/stamp'
 import { StampCommand } from './stamp-command'
 
@@ -44,8 +43,10 @@ export class List extends StampCommand implements LeafCommand {
     const stamps = (await this.bee.getAllPostageBatch()) || []
 
     if (stamps.length === 0) {
-      this.console.info('You do not have any stamps.')
-      exit(1)
+      this.console.error('You do not have any stamps.')
+      process.exitCode = 1
+
+      return
     }
 
     const limitedStamps = stamps.slice(0, this.limit)
@@ -53,6 +54,12 @@ export class List extends StampCommand implements LeafCommand {
     const enrichedStamps = limitedStamps.map(enrichStamp)
 
     const filteredStamps = enrichedStamps.filter(x => x.usageNormal >= this.minUsage && x.usageNormal <= this.maxUsage)
+
+    if (filteredStamps.length === 0) {
+      process.exitCode = 1
+
+      return
+    }
 
     const orderedStamps = this.leastUsed ? filteredStamps.sort((a, b) => a.usage - b.usage) : filteredStamps
     orderedStamps.forEach(stamp => this.printStamp(stamp))
