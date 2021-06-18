@@ -5,7 +5,7 @@ import { getStampOption } from '../utility/stamp'
 
 describeCommand(
   'Test Feed command',
-  ({ consoleMessages, getLastMessage }) => {
+  ({ consoleMessages, getLastMessage, hasMessageContaining }) => {
     it('should upload file, update feed and print it', async () => {
       // create identity
       await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
@@ -79,9 +79,8 @@ describeCommand(
         hash,
         ...getStampOption(),
       ])
-      expect(consoleMessages).toHaveLength(1)
-      expect(consoleMessages[0]).toContain('Feed Manifest URL')
-      expect(consoleMessages[0]).toContain('/bzz/')
+      expect(hasMessageContaining('Feed Manifest URL')).toBeTruthy()
+      expect(hasMessageContaining('/bzz/')).toBeTruthy()
     })
   },
   { configFileName: 'feed' },

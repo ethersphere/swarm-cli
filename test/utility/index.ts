@@ -18,6 +18,7 @@ type describeFunctionArgs = {
   configFolderPath: string
   getNthLastMessage: (n: number) => string
   getLastMessage: () => string
+  hasMessageContaining: (substring: string) => boolean
 }
 
 export function describeCommand(
@@ -30,6 +31,8 @@ export function describeCommand(
     const configFileName = options?.configFileName
     const getNthLastMessage = (n: number) => consoleMessages[consoleMessages.length - n]
     const getLastMessage = () => consoleMessages[consoleMessages.length - 1]
+    const hasMessageContaining = (substring: string) =>
+      Boolean(consoleMessages.find(consoleMessage => consoleMessage.includes(substring)))
     const configFolderPath = join(__dirname, '..', 'testconfig')
 
     //set config environment variable
@@ -72,6 +75,6 @@ export function describeCommand(
       consoleMessages.length = 0
     })
 
-    func({ consoleMessages, getNthLastMessage, getLastMessage, configFolderPath })
+    func({ consoleMessages, getNthLastMessage, getLastMessage, hasMessageContaining, configFolderPath })
   })
 }
