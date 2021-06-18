@@ -1,4 +1,6 @@
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand, Option } from 'furious-commander'
+import { exit } from 'process'
+import { enrichStamp } from '../../service/stamp'
 import { StampCommand } from './stamp-command'
 
 export class List extends StampCommand implements LeafCommand {
@@ -8,17 +10,44 @@ export class List extends StampCommand implements LeafCommand {
 
   public readonly description = 'List postage stamps'
 
+  @Option({ key: 'least-used', type: 'boolean', description: 'Sort stamps so least used comes first' })
+  public leastUsed!: boolean
+
+  @Option({
+    key: 'max-usage',
+    type: 'number',
+    minimum: 0,
+    maximum: 100,
+    description: 'Only list stamps at most this usage percentage',
+    default: 100,
+  })
+  public maxUsage!: number
+
+  @Option({
+    key: 'min-usage',
+    type: 'number',
+    minimum: 0,
+    maximum: 100,
+    description: 'Only list stamps at least this usage percentage',
+    default: 0,
+  })
+  public minUsage!: number
+
   public async run(): Promise<void> {
     super.init()
 
     this.console.verbose(`Listing postage stamps...`)
 
-    const stamps = await this.bee.getAllPostageBatch()
+    const stamps = ((await this.bee.getAllPostageBatch()) || []).map(enrichStamp)
 
-    if (stamps === null || stamps.length === 0) {
+    if (stamps.length === 0) {
       this.console.info('You do not have any stamps.')
-    } else {
-      stamps.forEach(stamp => this.printStamp(stamp))
+      exit(1)
     }
+
+    const filteredStamps = stamps.filter(x => x.usageNormal >= this.minUsage && x.usageNormal <= this.maxUsage)
+
+    const orderedStamps = this.leastUsed ? filteredStamps.sort((a, b) => a.usage - b.usage) : filteredStamps
+    orderedStamps.forEach(stamp => this.printStamp(stamp))
   }
 }
