@@ -237,7 +237,7 @@ swarm-cli stamp list --least-used -q
 
 #### Uploading
 
-Upload a file with the least utilized postage stamp (which is has usage at most 50%):
+Upload a file with the least utilized postage stamp (that has at most 50% usage):
 
 ```
 STAMP=$(swarm-cli stamp list --max-usage 50 --least-used --limit 1 -q | awk '{ print $1 }')
