@@ -13,6 +13,9 @@ export class List extends StampCommand implements LeafCommand {
   @Option({ key: 'least-used', type: 'boolean', description: 'Sort stamps so least used comes first' })
   public leastUsed!: boolean
 
+  @Option({ key: 'limit', type: 'number', minimum: 1, description: 'Limit the amount of printed stamps' })
+  public limit!: number
+
   @Option({
     key: 'max-usage',
     type: 'number',
@@ -38,14 +41,18 @@ export class List extends StampCommand implements LeafCommand {
 
     this.console.verbose(`Listing postage stamps...`)
 
-    const stamps = ((await this.bee.getAllPostageBatch()) || []).map(enrichStamp)
+    const stamps = (await this.bee.getAllPostageBatch()) || []
 
     if (stamps.length === 0) {
       this.console.info('You do not have any stamps.')
       exit(1)
     }
 
-    const filteredStamps = stamps.filter(x => x.usageNormal >= this.minUsage && x.usageNormal <= this.maxUsage)
+    const limitedStamps = stamps.slice(0, this.limit)
+
+    const enrichedStamps = limitedStamps.map(enrichStamp)
+
+    const filteredStamps = enrichedStamps.filter(x => x.usageNormal >= this.minUsage && x.usageNormal <= this.maxUsage)
 
     const orderedStamps = this.leastUsed ? filteredStamps.sort((a, b) => a.usage - b.usage) : filteredStamps
     orderedStamps.forEach(stamp => this.printStamp(stamp))

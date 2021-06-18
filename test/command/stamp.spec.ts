@@ -1,6 +1,6 @@
 import { describeCommand, invokeTestCli } from '../utility'
 
-describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
+describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNthLastMessage }) => {
   it('should list stamps', async () => {
     await invokeTestCli(['stamp', 'list'])
     expect(consoleMessages[1]).toContain('Stamp ID:')
@@ -31,7 +31,8 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
 
   it('should print custom message when there are no stamps', async () => {
     await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:11633'])
-    expect(getLastMessage()).toContain('You do not have any stamps.')
+    expect(getNthLastMessage(2)).toContain('You do not have any stamps.')
+    expect(getNthLastMessage(1)).toContain('process.exit() was called')
   })
 
   it('should list with sorting and filter', async () => {
