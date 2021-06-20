@@ -129,7 +129,7 @@ To aid this, you may use underscores (`_`) and `K`, `M`, `B` and `T` units to ma
 Example:
 
 ```
-swarm-cli stamp buy --amount 10M --depth 16 --gas-price 10_000_000_000_000
+swarm-cli stamp buy --amount 10M --depth 17 --gas-price 10_000_000_000_000
 ```
 
 You may combine the two: `100_000T`.
