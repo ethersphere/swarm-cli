@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.11.0](https://www.github.com/ethersphere/swarm-cli/compare/v0.10.0...v0.11.0) (2021-06-21)
+
+
+### Features
+
+* add addresses command ([#160](https://www.github.com/ethersphere/swarm-cli/issues/160)) ([03457d9](https://www.github.com/ethersphere/swarm-cli/commit/03457d9e2c043b88cd582405c6c5e018448a8d4e))
+* add stamp usage, sorting and filtering ([#165](https://www.github.com/ethersphere/swarm-cli/issues/165)) ([4000072](https://www.github.com/ethersphere/swarm-cli/commit/4000072c428875dc6791f2311aa431300dd68796))
+* add upload size prompt/warning/flag ([#153](https://www.github.com/ethersphere/swarm-cli/issues/153)) ([218bd41](https://www.github.com/ethersphere/swarm-cli/commit/218bd41126334242478b2043e874ee2bc81bbcb1))
+
+
+### Bug Fixes
+
+* change order of stamp listing operations ([#166](https://www.github.com/ethersphere/swarm-cli/issues/166)) ([3d25a84](https://www.github.com/ethersphere/swarm-cli/commit/3d25a845d255b434ac49dcd46d2682ea62adee4f))
+
 ## [0.10.0](https://www.github.com/ethersphere/swarm-cli/compare/v0.9.0...v0.10.0) (2021-06-11)
 
 
