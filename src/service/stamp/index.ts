@@ -1,4 +1,4 @@
-import { Bee, PostageBatch } from '@ethersphere/bee-js'
+import { BeeDebug, PostageBatch } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { EnrichedStamp } from './types/stamp'
@@ -13,8 +13,8 @@ import { EnrichedStamp } from './types/stamp'
  *
  * @returns {Promise<string>} Hex representation of the Stamp ID.
  */
-export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> {
-  const stamps = ((await bee.getAllPostageBatch()) || []).map(enrichStamp)
+export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promise<string> {
+  const stamps = ((await beeDebug.getAllPostageBatch()) || []).map(enrichStamp)
 
   if (!stamps.length) {
     console.error('You need to have at least one stamp for this action.')

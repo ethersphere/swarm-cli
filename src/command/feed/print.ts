@@ -32,7 +32,7 @@ export class Print extends FeedCommand implements LeafCommand {
     const { reference, feedIndex, feedIndexNext } = await reader.download()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.bee, this.console)
+      this.stamp = await pickStamp(this.beeDebug, this.console)
     }
 
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
