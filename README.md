@@ -46,7 +46,7 @@
 
 ## Purchasing a Postage Stamp
 
-![Swarm CLI Stamp Buy Command](./docs/stamp-buy.gif)]
+![Swarm CLI Stamp Buy Command](./docs/stamp-buy.gif)
 
 ## Uploading a File
 
