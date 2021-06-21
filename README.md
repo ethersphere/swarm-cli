@@ -13,6 +13,11 @@
 
 * [Swarm-CLI](#swarm-cli)
 * [Table of Contents](#table-of-contents)
+* [Demo](#demo)
+   * [Purchasing a Postage Stamp](#purchasing-a-postage-stamp)
+   * [Uploading a File](#uploading-a-file)
+   * [Creating an Identity](#creating-an-identity)
+   * [Uploading to a Feed](#uploading-to-a-feed)
 * [Description](#description)
    * [Installation](#installation)
       * [From npm](#from-npm)
@@ -36,6 +41,24 @@
 * [Contribute](#contribute)
 * [Maintainers](#maintainers)
 * [License](#license)
+
+# Demo
+
+## Purchasing a Postage Stamp
+
+![Swarm CLI Stamp Buy Command](./docs/stamp-buy.gif)]
+
+## Uploading a File
+
+![Swarm CLI Upload Command](./docs/upload.gif)
+
+## Creating an Identity
+
+![Swarm CLI Identity Create Command](./docs/identity-create.gif)
+
+## Uploading to a Feed
+
+![Swarm CLI Feed Upload Command](./docs/feed-upload.gif)
 
 # Description
 
@@ -91,6 +114,7 @@ Run 'swarm-cli GROUP --help' to see available commands in a group
 
 upload   Upload file to Swarm
 status   Check API availability and Bee compatibility
+addresses   Display the addresses of the Bee node
 
 Run 'swarm-cli COMMAND --help' for more information on a command
 
