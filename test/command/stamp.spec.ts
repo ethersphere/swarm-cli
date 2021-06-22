@@ -20,8 +20,8 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
   })
 
   it('should not allow buying stamp with depth 16', async () => {
-    await invokeTestCli(['stamp', 'buy', '--amount', '1', '--depth', '15'])
-    expect(getLastMessage()).toContain('[depth] must be at least 16')
+    await invokeTestCli(['stamp', 'buy', '--amount', '1', '--depth', '16'])
+    expect(getLastMessage()).toContain('[depth] must be at least 17')
   })
 
   it('should buy stamp', async () => {

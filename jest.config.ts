@@ -3,6 +3,7 @@
  * https://jestjs.io/docs/en/configuration.html
  */
 import type { Config } from '@jest/types'
+import { sleep } from './src/utils'
 import { buyStamp } from './test/utility/stamp'
 
 export default async (): Promise<Config.InitialOptions> => {
@@ -10,6 +11,7 @@ export default async (): Promise<Config.InitialOptions> => {
 
   if (!process.env.STAMP) {
     process.env.STAMP = await buyStamp()
+    await sleep(11_000)
   }
 
   return {

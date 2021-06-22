@@ -13,7 +13,7 @@ export class Buy extends StampCommand implements LeafCommand {
     description: 'Depth of the postage stamp',
     type: 'number',
     required: true,
-    minimum: 16,
+    minimum: 17,
     maximum: 255,
   })
   public depth!: number
