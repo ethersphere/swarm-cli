@@ -77,7 +77,7 @@ describeCommand(
       expect(consoleMessages[1]).toContain('No pinned chunk found with that address.')
     })
 
-    test.skip('should allow reuploading pinned file', async () => {
+    it('should allow reuploading pinned file', async () => {
       const invocation = await invokeTestCli(['upload', 'README.md', '--pin', ...getStampOption()])
       const upload = invocation.runnable as Upload
       const { hash } = upload
@@ -86,7 +86,7 @@ describeCommand(
       expect(consoleMessages[3]).toContain('Reuploaded successfully.')
     })
 
-    test.skip('should allow reuploading pinned folder', async () => {
+    it('should allow reuploading pinned folder', async () => {
       const invocation = await invokeTestCli(['upload', 'test', '--pin', ...getStampOption()])
       const upload = invocation.runnable as Upload
       const { hash } = upload
