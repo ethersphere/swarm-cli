@@ -52,7 +52,7 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({
     key: 'drop-name',
     type: 'boolean',
-    description: 'Erase file name when upliading a single file',
+    description: 'Erase file name when uploading a single file',
   })
   public dropName!: boolean
 
