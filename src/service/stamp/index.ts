@@ -64,3 +64,8 @@ export function printStamp(stamp: EnrichedStamp, console: CommandLog): void {
   console.verbose(bold('Immutable Flag: ') + stamp.immutableFlag)
   console.quiet(stamp.batchID + ' ' + stamp.usageText)
 }
+
+export function printEnrichedStamp(stamp: PostageBatch, console: CommandLog): void {
+  const enrichedStamp = enrichStamp(stamp)
+  printStamp(enrichedStamp, console)
+}

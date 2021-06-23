@@ -7,7 +7,7 @@ import { bold, green } from 'kleur'
 import ora from 'ora'
 import { join, parse } from 'path'
 import { exit } from 'process'
-import { enrichStamp, pickStamp, printStamp } from '../service/stamp'
+import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
 import { stampProperties } from '../utils/option'
 import { RootCommand } from './root-command'
@@ -164,7 +164,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
     if (!this.usedFromOtherCommand) {
       this.console.quiet(this.hash)
-      printStamp(enrichStamp(await this.bee.getPostageBatch(this.stamp)), this.console)
+      printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
       this.console.divider()
     }
   }

@@ -5,7 +5,7 @@ import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
-import { enrichStamp, printStamp } from '../../service/stamp'
+import { printEnrichedStamp } from '../../service/stamp'
 import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
 import { RootCommand } from '../root-command'
 
@@ -47,7 +47,7 @@ export class FeedCommand extends RootCommand {
 
     this.console.quiet(manifest)
 
-    printStamp(enrichStamp(await this.bee.getPostageBatch(this.stamp)), this.console)
+    printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
     this.console.divider()
   }
 
