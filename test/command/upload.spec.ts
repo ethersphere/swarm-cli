@@ -95,7 +95,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
       '--skip-sync',
       '--bee-api-url',
       'http://gateway.ethswarm.org',
-      '--encrypt',
+      '--pin',
       ...getStampOption(),
     ])
     expect(hasMessageContaining('does not support pinning')).toBeTruthy()
