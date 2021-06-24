@@ -1,4 +1,5 @@
 import { Bee, PostageBatch } from '@ethersphere/bee-js'
+import { bold } from 'kleur'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { EnrichedStamp } from './types/stamp'
@@ -31,14 +32,14 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
   return hex
 }
 
-export function calculateUsagePercentage(stamp: PostageBatch): number {
+export function normalizeUtilization(stamp: PostageBatch): number {
   const { depth, bucketDepth, utilization } = stamp
 
   return utilization / Math.pow(2, depth - bucketDepth)
 }
 
 export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
-  const usage = calculateUsagePercentage(stamp)
+  const usage = normalizeUtilization(stamp)
   const usageNormal = Math.ceil(usage * 100)
   const usageText = usageNormal + '%'
 
@@ -48,4 +49,23 @@ export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
     usageNormal,
     usageText,
   }
+}
+
+export function printStamp(stamp: EnrichedStamp, console: CommandLog): void {
+  console.divider('-')
+  console.log(bold('Stamp ID: ') + stamp.batchID)
+  console.log(bold('Usage: ') + stamp.usageText)
+  console.verbose(bold('Depth: ') + stamp.depth)
+  console.verbose(bold('Bucket depth: ') + stamp.bucketDepth)
+  console.verbose(bold('Amount: ') + stamp.amount)
+  console.verbose(bold('Usable: ') + stamp.usable)
+  console.verbose(bold('Utilization: ') + stamp.utilization)
+  console.verbose(bold('Block Number: ') + stamp.blockNumber)
+  console.verbose(bold('Immutable Flag: ') + stamp.immutableFlag)
+  console.quiet(stamp.batchID + ' ' + stamp.usageText)
+}
+
+export function printEnrichedStamp(stamp: PostageBatch, console: CommandLog): void {
+  const enrichedStamp = enrichStamp(stamp)
+  printStamp(enrichedStamp, console)
 }

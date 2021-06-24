@@ -5,6 +5,7 @@ import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
+import { printEnrichedStamp } from '../../service/stamp'
 import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
 import { RootCommand } from '../root-command'
 
@@ -45,6 +46,8 @@ export class FeedCommand extends RootCommand {
     this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}/`)}`))
 
     this.console.quiet(manifest)
+
+    printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
   }
 
   protected async getWallet(): Promise<Wallet> {

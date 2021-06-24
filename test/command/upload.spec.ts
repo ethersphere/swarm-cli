@@ -4,7 +4,7 @@ import type { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
-describeCommand('Test Upload command', ({ consoleMessages, getNthLastMessage }) => {
+describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining }) => {
   if (existsSync('test/data/8mb.bin')) {
     unlinkSync('test/data/8mb.bin')
   }
@@ -55,11 +55,11 @@ describeCommand('Test Upload command', ({ consoleMessages, getNthLastMessage }) 
 
   it('should not warn for large files with flag', async () => {
     await invokeTestCli(['upload', 'test/data/8mb.bin', '-v', '--size-check', 'false', ...getStampOption()])
-    expect(getNthLastMessage(2)).toContain('Uploading was successful!')
+    expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
 
   it('should not warn for large folders with flag', async () => {
     await invokeTestCli(['upload', 'test/data', '-v', '--size-check', 'false', ...getStampOption()])
-    expect(getNthLastMessage(2)).toContain('Uploading was successful!')
+    expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
 })

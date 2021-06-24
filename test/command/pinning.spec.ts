@@ -12,31 +12,26 @@ async function uploadAndGetHash(path: string, indexDocument?: string): Promise<s
 
 describeCommand(
   'Test Pinning command',
-  ({ consoleMessages, getLastMessage }) => {
+  ({ consoleMessages, getLastMessage, hasMessageContaining }) => {
     it('should pin a collection with index.html index document', async () => {
       const hash = await uploadAndGetHash('test/testpage')
       expect(hash).toMatch(/[a-z0-9]{64}/)
       await invokeTestCli(['pinning', 'pin', hash])
-      expect(consoleMessages).toHaveLength(4)
-      expect(consoleMessages[3]).toBe('Pinned successfully')
+      expect(hasMessageContaining('Pinned successfully')).toBeTruthy()
     })
 
     it('should pin a collection with no index document', async () => {
       const hash = await uploadAndGetHash('test/command')
       expect(hash).toMatch(/[a-z0-9]{64}/)
       await invokeTestCli(['pinning', 'pin', hash])
-      expect(consoleMessages).toHaveLength(3)
-      const successMessage = consoleMessages[2]
-      expect(successMessage).toBe('Pinned successfully')
+      expect(hasMessageContaining('Pinned successfully')).toBeTruthy()
     })
 
     it('should pin a collection with explicit index document', async () => {
       const hash = await uploadAndGetHash('test/command', 'pinning.spec.ts')
       expect(hash).toMatch(/[a-z0-9]{64}/)
       await invokeTestCli(['pinning', 'pin', hash])
-      expect(consoleMessages).toHaveLength(3)
-      const successMessage = consoleMessages[2]
-      expect(successMessage).toBe('Pinned successfully')
+      expect(hasMessageContaining('Pinned successfully')).toBeTruthy()
     })
 
     it('should list less pinned items after unpinning', async () => {
@@ -82,8 +77,7 @@ describeCommand(
       const upload = invocation.runnable as Upload
       const { hash } = upload
       await invokeTestCli(['pinning', 'reupload', hash])
-      expect(consoleMessages).toHaveLength(4)
-      expect(consoleMessages[3]).toContain('Reuploaded successfully.')
+      expect(hasMessageContaining('Reuploaded successfully.')).toBeTruthy()
     })
 
     it('should allow reuploading pinned folder', async () => {
@@ -91,8 +85,7 @@ describeCommand(
       const upload = invocation.runnable as Upload
       const { hash } = upload
       await invokeTestCli(['pinning', 'reupload', hash])
-      expect(consoleMessages).toHaveLength(4)
-      expect(consoleMessages[3]).toContain('Reuploaded successfully.')
+      expect(hasMessageContaining('Reuploaded successfully.')).toBeTruthy()
     })
 
     it('should reupload all pinned content', async () => {

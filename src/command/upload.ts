@@ -1,14 +1,13 @@
 import { Tag, Utils } from '@ethersphere/bee-js'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
-import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import inquirer from 'inquirer'
 import { bold, green } from 'kleur'
 import ora from 'ora'
-import { basename, join } from 'path'
+import { join, parse } from 'path'
 import { exit } from 'process'
-import { pickStamp } from '../service/stamp'
+import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
 import { stampProperties } from '../utils/option'
 import { RootCommand } from './root-command'
@@ -51,6 +50,13 @@ export class Upload extends RootCommand implements LeafCommand {
   public skipSync!: boolean
 
   @Option({
+    key: 'drop-name',
+    type: 'boolean',
+    description: 'Erase file name when uploading a single file',
+  })
+  public dropName!: boolean
+
+  @Option({
     key: 'sync-polling-time',
     description: 'Waiting time in ms between sync pollings',
     type: 'number',
@@ -82,9 +88,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public hash!: string
 
-  public usedFromOtherCommand = false
-
-  public async run(): Promise<void> {
+  public async run(usedFromOtherCommand = false): Promise<void> {
     this.initCommand()
 
     let url: string
@@ -130,7 +134,7 @@ export class Upload extends RootCommand implements LeafCommand {
       if (FS.statSync(this.path).isDirectory()) {
         url = await this.uploadFolder(this.stamp, tag)
       } else {
-        url = await this.uploadSingleFileAsFileList(this.stamp, tag)
+        url = await this.uploadSingleFile(this.stamp, tag)
       }
     } finally {
       if (spinner.isSpinning) {
@@ -138,7 +142,7 @@ export class Upload extends RootCommand implements LeafCommand {
       }
     }
 
-    this.console.dim('Data have been sent to the Bee node successfully!')
+    this.console.dim('Data has been sent to the Bee node successfully!')
     this.console.log(bold(`Swarm root hash -> ${green(this.hash)}`))
 
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
@@ -156,8 +160,9 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(bold(`URL -> ${green(url)}`))
 
-    if (!this.usedFromOtherCommand) {
+    if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
+      printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
     }
   }
 
@@ -182,18 +187,12 @@ export class Upload extends RootCommand implements LeafCommand {
     return `${this.beeApiUrl}/bzz/${this.hash}/`
   }
 
-  private async uploadSingleFileAsFileList(postageBatchId: string, tag?: Tag): Promise<string> {
-    const buffer = readFileSync(this.path)
-    // eslint-disable-next-line
-    // @ts-ignore
-    const fakeFile: File = {
-      name: basename(this.path),
-      arrayBuffer: () => new Promise(resolve => resolve(new Uint8Array(buffer).buffer)),
-    }
-    this.hash = await this.bee.uploadFiles(postageBatchId, [fakeFile], {
+  private async uploadSingleFile(postageBatchId: string, tag?: Tag): Promise<string> {
+    const readable = FS.readFileSync(this.path)
+    const parsedPath = parse(this.path)
+    this.hash = await this.bee.uploadFile(postageBatchId, readable, this.dropName ? undefined : parsedPath.base, {
       tag: tag && tag.uid,
       pin: this.pin,
-      indexDocument: basename(this.path),
     })
 
     return `${this.beeApiUrl}/bzz/${this.hash}`
@@ -220,9 +219,9 @@ export class Upload extends RootCommand implements LeafCommand {
     for (let i = 0; i < pollingTrials; i++) {
       tag = await this.bee.retrieveTag(tagUid)
 
-      if (syncStatus !== tag.processed) {
+      if (syncStatus !== tag.synced) {
         i = 0
-        syncStatus = tag.processed
+        syncStatus = tag.synced
       }
       progressBar.update(syncStatus)
 
