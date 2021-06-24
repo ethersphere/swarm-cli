@@ -74,4 +74,42 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli(['upload', 'test/data', '-v', '--size-check', 'false', ...getStampOption()])
     expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
+
+  it('should not allow --encrypt for gateways', async () => {
+    await invokeTestCli([
+      'upload',
+      'README.md',
+      '--skip-sync',
+      '--bee-api-url',
+      'http://gateway.ethswarm.org',
+      '--encrypt',
+      ...getStampOption(),
+    ])
+    expect(hasMessageContaining('does not support encryption')).toBeTruthy()
+  })
+
+  it('should not allow --pin for gateways', async () => {
+    await invokeTestCli([
+      'upload',
+      'README.md',
+      '--skip-sync',
+      '--bee-api-url',
+      'http://gateway.ethswarm.org',
+      '--encrypt',
+      ...getStampOption(),
+    ])
+    expect(hasMessageContaining('does not support pinning')).toBeTruthy()
+  })
+
+  it('should not allow sync for gateways', async () => {
+    await invokeTestCli([
+      'upload',
+      'README.md',
+      '--bee-api-url',
+      'http://gateway.ethswarm.org',
+      '--encrypt',
+      ...getStampOption(),
+    ])
+    expect(hasMessageContaining('does not support syncing')).toBeTruthy()
+  })
 })
