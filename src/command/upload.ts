@@ -97,18 +97,27 @@ export class Upload extends RootCommand implements LeafCommand {
     let url: string
     let tag: Tag | undefined
 
-    if (isGateway(this.beeApiUrl) && this.pin) {
-      this.console.error('You are trying to upload to the gateway which does not support pinning.')
-      this.console.error('Please try again without the --pin option.')
+    if (isGateway(this.beeApiUrl)) {
+      if (this.pin) {
+        this.console.error('You are trying to upload to the gateway which does not support pinning.')
+        this.console.error('Please try again without the --pin option.')
 
-      return
-    }
+        return
+      }
 
-    if (isGateway(this.beeApiUrl) && !this.skipSync) {
-      this.console.error('You are trying to upload to the gateway which does not support syncing.')
-      this.console.error('Please try again with the --skip-sync option.')
+      if (!this.skipSync) {
+        this.console.error('You are trying to upload to the gateway which does not support syncing.')
+        this.console.error('Please try again with the --skip-sync option.')
 
-      return
+        return
+      }
+
+      if (this.encrypt) {
+        this.console.error('You are trying to upload to the gateway which does not support encryption.')
+        this.console.error('Please try again without the --encrypt option.')
+
+        return
+      }
     }
 
     if (!this.stamp) {
