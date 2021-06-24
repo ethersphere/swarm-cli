@@ -31,6 +31,18 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(command.hash?.length).toBe(64)
   })
 
+  it('should upload file and encrypt', async () => {
+    const commandBuilder = await invokeTestCli(['upload', 'README.md', '--encrypt', ...getStampOption()])
+    const uploadCommand = commandBuilder.runnable as Upload
+    expect(uploadCommand.hash).toHaveLength(128)
+  })
+
+  it('should upload folder and encrypt', async () => {
+    const commandBuilder = await invokeTestCli(['upload', 'test/testpage', '--encrypt', ...getStampOption()])
+    const uploadCommand = commandBuilder.runnable as Upload
+    expect(uploadCommand.hash).toHaveLength(128)
+  })
+
   it('should warn for large files', async () => {
     inquirer.prompt = jest.fn().mockResolvedValueOnce({ value: false })
     await invokeTestCli(['upload', 'test/data/8mb.bin', ...getStampOption()])
@@ -61,5 +73,43 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should not warn for large folders with flag', async () => {
     await invokeTestCli(['upload', 'test/data', '-v', '--size-check', 'false', ...getStampOption()])
     expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
+  })
+
+  it('should not allow --encrypt for gateways', async () => {
+    await invokeTestCli([
+      'upload',
+      'README.md',
+      '--skip-sync',
+      '--bee-api-url',
+      'http://gateway.ethswarm.org',
+      '--encrypt',
+      ...getStampOption(),
+    ])
+    expect(hasMessageContaining('does not support encryption')).toBeTruthy()
+  })
+
+  it('should not allow --pin for gateways', async () => {
+    await invokeTestCli([
+      'upload',
+      'README.md',
+      '--skip-sync',
+      '--bee-api-url',
+      'http://gateway.ethswarm.org',
+      '--pin',
+      ...getStampOption(),
+    ])
+    expect(hasMessageContaining('does not support pinning')).toBeTruthy()
+  })
+
+  it('should not allow sync for gateways', async () => {
+    await invokeTestCli([
+      'upload',
+      'README.md',
+      '--bee-api-url',
+      'http://gateway.ethswarm.org',
+      '--encrypt',
+      ...getStampOption(),
+    ])
+    expect(hasMessageContaining('does not support syncing')).toBeTruthy()
   })
 })

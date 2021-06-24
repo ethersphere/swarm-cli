@@ -33,6 +33,9 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the node' })
   public pin!: boolean
 
+  @Option({ key: 'encrypt', type: 'boolean', description: 'Encrypt uploaded data' })
+  public encrypt!: boolean
+
   @Option({
     key: 'size-check',
     type: 'boolean',
@@ -91,22 +94,12 @@ export class Upload extends RootCommand implements LeafCommand {
   public async run(usedFromOtherCommand = false): Promise<void> {
     this.initCommand()
 
+    if (this.hasUnsupportedGatewayOptions()) {
+      exit(1)
+    }
+
     let url: string
     let tag: Tag | undefined
-
-    if (isGateway(this.beeApiUrl) && this.pin) {
-      this.console.error('You are trying to upload to the gateway which does not support pinning.')
-      this.console.error('Please try again without the --pin option.')
-
-      return
-    }
-
-    if (isGateway(this.beeApiUrl) && !this.skipSync) {
-      this.console.error('You are trying to upload to the gateway which does not support syncing.')
-      this.console.error('Please try again with the --skip-sync option.')
-
-      return
-    }
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)
@@ -182,6 +175,7 @@ export class Upload extends RootCommand implements LeafCommand {
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
       pin: this.pin,
+      encrypt: this.encrypt,
     })
 
     return `${this.beeApiUrl}/bzz/${this.hash}/`
@@ -193,6 +187,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.hash = await this.bee.uploadFile(postageBatchId, readable, this.dropName ? undefined : parsedPath.base, {
       tag: tag && tag.uid,
       pin: this.pin,
+      encrypt: this.encrypt,
     })
 
     return `${this.beeApiUrl}/bzz/${this.hash}`
@@ -284,5 +279,34 @@ export class Upload extends RootCommand implements LeafCommand {
       size,
       isDirectory: stats.isDirectory(),
     }
+  }
+
+  private hasUnsupportedGatewayOptions(): boolean {
+    if (!isGateway(this.beeApiUrl)) {
+      return false
+    }
+
+    if (this.pin) {
+      this.console.error('You are trying to upload to the gateway which does not support pinning.')
+      this.console.error('Please try again without the --pin option.')
+
+      return true
+    }
+
+    if (!this.skipSync) {
+      this.console.error('You are trying to upload to the gateway which does not support syncing.')
+      this.console.error('Please try again with the --skip-sync option.')
+
+      return true
+    }
+
+    if (this.encrypt) {
+      this.console.error('You are trying to upload to the gateway which does not support encryption.')
+      this.console.error('Please try again without the --encrypt option.')
+
+      return true
+    }
+
+    return false
   }
 }
