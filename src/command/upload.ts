@@ -163,7 +163,6 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
       printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
-      this.console.divider()
     }
   }
 
