@@ -182,12 +182,14 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadSingleFile(postageBatchId: string, tag?: Tag): Promise<string> {
-    const readable = FS.readFileSync(this.path)
+    const { size } = FS.statSync(this.path)
+    const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
     this.hash = await this.bee.uploadFile(postageBatchId, readable, this.dropName ? undefined : parsedPath.base, {
       tag: tag && tag.uid,
       pin: this.pin,
       encrypt: this.encrypt,
+      size,
     })
 
     return `${this.beeApiUrl}/bzz/${this.hash}`
