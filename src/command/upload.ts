@@ -105,7 +105,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.bee, this.console)
+      this.stamp = await pickStamp(this.beeDebug, this.console)
     }
 
     if (!this.skipSync) {
