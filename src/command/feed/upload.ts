@@ -26,9 +26,7 @@ export class Upload extends FeedCommand implements LeafCommand {
   }
 
   private async runUpload(): Promise<string> {
-    this.fileUpload.usedFromOtherCommand = true
-
-    await this.fileUpload.run()
+    await this.fileUpload.run(true)
 
     return this.fileUpload.hash
   }

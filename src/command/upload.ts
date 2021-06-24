@@ -88,9 +88,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public hash!: string
 
-  public usedFromOtherCommand = false
-
-  public async run(): Promise<void> {
+  public async run(usedFromOtherCommand = false): Promise<void> {
     this.initCommand()
 
     let url: string
@@ -162,7 +160,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(bold(`URL -> ${green(url)}`))
 
-    if (!this.usedFromOtherCommand) {
+    if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
       printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
       this.console.divider()
