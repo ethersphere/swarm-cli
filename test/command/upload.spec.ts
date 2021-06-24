@@ -31,6 +31,18 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(command.hash?.length).toBe(64)
   })
 
+  it('should upload folder and encrypt', async () => {
+    const commandBuilder = await invokeTestCli(['upload', 'README.md', '--encrypt', ...getStampOption()])
+    const uploadCommand = commandBuilder.runnable as Upload
+    expect(uploadCommand.hash).toHaveLength(128)
+  })
+
+  it('should upload file and encrypt', async () => {
+    const commandBuilder = await invokeTestCli(['upload', 'test/testpage', '--encrypt', ...getStampOption()])
+    const uploadCommand = commandBuilder.runnable as Upload
+    expect(uploadCommand.hash).toHaveLength(128)
+  })
+
   it('should warn for large files', async () => {
     inquirer.prompt = jest.fn().mockResolvedValueOnce({ value: false })
     await invokeTestCli(['upload', 'test/data/8mb.bin', ...getStampOption()])

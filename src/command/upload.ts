@@ -33,6 +33,9 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({ key: 'pin', type: 'boolean', description: 'Persist the uploaded data on the node' })
   public pin!: boolean
 
+  @Option({ key: 'encrypt', type: 'boolean', description: 'Encrypt uploaded data' })
+  public encrypt!: boolean
+
   @Option({
     key: 'size-check',
     type: 'boolean',
@@ -182,6 +185,7 @@ export class Upload extends RootCommand implements LeafCommand {
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
       pin: this.pin,
+      encrypt: this.encrypt,
     })
 
     return `${this.beeApiUrl}/bzz/${this.hash}/`
@@ -193,6 +197,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.hash = await this.bee.uploadFile(postageBatchId, readable, this.dropName ? undefined : parsedPath.base, {
       tag: tag && tag.uid,
       pin: this.pin,
+      encrypt: this.encrypt,
     })
 
     return `${this.beeApiUrl}/bzz/${this.hash}`
