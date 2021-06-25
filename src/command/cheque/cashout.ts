@@ -28,9 +28,9 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     key: 'minimum',
     alias: 'm',
     type: 'bigint',
-    minimum: BigInt(0),
+    minimum: BigInt(1),
     description: 'Cashout cheques with balance above this value in PLUR',
-    default: BigInt(0),
+    default: BigInt(1),
   })
   public minimum!: bigint
 
