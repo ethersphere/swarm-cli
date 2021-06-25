@@ -1,5 +1,7 @@
-import { Bee, BeeDebug } from '@ethersphere/bee-js'
+import { Bee, BeeDebug, Utils as BeeJsUtils } from '@ethersphere/bee-js'
+import { AxiosRequestConfig } from 'axios'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
+import { printCurlCommand } from '../../curl'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
@@ -25,6 +27,9 @@ export class RootCommand {
 
   @ExternalOption('quiet')
   public quiet!: boolean
+
+  @ExternalOption('curl')
+  public curl!: boolean
 
   public bee!: Bee
   public beeDebug!: BeeDebug
@@ -52,6 +57,14 @@ export class RootCommand {
       this.verbosity = VerbosityLevel.Verbose
     }
     this.console = new CommandLog(this.verbosity)
+
+    if (this.curl) {
+      BeeJsUtils.axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
+        printCurlCommand(request)
+
+        return request
+      })
+    }
   }
 
   private maybeSetFromConfig(option: ConfigOption): void {

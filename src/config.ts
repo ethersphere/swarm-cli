@@ -72,6 +72,13 @@ export const version: IOption<boolean> = {
   },
 }
 
+export const curl: IOption<boolean> = {
+  key: 'curl',
+  description: 'Print curl commands for debug purposes',
+  type: 'boolean',
+  default: false,
+}
+
 export const optionParameters: IOption<unknown>[] = [
   beeApiUrl,
   beeDebugApiUrl,
@@ -81,6 +88,7 @@ export const optionParameters: IOption<unknown>[] = [
   quiet,
   help,
   version,
+  curl,
 ]
 
 export const rootCommandClasses = [Upload, Status, Pinning, Identity, Feed, Cheque, Stamp, Pss, Addresses]
