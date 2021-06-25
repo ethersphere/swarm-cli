@@ -47,7 +47,7 @@ export class Buy extends StampCommand implements LeafCommand {
 
     const spinner: ora.Ora = ora('Buying postage stamp. This may take a while.')
 
-    if (this.verbosity !== VerbosityLevel.Quiet) {
+    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
     }
 
