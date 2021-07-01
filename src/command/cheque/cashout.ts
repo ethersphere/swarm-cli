@@ -1,5 +1,6 @@
 import { LeafCommand, Option } from 'furious-commander'
-import { bold, green } from 'kleur'
+import { green } from 'kleur'
+import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
 export class Cashout extends ChequeCommand implements LeafCommand {
@@ -84,7 +85,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
         gasLimit: this.gasLimit?.toString(),
         gasPrice: this.gasPrice?.toString(),
       })
-      this.console.log(green(bold('Tx:'.padEnd(14))) + transaction)
+      this.console.log(createKeyValue('Tx', Number(transaction)))
       this.console.quiet(transaction)
     } catch (error) {
       this.console.error('Could not cashout ' + address)

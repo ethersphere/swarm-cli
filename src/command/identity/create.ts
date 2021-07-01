@@ -1,11 +1,11 @@
 import { randomBytes } from 'crypto'
 import Wallet from 'ethereumjs-wallet'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { bold, green } from 'kleur'
 import ora from 'ora'
 import { exit } from 'process'
 import { IdentityType, SimpleWallet, V3Keystore } from '../../service/identity/types'
 import { bytesToHex } from '../../utils/hex'
+import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
 
@@ -80,10 +80,10 @@ export class Create extends RootCommand implements LeafCommand {
     //print info
     this.console.log('Keypair has been generated successfully!')
     this.console.divider()
-    this.console.log(bold(`Identity name \t ${green(this.identityName)}`))
-    this.console.log(`Private key \t ${green(this.wallet.getPrivateKeyString())}`)
-    this.console.log(`Public key \t ${green(this.wallet.getPublicKeyString())}`)
-    this.console.log(`Address \t ${green(this.wallet.getAddressString())}`)
+    this.console.log(createKeyValue('Identity name', this.identityName))
+    this.console.log(createKeyValue('Private key', this.wallet.getPrivateKeyString()))
+    this.console.log(createKeyValue('Public key', this.wallet.getPublicKeyString()))
+    this.console.log(createKeyValue('Address', this.wallet.getAddressString()))
   }
 
   /** Init additional properties of class, that are not handled by the CLI framework */

@@ -62,6 +62,14 @@ export class List extends StampCommand implements LeafCommand {
     const limitedStamps = filteredStamps.slice(0, this.limit)
 
     const orderedStamps = this.leastUsed ? limitedStamps.sort((a, b) => a.usage - b.usage) : limitedStamps
-    orderedStamps.forEach(stamp => printStamp(stamp, this.console))
+
+    for (let i = 0; i < orderedStamps.length; i++) {
+      const stamp = orderedStamps[i]
+      printStamp(stamp, this.console)
+
+      if (i !== orderedStamps.length - 1) {
+        this.console.divider()
+      }
+    }
   }
 }

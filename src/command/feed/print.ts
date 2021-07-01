@@ -1,10 +1,11 @@
 import Wallet from 'ethereumjs-wallet'
 import { LeafCommand, Option } from 'furious-commander'
-import { bold, green } from 'kleur'
+import { green } from 'kleur'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { pickStamp } from '../../service/stamp'
+import { createKeyValue } from '../../utils/text'
 import { FeedCommand } from './feed-command'
 
 export class Print extends FeedCommand implements LeafCommand {
@@ -37,14 +38,14 @@ export class Print extends FeedCommand implements LeafCommand {
 
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
 
-    this.console.verbose(bold(`Chunk Reference -> ${green(reference)}`))
-    this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${reference}`)}`))
-    this.console.verbose(bold(`Feed Index -> ${green(feedIndex)}`))
-    this.console.verbose(bold(`Next Index -> ${green(feedIndexNext)}`))
-    this.console.verbose(bold(`Feed Manifest -> ${green(manifest)}`))
+    this.console.verbose(createKeyValue('Chunk Reference', reference))
+    this.console.verbose(createKeyValue('Chunk Reference URL', `${this.beeApiUrl}/files/${reference}`))
+    this.console.verbose(createKeyValue('Feed Index', green(feedIndex)))
+    this.console.verbose(createKeyValue('Next Index', green(feedIndexNext)))
+    this.console.verbose(createKeyValue('Feed Manifest', manifest))
 
     this.console.quiet(manifest)
-    this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}/`)}`))
+    this.console.log(createKeyValue('Feed Manifest URL', `${this.beeApiUrl}/bzz/${manifest}/`))
   }
 
   private async getAddressString(): Promise<string> {

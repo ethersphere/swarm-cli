@@ -1,6 +1,7 @@
 import { SUPPORTED_BEE_VERSION, SUPPORTED_BEE_VERSION_EXACT } from '@ethersphere/bee-js'
 import { LeafCommand } from 'furious-commander'
-import { bold, green, red, yellow } from 'kleur'
+import { bold, green, red } from 'kleur'
+import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
 
 export class Status extends RootCommand implements LeafCommand {
@@ -16,9 +17,9 @@ export class Status extends RootCommand implements LeafCommand {
     await this.checkBeeVersionCompatibility()
 
     this.console.divider()
-    this.console.log(bold('Bee Version: ' + yellow(version)))
+    this.console.log(createKeyValue('Bee Version', version, 'Supported Version'.length))
     this.console.log(
-      bold('Supported Version: ' + yellow(SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')')),
+      createKeyValue('Supported Version', SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')'),
     )
     this.console.quiet('Bee version - ' + version)
     this.console.quiet('Supported version - ' + SUPPORTED_BEE_VERSION_EXACT)

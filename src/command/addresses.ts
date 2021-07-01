@@ -1,5 +1,6 @@
 import { LeafCommand } from 'furious-commander'
-import { bold, green } from 'kleur'
+import { bold } from 'kleur'
+import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
 
 export class Addresses extends RootCommand implements LeafCommand {
@@ -13,14 +14,14 @@ export class Addresses extends RootCommand implements LeafCommand {
     const nodeAddresses = await this.beeDebug.getNodeAddresses()
     const chequebookAddress = await this.beeDebug.getChequebookAddress()
 
-    const longest = 'PSS Public Key: '.length
+    const longest = 'PSS Public Key'.length
     this.console.log(bold('Node Addresses'))
     this.console.divider()
-    this.console.log(green('Ethereum: '.padEnd(longest)) + nodeAddresses.ethereum)
-    this.console.log(green('Overlay: '.padEnd(longest)) + nodeAddresses.overlay)
-    this.console.log(green('PSS Public Key: ') + nodeAddresses.pssPublicKey)
-    this.console.log(green('Public Key: '.padEnd(longest)) + nodeAddresses.publicKey)
-    this.console.log(green('Underlay: '.padEnd(longest)) + nodeAddresses.underlay)
+    this.console.log(createKeyValue('Ethereum', nodeAddresses.ethereum, longest))
+    this.console.log(createKeyValue('Overlay', nodeAddresses.overlay, longest))
+    this.console.log(createKeyValue('PSS Public Key', nodeAddresses.pssPublicKey, longest))
+    this.console.log(createKeyValue('Public Key', nodeAddresses.publicKey, longest))
+    this.console.log(createKeyValue('Underlay', nodeAddresses.underlay.join(' '), longest))
     this.console.log('')
     this.console.log(bold('Chequebook Address'))
     this.console.divider()

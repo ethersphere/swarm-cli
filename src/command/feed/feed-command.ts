@@ -1,12 +1,12 @@
 import { Reference } from '@ethersphere/bee-js'
 import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
-import { bold, green } from 'kleur'
 import { exit } from 'process'
 import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { printEnrichedStamp } from '../../service/stamp'
 import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
+import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 
 export class FeedCommand extends RootCommand {
@@ -39,11 +39,11 @@ export class FeedCommand extends RootCommand {
     const reference = await writer.upload(this.stamp, chunkReference as Reference)
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())
 
-    this.console.verbose(bold(`Chunk Reference -> ${green(chunkReference)}`))
-    this.console.verbose(bold(`Chunk Reference URL -> ${green(`${this.beeApiUrl}/files/${chunkReference}`)}`))
-    this.console.verbose(bold(`Feed Reference -> ${green(reference)}`))
-    this.console.verbose(bold(`Feed Manifest -> ${green(manifest)}`))
-    this.console.log(bold(`Feed Manifest URL -> ${green(`${this.beeApiUrl}/bzz/${manifest}/`)}`))
+    this.console.verbose(createKeyValue('Chunk Reference', chunkReference))
+    this.console.verbose(createKeyValue('Chunk Reference URL', `${this.beeApiUrl}/files/${chunkReference}`))
+    this.console.verbose(createKeyValue('Feed Reference', reference))
+    this.console.verbose(createKeyValue('Feed Manifest', manifest))
+    this.console.log(createKeyValue('Feed Manifest URL', `${this.beeApiUrl}/bzz/${manifest}/`))
 
     this.console.quiet(manifest)
 
