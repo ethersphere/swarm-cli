@@ -9,6 +9,7 @@ import { exit } from 'process'
 import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
 import { stampProperties } from '../utils/option'
+import { createSpinner } from '../utils/spinner'
 import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
@@ -121,7 +122,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
     await this.maybeRunSizeChecks()
 
-    const spinner: ora.Ora = ora('Uploading files...')
+    const spinner: ora.Ora = createSpinner('Uploading files...')
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
       spinner.start()
