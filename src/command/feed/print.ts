@@ -1,6 +1,5 @@
 import Wallet from 'ethereumjs-wallet'
 import { LeafCommand, Option } from 'furious-commander'
-import { green } from 'kleur'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
@@ -40,8 +39,8 @@ export class Print extends FeedCommand implements LeafCommand {
 
     this.console.verbose(createKeyValue('Chunk Reference', reference))
     this.console.verbose(createKeyValue('Chunk Reference URL', `${this.beeApiUrl}/files/${reference}`))
-    this.console.verbose(createKeyValue('Feed Index', green(feedIndex)))
-    this.console.verbose(createKeyValue('Next Index', green(feedIndexNext)))
+    this.console.verbose(createKeyValue('Feed Index', feedIndex))
+    this.console.verbose(createKeyValue('Next Index', feedIndexNext))
     this.console.verbose(createKeyValue('Feed Manifest', manifest))
 
     this.console.quiet(manifest)
