@@ -3,15 +3,15 @@ import { describeCommand, invokeTestCli } from '../utility'
 describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
   it('should list stamps', async () => {
     await invokeTestCli(['stamp', 'list'])
-    expect(consoleMessages[1]).toContain('Stamp ID:')
-    expect(consoleMessages[2]).toContain('Usage:')
+    expect(consoleMessages[0]).toContain('Stamp ID:')
+    expect(consoleMessages[1]).toContain('Usage:')
   })
 
   it('should show a specific stamp', async () => {
     await invokeTestCli(['stamp', 'show', process.env.STAMP || ''])
-    expect(consoleMessages[1]).toContain('Stamp ID:')
-    expect(consoleMessages[1]).toContain(process.env.STAMP)
-    expect(consoleMessages[2]).toContain('Usage:')
+    expect(consoleMessages[0]).toContain('Stamp ID:')
+    expect(consoleMessages[0]).toContain(process.env.STAMP)
+    expect(consoleMessages[1]).toContain('Usage:')
   })
 
   it('should not allow buying stamp with amount 0', async () => {

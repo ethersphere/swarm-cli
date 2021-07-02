@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { bold, dim, italic } from 'kleur'
+import { bold, dim } from 'kleur'
 
 export const Printer = {
   emptyFunction: (): void => {
@@ -15,7 +15,7 @@ export const Printer = {
     console.log(message, ...args)
   },
   info: (message: string, ...args: unknown[]): void => {
-    console.log(italic().dim(message), ...args)
+    console.log(dim(message), ...args)
   },
   dimFunction: (message: string, ...args: unknown[]): void => {
     console.log(dim(message), ...args)

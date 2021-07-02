@@ -1,5 +1,5 @@
 import { Argument, LeafCommand } from 'furious-commander'
-import { bold, green } from 'kleur'
+import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
 export class Deposit extends ChequeCommand implements LeafCommand {
@@ -28,7 +28,7 @@ export class Deposit extends ChequeCommand implements LeafCommand {
     }
 
     const response = await this.beeDebug.depositTokens(this.amount.toString())
-    this.console.log(green(bold('Tx: ')) + response)
+    this.console.log(createKeyValue('Tx', response))
     this.console.quiet(response)
   }
 }

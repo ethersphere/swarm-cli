@@ -1,4 +1,5 @@
-import { bold, dim, italic } from 'kleur'
+import { dim } from 'kleur'
+import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 
 interface Cashable {
@@ -9,7 +10,7 @@ interface Cashable {
 export class ChequeCommand extends RootCommand {
   protected async checkDebugApiHealth(): Promise<boolean> {
     try {
-      this.console.verbose(italic(dim('Checking Debug API health...')))
+      this.console.verbose(dim('Checking Debug API health...'))
       const health = await this.beeDebug.getHealth()
 
       return health.status === 'ok'
@@ -48,8 +49,8 @@ export class ChequeCommand extends RootCommand {
 
   protected printCheque(cashable: Cashable): void {
     this.console.divider('-')
-    this.console.log(bold('Peer Address: ') + cashable.address)
-    this.console.log(bold('Cheque Value: ') + cashable.amount + ' PLUR')
+    this.console.log(createKeyValue('Peer Address', cashable.address))
+    this.console.log(createKeyValue('Cheque Value', cashable.amount + ' PLUR'))
     this.console.quiet(cashable.address + ' ' + cashable.amount)
   }
 

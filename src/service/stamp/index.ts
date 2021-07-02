@@ -1,7 +1,7 @@
 import { Bee, PostageBatch } from '@ethersphere/bee-js'
-import { bold } from 'kleur'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
+import { createKeyValue } from '../../utils/text'
 import { EnrichedStamp } from './types/stamp'
 
 /**
@@ -23,10 +23,7 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
   }
 
   const choices = stamps.map(stamp => `${stamp.batchID} (${stamp.usageText})`)
-  const value = await console.promptList(
-    choices,
-    'Please select a stamp for this action.\n\n  Stamp ID' + ' '.repeat(56) + ' Usage\n',
-  )
+  const value = await console.promptList(choices, 'Please select a stamp for this action')
   const [hex] = value.split(' ')
 
   return hex
@@ -52,16 +49,15 @@ export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
 }
 
 export function printStamp(stamp: EnrichedStamp, console: CommandLog): void {
-  console.divider('-')
-  console.log(bold('Stamp ID: ') + stamp.batchID)
-  console.log(bold('Usage: ') + stamp.usageText)
-  console.verbose(bold('Depth: ') + stamp.depth)
-  console.verbose(bold('Bucket depth: ') + stamp.bucketDepth)
-  console.verbose(bold('Amount: ') + stamp.amount)
-  console.verbose(bold('Usable: ') + stamp.usable)
-  console.verbose(bold('Utilization: ') + stamp.utilization)
-  console.verbose(bold('Block Number: ') + stamp.blockNumber)
-  console.verbose(bold('Immutable Flag: ') + stamp.immutableFlag)
+  console.log(createKeyValue('Stamp ID', stamp.batchID))
+  console.log(createKeyValue('Usage', stamp.usageText))
+  console.verbose(createKeyValue('Depth', stamp.depth))
+  console.verbose(createKeyValue('Bucket Depth', stamp.bucketDepth))
+  console.verbose(createKeyValue('Amount', stamp.amount))
+  console.verbose(createKeyValue('Usable', stamp.usable))
+  console.verbose(createKeyValue('Utilization', stamp.utilization))
+  console.verbose(createKeyValue('Block Number', stamp.blockNumber))
+  console.verbose(createKeyValue('Immutable Flag', stamp.immutableFlag))
   console.quiet(stamp.batchID + ' ' + stamp.usageText)
 }
 

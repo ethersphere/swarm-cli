@@ -1,6 +1,7 @@
 import { prompt } from 'inquirer'
 import { exit } from 'process'
 import { isInternalServerError, isNotFoundError } from '../../utils/error'
+import { deletePreviousLine } from '../../utils/text'
 import { BeeError } from '../../utils/types'
 import { Printer } from './printer'
 
@@ -85,6 +86,8 @@ export class CommandLog {
       exit(1)
     }
 
+    deletePreviousLine()
+
     return value
   }
 
@@ -93,7 +96,7 @@ export class CommandLog {
    *
    * @returns password
    */
-  public async askForPassword(message: string): Promise<string> {
+  public async askForPassword(message: string, clear = true): Promise<string> {
     const { value } = await prompt({
       type: 'password',
       name: 'value',
@@ -106,6 +109,10 @@ export class CommandLog {
       exit(1)
     }
 
+    if (clear) {
+      deletePreviousLine()
+    }
+
     return value
   }
 
@@ -115,8 +122,8 @@ export class CommandLog {
    * @returns password
    */
   public async askForPasswordWithConfirmation(): Promise<string> {
-    const password = await this.askForPassword('Please provide a password')
-    const passwordAgain = await this.askForPassword('Please repeat the password')
+    const password = await this.askForPassword('Please provide a password', false)
+    const passwordAgain = await this.askForPassword('Please repeat the password', false)
 
     if (password !== passwordAgain) {
       this.error('The two passwords do not match')
@@ -129,6 +136,8 @@ export class CommandLog {
 
   public async promptList(choices: string[], message: string): Promise<string> {
     const result = await prompt({ name: 'value', type: 'list', message, choices, loop: false })
+
+    deletePreviousLine()
 
     return result.value
   }

@@ -3,13 +3,13 @@ import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import inquirer from 'inquirer'
-import { bold, green } from 'kleur'
 import ora from 'ora'
 import { join, parse } from 'path'
 import { exit } from 'process'
 import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
 import { stampProperties } from '../utils/option'
+import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
@@ -136,7 +136,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     this.console.dim('Data has been sent to the Bee node successfully!')
-    this.console.log(bold(`Swarm root hash -> ${green(this.hash)}`))
+    this.console.log(createKeyValue('Swarm hash', this.hash))
 
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
     //refresh tag before populate tracking
@@ -151,7 +151,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     this.console.dim('Uploading was successful!')
-    this.console.log(bold(`URL -> ${green(url)}`))
+    this.console.log(createKeyValue('URL', url))
 
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
@@ -208,7 +208,7 @@ export class Upload extends RootCommand implements LeafCommand {
     const pollingTrials = this.syncPollingTrials
     let synced = false
     let syncStatus = 0
-    const progressBar = new SingleBar({}, Presets.rect)
+    const progressBar = new SingleBar({ clearOnComplete: true }, Presets.rect)
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
       progressBar.start(tag.total, 0)
@@ -230,14 +230,14 @@ export class Upload extends RootCommand implements LeafCommand {
     }
     progressBar.stop()
 
-    if (!synced) {
-      this.console.error('Data syncing timeout.')
-
-      return false
-    } else {
+    if (synced) {
       this.console.dim('Data has been synced on Swarm network')
 
       return true
+    } else {
+      this.console.error('Data syncing timeout.')
+
+      return false
     }
   }
 
