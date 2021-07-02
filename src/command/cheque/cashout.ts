@@ -85,7 +85,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
         gasLimit: this.gasLimit?.toString(),
         gasPrice: this.gasPrice?.toString(),
       })
-      this.console.log(createKeyValue('Tx', Number(transaction)))
+      this.console.log(createKeyValue('Tx', transaction))
       this.console.quiet(transaction)
     } catch (error) {
       this.console.error('Could not cashout ' + address)
