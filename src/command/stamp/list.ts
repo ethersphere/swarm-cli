@@ -1,5 +1,6 @@
 import { LeafCommand, Option } from 'furious-commander'
 import { enrichStamp, printStamp } from '../../service/stamp'
+import { printDivided } from '../../utils/text'
 import { StampCommand } from './stamp-command'
 
 export class List extends StampCommand implements LeafCommand {
@@ -63,13 +64,6 @@ export class List extends StampCommand implements LeafCommand {
 
     const orderedStamps = this.leastUsed ? limitedStamps.sort((a, b) => a.usage - b.usage) : limitedStamps
 
-    for (let i = 0; i < orderedStamps.length; i++) {
-      const stamp = orderedStamps[i]
-      printStamp(stamp, this.console)
-
-      if (i !== orderedStamps.length - 1) {
-        this.console.divider()
-      }
-    }
+    printDivided(orderedStamps, printStamp, this.console)
   }
 }
