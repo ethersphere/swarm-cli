@@ -5,9 +5,11 @@
 
 ### Features
 
-* add --drop-name to upload, print stamp after usage, sync progress ([#167](https://www.github.com/ethersphere/swarm-cli/issues/167)) ([8fc60be](https://www.github.com/ethersphere/swarm-cli/commit/8fc60bea546cbbd9bb7e9d8a82da3b4e7155c71b))
+* switch to streaming upload in case of single files ([#184](https://www.github.com/ethersphere/swarm-cli/issues/184)) ([e7ebbc9](https://www.github.com/ethersphere/swarm-cli/commit/e7ebbc989d5498d5963176fc2ed8b3a0c24ea57e))
 * add --encrypt to upload ([#183](https://www.github.com/ethersphere/swarm-cli/issues/183)) ([47ddc94](https://www.github.com/ethersphere/swarm-cli/commit/47ddc944dc20b36c0a05e716ef6ce453f3a771d6))
-* switch to streaming upload ([#184](https://www.github.com/ethersphere/swarm-cli/issues/184)) ([e7ebbc9](https://www.github.com/ethersphere/swarm-cli/commit/e7ebbc989d5498d5963176fc2ed8b3a0c24ea57e))
+* add --drop-name to upload ([#167](https://www.github.com/ethersphere/swarm-cli/issues/167)) ([8fc60be](https://www.github.com/ethersphere/swarm-cli/commit/8fc60bea546cbbd9bb7e9d8a82da3b4e7155c71b))
+* track chunk sync progress after upload ([#167](https://www.github.com/ethersphere/swarm-cli/issues/167)) ([8fc60be](https://www.github.com/ethersphere/swarm-cli/commit/8fc60bea546cbbd9bb7e9d8a82da3b4e7155c71b))
+* print stamp after usage ([#167](https://www.github.com/ethersphere/swarm-cli/issues/167)) ([8fc60be](https://www.github.com/ethersphere/swarm-cli/commit/8fc60bea546cbbd9bb7e9d8a82da3b4e7155c71b))
 
 
 ### Bug Fixes
