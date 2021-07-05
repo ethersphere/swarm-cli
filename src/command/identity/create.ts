@@ -5,6 +5,7 @@ import ora from 'ora'
 import { exit } from 'process'
 import { IdentityType, SimpleWallet, V3Keystore } from '../../service/identity/types'
 import { bytesToHex } from '../../utils/hex'
+import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
@@ -52,7 +53,7 @@ export class Create extends RootCommand implements LeafCommand {
       let spinner: ora.Ora
 
       if (this.verbosity === VerbosityLevel.Verbose) {
-        spinner = ora('Creating V3 wallet...').start()
+        spinner = createSpinner('Creating V3 wallet...').start()
       }
       identityWallet = await this.wallet.toV3(this.password)
 

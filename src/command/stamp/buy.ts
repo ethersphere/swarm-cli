@@ -1,5 +1,6 @@
 import { LeafCommand, Option } from 'furious-commander'
 import ora from 'ora'
+import { createSpinner } from '../../utils/spinner'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
 
@@ -45,7 +46,7 @@ export class Buy extends StampCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const spinner: ora.Ora = ora('Buying postage stamp. This may take a while.')
+    const spinner: ora.Ora = createSpinner('Buying postage stamp. This may take a while.')
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
       spinner.start()

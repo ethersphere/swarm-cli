@@ -5,6 +5,7 @@ import ora from 'ora'
 import { exit } from 'process'
 import { IdentityType } from '../../service/identity/types'
 import { fileExists } from '../../utils'
+import { createSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
 
@@ -30,7 +31,7 @@ export class Import extends RootCommand implements LeafCommand {
     await this.ensurePasswordIsProvided()
     const data = readFileSync(this.path).toString()
     await this.ensureIdentityNameIsProvided()
-    const spinner: ora.Ora = ora('Decrypting V3 wallet...')
+    const spinner: ora.Ora = createSpinner('Decrypting V3 wallet...')
 
     if (this.verbosity === VerbosityLevel.Verbose) {
       spinner.start()
