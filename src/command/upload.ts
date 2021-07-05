@@ -200,7 +200,7 @@ export class Upload extends RootCommand implements LeafCommand {
       size,
     })
 
-    return `${this.beeApiUrl}/bzz/${this.hash}`
+    return `${this.beeApiUrl}/bzz/${this.hash}/`
   }
 
   /**
