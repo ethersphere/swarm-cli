@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.1.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.0.0...v1.1.0) (2021-07-05)
+
+
+### Features
+
+* switch to streaming upload in case of single files ([#184](https://www.github.com/ethersphere/swarm-cli/issues/184)) ([e7ebbc9](https://www.github.com/ethersphere/swarm-cli/commit/e7ebbc989d5498d5963176fc2ed8b3a0c24ea57e))
+* add --encrypt to upload ([#183](https://www.github.com/ethersphere/swarm-cli/issues/183)) ([47ddc94](https://www.github.com/ethersphere/swarm-cli/commit/47ddc944dc20b36c0a05e716ef6ce453f3a771d6))
+* add --drop-name to upload ([#167](https://www.github.com/ethersphere/swarm-cli/issues/167)) ([8fc60be](https://www.github.com/ethersphere/swarm-cli/commit/8fc60bea546cbbd9bb7e9d8a82da3b4e7155c71b))
+* track chunk sync progress after upload ([#167](https://www.github.com/ethersphere/swarm-cli/issues/167)) ([8fc60be](https://www.github.com/ethersphere/swarm-cli/commit/8fc60bea546cbbd9bb7e9d8a82da3b4e7155c71b))
+* print stamp after usage ([#167](https://www.github.com/ethersphere/swarm-cli/issues/167)) ([8fc60be](https://www.github.com/ethersphere/swarm-cli/commit/8fc60bea546cbbd9bb7e9d8a82da3b4e7155c71b))
+
+
+### Bug Fixes
+
+* **cashout:** set minimum of minimum to 1 ([#176](https://www.github.com/ethersphere/swarm-cli/issues/176)) ([1db096f](https://www.github.com/ethersphere/swarm-cli/commit/1db096f272fd4983c8a14e145694ddda9148f411))
+* print trailing slash when uploading single file ([#194](https://www.github.com/ethersphere/swarm-cli/issues/194)) ([1bfee2b](https://www.github.com/ethersphere/swarm-cli/commit/1bfee2b1c72f390f0ad351a195eb7d95300f037a))
+* reduce spinner interval to avoid flickering on windows ([#188](https://www.github.com/ethersphere/swarm-cli/issues/188)) ([0eedf7b](https://www.github.com/ethersphere/swarm-cli/commit/0eedf7b74d894f839620728ad10d967dc5c817ac))
+
 ## [1.0.0](https://www.github.com/ethersphere/swarm-cli/compare/v0.10.0...v1.0.0) (2021-06-22)
 
 
