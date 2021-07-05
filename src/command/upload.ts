@@ -161,7 +161,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
 
-      if (!isGateway(this.beeApiUrl)) {
+      if (!isGateway(this.beeApiUrl) && !this.quiet) {
         printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
       }
     }

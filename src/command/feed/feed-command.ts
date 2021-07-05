@@ -47,7 +47,9 @@ export class FeedCommand extends RootCommand {
 
     this.console.quiet(manifest)
 
-    printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
+    if (!this.quiet) {
+      printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
+    }
   }
 
   protected async getWallet(): Promise<Wallet> {
