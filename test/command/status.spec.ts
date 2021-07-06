@@ -1,7 +1,7 @@
 import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 import { describeCommand, invokeTestCli } from '../utility'
 
-describeCommand('Test Status command', ({ consoleMessages }) => {
+describeCommand('Test Status command', ({ consoleMessages, getLastMessage, getNthLastMessage }) => {
   const server = createChequeMockHttpServer(1333)
 
   afterAll(() => {
@@ -10,10 +10,10 @@ describeCommand('Test Status command', ({ consoleMessages }) => {
 
   it('should succeed with all checks', async () => {
     await invokeTestCli(['status'])
-    expect(consoleMessages[0]).toContain('[OK]')
-    expect(consoleMessages[1]).toContain('[OK]')
     expect(consoleMessages[2]).toContain('[OK]')
-    expect(consoleMessages[4]).not.toContain('N/A')
+    expect(consoleMessages[3]).toContain('[OK]')
+    expect(consoleMessages[4]).toContain('[OK]')
+    expect(consoleMessages[5]).not.toContain('N/A')
   })
 
   it('should print less in quiet mode', async () => {
@@ -26,25 +26,37 @@ describeCommand('Test Status command', ({ consoleMessages }) => {
 
   it('should report when bee api is not available', async () => {
     await invokeTestCli(['status', '--bee-api-url', 'http://localhost:14999'])
-    expect(consoleMessages[0]).toContain('[FAILED]')
-    expect(consoleMessages[1]).toContain('[OK]')
-    expect(consoleMessages[2]).toContain('[OK]')
-    expect(consoleMessages[4]).not.toContain('N/A')
+    expect(consoleMessages[2]).toContain('[FAILED]')
+    expect(consoleMessages[3]).toContain('[OK]')
+    expect(consoleMessages[4]).toContain('[OK]')
+    expect(consoleMessages[5]).not.toContain('N/A')
   })
 
   it('should report when bee debug api is not available', async () => {
     await invokeTestCli(['status', '--bee-debug-api-url', 'http://localhost:14999'])
-    expect(consoleMessages[0]).toContain('[OK]')
-    expect(consoleMessages[1]).toContain('[FAILED]')
-    expect(consoleMessages[2]).toContain('[FAILED]')
-    expect(consoleMessages[4]).toContain('N/A')
+    expect(consoleMessages[2]).toContain('[OK]')
+    expect(consoleMessages[3]).toContain('[FAILED]')
+    expect(consoleMessages[4]).toContain('[FAILED]')
+    expect(consoleMessages[5]).toContain('N/A')
   })
 
   it('should report when bee version does not match', async () => {
     await invokeTestCli(['status', '--bee-debug-api-url', 'http://localhost:1333'])
-    expect(consoleMessages[0]).toContain('[OK]')
-    expect(consoleMessages[1]).toContain('[OK]')
-    expect(consoleMessages[2]).toContain('[FAILED]')
-    expect(consoleMessages[4]).toContain('0.5.3-acbd0e2')
+    expect(consoleMessages[2]).toContain('[OK]')
+    expect(consoleMessages[3]).toContain('[OK]')
+    expect(consoleMessages[4]).toContain('[FAILED]')
+    expect(consoleMessages[5]).toContain('0.5.3-acbd0e2')
+  })
+
+  it('should print topology', async () => {
+    await invokeTestCli(['status'])
+    expect(getNthLastMessage(3)).toContain('Connected Peers')
+    expect(getNthLastMessage(2)).toContain('Population')
+    expect(getLastMessage()).toContain('Depth')
+  })
+
+  it('should not print topology when debug api is unavailable', async () => {
+    await invokeTestCli(['status', '--bee-debug-api-url', 'http://localhost:1331'])
+    expect(getLastMessage()).toContain('Supported Version')
   })
 })

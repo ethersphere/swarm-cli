@@ -14,6 +14,10 @@ export function createChequeMockHttpServer(port: number): Server {
       response.end(JSON.stringify(health))
     }
 
+    if (request.url === '/topology') {
+      response.end(JSON.stringify(topology))
+    }
+
     if (request.url === '/chequebook/cheque') {
       response.end(JSON.stringify(lastCheques))
     }
@@ -32,6 +36,12 @@ export function createChequeMockHttpServer(port: number): Server {
 }
 
 const health = { status: 'ok', version: '0.5.3-acbd0e2' }
+
+const topology = {
+  population: 1,
+  connected: 1,
+  depth: 0,
+}
 
 const lastCheques = {
   lastcheques: [

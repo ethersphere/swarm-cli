@@ -12,17 +12,29 @@ export class Status extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
+    this.console.log(bold('Bee Status'))
+    this.console.divider()
     await this.checkBeeApiConnection()
     const version = await this.checkBeeDebugApiConnection()
     await this.checkBeeVersionCompatibility()
+    const topology = await this.checkTopology()
 
-    this.console.divider()
     this.console.log(createKeyValue('Bee Version', version, 'Supported Version'.length))
     this.console.log(
       createKeyValue('Supported Version', SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')'),
     )
     this.console.quiet('Bee version - ' + version)
     this.console.quiet('Supported version - ' + SUPPORTED_BEE_VERSION_EXACT)
+
+    if (topology) {
+      this.console.divider('=')
+      this.console.log(bold('Topology'))
+      this.console.divider()
+      this.console.log(createKeyValue('Connected Peers', topology.connected))
+      this.console.log(createKeyValue('Population', topology.population))
+      this.console.log(createKeyValue('Depth', topology.depth))
+      this.console.quiet(topology.connected + ' ' + topology.population + ' ' + topology.depth)
+    }
   }
 
   private async checkBeeApiConnection(): Promise<void> {
@@ -58,6 +70,24 @@ export class Status extends RootCommand implements LeafCommand {
       }
     } catch {
       this.handleFailedCheck('Bee Version Compatibility')
+    }
+  }
+
+  private async checkTopology(): Promise<null | {
+    connected: number
+    population: number
+    depth: number
+  }> {
+    try {
+      const { connected, population, depth } = await this.beeDebug.getTopology()
+
+      return {
+        connected,
+        population,
+        depth,
+      }
+    } catch {
+      return null
     }
   }
 
