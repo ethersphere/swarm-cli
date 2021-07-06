@@ -76,7 +76,7 @@ export class FeedCommand extends RootCommand {
     wallet: Wallet,
     topic: string,
     chunkReference: string,
-  ): Promise<{ reference: string; manifest: string }> {
+  ): Promise<{ reference: string, manifest: string }> {
     const spinner = createSpinner('Writing feed...')
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
