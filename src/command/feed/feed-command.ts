@@ -11,6 +11,11 @@ import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
 
+interface FeedInfo {
+  reference: string
+  manifest: string
+}
+
 export class FeedCommand extends RootCommand {
   @Option(stampProperties)
   public stamp!: string
@@ -72,11 +77,7 @@ export class FeedCommand extends RootCommand {
     return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
   }
 
-  private async writeFeed(
-    wallet: Wallet,
-    topic: string,
-    chunkReference: string,
-  ): Promise<{ reference: string, manifest: string }> {
+  private async writeFeed(wallet: Wallet, topic: string, chunkReference: string): Promise<FeedInfo> {
     const spinner = createSpinner('Writing feed...')
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
