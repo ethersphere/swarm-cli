@@ -12,7 +12,6 @@ export class Status extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    this.console.divider()
     this.console.log(bold('Bee Status'))
     this.console.divider()
     await this.checkBeeApiConnection()
@@ -28,7 +27,7 @@ export class Status extends RootCommand implements LeafCommand {
     this.console.quiet('Supported version - ' + SUPPORTED_BEE_VERSION_EXACT)
 
     if (topology) {
-      this.console.divider()
+      this.console.divider('=')
       this.console.log(bold('Topology'))
       this.console.divider()
       this.console.log(createKeyValue('Connected Peers', topology.connected))
