@@ -6,8 +6,10 @@ import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { printEnrichedStamp } from '../../service/stamp'
 import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
+import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
+import { VerbosityLevel } from '../root-command/command-log'
 
 export class FeedCommand extends RootCommand {
   @Option(stampProperties)
@@ -32,12 +34,9 @@ export class FeedCommand extends RootCommand {
   public password!: string
 
   protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
-    this.console.dim('Updating feed...')
     const wallet = await this.getWallet()
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
-    const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-    const reference = await writer.upload(this.stamp, chunkReference as Reference)
-    const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())
+    const { reference, manifest } = await this.writeFeed(wallet, topic, chunkReference)
 
     this.console.verbose(createKeyValue('Chunk Reference', chunkReference))
     this.console.verbose(createKeyValue('Chunk Reference URL', `${this.beeApiUrl}/files/${chunkReference}`))
@@ -71,5 +70,27 @@ export class FeedCommand extends RootCommand {
     }
 
     return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
+  }
+
+  private async writeFeed(
+    wallet: Wallet,
+    topic: string,
+    chunkReference: string,
+  ): Promise<{ reference: string; manifest: string }> {
+    const spinner = createSpinner('Writing feed...')
+
+    if (this.verbosity !== VerbosityLevel.Quiet) {
+      spinner.start()
+    }
+
+    try {
+      const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
+      const reference = await writer.upload(this.stamp, chunkReference as Reference)
+      const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())
+
+      return { reference, manifest }
+    } finally {
+      spinner.stop()
+    }
   }
 }
