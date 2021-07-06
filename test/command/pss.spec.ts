@@ -4,7 +4,7 @@ import { sleep } from '../../src/utils'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
-describeCommand('Test PSS command', ({ getLastMessage }) => {
+describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
   it('should receive sent pss message', async () => {
     const invocation = invokeTestCli([
       'pss',
@@ -100,5 +100,67 @@ describeCommand('Test PSS command', ({ getLastMessage }) => {
   it('should timeout during receive', async () => {
     await invokeTestCli(['pss', 'receive', '-T', 'PSS Test', '--timeout', '1'])
     expect(getLastMessage()).toContain('Receive timed out')
+  })
+
+  it('should not allow sending payload above 4000 bytes', async () => {
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'PSS Test',
+      '--target',
+      '00',
+      '--message',
+      '0'.repeat(4001),
+      ...getStampOption(),
+    ])
+    expect(getNthLastMessage(2)).toContain('Maximum payload size is 4000 bytes.')
+    expect(getLastMessage()).toContain('You tried sending 4001 bytes.')
+  })
+
+  it('should allow sending payload of 4000 bytes', async () => {
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'PSS Test',
+      '--target',
+      '00',
+      '--message',
+      '0'.repeat(4000),
+      ...getStampOption(),
+    ])
+    expect(getLastMessage()).toContain('Message sent successfully.')
+  })
+
+  it('should not allow sending multibyte payload above 4000 bytes', async () => {
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'PSS Test',
+      '--target',
+      '00',
+      '--message',
+      '😃'.repeat(1001),
+      ...getStampOption(),
+    ])
+    expect(getNthLastMessage(2)).toContain('Maximum payload size is 4000 bytes.')
+    expect(getLastMessage()).toContain('You tried sending 4004 bytes.')
+  })
+
+  it('should allow sending multibyte payload of 4000 bytes', async () => {
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'PSS Test',
+      '--target',
+      '00',
+      '--message',
+      '😃'.repeat(1000),
+      ...getStampOption(),
+    ])
+    expect(getLastMessage()).toContain('Message sent successfully.')
   })
 })
