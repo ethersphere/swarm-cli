@@ -132,4 +132,35 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
     ])
     expect(getLastMessage()).toContain('Message sent successfully.')
   })
+
+  it('should not allow sending multibyte payload above 4000 bytes', async () => {
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'PSS Test',
+      '--target',
+      '00',
+      '--message',
+      '😃'.repeat(1001),
+      ...getStampOption(),
+    ])
+    expect(getNthLastMessage(2)).toContain('Maximum payload size is 4000 bytes.')
+    expect(getLastMessage()).toContain('You tried sending 4001 bytes.')
+  })
+
+  it('should allow sending multibyte payload of 4000 bytes', async () => {
+    await invokeTestCli([
+      'pss',
+      'send',
+      '-T',
+      'PSS Test',
+      '--target',
+      '00',
+      '--message',
+      '😃'.repeat(1000),
+      ...getStampOption(),
+    ])
+    expect(getLastMessage()).toContain('Message sent successfully.')
+  })
 })

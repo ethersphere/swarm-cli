@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
-import { fileExists } from '../../utils'
+import { fileExists, getByteSize } from '../../utils'
 import { stampProperties } from '../../utils/option'
 import { PssCommand } from './pss-command'
 
@@ -60,7 +60,7 @@ export class Send extends PssCommand implements LeafCommand {
       this.sendable = this.message
     }
 
-    const length = this.sendable.length
+    const length = getByteSize(this.sendable)
 
     if (length > 4000) {
       this.console.error('Maximum payload size is 4000 bytes.')
