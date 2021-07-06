@@ -146,7 +146,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       ...getStampOption(),
     ])
     expect(getNthLastMessage(2)).toContain('Maximum payload size is 4000 bytes.')
-    expect(getLastMessage()).toContain('You tried sending 4001 bytes.')
+    expect(getLastMessage()).toContain('You tried sending 4004 bytes.')
   })
 
   it('should allow sending multibyte payload of 4000 bytes', async () => {
