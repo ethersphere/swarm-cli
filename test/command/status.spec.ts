@@ -54,4 +54,9 @@ describeCommand('Test Status command', ({ consoleMessages, getLastMessage, getNt
     expect(getNthLastMessage(2)).toContain('Population')
     expect(getLastMessage()).toContain('Depth')
   })
+
+  it('should not print topology when debug api is unavailable', async () => {
+    await invokeTestCli(['status', '--bee-debug-api-url', 'http://localhost:1333'])
+    expect(getLastMessage()).toContain('Supported Version')
+  })
 })
