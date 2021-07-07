@@ -44,7 +44,7 @@ export class FeedCommand extends RootCommand {
     const { reference, manifest } = await this.writeFeed(wallet, topic, chunkReference)
 
     this.console.verbose(createKeyValue('Chunk Reference', chunkReference))
-    this.console.verbose(createKeyValue('Chunk Reference URL', `${this.beeApiUrl}/files/${chunkReference}`))
+    this.console.verbose(createKeyValue('Chunk Reference URL', `${this.beeApiUrl}/bzz/${chunkReference}/`))
     this.console.verbose(createKeyValue('Feed Reference', reference))
     this.console.verbose(createKeyValue('Feed Manifest', manifest))
     this.console.log(createKeyValue('Feed Manifest URL', `${this.beeApiUrl}/bzz/${manifest}/`))

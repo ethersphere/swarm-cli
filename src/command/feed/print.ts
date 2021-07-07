@@ -38,7 +38,7 @@ export class Print extends FeedCommand implements LeafCommand {
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
 
     this.console.verbose(createKeyValue('Chunk Reference', reference))
-    this.console.verbose(createKeyValue('Chunk Reference URL', `${this.beeApiUrl}/files/${reference}`))
+    this.console.verbose(createKeyValue('Chunk Reference URL', `${this.beeApiUrl}/bzz/${reference}/`))
     this.console.verbose(createKeyValue('Feed Index', feedIndex))
     this.console.verbose(createKeyValue('Next Index', feedIndexNext))
     this.console.verbose(createKeyValue('Feed Manifest', manifest))
