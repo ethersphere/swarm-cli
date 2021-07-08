@@ -124,7 +124,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
     const spinner: ora.Ora = createSpinner('Uploading files...')
 
-    if (this.verbosity !== VerbosityLevel.Quiet) {
+    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
     }
 
@@ -218,7 +218,7 @@ export class Upload extends RootCommand implements LeafCommand {
     let syncStatus = 0
     const progressBar = new SingleBar({ clearOnComplete: true }, Presets.rect)
 
-    if (this.verbosity !== VerbosityLevel.Quiet) {
+    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       progressBar.start(tag.total, 0)
     }
     for (let i = 0; i < pollingTrials; i++) {
@@ -228,7 +228,12 @@ export class Upload extends RootCommand implements LeafCommand {
         i = 0
         syncStatus = tag.synced
       }
-      progressBar.update(syncStatus)
+
+      if (this.curl) {
+        this.console.log(`${syncStatus} / ${tag.total}`)
+      } else {
+        progressBar.update(syncStatus)
+      }
 
       if (syncStatus >= tag.total) {
         synced = true
