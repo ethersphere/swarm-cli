@@ -1,5 +1,6 @@
 import { LeafCommand, Option } from 'furious-commander'
 import ora from 'ora'
+import { printEnrichedStamp } from '../../service/stamp'
 import { createSpinner } from '../../utils/spinner'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
@@ -61,7 +62,7 @@ export class Buy extends StampCommand implements LeafCommand {
       if (spinner.isSpinning) {
         spinner.stop()
       }
-      this.printBatchId(batchId)
+      printEnrichedStamp(await this.bee.getPostageBatch(batchId), this.console)
       this.postageBatchId = batchId
     } finally {
       if (spinner.isSpinning) {
