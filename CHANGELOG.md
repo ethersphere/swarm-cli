@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.1.0...v1.2.0) (2021-07-14)
+
+
+### Features
+
+* add spinner to feed operations ([#197](https://www.github.com/ethersphere/swarm-cli/issues/197)) ([94f198c](https://www.github.com/ethersphere/swarm-cli/commit/94f198ca301580d17c9fd9ac62547d9dce7a2c7d))
+* add topology info to status command ([#198](https://www.github.com/ethersphere/swarm-cli/issues/198)) ([9805f92](https://www.github.com/ethersphere/swarm-cli/commit/9805f92da8807c01ef98155ee8bd13fd081e7b33))
+* establish color system with chalk ([#207](https://www.github.com/ethersphere/swarm-cli/issues/207)) ([f6cf189](https://www.github.com/ethersphere/swarm-cli/commit/f6cf18967e9a1a3aa0b4a3080e8e4730b2e315be))
+
+
+### Bug Fixes
+
+* change old /files endpoints to /bzz in feed commands ([#204](https://www.github.com/ethersphere/swarm-cli/issues/204)) ([28a2d3a](https://www.github.com/ethersphere/swarm-cli/commit/28a2d3a6713887d1e860d92308edaa08376465d8))
+* handle payload size errors in pss send ([#199](https://www.github.com/ethersphere/swarm-cli/issues/199)) ([4ec8fbc](https://www.github.com/ethersphere/swarm-cli/commit/4ec8fbcb95d7f700f64b5d1eaba46a35e3f13988))
+
 ## [1.1.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.0.0...v1.1.0) (2021-07-05)
 
 
