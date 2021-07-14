@@ -1,4 +1,4 @@
-import { dim } from 'kleur'
+import chalk from 'chalk'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 
@@ -10,7 +10,7 @@ interface Cashable {
 export class ChequeCommand extends RootCommand {
   protected async checkDebugApiHealth(): Promise<boolean> {
     try {
-      this.console.verbose(dim('Checking Debug API health...'))
+      this.console.verbose(chalk.dim('Checking Debug API health...'))
       const health = await this.beeDebug.getHealth()
 
       return health.status === 'ok'

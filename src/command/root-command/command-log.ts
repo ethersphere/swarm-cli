@@ -1,3 +1,4 @@
+import chalk from 'chalk'
 import { prompt } from 'inquirer'
 import { exit } from 'process'
 import { isInternalServerError, isNotFoundError } from '../../utils/error'
@@ -68,6 +69,17 @@ export class CommandLog {
     }
   }
 
+  public async confirm(message: string): Promise<boolean> {
+    const { value } = await prompt({
+      prefix: chalk.bold.cyan('?'),
+      type: 'confirm',
+      name: 'value',
+      message,
+    })
+
+    return value
+  }
+
   /**
    * Ask for an arbitrary value
    *
@@ -75,6 +87,7 @@ export class CommandLog {
    */
   public async askForValue(message: string): Promise<string> {
     const input = await prompt({
+      prefix: chalk.bold.cyan('?'),
       name: 'value',
       message,
     })
@@ -98,6 +111,7 @@ export class CommandLog {
    */
   public async askForPassword(message: string, clear = true): Promise<string> {
     const { value } = await prompt({
+      prefix: chalk.bold.cyan('?'),
       type: 'password',
       name: 'value',
       message,
@@ -135,7 +149,14 @@ export class CommandLog {
   }
 
   public async promptList(choices: string[], message: string): Promise<string> {
-    const result = await prompt({ name: 'value', type: 'list', message, choices, loop: false })
+    const result = await prompt({
+      prefix: chalk.bold.cyan('?'),
+      name: 'value',
+      type: 'list',
+      message,
+      choices,
+      loop: false,
+    })
 
     deletePreviousLine()
 

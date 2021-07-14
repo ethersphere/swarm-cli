@@ -1,5 +1,5 @@
+import chalk from 'chalk'
 import { LeafCommand, Option } from 'furious-commander'
-import { green } from 'kleur'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
@@ -79,7 +79,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
 
   private async cashoutOne(address: string, amount: bigint): Promise<void> {
     try {
-      this.console.log(green('Cashing out:'))
+      this.console.log(chalk.green('Cashing out:'))
       this.printCheque({ address, amount })
       const transaction = await this.beeDebug.cashoutLastCheque(address, {
         gasLimit: this.gasLimit?.toString(),

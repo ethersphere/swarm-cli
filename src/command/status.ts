@@ -1,6 +1,6 @@
 import { SUPPORTED_BEE_VERSION, SUPPORTED_BEE_VERSION_EXACT } from '@ethersphere/bee-js'
+import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
-import { bold, green, red } from 'kleur'
 import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
 
@@ -12,7 +12,7 @@ export class Status extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    this.console.log(bold('Bee Status'))
+    this.console.log(chalk.bold('Bee Status'))
     this.console.divider()
     await this.checkBeeApiConnection()
     const version = await this.checkBeeDebugApiConnection()
@@ -28,7 +28,7 @@ export class Status extends RootCommand implements LeafCommand {
 
     if (topology) {
       this.console.divider('=')
-      this.console.log(bold('Topology'))
+      this.console.log(chalk.bold('Topology'))
       this.console.divider()
       this.console.log(createKeyValue('Connected Peers', topology.connected))
       this.console.log(createKeyValue('Population', topology.population))
@@ -92,12 +92,12 @@ export class Status extends RootCommand implements LeafCommand {
   }
 
   private printSuccessfulCheck(message: string): void {
-    this.console.log(bold(green('[OK]')) + ' ' + message)
+    this.console.log(chalk.bold.green('[OK]') + ' ' + message)
     this.console.quiet('OK - ' + message)
   }
 
   private handleFailedCheck(message: string): void {
-    this.console.log(bold(red('[FAILED]')) + ' ' + message)
+    this.console.log(chalk.bold.red('[FAILED]') + ' ' + message)
     this.console.quiet('FAILED - ' + message)
     process.exitCode = 1
   }

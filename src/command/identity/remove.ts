@@ -1,5 +1,4 @@
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import inquirer from 'inquirer'
 import { exit } from 'process'
 import { pickIdentity } from '../../service/identity'
 import { IdentityCommand } from './identity-command'
@@ -42,13 +41,9 @@ export class Remove extends IdentityCommand implements LeafCommand {
     }
 
     if (!this.force) {
-      const approve = await inquirer.prompt({
-        type: 'confirm',
-        name: 'question',
-        message: `Are you sure you want delete identity '${this.identityName}'?`,
-      })
+      const confirmation = await this.console.confirm(`Are you sure you want delete identity '${this.identityName}'?`)
 
-      if (!approve.question) {
+      if (!confirmation) {
         this.console.error('Removal of identity has been cancelled')
 
         exit(1)

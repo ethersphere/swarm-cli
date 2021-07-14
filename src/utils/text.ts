@@ -1,4 +1,4 @@
-import { bold, green } from 'kleur'
+import chalk from 'chalk'
 import { CommandLog } from '../command/root-command/command-log'
 
 function goUpOneRow(): string {
@@ -14,7 +14,7 @@ export function deletePreviousLine(): void {
 }
 
 export function createKeyValue(key: string, value: string | number | boolean, padLength?: number): string {
-  return `${green(bold(key + ':')).padEnd(padLength ? padLength + 1 : 0)} ${String(value)}`
+  return `${chalk.green.bold(key + ':').padEnd(padLength ? padLength + 1 : 0)} ${String(value)}`
 }
 
 export function printDivided<T>(

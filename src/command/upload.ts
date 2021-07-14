@@ -2,7 +2,6 @@ import { Tag, Utils } from '@ethersphere/bee-js'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import inquirer from 'inquirer'
 import ora from 'ora'
 import { join, parse } from 'path'
 import { exit } from 'process'
@@ -266,13 +265,9 @@ export class Upload extends RootCommand implements LeafCommand {
       this.console.error('Pass --size-check false to ignore this warning.')
       exit(1)
     }
-    const { value } = await inquirer.prompt({
-      type: 'confirm',
-      name: 'value',
-      message: message + ' Do you want to proceed?',
-    })
+    const confirmation = await this.console.confirm(message + ' Do you want to proceed?')
 
-    if (!value) {
+    if (!confirmation) {
       exit(1)
     }
   }
