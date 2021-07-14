@@ -2,6 +2,7 @@ import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { Receive } from '../../src/command/pss/receive'
 import { sleep } from '../../src/utils'
 import { describeCommand, invokeTestCli } from '../utility'
+import { getWorkerPssAddress } from '../utility/address'
 import { getStampOption } from '../utility/stamp'
 
 describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
@@ -23,7 +24,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       '--topic-string',
       'PSS Test',
       '--target',
-      '00',
+      getWorkerPssAddress(4),
       '--message',
       'Bzzz Bzzzz Bzzzz',
       ...getStampOption(),
@@ -56,7 +57,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       '--topic-string',
       'PSS Test',
       '--target',
-      '00',
+      getWorkerPssAddress(4),
       '--path',
       'test/testconfig/in.txt',
       ...getStampOption(),
@@ -109,7 +110,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       '-T',
       'PSS Test',
       '--target',
-      '00',
+      getWorkerPssAddress(4),
       '--message',
       '0'.repeat(4001),
       ...getStampOption(),
@@ -125,7 +126,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       '-T',
       'PSS Test',
       '--target',
-      '00',
+      getWorkerPssAddress(4),
       '--message',
       '0'.repeat(4000),
       ...getStampOption(),
@@ -140,7 +141,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       '-T',
       'PSS Test',
       '--target',
-      '00',
+      getWorkerPssAddress(4),
       '--message',
       '😃'.repeat(1001),
       ...getStampOption(),
@@ -156,7 +157,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       '-T',
       'PSS Test',
       '--target',
-      '00',
+      getWorkerPssAddress(4),
       '--message',
       '😃'.repeat(1000),
       ...getStampOption(),
