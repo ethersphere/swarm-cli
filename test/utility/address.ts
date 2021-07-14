@@ -2,7 +2,7 @@ import { invokeTestCli } from '.'
 import { Addresses } from '../../src/command/addresses'
 
 export async function getPssAddress(beeDebugApiUrl: string): Promise<string> {
-  const execution = await invokeTestCli(['stamp', 'addresses', '--bee-debug-api-url', beeDebugApiUrl])
+  const execution = await invokeTestCli(['addresses', '--bee-debug-api-url', beeDebugApiUrl])
 
   return (execution.runnable as Addresses).nodeAddresses.pssPublicKey
 }
