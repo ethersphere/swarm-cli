@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { bold, dim } from 'kleur'
+import chalk from 'chalk'
 
 export const Printer = {
   emptyFunction: (): void => {
@@ -9,15 +9,15 @@ export const Printer = {
     console.log(char.repeat(process.stdout.columns))
   },
   error: (message: string, ...args: unknown[]): void => {
-    console.error(bold().white().bgRed(message), ...args)
+    console.error(chalk.bold.white.bgRed(message), ...args)
   },
   log: (message: string, ...args: unknown[]): void => {
     console.log(message, ...args)
   },
   info: (message: string, ...args: unknown[]): void => {
-    console.log(dim(message), ...args)
+    console.log(chalk.dim(message), ...args)
   },
   dimFunction: (message: string, ...args: unknown[]): void => {
-    console.log(dim(message), ...args)
+    console.log(chalk.dim(message), ...args)
   },
 }

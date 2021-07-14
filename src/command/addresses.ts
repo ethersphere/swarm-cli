@@ -1,5 +1,5 @@
+import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
-import { bold } from 'kleur'
 import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
 
@@ -15,7 +15,7 @@ export class Addresses extends RootCommand implements LeafCommand {
     const chequebookAddress = await this.beeDebug.getChequebookAddress()
 
     const longest = 'PSS Public Key'.length
-    this.console.log(bold('Node Addresses'))
+    this.console.log(chalk.bold('Node Addresses'))
     this.console.divider()
     this.console.log(createKeyValue('Ethereum', nodeAddresses.ethereum, longest))
     this.console.log(createKeyValue('Overlay', nodeAddresses.overlay, longest))
@@ -23,7 +23,7 @@ export class Addresses extends RootCommand implements LeafCommand {
     this.console.log(createKeyValue('Public Key', nodeAddresses.publicKey, longest))
     this.console.log(createKeyValue('Underlay', nodeAddresses.underlay.join(' '), longest))
     this.console.log('')
-    this.console.log(bold('Chequebook Address'))
+    this.console.log(chalk.bold('Chequebook Address'))
     this.console.divider()
     this.console.log(chequebookAddress.chequebookAddress)
 
