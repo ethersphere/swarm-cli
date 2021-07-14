@@ -69,6 +69,17 @@ export class CommandLog {
     }
   }
 
+  public async confirm(message: string): Promise<boolean> {
+    const { value } = await prompt({
+      prefix: chalk.bold.cyan('?'),
+      type: 'confirm',
+      name: 'value',
+      message,
+    })
+
+    return value
+  }
+
   /**
    * Ask for an arbitrary value
    *
