@@ -16,7 +16,7 @@ export class Import extends RootCommand implements LeafCommand {
 
   public readonly description = 'Import V3 wallet as a new identity'
 
-  @Argument({ key: 'path', required: true, description: 'Path to the V3 wallet file' })
+  @Argument({ key: 'path', required: true, description: 'Path to the V3 wallet file', autocompletePath: true })
   public path!: string
 
   @Option({ key: 'identity-name', alias: 'i', description: 'Name of the identity to be saved as' })
