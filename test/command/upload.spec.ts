@@ -44,13 +44,13 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   })
 
   it('should warn for large files', async () => {
-    inquirer.prompt = jest.fn().mockResolvedValueOnce({ value: false })
+    jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: false })
     await invokeTestCli(['upload', 'test/data/8mb.bin', ...getStampOption()])
     expect(inquirer.prompt).toHaveBeenCalledTimes(1)
   })
 
   it('should warn for large folders', async () => {
-    inquirer.prompt = jest.fn().mockResolvedValueOnce({ value: false })
+    jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: false })
     await invokeTestCli(['upload', 'test/data', ...getStampOption()])
     expect(inquirer.prompt).toHaveBeenCalledTimes(1)
   })
