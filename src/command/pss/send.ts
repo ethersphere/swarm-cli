@@ -34,6 +34,7 @@ export class Send extends PssCommand implements LeafCommand {
     description: 'Send raw data from file',
     required: true,
     conflicts: 'message',
+    autocompletePath: true,
   })
   public path!: string
 
