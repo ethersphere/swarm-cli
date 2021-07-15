@@ -71,13 +71,26 @@ For currently supported operations, see [Commands](##Commands) section.
 
 ### From npm
 
+To install globally:
+
 ```sh
-npm install -g @ethersphere/swarm-cli
+npm install --global @ethersphere/swarm-cli
+```
+
+It may require `sudo` if `npm root --global` is not writable by your
+user.
+
+Or you can install locally:
+
+```sh
+cd [some directory for nodejs files]
+npm install @ethersphere/swarm-cli
+./node_modules/.bin/swarm-cli --help
 ```
 
 ### From source
 
-See the [Development](##Development) section.
+See the [Development](#development) section.
 
 ## Usage
 
@@ -302,24 +315,30 @@ With specific system environment variables you can alter the behaviour of the CL
 
 # Development
 
-After cloning the project, install dependencies with:
+After the project has been cloned, the dependencies must be
+installed. Run the following in the project folder:
 
 ```sh
- $ npm i
+ $ npm install
 ```
 
-In order to compile NodeJS code run
+Then you need to compile the TypeScript code:
 
 ```sh
  $ npm run compile
 ```
 
-and you can try out the `swarm-cli` CLI after run command
+To install `swarm-cli` as a global package:
 
 ```sh
  $ npm link
 ```
-in your project folder.
+
+If all went well you should be able to run `swarm-cli`.
+
+Note: on some systems (e.g. NixOS) `npm link` will fail. If that
+happens then you can try `node dist/index.js` to run `swarm-cli` from
+the checked out directory.
 
 # Contribute
 
