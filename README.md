@@ -150,8 +150,8 @@ This URL will stay the same when we upload an updated version of the website. Be
 `swarm-cli` has support for autocomplete in `bash`, `zsh` and `fish`. This turns on `<tab><tab>` suggestions which can complete commands, paths and options for you.
 
 To enable it, you need to install it once via two options:
- - Running `swarm-cli --generate-completion` and follow the instructions there
- - Running `sawrm-cli --install-completion` which automatically appends the completion script to your configuration file
+ - Running `swarm-cli --generate-completion` and following the instructions there
+ - Running `swarm-cli --install-completion` which automatically appends the completion script to your configuration file
 
 | Shell   | Completion System                                 | Configuration Path                       |
 |---------|---------------------------------------------------|------------------------------------------|
