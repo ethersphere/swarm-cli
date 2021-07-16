@@ -26,6 +26,7 @@
    * [Commands](#commands)
    * [Example usage](#example-usage)
    * [Usability Features](#usability-features)
+      * [Autocomplete](#autocomplete)
       * [Numerical Separator and Units](#numerical-separator-and-units)
       * [Stamp Picker](#stamp-picker)
       * [Identity Picker](#identity-picker)
@@ -143,6 +144,36 @@ In this example we are uploading the content of the `dist` folder. If the upload
 This URL will stay the same when we upload an updated version of the website. Because of this we can also put this URL into a reverse proxy configuration or use the reference (the hex string after the `/bzz/`) in an ENS record. There is more information about that in the [Bee documentation](https://docs.ethswarm.org/docs/getting-started/host-your-website-using-ens). The uploaded content can be found on the link in the line starting with `URL`. This will change every time the content is modified.
 
 ## Usability Features
+
+### Autocomplete
+
+`swarm-cli` has support for autocomplete in `bash`, `zsh` and `fish`. This turns on `<tab><tab>` suggestions which can complete commands, paths and options for you.
+
+To enable it, you need to install it once via two options:
+ - Running `swarm-cli --generate-completion` and follow the instructions there
+ - Running `sawrm-cli --install-completion` which automatically appends the completion script to your configuration file
+
+| Shell   | Completion System                                 | Configuration Path                       |
+|---------|---------------------------------------------------|------------------------------------------|
+| `bash`  | `compdef` & `compadd` OR `complete` & `COMPREPLY` | `$HOME/.bashrc` & `$HOME/.bash_profile`  |
+| `zsh`   | `compdef` & `compadd` OR `complete` & `COMPREPLY` | `$HOME/.zshrc`                           |
+| `fish`  | `complete`                                        | `$HOME/.config/fish/config.fish`         |
+
+> Warning! If you start a subshell (e.g. running `bash` from `zsh`), your `SHELL` env variable would still be the old value! The generation and completion script cannot detect your shell accurately in that case, so please set `SHELL` manually. It is generally advised to run `--generate-completion` first to ensure the shell and the paths are properly detected.
+
+Example:
+
+```
+$ SHELL=zsh
+$ swarm-cli --generate-completion
+Your shell is: zsh
+Found configuration file path: /Users/Swarm/.zshrc
+
+Append the completion script below to your configuration file to enable autocomplete.
+You need to source your configuration, or restart your shell, to load the changes.
+
+<script>
+```
 
 ### Numerical Separator and Units
 
