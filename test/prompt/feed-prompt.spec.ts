@@ -9,6 +9,7 @@ describeCommand(
       await invokeTestCli(['identity', 'create', 'main', '-P', 'secret'])
       jest
         .spyOn(inquirer, 'prompt')
+        .mockClear()
         .mockResolvedValueOnce({ value: getStampOption()[1] })
         .mockResolvedValueOnce({ value: 'main' })
         .mockResolvedValueOnce({ value: 'secret' })
@@ -18,14 +19,14 @@ describeCommand(
     })
 
     it('feed upload should prompt for identity when it is misspelled', async () => {
-      jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: 'main' })
+      jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: 'main' })
       await invokeTestCli(['feed', 'upload', '-v', 'README.md', '-i', '_main', '-P', 'secret', ...getStampOption()])
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
       expect(getLastMessage()).toContain('Successfully uploaded to feed.')
     })
 
     it('feed upload should prompt for password when it is not given', async () => {
-      jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: 'secret' })
+      jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: 'secret' })
       await invokeTestCli(['feed', 'upload', '-v', 'README.md', '-i', 'main', ...getStampOption()])
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
       expect(getLastMessage()).toContain('Successfully uploaded to feed.')
