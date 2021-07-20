@@ -97,6 +97,7 @@ export class Buy extends StampCommand implements LeafCommand {
         const stamp = await this.bee.getPostageBatch(this.postageBatchId)
 
         if (!stamp.usable) {
+          await sleep(1000)
           continue
         }
 
