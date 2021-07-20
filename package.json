@@ -71,8 +71,7 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
-    "@ethersphere/bee-js": "1.0.0",
-    "axios": "^0.21.1",
+    "@ethersphere/bee-js": "1.1.0",
     "chalk": "^2.4.2",
     "cli-progress": "^3.8.2",
     "ethereumjs-wallet": "^1.0.1",
