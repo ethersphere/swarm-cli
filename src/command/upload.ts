@@ -2,7 +2,6 @@ import { Tag, Utils } from '@ethersphere/bee-js'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import ora from 'ora'
 import { join, parse } from 'path'
 import { exit } from 'process'
 import { pickStamp, printEnrichedStamp } from '../service/stamp'
@@ -121,7 +120,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
     await this.maybeRunSizeChecks()
 
-    const spinner: ora.Ora = createSpinner('Uploading files...')
+    const spinner = createSpinner('Uploading files...')
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
       spinner.start()

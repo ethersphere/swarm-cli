@@ -1,7 +1,6 @@
 import Wallet from 'ethereumjs-wallet'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import ora from 'ora'
 import { exit } from 'process'
 import { IdentityType } from '../../service/identity/types'
 import { fileExists } from '../../utils'
@@ -31,7 +30,7 @@ export class Import extends RootCommand implements LeafCommand {
     await this.ensurePasswordIsProvided()
     const data = readFileSync(this.path).toString()
     await this.ensureIdentityNameIsProvided()
-    const spinner: ora.Ora = createSpinner('Decrypting V3 wallet...')
+    const spinner = createSpinner('Decrypting V3 wallet...')
 
     if (this.verbosity === VerbosityLevel.Verbose) {
       spinner.start()

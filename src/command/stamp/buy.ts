@@ -1,5 +1,4 @@
 import { LeafCommand, Option } from 'furious-commander'
-import ora from 'ora'
 import { printEnrichedStamp } from '../../service/stamp'
 import { sleep } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
@@ -60,7 +59,7 @@ export class Buy extends StampCommand implements LeafCommand {
       this.waitUsable = await this.console.confirm('Would you like to enable it now?')
     }
 
-    const spinner: ora.Ora = createSpinner('Buying postage stamp. This may take a while.')
+    const spinner = createSpinner('Buying postage stamp. This may take a while.')
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
       spinner.start()
@@ -85,7 +84,7 @@ export class Buy extends StampCommand implements LeafCommand {
   }
 
   private async waitToBecomeUsable(): Promise<void> {
-    const spinner: ora.Ora = createSpinner('Waiting for postage stamp to become usable...')
+    const spinner = createSpinner('Waiting for postage stamp to become usable...')
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
       spinner.start()
