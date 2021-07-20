@@ -81,11 +81,6 @@ export class Buy extends StampCommand implements LeafCommand {
 
     if (this.waitUsable) {
       await this.waitToBecomeUsable()
-    } else if (this.verbosity === VerbosityLevel.Verbose) {
-      this.console.verbose(
-        'You are running in verbose mode, but additional stamp information is only available after a short waiting period.',
-      )
-      this.console.verbose('You can use the --wait-usable flag to get this information.')
     }
   }
 
