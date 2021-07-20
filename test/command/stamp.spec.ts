@@ -57,9 +57,19 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
     expect(getNthLastMessage(9)).toContain(id)
   })
 
-  it('should prompt user to wait with --verbose without --wait-usable', async () => {
+  it('should accept --wait-usable prompt', async () => {
     jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: true })
-    await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose'])
+    const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose'])
+    const command = execution.runnable as Buy
+    expect(command.waitUsable).toBe(true)
+    expect(inquirer.prompt).toHaveBeenCalledTimes(1)
+  })
+
+  it('should reject --wait-usable prompt', async () => {
+    jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
+    const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose'])
+    const command = execution.runnable as Buy
+    expect(command.waitUsable).toBe(false)
     expect(inquirer.prompt).toHaveBeenCalledTimes(1)
   })
 })
