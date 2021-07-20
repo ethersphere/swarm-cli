@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios'
+import { BeeRequest, Utils } from '@ethersphere/bee-js'
 import { Readable } from 'stream'
 import { printer } from './printer'
 
@@ -7,7 +7,7 @@ function isReadable(x: any): x is Readable {
   return typeof x?.read === 'function'
 }
 
-const getDataString = (data?: string | Readable): string | null => {
+const getDataString = (data?: unknown): string | null => {
   if (typeof data === 'string') {
     return data
   }
@@ -19,18 +19,18 @@ const getDataString = (data?: string | Readable): string | null => {
   return null
 }
 
-export function printCurlCommand(request: AxiosRequestConfig): AxiosRequestConfig {
-  const headers = Object.entries(request.headers)
-    .filter(([key]) => !['common', 'delete', 'get', 'head', 'patch', 'post', 'put'].includes(key))
-    .map(([key, value]) => `-H "${key}:${value}"`)
+function printCurlCommand(request: BeeRequest): BeeRequest {
+  const headers = Object.entries(request.headers || {})
+    .map(([key, value]) => `-H "${key}: ${value}"`)
     .join(' ')
-
-  const methodString = request.method === 'get' ? '' : ` -X ${request.method?.toUpperCase()}`
+  const methodString = request.method.toUpperCase() === 'GET' ? '' : ` -X ${request.method?.toUpperCase()}`
   const dataString = request.data ? ` --data "${getDataString(request.data)}"` : ''
-
   const command = `curl ${request.url}${methodString} ${headers}${dataString}`
-
   printer.print(command)
 
   return request
+}
+
+export function registerCurlHook(): void {
+  Utils.Hooks.onRequest(printCurlCommand)
 }

@@ -1,7 +1,6 @@
-import { Bee, BeeDebug, Utils as BeeJsUtils } from '@ethersphere/bee-js'
-import { AxiosRequestConfig } from 'axios'
+import { Bee, BeeDebug } from '@ethersphere/bee-js'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
-import { printCurlCommand } from '../../curl'
+import { registerCurlHook } from '../../curl'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
@@ -59,11 +58,7 @@ export class RootCommand {
     this.console = new CommandLog(this.verbosity)
 
     if (this.curl) {
-      BeeJsUtils.axiosInstance.interceptors.request.use((request: AxiosRequestConfig) => {
-        printCurlCommand(request)
-
-        return request
-      })
+      registerCurlHook()
     }
   }
 
