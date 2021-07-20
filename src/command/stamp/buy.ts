@@ -68,9 +68,7 @@ export class Buy extends StampCommand implements LeafCommand {
       this.console.log(createKeyValue('Stamp ID', batchId))
       this.postageBatchId = batchId
     } finally {
-      if (spinner.isSpinning) {
-        spinner.stop()
-      }
+      spinner.stop()
     }
 
     if (this.waitUsable) {
