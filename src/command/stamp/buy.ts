@@ -86,7 +86,7 @@ export class Buy extends StampCommand implements LeafCommand {
   private async waitToBecomeUsable(): Promise<void> {
     const spinner = createSpinner('Waiting for postage stamp to become usable...')
 
-    if (this.verbosity !== VerbosityLevel.Quiet) {
+    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
     }
     let running = true
@@ -103,7 +103,9 @@ export class Buy extends StampCommand implements LeafCommand {
         spinner.stop()
 
         if (this.verbosity === VerbosityLevel.Verbose) {
-          deletePreviousLine()
+          if (!this.curl) {
+            deletePreviousLine()
+          }
           printEnrichedStamp(stamp, this.console)
         }
         running = false
