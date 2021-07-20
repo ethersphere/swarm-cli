@@ -1,7 +1,6 @@
 import { randomBytes } from 'crypto'
 import Wallet from 'ethereumjs-wallet'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import ora from 'ora'
 import { exit } from 'process'
 import { IdentityType, SimpleWallet, V3Keystore } from '../../service/identity/types'
 import { bytesToHex } from '../../utils/hex'
@@ -50,10 +49,10 @@ export class Create extends RootCommand implements LeafCommand {
         this.console.info('If you want to create disposable keypair, use "only-keypair" option')
         this.password = await this.console.askForPasswordWithConfirmation()
       }
-      let spinner: ora.Ora
+      const spinner = createSpinner('Creating V3 wallet...')
 
       if (this.verbosity === VerbosityLevel.Verbose) {
-        spinner = createSpinner('Creating V3 wallet...').start()
+        spinner.start()
       }
       identityWallet = await this.wallet.toV3(this.password)
 

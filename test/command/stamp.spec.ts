@@ -1,6 +1,8 @@
+import inquirer from 'inquirer'
+import { Buy } from '../../src/command/stamp/buy'
 import { describeCommand, invokeTestCli } from '../utility'
 
-describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
+describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNthLastMessage }) => {
   it('should list stamps', async () => {
     await invokeTestCli(['stamp', 'list'])
     expect(consoleMessages[0]).toContain('Stamp ID:')
@@ -37,5 +39,37 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage }) => {
   it('should list with sorting and filter', async () => {
     await invokeTestCli(['stamp', 'list', '--min-usage', '0', '--max-usage', '100', '--least-used', '--limit', '1'])
     expect(getLastMessage()).toContain('Usage:')
+  })
+
+  it('should wait until stamp is usable', async () => {
+    const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--wait-usable'])
+    const command = execution.runnable as Buy
+
+    const id = command.postageBatchId
+    await invokeTestCli(['stamp', 'show', id, '--verbose'])
+    expect(getNthLastMessage(3)).toContain('Utilization')
+    expect(getNthLastMessage(3)).toContain('0')
+    expect(getNthLastMessage(4)).toContain('Usable')
+    expect(getNthLastMessage(4)).toContain('true')
+    expect(getNthLastMessage(8)).toContain('Usage')
+    expect(getNthLastMessage(8)).toContain('0%')
+    expect(getNthLastMessage(9)).toContain('Stamp ID')
+    expect(getNthLastMessage(9)).toContain(id)
+  })
+
+  it('should accept --wait-usable prompt', async () => {
+    jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: true })
+    const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose'])
+    const command = execution.runnable as Buy
+    expect(command.waitUsable).toBe(true)
+    expect(inquirer.prompt).toHaveBeenCalledTimes(1)
+  })
+
+  it('should reject --wait-usable prompt', async () => {
+    jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
+    const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose'])
+    const command = execution.runnable as Buy
+    expect(command.waitUsable).toBe(false)
+    expect(inquirer.prompt).toHaveBeenCalledTimes(1)
   })
 })
