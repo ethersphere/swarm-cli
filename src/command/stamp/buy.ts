@@ -52,6 +52,14 @@ export class Buy extends StampCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
+    if (this.verbose && !this.waitUsable) {
+      this.console.log(
+        'You are running in verbose mode, but additional stamp information is only available after a short waiting period.',
+      )
+      this.console.log('You can wait for it using the --wait-usable flag.')
+      this.waitUsable = await this.console.confirm('Would you like to enable it now?')
+    }
+
     const spinner: ora.Ora = createSpinner('Buying postage stamp. This may take a while.')
 
     if (this.verbosity !== VerbosityLevel.Quiet) {
@@ -73,6 +81,11 @@ export class Buy extends StampCommand implements LeafCommand {
 
     if (this.waitUsable) {
       await this.waitToBecomeUsable()
+    } else if (this.verbosity === VerbosityLevel.Verbose) {
+      this.console.verbose(
+        'You are running in verbose mode, but additional stamp information is only available after a short waiting period.',
+      )
+      this.console.verbose('You can use the --wait-usable flag to get this information.')
     }
   }
 
