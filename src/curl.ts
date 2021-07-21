@@ -16,7 +16,11 @@ const getDataString = (data?: unknown): string | null => {
     return '<stream>'
   }
 
-  return null
+  if (data instanceof Uint8Array) {
+    return '<buffer>'
+  }
+
+  return '<unknown>'
 }
 
 function printCurlCommand(request: BeeRequest): BeeRequest {

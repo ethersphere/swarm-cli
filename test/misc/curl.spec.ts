@@ -2,14 +2,13 @@ import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
 describeCommand('--curl flag', ({ consoleMessages }) => {
-  it('should print upload command', async () => {
+  it('should print upload command without encryption', async () => {
     await invokeTestCli(['upload', 'test/testpage/index.html', '--curl', ...getStampOption()])
     expect(consoleMessages[0]).toContain('curl -X POST http://localhost:1633/tags ')
     expect(consoleMessages[1]).toContain('curl -X POST http://localhost:1633/bzz?name=index.html ')
     expect(consoleMessages[1]).toContain(`-H "swarm-postage-batch-id: ${getStampOption()[1]}`)
     expect(consoleMessages[1]).toContain('-H "content-length: 220"')
     expect(consoleMessages[1]).toContain('-H "swarm-tag: ')
-    expect(consoleMessages[1]).toContain('--data "<stream>"')
     expect(consoleMessages[1]).not.toContain('swarm-encrypt')
   })
 
@@ -21,6 +20,17 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
     expect(consoleMessages[1]).toContain('-H "content-length: 220"')
     expect(consoleMessages[1]).toContain('-H "swarm-tag: ')
     expect(consoleMessages[1]).toContain('-H "swarm-encrypt: true"')
+  })
+
+  it('should print <stream> for files', async () => {
+    await invokeTestCli(['upload', 'test/testpage/index.html', '--curl', ...getStampOption()])
+    expect(consoleMessages[1]).toContain('curl -X POST http://localhost:1633/bzz?name=index.html ')
     expect(consoleMessages[1]).toContain('--data "<stream>"')
+  })
+
+  it('should print <buffer> for directories', async () => {
+    await invokeTestCli(['upload', 'test/testpage/', '--curl', ...getStampOption()])
+    expect(consoleMessages[1]).toContain('curl -X POST http://localhost:1633/bzz ')
+    expect(consoleMessages[1]).toContain('--data "<buffer>"')
   })
 })
