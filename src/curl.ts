@@ -19,10 +19,11 @@ const getDataString = (data?: unknown): string | null => {
 }
 
 function printCurlCommand(request: BeeRequest): BeeRequest {
+  const params = Object.entries(request.params || {}).filter(([, v]) => v !== undefined)
   const headers = Object.entries(request.headers || {})
     .map(([key, value]) => `-H "${key}: ${value}"`)
     .join(' ')
-  const queryParameters = new URLSearchParams(request.params as Record<string, string>).toString()
+  const queryParameters = new URLSearchParams(params as string[][]).toString()
   const queryString = queryParameters ? '?' + queryParameters : ''
   const methodString = request.method.toUpperCase() === 'GET' ? '' : ` -X ${request.method?.toUpperCase()}`
   const dataString = request.data ? ` --data "${getDataString(request.data)}"` : ''
