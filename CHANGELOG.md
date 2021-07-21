@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.1.0...v1.2.0) (2021-07-21)
+
+
+### Features
+
+* add --curl global option ([#185](https://www.github.com/ethersphere/swarm-cli/issues/185)) ([674fafb](https://www.github.com/ethersphere/swarm-cli/commit/674fafb3628cd9479c15e55a427da16d6d6f185b))
+* add auto-completion system ([#209](https://www.github.com/ethersphere/swarm-cli/issues/209)) ([5796876](https://www.github.com/ethersphere/swarm-cli/commit/5796876f992e132522403ce087d53bedc184c7b4))
+* add spinner to feed operations ([#197](https://www.github.com/ethersphere/swarm-cli/issues/197)) ([94f198c](https://www.github.com/ethersphere/swarm-cli/commit/94f198ca301580d17c9fd9ac62547d9dce7a2c7d))
+* add topology info to status command ([#198](https://www.github.com/ethersphere/swarm-cli/issues/198)) ([9805f92](https://www.github.com/ethersphere/swarm-cli/commit/9805f92da8807c01ef98155ee8bd13fd081e7b33))
+* add wait-usable option to stamp buy with verbose mode support ([#212](https://www.github.com/ethersphere/swarm-cli/issues/212)) ([0e4a794](https://www.github.com/ethersphere/swarm-cli/commit/0e4a79415d491a258ee681cfce956dfdee4b8070))
+* establish color system with chalk ([#207](https://www.github.com/ethersphere/swarm-cli/issues/207)) ([f6cf189](https://www.github.com/ethersphere/swarm-cli/commit/f6cf18967e9a1a3aa0b4a3080e8e4730b2e315be))
+
+
+### Bug Fixes
+
+* change old /files endpoints to /bzz in feed commands ([#204](https://www.github.com/ethersphere/swarm-cli/issues/204)) ([28a2d3a](https://www.github.com/ethersphere/swarm-cli/commit/28a2d3a6713887d1e860d92308edaa08376465d8))
+* handle payload size errors in pss send ([#199](https://www.github.com/ethersphere/swarm-cli/issues/199)) ([4ec8fbc](https://www.github.com/ethersphere/swarm-cli/commit/4ec8fbcb95d7f700f64b5d1eaba46a35e3f13988))
+
 ## [1.1.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.0.0...v1.1.0) (2021-07-05)
 
 
