@@ -2,17 +2,12 @@ import { BeeRequest, Utils } from '@ethersphere/bee-js'
 import { Readable } from 'stream'
 import { printer } from './printer'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isReadable(x: any): x is Readable {
-  return typeof x?.read === 'function'
-}
-
 const getDataString = (data?: unknown): string | null => {
   if (typeof data === 'string') {
     return data
   }
 
-  if (isReadable(data)) {
+  if (data instanceof Readable) {
     return '<stream>'
   }
 
