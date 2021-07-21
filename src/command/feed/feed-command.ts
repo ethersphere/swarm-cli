@@ -80,7 +80,7 @@ export class FeedCommand extends RootCommand {
   private async writeFeed(wallet: Wallet, topic: string, chunkReference: string): Promise<FeedInfo> {
     const spinner = createSpinner('Writing feed...')
 
-    if (this.verbosity !== VerbosityLevel.Quiet) {
+    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
     }
 
