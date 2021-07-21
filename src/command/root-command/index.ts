@@ -1,5 +1,6 @@
 import { Bee, BeeDebug } from '@ethersphere/bee-js'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
+import { registerCurlHook } from '../../curl'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
@@ -25,6 +26,9 @@ export class RootCommand {
 
   @ExternalOption('quiet')
   public quiet!: boolean
+
+  @ExternalOption('curl')
+  public curl!: boolean
 
   public bee!: Bee
   public beeDebug!: BeeDebug
@@ -52,6 +56,10 @@ export class RootCommand {
       this.verbosity = VerbosityLevel.Verbose
     }
     this.console = new CommandLog(this.verbosity)
+
+    if (this.curl) {
+      registerCurlHook()
+    }
   }
 
   private maybeSetFromConfig(option: ConfigOption): void {
