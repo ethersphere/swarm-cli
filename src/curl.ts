@@ -34,5 +34,7 @@ function printCurlCommand(request: BeeRequest): BeeRequest {
 }
 
 export function registerCurlHook(): void {
-  Utils.Hooks.onRequest(printCurlCommand)
+  if (typeof process.env.CURL_HOOK_ID === 'undefined') {
+    process.env.CURL_HOOK_ID = String(Utils.Hooks.onRequest(printCurlCommand))
+  }
 }
