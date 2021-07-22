@@ -1,7 +1,7 @@
 import { SUPPORTED_BEE_VERSION, SUPPORTED_BEE_VERSION_EXACT } from '@ethersphere/bee-js'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
-import { createKeyValue } from '../utils/text'
+import { createPositiveKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
 
 export class Status extends RootCommand implements LeafCommand {
@@ -19,9 +19,9 @@ export class Status extends RootCommand implements LeafCommand {
     await this.checkBeeVersionCompatibility()
     const topology = await this.checkTopology()
 
-    this.console.log(createKeyValue('Bee Version', version, 'Supported Version'.length))
+    this.console.log(createPositiveKeyValue('Bee Version', version, 'Supported Version'.length))
     this.console.log(
-      createKeyValue('Supported Version', SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')'),
+      createPositiveKeyValue('Supported Version', SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')'),
     )
     this.console.quiet('Bee version - ' + version)
     this.console.quiet('Supported version - ' + SUPPORTED_BEE_VERSION_EXACT)
@@ -30,9 +30,9 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.divider('=')
       this.console.log(chalk.bold('Topology'))
       this.console.divider()
-      this.console.log(createKeyValue('Connected Peers', topology.connected))
-      this.console.log(createKeyValue('Population', topology.population))
-      this.console.log(createKeyValue('Depth', topology.depth))
+      this.console.log(createPositiveKeyValue('Connected Peers', topology.connected))
+      this.console.log(createPositiveKeyValue('Population', topology.population))
+      this.console.log(createPositiveKeyValue('Depth', topology.depth))
       this.console.quiet(topology.connected + ' ' + topology.population + ' ' + topology.depth)
     }
   }

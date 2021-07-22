@@ -1,6 +1,8 @@
 import chalk from 'chalk'
 import { CommandLog } from '../command/root-command/command-log'
 
+export const orange = chalk.rgb(208, 117, 43)
+
 function goUpOneRow(): string {
   return '\u001b[1A'
 }
@@ -13,8 +15,12 @@ export function deletePreviousLine(): void {
   process.stdout.write('\r' + goUpOneRow() + deleteWholeRow())
 }
 
-export function createKeyValue(key: string, value: string | number | boolean, padLength?: number): string {
+export function createPositiveKeyValue(key: string, value: string | number | boolean, padLength?: number): string {
   return `${chalk.green.bold(key + ':').padEnd(padLength ? padLength + 1 : 0)} ${String(value)}`
+}
+
+export function createKeyValue(key: string, value: string | number | boolean, padLength?: number): string {
+  return `${orange.bold(key + ':').padEnd(padLength ? padLength + 1 : 0)} ${String(value)}`
 }
 
 export function printDivided<T>(
