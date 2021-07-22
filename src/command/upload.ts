@@ -8,7 +8,7 @@ import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
-import { createKeyValue } from '../utils/text'
+import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
@@ -92,6 +92,8 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public async run(usedFromOtherCommand = false): Promise<void> {
     this.initCommand()
+
+    await this.handleSyncSupport()
 
     if (this.hasUnsupportedGatewayOptions()) {
       exit(1)
@@ -319,5 +321,35 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     return false
+  }
+
+  private async handleSyncSupport(): Promise<void | never> {
+    if (this.quiet || this.skipSync) {
+      return
+    }
+    const connectedPeers = await this.getConnectedPeers()
+
+    if (connectedPeers === null) {
+      this.console.log(warningSymbol())
+      this.console.log(warningText('Could not fetch connected peers info.'))
+      this.console.log(warningText('Either the debug API is not enabled, or you are uploading to a gateway node.'))
+      this.console.log(warningText('Synchronization may time out.'))
+      this.skipSync = await this.console.confirm('Would you like to disable it now? (--skip-sync)')
+    } else if (connectedPeers === 0) {
+      this.console.log(warningSymbol())
+      this.console.log(warningText('Your Bee node has no connected peers.'))
+      this.console.log(warningText('Synchronization may time out.'))
+      this.skipSync = await this.console.confirm('Would you like to disable it now? (--skip-sync)')
+    }
+  }
+
+  private async getConnectedPeers(): Promise<number | null> {
+    try {
+      const { connected } = await this.beeDebug.getTopology()
+
+      return connected
+    } catch {
+      return null
+    }
   }
 }
