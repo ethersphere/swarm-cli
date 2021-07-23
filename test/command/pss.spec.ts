@@ -29,7 +29,7 @@ async function callSend(message: string, fromPeer?: boolean): Promise<void> {
     '-T',
     'PSS Test',
     '--target',
-    fromPeer ? getWorkerPssAddress(4) : getQueenPssAddress(4),
+    fromPeer ? getQueenPssAddress(4) : getWorkerPssAddress(4),
     ...(fromPeer ? ['--bee-api-url', 'http://localhost:11633'] : []),
     '--message',
     message,
