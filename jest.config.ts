@@ -14,7 +14,14 @@ export default async (): Promise<Config.InitialOptions> => {
   process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11635')
 
   if (!process.env.STAMP) {
-    process.env.STAMP = await buyStamp()
+    await Promise.all([
+      async () => {
+        process.env.STAMP = await buyStamp()
+      },
+      async () => {
+        process.env.PEER_STAMP = await buyStamp('http://localhost:11633')
+      },
+    ])
     await sleep(11_000)
   }
 

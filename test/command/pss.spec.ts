@@ -14,15 +14,15 @@ async function sendAndExpect(message: string): Promise<void> {
     '--bee-api-url',
     'http://localhost:11633',
     '--timeout',
-    '30000',
+    '120000',
   ])
-  await sleep(3000)
+  await sleep(1000)
   await callSend(message)
   const { receivedMessage } = (await receiveCommand).runnable as Receive
   expect(receivedMessage).toBe(message)
 }
 
-async function callSend(message: string, fromPeer?: boolean): Promise<void> {
+async function callSend(message: string, fromPeer = false): Promise<void> {
   await invokeTestCli([
     'pss',
     'send',
@@ -33,7 +33,7 @@ async function callSend(message: string, fromPeer?: boolean): Promise<void> {
     ...(fromPeer ? ['--bee-api-url', 'http://localhost:11633'] : []),
     '--message',
     message,
-    ...getStampOption(),
+    ...getStampOption(fromPeer),
   ])
 }
 
