@@ -5,8 +5,8 @@ import { describeCommand, invokeTestCli } from '../utility'
 import { getWorkerPssAddress } from '../utility/address'
 import { getStampOption } from '../utility/stamp'
 
-async function callReceive(extraArgs: string[]): Promise<Receive> {
-  const invocation = invokeTestCli([
+async function sendAndExpect(message: string): Promise<void> {
+  const command = invokeTestCli([
     'pss',
     'receive',
     '--topic-string',
@@ -15,12 +15,11 @@ async function callReceive(extraArgs: string[]): Promise<Receive> {
     'http://localhost:11633',
     '--timeout',
     '30000',
-    ...extraArgs,
   ])
-  const receive = (await invocation).runnable as Receive
   await sleep(3000)
-
-  return receive
+  await callSend(message)
+  const receive = (await command).runnable as Receive
+  expect(receive.receivedMessage).toBe(message)
 }
 
 async function callSend(message: string): Promise<void> {
@@ -38,28 +37,23 @@ async function callSend(message: string): Promise<void> {
 }
 
 describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
-  it('should receive sent pss message', async () => {
-    const receive = await callReceive([])
-    await invokeTestCli([
-      'pss',
-      'send',
-      '--topic-string',
-      'PSS Test',
-      '--target',
-      getWorkerPssAddress(4),
-      '--message',
-      'Bzzz Bzzzz Bzzzz',
-      ...getStampOption(),
-    ])
-    expect(receive.receivedMessage).toBe('Bzzz Bzzzz Bzzzz')
-  })
-
   it('should receive sent pss message with in/out files', async () => {
     if (existsSync('test/testconfig/out.txt')) {
       unlinkSync('test/testconfig/out.txt')
     }
     writeFileSync('test/testconfig/in.txt', 'Message in a file')
-    await callReceive(['--out-file', 'test/testconfig/out.txt'])
+    invokeTestCli([
+      'pss',
+      'receive',
+      '--topic-string',
+      'PSS Test',
+      '--bee-api-url',
+      'http://localhost:11633',
+      '--timeout',
+      '30000',
+      '--out-file',
+      'test/testconfig/out.txt',
+    ])
     await invokeTestCli([
       'pss',
       'send',
@@ -135,20 +129,18 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
   })
 
   it('should receive multibyte data correctly', async () => {
-    const receive = await callReceive([])
-    await callSend('🐝🐝🐝')
-    expect(receive.receivedMessage).toBe('🐝🐝🐝')
+    await sendAndExpect('🐝🐝🐝')
   })
 
   it('should receive zero bytes correctly', async () => {
-    const receive = await callReceive([])
-    await callSend(Buffer.from([0, 0, 0, 0]).toString('ascii'))
-    expect(receive.receivedMessage).toBe('\x00\x00\x00\x00')
+    await sendAndExpect('\x00\x00\x00\x00')
   })
 
   it('should receive ascii text correctly', async () => {
-    const receive = await callReceive([])
-    await callSend('A honey bee, a busy, flying insect that lives in a hive and makes honey.')
-    expect(receive.receivedMessage).toBe('A honey bee, a busy, flying insect that lives in a hive and makes honey.')
+    await sendAndExpect('A honey bee, a busy, flying insect that lives in a hive and makes honey.')
+  })
+
+  it('should receive utf-8 text correctly', async () => {
+    await sendAndExpect('⠓⠑⠇⠇⠕ ⠃⠑⠑')
   })
 })
