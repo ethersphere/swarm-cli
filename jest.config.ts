@@ -15,12 +15,12 @@ export default async (): Promise<Config.InitialOptions> => {
 
   if (!process.env.STAMP) {
     await Promise.all([
-      async () => {
+      (async () => {
         process.env.STAMP = await buyStamp()
-      },
-      async () => {
+      })(),
+      (async () => {
         process.env.PEER_STAMP = await buyStamp('http://localhost:11633')
-      },
+      })(),
     ])
     await sleep(11_000)
   }
