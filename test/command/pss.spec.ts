@@ -5,29 +5,32 @@ import { describeCommand, invokeTestCli } from '../utility'
 import { getQueenPssAddress, getWorkerPssAddress } from '../utility/address'
 import { getStampOption } from '../utility/stamp'
 
+let topicCounter = 1000
+
 async function sendAndExpect(message: string): Promise<void> {
+  const topic = String(topicCounter++)
   const receiveCommand = invokeTestCli([
     'pss',
     'receive',
     '--topic-string',
-    'PSS Test',
+    topic,
     '--bee-api-url',
     'http://localhost:11633',
     '--timeout',
     '120000',
   ])
   await sleep(1000)
-  await callSend(message)
+  await callSend(message, topic)
   const { receivedMessage } = (await receiveCommand).runnable as Receive
   expect(receivedMessage).toBe(message)
 }
 
-async function callSend(message: string, fromPeer = false): Promise<void> {
+async function callSend(message: string, topic: string, fromPeer = false): Promise<void> {
   await invokeTestCli([
     'pss',
     'send',
     '-T',
-    'PSS Test',
+    topic,
     '--target',
     fromPeer ? getQueenPssAddress(4) : getWorkerPssAddress(4),
     ...(fromPeer ? ['--bee-api-url', 'http://localhost:11633'] : []),
@@ -108,24 +111,24 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
   })
 
   it('should not allow sending payload above 4000 bytes', async () => {
-    await callSend('0'.repeat(4001), true)
+    await callSend('0'.repeat(4001), '4001 x 0', true)
     expect(getNthLastMessage(2)).toContain('Maximum payload size is 4000 bytes.')
     expect(getLastMessage()).toContain('You tried sending 4001 bytes.')
   })
 
   it('should allow sending payload of 4000 bytes', async () => {
-    await callSend('0'.repeat(4000), true)
+    await callSend('0'.repeat(4000), '4000 x 0', true)
     expect(getLastMessage()).toContain('Message sent successfully.')
   })
 
   it('should not allow sending multibyte payload above 4000 bytes', async () => {
-    await callSend('😃'.repeat(1001), true)
+    await callSend('😃'.repeat(1001), 'emoji x 1001', true)
     expect(getNthLastMessage(2)).toContain('Maximum payload size is 4000 bytes.')
     expect(getLastMessage()).toContain('You tried sending 4004 bytes.')
   })
 
   it('should allow sending multibyte payload of 4000 bytes', async () => {
-    await callSend('😃'.repeat(1000), true)
+    await callSend('😃'.repeat(1000), 'emoji x 1000', true)
     expect(getLastMessage()).toContain('Message sent successfully.')
   })
 
