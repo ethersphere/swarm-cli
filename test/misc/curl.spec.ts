@@ -7,7 +7,6 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
     expect(consoleMessages[0]).toContain('curl -X POST http://localhost:1633/bzz?name=index.html ')
     expect(consoleMessages[0]).toContain(`-H "swarm-postage-batch-id: ${getStampOption()[1]}`)
     expect(consoleMessages[0]).toContain('-H "content-length: 220"')
-    expect(consoleMessages[0]).toContain('-H "swarm-tag: ')
     expect(consoleMessages[0]).not.toContain('swarm-encrypt')
   })
 
@@ -16,7 +15,6 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
     expect(consoleMessages[0]).toContain('curl -X POST http://localhost:1633/bzz?name=index.html ')
     expect(consoleMessages[0]).toContain(`-H "swarm-postage-batch-id: ${getStampOption()[1]}`)
     expect(consoleMessages[0]).toContain('-H "content-length: 220"')
-    expect(consoleMessages[0]).toContain('-H "swarm-tag: ')
     expect(consoleMessages[0]).toContain('-H "swarm-encrypt: true"')
   })
 
