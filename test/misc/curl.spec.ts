@@ -28,8 +28,8 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
 
   it('should print <buffer> for directories', async () => {
     await invokeTestCli(['upload', 'test/testpage/', '--curl', ...getStampOption()])
-    expect(consoleMessages[0]).toContain('curl -X POST http://localhost:1633/bzz ')
-    expect(consoleMessages[0]).toContain('--data "<buffer>"')
+    expect(consoleMessages[1]).toContain('curl -X POST http://localhost:1633/bzz ')
+    expect(consoleMessages[1]).toContain('--data "<buffer>"')
   })
 
   it('should not print undefined params', async () => {
