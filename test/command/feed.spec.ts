@@ -62,7 +62,7 @@ describeCommand(
 
     it('should update feeds', async () => {
       await invokeTestCli(['identity', 'create', 'update-feed-test', '-P', '1234', '-v'])
-      const uploadCommand = await invokeTestCli(['upload', 'README.md', '--skip-sync', ...getStampOption()])
+      const uploadCommand = await invokeTestCli(['upload', 'README.md', ...getStampOption()])
       const upload = uploadCommand.runnable as Upload
       const { hash } = upload
       consoleMessages.length = 0

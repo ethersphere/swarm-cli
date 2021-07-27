@@ -79,7 +79,6 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli([
       'upload',
       'README.md',
-      '--skip-sync',
       '--bee-api-url',
       'http://gateway.ethswarm.org',
       '--encrypt',
@@ -92,7 +91,6 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli([
       'upload',
       'README.md',
-      '--skip-sync',
       '--bee-api-url',
       'http://gateway.ethswarm.org',
       '--pin',
@@ -105,6 +103,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli([
       'upload',
       'README.md',
+      '--sync',
       '--bee-api-url',
       'http://gateway.ethswarm.org',
       '--encrypt',

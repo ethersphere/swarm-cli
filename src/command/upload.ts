@@ -44,12 +44,11 @@ export class Upload extends RootCommand implements LeafCommand {
   public sizeCheck!: boolean
 
   @Option({
-    key: 'skip-sync',
+    key: 'sync',
     type: 'boolean',
-    description: 'Skip waiting for synchronization over the network',
-    default: false,
+    description: 'Waiting for chunk synchronization over the network',
   })
-  public skipSync!: boolean
+  public sync!: boolean
 
   @Option({
     key: 'drop-name',
@@ -110,7 +109,7 @@ export class Upload extends RootCommand implements LeafCommand {
       }
     }
 
-    if (!this.skipSync) {
+    if (this.sync) {
       tag = await this.bee.createTag()
     }
 
@@ -153,9 +152,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
     //refresh tag before populate tracking
 
-    if (this.skipSync) {
-      this.console.info('Skipping synchronization')
-    } else if (tag) {
+    if (this.sync && tag) {
       tag = await this.bee.retrieveTag(tag.uid)
       const synced = await this.waitForFileSynced(tag)
 
@@ -306,9 +303,9 @@ export class Upload extends RootCommand implements LeafCommand {
       return true
     }
 
-    if (!this.skipSync) {
+    if (this.sync) {
       this.console.error('You are trying to upload to the gateway which does not support syncing.')
-      this.console.error('Please try again with the --skip-sync option.')
+      this.console.error('Please try again without the --sync option.')
 
       return true
     }
@@ -324,7 +321,7 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async handleSyncSupport(): Promise<void | never> {
-    if (this.quiet || this.skipSync) {
+    if (this.quiet || !this.sync) {
       return
     }
     const connectedPeers = await this.getConnectedPeers()
@@ -334,12 +331,10 @@ export class Upload extends RootCommand implements LeafCommand {
       this.console.log(warningText('Could not fetch connected peers info.'))
       this.console.log(warningText('Either the debug API is not enabled, or you are uploading to a gateway node.'))
       this.console.log(warningText('Synchronization may time out.'))
-      this.skipSync = await this.console.confirm('Would you like to disable it now? (--skip-sync)')
     } else if (connectedPeers === 0) {
       this.console.log(warningSymbol())
       this.console.log(warningText('Your Bee node has no connected peers.'))
       this.console.log(warningText('Synchronization may time out.'))
-      this.skipSync = await this.console.confirm('Would you like to disable it now? (--skip-sync)')
     }
   }
 
