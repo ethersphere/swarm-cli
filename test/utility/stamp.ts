@@ -8,7 +8,4 @@ export const buyStamp = async (beeApiUrl = 'http://localhost:1633'): Promise<str
   return command.postageBatchId
 }
 
-export const getStampOption = (peer = false): string[] => [
-  '--stamp',
-  (peer ? process.env.PEER_STAMP : process.env.STAMP) || '',
-]
+export const getStampOption = (): string[] => ['--stamp', process.env.STAMP || '']
