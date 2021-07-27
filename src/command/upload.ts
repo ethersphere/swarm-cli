@@ -46,7 +46,7 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({
     key: 'sync',
     type: 'boolean',
-    description: 'Waiting for chunk synchronization over the network',
+    description: 'Wait for chunk synchronization over the network',
   })
   public sync!: boolean
 
