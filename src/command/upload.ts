@@ -122,12 +122,19 @@ export class Upload extends RootCommand implements LeafCommand {
 
     const spinner = createSpinner('Uploading files...')
 
+    const uploadingFolder = FS.statSync(this.path).isDirectory()
+
+    if (uploadingFolder && !this.indexDocument && fileExists(join(this.path, 'index.html'))) {
+      this.console.info('Setting --index-document to index.html')
+      this.indexDocument = 'index.html'
+    }
+
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
     }
 
     try {
-      if (FS.statSync(this.path).isDirectory()) {
+      if (uploadingFolder) {
         url = await this.uploadFolder(this.stamp, tag)
       } else {
         url = await this.uploadSingleFile(this.stamp, tag)
@@ -171,11 +178,6 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadFolder(postageBatchId: string, tag?: Tag): Promise<string> {
-    if (!this.indexDocument && fileExists(join(this.path, 'index.html'))) {
-      this.console.info('Setting --index-document to index.html')
-      this.indexDocument = 'index.html'
-    }
-
     this.hash = await this.bee.uploadFilesFromDirectory(postageBatchId, this.path, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
