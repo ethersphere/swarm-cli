@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.1](https://www.github.com/ethersphere/swarm-cli/compare/v1.2.0...v1.2.1) (2021-07-28)
+
+
+### Bug Fixes
+
+* print index-document before spinner to avoid text glitch ([#220](https://www.github.com/ethersphere/swarm-cli/issues/220)) ([9f596f4](https://www.github.com/ethersphere/swarm-cli/commit/9f596f4b40905dfbe7805e175680949f3415bcf7))
+
 ## [1.2.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.1.0...v1.2.0) (2021-07-21)
 
 
