@@ -92,11 +92,11 @@ export class Upload extends RootCommand implements LeafCommand {
   public async run(usedFromOtherCommand = false): Promise<void> {
     this.initCommand()
 
-    await this.handleSyncSupport()
-
     if (this.hasUnsupportedGatewayOptions()) {
       exit(1)
     }
+
+    await this.handleSyncSupport()
 
     let url: string
     let tag: Tag | undefined
