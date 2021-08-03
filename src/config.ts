@@ -15,9 +15,6 @@ export const beeApiUrl: IOption<string> = {
   default: 'http://localhost:1633',
   description: 'URL of the Bee-client API',
   envKey: 'BEE_API_URL',
-  required: {
-    when: 'bee-debug-api-url',
-  },
 }
 
 export const beeDebugApiUrl: IOption<string> = {
@@ -25,9 +22,6 @@ export const beeDebugApiUrl: IOption<string> = {
   default: 'http://localhost:1635',
   description: 'URL of the Bee-client Debug API',
   envKey: 'BEE_DEBUG_API_URL',
-  required: {
-    when: 'bee-api-url',
-  },
 }
 
 export const configFolder: IOption<string> = {
