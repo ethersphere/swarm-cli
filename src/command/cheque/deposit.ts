@@ -27,7 +27,7 @@ export class Deposit extends ChequeCommand implements LeafCommand {
       return
     }
 
-    const response = await this.getBeeDebug().depositTokens(this.amount.toString())
+    const response = await this.beeDebug.depositTokens(this.amount.toString())
     this.console.log(createKeyValue('Tx', response))
     this.console.quiet(response)
   }

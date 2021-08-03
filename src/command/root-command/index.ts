@@ -32,10 +32,9 @@ export class RootCommand {
   public curl!: boolean
 
   public bee!: Bee
-  public beeDebug?: BeeDebug
-
-  public getBeeDebug(): BeeDebug {
-    if (!this.beeDebug) {
+  public _beeDebug?: BeeDebug
+  public get beeDebug(): BeeDebug {
+    if (!this._beeDebug) {
       this.console.error('Cannot ensure Debug API correctness!')
       this.console.error('--bee-api-url is set explicitly to a non-local address.')
       this.console.error('--bee-debug-api-url is still set to its default localhost value, which may be incorrect.')
@@ -43,7 +42,7 @@ export class RootCommand {
       exit(1)
     }
 
-    return this.beeDebug
+    return this._beeDebug
   }
 
   public console!: CommandLog
@@ -61,7 +60,7 @@ export class RootCommand {
     })
 
     this.bee = new Bee(this.beeApiUrl)
-    this.beeDebug = new BeeDebug(this.beeDebugApiUrl)
+    this._beeDebug = this.localRemoteUrlMismatch() ? undefined : new BeeDebug(this.beeDebugApiUrl)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
@@ -74,14 +73,6 @@ export class RootCommand {
     if (this.curl) {
       registerCurlHook()
     }
-
-    if (
-      this.sourcemap['bee-api-url'] === 'explicit' &&
-      !this.beeApiUrl.startsWith('http://localhost:') &&
-      this.sourcemap['bee-debug-api-url'] === 'default'
-    ) {
-      this.beeDebug = undefined
-    }
   }
 
   private maybeSetFromConfig(option: ConfigOption): void {
@@ -92,5 +83,13 @@ export class RootCommand {
         this[option.propertyKey] = value
       }
     }
+  }
+
+  private localRemoteUrlMismatch(): boolean {
+    return (
+      this.sourcemap['bee-api-url'] === 'explicit' &&
+      !this.beeApiUrl.startsWith('http://localhost:') &&
+      this.sourcemap['bee-debug-api-url'] === 'default'
+    )
   }
 }
