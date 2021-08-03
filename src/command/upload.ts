@@ -340,7 +340,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async getConnectedPeers(): Promise<number | null> {
     try {
-      const { connected } = await this.beeDebug.getTopology()
+      const { connected } = await this.getBeeDebug().getTopology()
 
       return connected
     } catch {

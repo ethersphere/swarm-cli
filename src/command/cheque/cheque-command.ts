@@ -11,7 +11,7 @@ export class ChequeCommand extends RootCommand {
   protected async checkDebugApiHealth(): Promise<boolean> {
     try {
       this.console.verbose(chalk.dim('Checking Debug API health...'))
-      const health = await this.beeDebug.getHealth()
+      const health = await this.getBeeDebug().getHealth()
 
       return health.status === 'ok'
     } catch (error) {
@@ -30,7 +30,7 @@ export class ChequeCommand extends RootCommand {
   }
 
   protected async getCashableCheques(): Promise<Cashable[]> {
-    const { lastcheques } = await this.beeDebug.getLastCheques()
+    const { lastcheques } = await this.getBeeDebug().getLastCheques()
 
     const results: Cashable[] = []
     for (const cheque of lastcheques) {
@@ -56,7 +56,7 @@ export class ChequeCommand extends RootCommand {
 
   protected async getUncashedAmount(address: string): Promise<bigint> {
     try {
-      const lastCashout = await this.beeDebug.getLastCashoutAction(address)
+      const lastCashout = await this.getBeeDebug().getLastCashoutAction(address)
 
       return BigInt(lastCashout.uncashedAmount)
     } catch (error) {
