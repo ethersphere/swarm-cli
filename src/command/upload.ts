@@ -96,7 +96,7 @@ export class Upload extends RootCommand implements LeafCommand {
       exit(1)
     }
 
-    await this.handleSyncSupport()
+    await this.maybePrintSyncWarning()
 
     let url: string
     let tag: Tag | undefined
@@ -320,7 +320,7 @@ export class Upload extends RootCommand implements LeafCommand {
     return false
   }
 
-  private async handleSyncSupport(): Promise<void | never> {
+  private async maybePrintSyncWarning(): Promise<void> {
     if (this.quiet || !this.sync) {
       return
     }
