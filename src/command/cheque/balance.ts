@@ -1,5 +1,4 @@
 import { LeafCommand } from 'furious-commander'
-import { exit } from 'process'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
@@ -15,9 +14,7 @@ export class Balance extends ChequeCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    if (!(await this.checkDebugApiHealth())) {
-      exit(1)
-    }
+    await this.requireHealthyDebugApi()
 
     this.console.info('Looking up balance...')
     const balance = await this.beeDebug.getChequebookBalance()

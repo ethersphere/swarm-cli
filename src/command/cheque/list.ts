@@ -1,5 +1,4 @@
 import { LeafCommand, Option } from 'furious-commander'
-import { exit } from 'process'
 import { ChequeCommand } from './cheque-command'
 
 export class List extends ChequeCommand implements LeafCommand {
@@ -24,9 +23,7 @@ export class List extends ChequeCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    if (!(await this.checkDebugApiHealth())) {
-      exit(1)
-    }
+    await this.requireHealthyDebugApi()
 
     this.console.info(`Looking up cheques with value at least ${this.minimum}...`)
     const cheques = await this.getFilteredCheques(this.minimum)
