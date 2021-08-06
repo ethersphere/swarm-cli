@@ -111,8 +111,8 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
 
   it('should not allow sending payload above 4000 bytes', async () => {
     await callSend('0'.repeat(4001), '4001 x 0')
-    expect(getNthLastMessage(2)).toContain('Maximum payload size is 4000 bytes.')
-    expect(getLastMessage()).toContain('You tried sending 4001 bytes.')
+    expect(getNthLastMessage(4)).toContain('Maximum payload size is 4000 bytes.')
+    expect(getNthLastMessage(3)).toContain('You tried sending 4001 bytes.')
   })
 
   it('should allow sending payload of 4000 bytes', async () => {
@@ -122,8 +122,8 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
 
   it('should not allow sending multibyte payload above 4000 bytes', async () => {
     await callSend('😃'.repeat(1001), 'emoji x 1001')
-    expect(getNthLastMessage(2)).toContain('Maximum payload size is 4000 bytes.')
-    expect(getLastMessage()).toContain('You tried sending 4004 bytes.')
+    expect(getNthLastMessage(4)).toContain('Maximum payload size is 4000 bytes.')
+    expect(getNthLastMessage(3)).toContain('You tried sending 4004 bytes.')
   })
 
   it('should allow sending multibyte payload of 4000 bytes', async () => {

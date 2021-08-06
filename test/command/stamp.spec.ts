@@ -33,7 +33,7 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
 
   it('should print custom message when there are no stamps', async () => {
     await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:11633'])
-    expect(getLastMessage()).toContain('You do not have any stamps.')
+    expect(getNthLastMessage(3)).toContain('You do not have any stamps.')
   })
 
   it('should list with sorting and filter', async () => {
