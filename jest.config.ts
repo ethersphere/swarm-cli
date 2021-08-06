@@ -4,10 +4,13 @@
  */
 import type { Config } from '@jest/types'
 import { sleep } from './src/utils'
+import { getPssAddress } from './test/utility/address'
 import { buyStamp } from './test/utility/stamp'
 
 export default async (): Promise<Config.InitialOptions> => {
   process.env.MAX_UPLOAD_SIZE = '5000000' // 5 megabytes
+
+  process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11635')
 
   if (!process.env.STAMP) {
     process.env.STAMP = await buyStamp()
