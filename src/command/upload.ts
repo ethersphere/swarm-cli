@@ -154,9 +154,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
     if (this.sync && tag) {
       tag = await this.bee.retrieveTag(tag.uid)
-      const synced = await this.waitForFileSynced(tag)
-
-      if (!synced) return //error message printed before
+      await this.waitForFileSynced(tag)
     }
 
     this.console.dim('Uploading was successful!')
@@ -209,7 +207,7 @@ export class Upload extends RootCommand implements LeafCommand {
    *
    * @returns whether the file sync was successful or not.
    */
-  private async waitForFileSynced(tag: Tag): Promise<boolean> {
+  private async waitForFileSynced(tag: Tag): Promise<void | never> {
     const tagUid = tag.uid
     const pollingTime = this.syncPollingTime
     const pollingTrials = this.syncPollingTrials
@@ -244,12 +242,9 @@ export class Upload extends RootCommand implements LeafCommand {
 
     if (synced) {
       this.console.dim('Data has been synced on Swarm network')
-
-      return true
     } else {
       this.console.error('Data syncing timeout.')
-
-      return false
+      exit(1)
     }
   }
 
