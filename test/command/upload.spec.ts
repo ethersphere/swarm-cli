@@ -79,7 +79,6 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli([
       'upload',
       'README.md',
-      '--skip-sync',
       '--bee-api-url',
       'http://gateway.ethswarm.org',
       '--encrypt',
@@ -92,7 +91,6 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli([
       'upload',
       'README.md',
-      '--skip-sync',
       '--bee-api-url',
       'http://gateway.ethswarm.org',
       '--pin',
@@ -105,11 +103,22 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli([
       'upload',
       'README.md',
+      '--sync',
       '--bee-api-url',
       'http://gateway.ethswarm.org',
       '--encrypt',
       ...getStampOption(),
     ])
     expect(hasMessageContaining('does not support syncing')).toBeTruthy()
+  })
+
+  it('should succeed with --sync', async () => {
+    await invokeTestCli(['upload', 'README.md', '--sync', '-v', ...getStampOption()])
+    expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
+  })
+
+  it('should succeed with --sync and --encrypt', async () => {
+    await invokeTestCli(['upload', 'README.md', '--sync', '--encrypt', '-v', ...getStampOption()])
+    expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
 })

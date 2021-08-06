@@ -9,6 +9,14 @@ function deleteWholeRow(): string {
   return '\u001b[2K'
 }
 
+export function warningSymbol(): string {
+  return chalk.yellow.bold('⚠️  Warning!')
+}
+
+export function warningText(string: string): string {
+  return chalk.yellow(string)
+}
+
 export function deletePreviousLine(): void {
   process.stdout.write('\r' + goUpOneRow() + deleteWholeRow())
 }

@@ -8,7 +8,7 @@ import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
-import { createKeyValue } from '../utils/text'
+import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
@@ -44,12 +44,11 @@ export class Upload extends RootCommand implements LeafCommand {
   public sizeCheck!: boolean
 
   @Option({
-    key: 'skip-sync',
+    key: 'sync',
     type: 'boolean',
-    description: 'Skip waiting for synchronization over the network',
-    default: false,
+    description: 'Wait for chunk synchronization over the network',
   })
-  public skipSync!: boolean
+  public sync!: boolean
 
   @Option({
     key: 'drop-name',
@@ -97,6 +96,8 @@ export class Upload extends RootCommand implements LeafCommand {
       exit(1)
     }
 
+    await this.maybePrintSyncWarning()
+
     let url: string
     let tag: Tag | undefined
 
@@ -108,7 +109,7 @@ export class Upload extends RootCommand implements LeafCommand {
       }
     }
 
-    if (!this.skipSync) {
+    if (this.sync) {
       tag = await this.bee.createTag()
     }
 
@@ -151,9 +152,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
     //refresh tag before populate tracking
 
-    if (this.skipSync) {
-      this.console.info('Skipping synchronization')
-    } else if (tag) {
+    if (this.sync && tag) {
       tag = await this.bee.retrieveTag(tag.uid)
       const synced = await this.waitForFileSynced(tag)
 
@@ -304,9 +303,9 @@ export class Upload extends RootCommand implements LeafCommand {
       return true
     }
 
-    if (!this.skipSync) {
+    if (this.sync) {
       this.console.error('You are trying to upload to the gateway which does not support syncing.')
-      this.console.error('Please try again with the --skip-sync option.')
+      this.console.error('Please try again without the --sync option.')
 
       return true
     }
@@ -319,5 +318,33 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     return false
+  }
+
+  private async maybePrintSyncWarning(): Promise<void> {
+    if (this.quiet || !this.sync) {
+      return
+    }
+    const connectedPeers = await this.getConnectedPeers()
+
+    if (connectedPeers === null) {
+      this.console.log(warningSymbol())
+      this.console.log(warningText('Could not fetch connected peers info.'))
+      this.console.log(warningText('Either the debug API is not enabled, or you are uploading to a gateway node.'))
+      this.console.log(warningText('Synchronization may time out.'))
+    } else if (connectedPeers === 0) {
+      this.console.log(warningSymbol())
+      this.console.log(warningText('Your Bee node has no connected peers.'))
+      this.console.log(warningText('Synchronization may time out.'))
+    }
+  }
+
+  private async getConnectedPeers(): Promise<number | null> {
+    try {
+      const { connected } = await this.beeDebug.getTopology()
+
+      return connected
+    } catch {
+      return null
+    }
   }
 }
