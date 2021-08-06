@@ -36,8 +36,8 @@ export class RootCommand {
   public get beeDebug(): BeeDebug {
     if (!this._beeDebug) {
       this.console.error('Cannot ensure Debug API correctness!')
-      this.console.error('--bee-api-url is set explicitly to a non-local address.')
-      this.console.error('--bee-debug-api-url is still set to its default localhost value, which may be incorrect.')
+      this.console.error('--bee-api-url is set explicitly, but --bee-debug-api-url is left default.')
+      this.console.error('This may be incorrect and cause unexpected behaviour.')
       this.console.error('Please run the command again and specify explicitly the --bee-debug-api-url value.')
       exit(1)
     }
@@ -60,7 +60,7 @@ export class RootCommand {
     })
 
     this.bee = new Bee(this.beeApiUrl)
-    this._beeDebug = this.localRemoteUrlMismatch() ? undefined : new BeeDebug(this.beeDebugApiUrl)
+    this._beeDebug = this.shouldDebugUrlBeSpecified() ? undefined : new BeeDebug(this.beeDebugApiUrl)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
@@ -85,11 +85,16 @@ export class RootCommand {
     }
   }
 
-  private localRemoteUrlMismatch(): boolean {
-    return (
-      this.sourcemap['bee-api-url'] === 'explicit' &&
-      !this.beeApiUrl.startsWith('http://localhost:') &&
-      this.sourcemap['bee-debug-api-url'] === 'default'
-    )
+  /**
+   * Used to catch confusing behaviour, which happens when only one of the Bee APIs is specified.
+   *
+   * e.g. A command uses both the Bee API and the Bee Debug API. The user specifies a remote Bee node
+   *      for the normal API, but forgets about the debug API. The command would run successfully,
+   *      but have confusing results, as two different Bee nodes are used when calling the APIs.
+   *
+   * @returns true is Bee API URL is set explicity, but Bee Debug API URL is left default.
+   */
+  private shouldDebugUrlBeSpecified(): boolean {
+    return this.sourcemap['bee-api-url'] === 'explicit' && this.sourcemap['bee-debug-api-url'] === 'default'
   }
 }
