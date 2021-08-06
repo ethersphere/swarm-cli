@@ -121,4 +121,10 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli(['upload', 'README.md', '--sync', '--encrypt', '-v', ...getStampOption()])
     expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
+
+  it('should not print double trailing slashes', async () => {
+    await invokeTestCli(['upload', 'README.md', '--bee-api-url', 'http://localhost:1633/', ...getStampOption()])
+    expect(hasMessageContaining(':1633/bzz')).toBeTruthy()
+    expect(hasMessageContaining('//bzz')).toBeFalsy()
+  })
 })

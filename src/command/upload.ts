@@ -185,7 +185,7 @@ export class Upload extends RootCommand implements LeafCommand {
       encrypt: this.encrypt,
     })
 
-    return `${this.beeApiUrl}/bzz/${this.hash}/`
+    return `${this.bee.url}/bzz/${this.hash}/`
   }
 
   private async uploadSingleFile(postageBatchId: string, tag?: Tag): Promise<string> {
@@ -199,7 +199,7 @@ export class Upload extends RootCommand implements LeafCommand {
       size,
     })
 
-    return `${this.beeApiUrl}/bzz/${this.hash}/`
+    return `${this.bee.url}/bzz/${this.hash}/`
   }
 
   /**
