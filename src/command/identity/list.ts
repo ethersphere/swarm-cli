@@ -1,4 +1,5 @@
 import { LeafCommand } from 'furious-commander'
+import { exit } from 'process'
 import { getPrintableIdentityType, getSimpleWallet, isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
@@ -22,7 +23,7 @@ export class List extends RootCommand implements LeafCommand {
       this.console.error("You don't have any identity yet")
       this.console.info(`You can create one with command '${this.appName} identity create'`)
 
-      return
+      exit(1)
     }
 
     for (const [identityName, identity] of Object.entries(this.commandConfig.config.identities)) {

@@ -1,4 +1,5 @@
 import { LeafCommand, Option } from 'furious-commander'
+import { exit } from 'process'
 import { enrichStamp, printStamp } from '../../service/stamp'
 import { printDivided } from '../../utils/text'
 import { StampCommand } from './stamp-command'
@@ -45,9 +46,7 @@ export class List extends StampCommand implements LeafCommand {
 
     if (stamps.length === 0) {
       this.console.error('You do not have any stamps.')
-      process.exitCode = 1
-
-      return
+      exit(1)
     }
 
     const enrichedStamps = stamps.map(enrichStamp)
@@ -55,9 +54,7 @@ export class List extends StampCommand implements LeafCommand {
     const filteredStamps = enrichedStamps.filter(x => x.usageNormal >= this.minUsage && x.usageNormal <= this.maxUsage)
 
     if (filteredStamps.length === 0) {
-      process.exitCode = 1
-
-      return
+      exit(1)
     }
 
     const limitedStamps = filteredStamps.slice(0, this.limit)

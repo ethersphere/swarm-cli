@@ -1,4 +1,5 @@
 import { LeafCommand } from 'furious-commander'
+import { exit } from 'process'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
@@ -15,7 +16,7 @@ export class Balance extends ChequeCommand implements LeafCommand {
     super.init()
 
     if (!(await this.checkDebugApiHealth())) {
-      return
+      exit(1)
     }
 
     this.console.info('Looking up balance...')

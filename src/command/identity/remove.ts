@@ -37,7 +37,7 @@ export class Remove extends IdentityCommand implements LeafCommand {
     if (!identityNames.includes(this.identityName)) {
       this.console.error('Given identity name does not exist')
 
-      return
+      exit(1)
     }
 
     if (!this.force) {

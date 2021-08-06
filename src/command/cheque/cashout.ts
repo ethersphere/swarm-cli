@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import { LeafCommand, Option } from 'furious-commander'
+import { exit } from 'process'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
@@ -55,7 +56,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     super.init()
 
     if (!(await this.checkDebugApiHealth())) {
-      return
+      exit(1)
     }
 
     if (this.all) {
