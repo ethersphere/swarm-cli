@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import { exit } from 'process'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 
@@ -8,6 +9,12 @@ interface Cashable {
 }
 
 export class ChequeCommand extends RootCommand {
+  protected async requireHealthyDebugApi(): Promise<void | never> {
+    if (!(await this.checkDebugApiHealth())) {
+      exit(1)
+    }
+  }
+
   protected async checkDebugApiHealth(): Promise<boolean> {
     try {
       this.console.verbose(chalk.dim('Checking Debug API health...'))

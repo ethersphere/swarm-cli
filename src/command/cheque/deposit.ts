@@ -23,9 +23,7 @@ export class Deposit extends ChequeCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    if (!(await this.checkDebugApiHealth())) {
-      return
-    }
+    await this.requireHealthyDebugApi()
 
     const response = await this.beeDebug.depositTokens(this.amount.toString())
     this.console.log(createKeyValue('Tx', response))

@@ -54,9 +54,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    if (!(await this.checkDebugApiHealth())) {
-      return
-    }
+    await this.requireHealthyDebugApi()
 
     if (this.all) {
       await this.cashoutAll()

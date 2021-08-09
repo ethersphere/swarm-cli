@@ -23,9 +23,7 @@ export class List extends ChequeCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    if (!(await this.checkDebugApiHealth())) {
-      return
-    }
+    await this.requireHealthyDebugApi()
 
     this.console.info(`Looking up cheques with value at least ${this.minimum}...`)
     const cheques = await this.getFilteredCheques(this.minimum)
