@@ -14,7 +14,7 @@ export class Export extends IdentityCommand implements LeafCommand {
   public identityName!: string
 
   public async run(): Promise<void> {
-    this.initCommand()
+    super.init()
     this.checkForNoIdentities()
     const identities = this.getV3Identities()
     this.checkForEmptyIdentities(identities)
@@ -23,11 +23,6 @@ export class Export extends IdentityCommand implements LeafCommand {
     const identity: Identity = this.commandConfig.config.identities[this.identityName]
     this.checkForV3Identity(identity)
     this.console.log(JSON.stringify(identity.wallet, null, 4))
-  }
-
-  /** Init additional properties of class, that are not handled by the CLI framework */
-  private initCommand(): void {
-    super.init()
   }
 
   private getV3Identities(): string[] {

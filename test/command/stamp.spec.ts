@@ -1,5 +1,6 @@
 import inquirer from 'inquirer'
 import { Buy } from '../../src/command/stamp/buy'
+import { sleep } from '../../src/utils'
 import { describeCommand, invokeTestCli } from '../utility'
 
 describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNthLastMessage }) => {
@@ -19,20 +20,23 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
   it('should not allow buying stamp with amount 0', async () => {
     await invokeTestCli(['stamp', 'buy', '--amount', '0', '--depth', '20'])
     expect(getLastMessage()).toContain('[amount] must be at least 1')
+    await sleep(11_000)
   })
 
   it('should not allow buying stamp with depth 16', async () => {
     await invokeTestCli(['stamp', 'buy', '--amount', '1', '--depth', '16'])
     expect(getLastMessage()).toContain('[depth] must be at least 17')
+    await sleep(11_000)
   })
 
   it('should buy stamp', async () => {
     await invokeTestCli(['stamp', 'buy', '--amount', '100000', '--depth', '20'])
     expect(getLastMessage()).toContain('Stamp ID:')
+    await sleep(11_000)
   })
 
   it('should print custom message when there are no stamps', async () => {
-    await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:11633'])
+    await invokeTestCli(['stamp', 'list', '--bee-debug-api-url', 'http://localhost:11635'])
     expect(getNthLastMessage(4)).toContain('You do not have any stamps.')
   })
 
@@ -63,6 +67,7 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
     const command = execution.runnable as Buy
     expect(command.waitUsable).toBe(true)
     expect(inquirer.prompt).toHaveBeenCalledTimes(1)
+    await sleep(11_000)
   })
 
   it('should reject --wait-usable prompt', async () => {
@@ -71,5 +76,12 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
     const command = execution.runnable as Buy
     expect(command.waitUsable).toBe(false)
     expect(inquirer.prompt).toHaveBeenCalledTimes(1)
+    await sleep(11_000)
+  })
+
+  it('should be possible to buy with underscores and units', async () => {
+    await invokeTestCli(['stamp', 'buy', '--amount', '1_000K', '--depth', '17', '--gas-price', '100_000_000'])
+    expect(getLastMessage()).toContain('Stamp ID:')
+    await sleep(11_000)
   })
 })

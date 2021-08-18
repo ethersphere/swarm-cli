@@ -1,3 +1,3 @@
-import { RootCommand } from '../root-command'
+import { BeeDebugCommand } from '../../BeeDebugCommand'
 
-export class StampCommand extends RootCommand {}
+export class StampCommand extends BeeDebugCommand {}

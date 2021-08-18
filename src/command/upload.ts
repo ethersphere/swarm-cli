@@ -90,7 +90,7 @@ export class Upload extends RootCommand implements LeafCommand {
   public hash!: string
 
   public async run(usedFromOtherCommand = false): Promise<void> {
-    this.initCommand()
+    super.init()
 
     if (this.hasUnsupportedGatewayOptions()) {
       exit(1)
@@ -167,11 +167,6 @@ export class Upload extends RootCommand implements LeafCommand {
         printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
       }
     }
-  }
-
-  /** Init additional properties of class, that are not handled by the CLI framework */
-  private initCommand(): void {
-    super.init()
   }
 
   private async uploadFolder(postageBatchId: string, tag?: Tag): Promise<string> {
@@ -335,7 +330,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async getConnectedPeers(): Promise<number | null> {
     try {
-      const { connected } = await this.beeDebug.getTopology()
+      const { connected } = await this._beeDebug.getTopology()
 
       return connected
     } catch {
