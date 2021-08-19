@@ -38,6 +38,9 @@ export class Buy extends StampCommand implements LeafCommand {
   })
   public gasPrice!: bigint
 
+  @Option({ key: 'immutable', description: 'Disable stamp reuse', type: 'boolean' })
+  public immutable!: boolean
+
   @Option({ key: 'label', description: 'Label of the postage stamp' })
   public label!: string
 
@@ -69,6 +72,7 @@ export class Buy extends StampCommand implements LeafCommand {
       const batchId = await this.bee.createPostageBatch(this.amount.toString(), this.depth, {
         label: this.label,
         gasPrice: this.gasPrice?.toString(),
+        immutableFlag: this.immutable,
       })
       spinner.stop()
       this.console.quiet(batchId)
