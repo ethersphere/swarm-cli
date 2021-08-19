@@ -38,7 +38,7 @@ export class Buy extends StampCommand implements LeafCommand {
   })
   public gasPrice!: bigint
 
-  @Option({ key: 'immutable', description: 'Disable stamp reuse and overwriting content', type: 'boolean' })
+  @Option({ key: 'immutable', description: 'Disable stamp reuse', type: 'boolean' })
   public immutable!: boolean
 
   @Option({ key: 'label', description: 'Label of the postage stamp' })
