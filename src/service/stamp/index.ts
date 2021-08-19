@@ -1,4 +1,4 @@
-import { Bee, PostageBatch } from '@ethersphere/bee-js'
+import { BeeDebug, DebugPostageBatch } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { createKeyValue } from '../../utils/text'
@@ -14,8 +14,8 @@ import { EnrichedStamp } from './types/stamp'
  *
  * @returns {Promise<string>} Hex representation of the Stamp ID.
  */
-export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> {
-  const stamps = ((await bee.getAllPostageBatch()) || []).map(enrichStamp)
+export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promise<string> {
+  const stamps = ((await beeDebug.getAllPostageBatch()) || []).map(enrichStamp)
 
   if (!stamps.length) {
     console.error('You need to have at least one stamp for this action.')
@@ -29,13 +29,13 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
   return hex
 }
 
-export function normalizeUtilization(stamp: PostageBatch): number {
+export function normalizeUtilization(stamp: DebugPostageBatch): number {
   const { depth, bucketDepth, utilization } = stamp
 
   return utilization / Math.pow(2, depth - bucketDepth)
 }
 
-export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
+export function enrichStamp(stamp: DebugPostageBatch): EnrichedStamp {
   const usage = normalizeUtilization(stamp)
   const usageNormal = Math.ceil(usage * 100)
   const usageText = usageNormal + '%'
@@ -51,6 +51,7 @@ export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
 export function printStamp(stamp: EnrichedStamp, console: CommandLog): void {
   console.log(createKeyValue('Stamp ID', stamp.batchID))
   console.log(createKeyValue('Usage', stamp.usageText))
+  console.log(createKeyValue('TTL', stamp.batchTTL))
   console.verbose(createKeyValue('Depth', stamp.depth))
   console.verbose(createKeyValue('Bucket Depth', stamp.bucketDepth))
   console.verbose(createKeyValue('Amount', stamp.amount))
@@ -61,7 +62,7 @@ export function printStamp(stamp: EnrichedStamp, console: CommandLog): void {
   console.quiet(stamp.batchID + ' ' + stamp.usageText)
 }
 
-export function printEnrichedStamp(stamp: PostageBatch, console: CommandLog): void {
+export function printEnrichedStamp(stamp: DebugPostageBatch, console: CommandLog): void {
   const enrichedStamp = enrichStamp(stamp)
   printStamp(enrichedStamp, console)
 }

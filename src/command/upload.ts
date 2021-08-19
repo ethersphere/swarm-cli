@@ -105,7 +105,7 @@ export class Upload extends RootCommand implements LeafCommand {
       if (isGateway(this.beeApiUrl)) {
         this.stamp = '0'.repeat(64)
       } else {
-        this.stamp = await pickStamp(this.bee, this.console)
+        this.stamp = await pickStamp(this.beeDebug, this.console)
       }
     }
 

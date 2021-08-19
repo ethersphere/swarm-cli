@@ -69,7 +69,7 @@ export class Send extends PssCommand implements LeafCommand {
     }
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.bee, this.console)
+      this.stamp = await pickStamp(this.beeDebug, this.console)
     }
 
     this.console.log('Sending PSS message on topic ' + this.topic)
