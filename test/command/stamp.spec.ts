@@ -32,13 +32,22 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
   })
 
   it('should buy stamp with immutable flag', async () => {
-    const execution = await invokeTestCli(['stamp', 'buy', '--amount', '100000', '--depth', '20', '--immutable'])
+    const execution = await invokeTestCli([
+      'stamp',
+      'buy',
+      '--amount',
+      '100000',
+      '--depth',
+      '20',
+      '--immutable',
+      '--wait-usable',
+    ])
     const command = execution.runnable as Buy
 
     const id = command.postageBatchId
     await invokeTestCli(['stamp', 'show', id, '--verbose'])
-    expect(getNthLastMessage(13)).toContain('Immutable')
-    expect(getNthLastMessage(13)).toContain('true')
+    expect(getLastMessage()).toContain('Immutable')
+    expect(getLastMessage()).toContain('true')
   })
 
   it('should print custom message when there are no stamps', async () => {
