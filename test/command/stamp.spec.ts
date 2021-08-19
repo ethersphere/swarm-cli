@@ -37,8 +37,8 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
 
     const id = command.postageBatchId
     await invokeTestCli(['stamp', 'show', id, '--verbose'])
-    expect(getNthLastMessage(5)).toContain('Immutable')
-    expect(getNthLastMessage(5)).toContain('true')
+    expect(getNthLastMessage(13)).toContain('Immutable')
+    expect(getNthLastMessage(13)).toContain('true')
   })
 
   it('should print custom message when there are no stamps', async () => {
