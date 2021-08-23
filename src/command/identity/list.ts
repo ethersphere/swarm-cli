@@ -13,8 +13,8 @@ export class List extends RootCommand implements LeafCommand {
 
   public readonly description = 'List keypairs which can be used to sign chunks'
 
-  public run(): void {
-    super.init()
+  public async run(): Promise<void> {
+    await super.init()
 
     this.console.info('List of your identities')
     this.console.divider('=')

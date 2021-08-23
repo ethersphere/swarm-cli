@@ -52,7 +52,7 @@ export class FeedCommand extends RootCommand {
     this.console.quiet(manifest)
 
     if (!this.quiet) {
-      printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
+      printEnrichedStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console)
     }
   }
 

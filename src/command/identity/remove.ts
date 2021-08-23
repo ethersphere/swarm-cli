@@ -19,7 +19,7 @@ export class Remove extends IdentityCommand implements LeafCommand {
   public force!: boolean
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     if (!this.commandConfig.config.identities) {
       this.printNoIdentitiesError()

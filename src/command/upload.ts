@@ -90,7 +90,7 @@ export class Upload extends RootCommand implements LeafCommand {
   public hash!: string
 
   public async run(usedFromOtherCommand = false): Promise<void> {
-    super.init()
+    await super.init()
 
     if (this.hasUnsupportedGatewayOptions()) {
       exit(1)
@@ -164,7 +164,7 @@ export class Upload extends RootCommand implements LeafCommand {
       this.console.quiet(this.hash)
 
       if (!isGateway(this.beeApiUrl) && !this.quiet) {
-        printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
+        printEnrichedStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console)
       }
     }
   }

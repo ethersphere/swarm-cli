@@ -10,7 +10,7 @@ export class Status extends RootCommand implements LeafCommand {
   public readonly description = 'Check API availability and Bee compatibility'
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     this.console.log(chalk.bold('Bee Status'))
     this.console.divider()

@@ -12,7 +12,7 @@ export class Upload extends FeedCommand implements LeafCommand {
   public fileUpload!: FileUpload
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     if (!this.stamp) {
       const stamp = await pickStamp(this.beeDebug, this.console)

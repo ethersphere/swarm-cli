@@ -7,7 +7,7 @@ export class ReuploadAll extends PinningCommand implements LeafCommand {
   public readonly description = 'Reupload all locally pinned content'
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     const chunks = await this.bee.getAllPins()
 

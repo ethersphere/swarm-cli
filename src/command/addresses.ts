@@ -1,10 +1,10 @@
 import { NodeAddresses } from '@ethersphere/bee-js'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
-import { BeeDebugCommand } from '../BeeDebugCommand'
 import { createKeyValue } from '../utils/text'
+import { RootCommand } from './root-command'
 
-export class Addresses extends BeeDebugCommand implements LeafCommand {
+export class Addresses extends RootCommand implements LeafCommand {
   public readonly name = 'addresses'
 
   public readonly description = 'Display the addresses of the Bee node'

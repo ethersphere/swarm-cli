@@ -48,7 +48,7 @@ export class Send extends PssCommand implements LeafCommand {
   sendable?: string | Uint8Array
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     if (this.path) {
       if (!fileExists(this.path)) {

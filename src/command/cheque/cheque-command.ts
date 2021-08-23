@@ -1,12 +1,12 @@
-import { BeeDebugCommand } from '../../BeeDebugCommand'
 import { createKeyValue } from '../../utils/text'
+import { RootCommand } from '../root-command'
 
 interface Cashable {
   address: string
   amount: bigint
 }
 
-export class ChequeCommand extends BeeDebugCommand {
+export class ChequeCommand extends RootCommand {
   protected async getFilteredCheques(minimum: bigint): Promise<Cashable[]> {
     const cheques = await this.getCashableCheques()
 

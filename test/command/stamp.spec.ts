@@ -42,7 +42,7 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
 
   it('should list with sorting and filter', async () => {
     await invokeTestCli(['stamp', 'list', '--min-usage', '0', '--max-usage', '100', '--least-used', '--limit', '1'])
-    expect(getLastMessage()).toContain('Usage:')
+    expect(getLastMessage()).toContain('TTL:')
   })
 
   it('should wait until stamp is usable', async () => {
@@ -55,10 +55,10 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
     expect(getNthLastMessage(3)).toContain('0')
     expect(getNthLastMessage(4)).toContain('Usable')
     expect(getNthLastMessage(4)).toContain('true')
-    expect(getNthLastMessage(8)).toContain('Usage')
-    expect(getNthLastMessage(8)).toContain('0%')
-    expect(getNthLastMessage(9)).toContain('Stamp ID')
-    expect(getNthLastMessage(9)).toContain(id)
+    expect(getNthLastMessage(9)).toContain('Usage')
+    expect(getNthLastMessage(9)).toContain('0%')
+    expect(getNthLastMessage(10)).toContain('Stamp ID')
+    expect(getNthLastMessage(10)).toContain(id)
   })
 
   it('should accept --wait-usable prompt', async () => {

@@ -25,7 +25,7 @@ export class Import extends RootCommand implements LeafCommand {
   public password!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
     this.checkForValidPath()
     await this.ensurePasswordIsProvided()
     const data = readFileSync(this.path).toString()

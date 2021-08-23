@@ -14,7 +14,7 @@ export class Export extends IdentityCommand implements LeafCommand {
   public identityName!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
     this.checkForNoIdentities()
     const identities = this.getV3Identities()
     this.checkForEmptyIdentities(identities)

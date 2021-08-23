@@ -34,7 +34,7 @@ export class Create extends RootCommand implements LeafCommand {
   public wallet!: Wallet
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     //simple wallet
     const privateKey = randomBytes(32)
