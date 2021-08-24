@@ -64,7 +64,7 @@ export class RootCommand {
   }
 
   public get beeDebug(): BeeDebug {
-    if (this.debugApiErrors.length) {
+    if (!this.debugApiIsUsable()) {
       for (const message of this.debugApiErrors) {
         this.console.error(message)
       }
