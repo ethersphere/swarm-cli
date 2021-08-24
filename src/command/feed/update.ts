@@ -11,10 +11,10 @@ export class Update extends FeedCommand implements LeafCommand {
   public reference!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.bee, this.console)
+      this.stamp = await pickStamp(this.beeDebug, this.console)
     }
 
     await this.updateFeedAndPrint(this.reference)

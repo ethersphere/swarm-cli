@@ -90,7 +90,7 @@ export class Upload extends RootCommand implements LeafCommand {
   public hash!: string
 
   public async run(usedFromOtherCommand = false): Promise<void> {
-    this.initCommand()
+    await super.init()
 
     if (this.hasUnsupportedGatewayOptions()) {
       exit(1)
@@ -105,7 +105,7 @@ export class Upload extends RootCommand implements LeafCommand {
       if (isGateway(this.beeApiUrl)) {
         this.stamp = '0'.repeat(64)
       } else {
-        this.stamp = await pickStamp(this.bee, this.console)
+        this.stamp = await pickStamp(this.beeDebug, this.console)
       }
     }
 
@@ -150,7 +150,6 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.log(createKeyValue('Swarm hash', this.hash))
 
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
-    //refresh tag before populate tracking
 
     if (this.sync && tag) {
       tag = await this.bee.retrieveTag(tag.uid)
@@ -163,15 +162,10 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
 
-      if (!isGateway(this.beeApiUrl) && !this.quiet) {
-        printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
+      if (!isGateway(this.beeApiUrl) && !this.quiet && this.debugApiIsUsable()) {
+        printEnrichedStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console)
       }
     }
-  }
-
-  /** Init additional properties of class, that are not handled by the CLI framework */
-  private initCommand(): void {
-    super.init()
   }
 
   private async uploadFolder(postageBatchId: string, tag?: Tag): Promise<string> {
@@ -335,7 +329,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async getConnectedPeers(): Promise<number | null> {
     try {
-      const { connected } = await this.beeDebug.getTopology()
+      const { connected } = await this._beeDebug.getTopology()
 
       return connected
     } catch {

@@ -25,7 +25,7 @@ export class Import extends RootCommand implements LeafCommand {
   public password!: string
 
   public async run(): Promise<void> {
-    this.initCommand()
+    await super.init()
     this.checkForValidPath()
     await this.ensurePasswordIsProvided()
     const data = readFileSync(this.path).toString()
@@ -40,11 +40,6 @@ export class Import extends RootCommand implements LeafCommand {
     await this.saveWallet(wallet)
     spinner.stop()
     this.console.log(`V3 Wallet imported as identity '${this.identityName}' successfully`)
-  }
-
-  /** Init additional properties of class, that are not handled by the CLI framework */
-  private initCommand(): void {
-    super.init()
   }
 
   private async decryptV3Wallet(data: string): Promise<Wallet> {

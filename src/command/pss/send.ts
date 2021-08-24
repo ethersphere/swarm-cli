@@ -48,7 +48,7 @@ export class Send extends PssCommand implements LeafCommand {
   sendable?: string | Uint8Array
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     if (this.path) {
       if (!fileExists(this.path)) {
@@ -69,7 +69,7 @@ export class Send extends PssCommand implements LeafCommand {
     }
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.bee, this.console)
+      this.stamp = await pickStamp(this.beeDebug, this.console)
     }
 
     this.console.log('Sending PSS message on topic ' + this.topic)

@@ -52,9 +52,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
   public gasPrice!: bigint
 
   public async run(): Promise<void> {
-    super.init()
-
-    await this.requireHealthyDebugApi()
+    await super.init()
 
     if (this.all) {
       await this.cashoutAll()

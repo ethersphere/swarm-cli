@@ -23,7 +23,7 @@ export class Print extends FeedCommand implements LeafCommand {
   public address!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
     this.console.info('Looking up feed topic ' + topic + '...')
@@ -32,7 +32,7 @@ export class Print extends FeedCommand implements LeafCommand {
     const { reference, feedIndex, feedIndexNext } = await reader.download()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.bee, this.console)
+      this.stamp = await pickStamp(this.beeDebug, this.console)
     }
 
     const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)

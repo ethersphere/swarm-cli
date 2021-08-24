@@ -52,7 +52,7 @@ export class Buy extends StampCommand implements LeafCommand {
   public postageBatchId!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     if (this.verbose && !this.waitUsable) {
       this.console.log(
@@ -69,7 +69,7 @@ export class Buy extends StampCommand implements LeafCommand {
     }
 
     try {
-      const batchId = await this.bee.createPostageBatch(this.amount.toString(), this.depth, {
+      const batchId = await this.beeDebug.createPostageBatch(this.amount.toString(), this.depth, {
         label: this.label,
         gasPrice: this.gasPrice?.toString(),
         immutableFlag: this.immutable,
@@ -97,7 +97,7 @@ export class Buy extends StampCommand implements LeafCommand {
 
     while (running) {
       try {
-        const stamp = await this.bee.getPostageBatch(this.postageBatchId)
+        const stamp = await this.beeDebug.getPostageBatch(this.postageBatchId)
 
         if (!stamp.usable) {
           await sleep(1000)

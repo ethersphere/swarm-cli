@@ -19,7 +19,7 @@ export class Remove extends IdentityCommand implements LeafCommand {
   public force!: boolean
 
   public async run(): Promise<void> {
-    this.initCommand()
+    await super.init()
 
     if (!this.commandConfig.config.identities) {
       this.printNoIdentitiesError()
@@ -52,10 +52,5 @@ export class Remove extends IdentityCommand implements LeafCommand {
 
     this.commandConfig.removeIdentity(this.identityName)
     this.console.log('Identity has been successfully removed')
-  }
-
-  /** Init additional properties of class, that are not handled by the CLI framework */
-  private initCommand(): void {
-    super.init()
   }
 }

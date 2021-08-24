@@ -32,26 +32,50 @@ export class RootCommand {
   public curl!: boolean
 
   public bee!: Bee
-  public _beeDebug?: BeeDebug
+  public _beeDebug!: BeeDebug
+  public console!: CommandLog
+  public readonly appName = 'swarm-cli'
+  public commandConfig!: CommandConfig
+  private sourcemap!: Sourcemap
+  /**
+   * Store Debug API errors here. It cannot be determined beforehand if Debug API is going to be used,
+   * since it is optional for some commands. The `beeDebug` getter should check if there are any errors
+   * here. Since the checks require async operations, this logic cannot be in the getter.
+   */
+  private debugApiErrors: string[] = []
+
+  private async setupBeeDebug(): Promise<void> {
+    if (this.shouldDebugUrlBeSpecified()) {
+      this.debugApiErrors.push('Cannot ensure Debug API correctness!')
+      this.debugApiErrors.push('--bee-api-url is set explicitly, but --bee-debug-api-url is left default.')
+      this.debugApiErrors.push('This may be incorrect and cause unexpected behaviour.')
+      this.debugApiErrors.push('Please run the command again and specify explicitly the --bee-debug-api-url value.')
+    } else {
+      if (!(await this.checkDebugApiHealth())) {
+        this.debugApiErrors.push('Could not reach Debug API at ' + this.beeDebugApiUrl)
+        this.debugApiErrors.push('Make sure you have the Debug API enabled in your Bee config')
+        this.debugApiErrors.push('or correct the URL with the --bee-debug-api-url option.')
+      }
+    }
+  }
+
+  protected debugApiIsUsable(): boolean {
+    return this.debugApiErrors.length === 0
+  }
+
   public get beeDebug(): BeeDebug {
-    if (!this._beeDebug) {
-      this.console.error('Cannot ensure Debug API correctness!')
-      this.console.error('--bee-api-url is set explicitly, but --bee-debug-api-url is left default.')
-      this.console.error('This may be incorrect and cause unexpected behaviour.')
-      this.console.error('Please run the command again and specify explicitly the --bee-debug-api-url value.')
+    if (!this.debugApiIsUsable()) {
+      for (const message of this.debugApiErrors) {
+        this.console.error(message)
+      }
+
       exit(1)
     }
 
     return this._beeDebug
   }
 
-  public console!: CommandLog
-  public appName = 'swarm-cli'
-  public commandConfig!: CommandConfig
-
-  private sourcemap!: Sourcemap
-
-  protected init(): void {
+  protected async init(): Promise<void> {
     this.commandConfig = new CommandConfig(this.appName, this.console, this.configFile, this.configFolder)
     this.sourcemap = Utils.getSourcemap()
 
@@ -60,7 +84,7 @@ export class RootCommand {
     })
 
     this.bee = new Bee(this.beeApiUrl)
-    this._beeDebug = this.shouldDebugUrlBeSpecified() ? undefined : new BeeDebug(this.beeDebugApiUrl)
+    this._beeDebug = new BeeDebug(this.beeDebugApiUrl)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
@@ -73,6 +97,7 @@ export class RootCommand {
     if (this.curl) {
       registerCurlHook()
     }
+    await this.setupBeeDebug()
   }
 
   private maybeSetFromConfig(option: ConfigOption): void {
@@ -96,5 +121,15 @@ export class RootCommand {
    */
   private shouldDebugUrlBeSpecified(): boolean {
     return this.sourcemap['bee-api-url'] === 'explicit' && this.sourcemap['bee-debug-api-url'] === 'default'
+  }
+
+  private async checkDebugApiHealth(): Promise<boolean> {
+    try {
+      const health = await this._beeDebug.getHealth()
+
+      return health.status === 'ok'
+    } catch (error) {
+      return false
+    }
   }
 }

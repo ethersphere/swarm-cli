@@ -27,7 +27,7 @@ export class Receive extends PssCommand implements LeafCommand {
   public receivedMessage?: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     this.console.log('Waiting for one PSS message on topic ' + this.topic)
 
