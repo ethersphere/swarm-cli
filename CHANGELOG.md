@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.3.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.2.0...v1.3.0) (2021-08-24)
+
+
+### Features
+
+* add bee 1.1.0 compatibility ([#232](https://www.github.com/ethersphere/swarm-cli/issues/232)) ([dad081e](https://www.github.com/ethersphere/swarm-cli/commit/dad081edc798596306ff908bf0e57be88e227ef0))
+* add immutable flag to stamp buy command ([#233](https://www.github.com/ethersphere/swarm-cli/issues/233)) ([a74df33](https://www.github.com/ethersphere/swarm-cli/commit/a74df33eda53523ea163e3745885c1a95cb82d39))
+* enforce explicit debug api when normal api is provided ([#225](https://www.github.com/ethersphere/swarm-cli/issues/225)) ([229fcd1](https://www.github.com/ethersphere/swarm-cli/commit/229fcd1810173fd229fcb3c197a9e3f5a04800bb))
+* rework --skip-sync to --sync with connectivity check ([#217](https://www.github.com/ethersphere/swarm-cli/issues/217)) ([1948ed8](https://www.github.com/ethersphere/swarm-cli/commit/1948ed8ed79827179599495b192525b666a56154))
+
+
+### Bug Fixes
+
+* always set correct exit code ([#229](https://www.github.com/ethersphere/swarm-cli/issues/229)) ([58bf091](https://www.github.com/ethersphere/swarm-cli/commit/58bf091b70aeb2cf73da8d94a29773e7be8e526f))
+* do not print double slashes in joined bee urls ([#228](https://www.github.com/ethersphere/swarm-cli/issues/228)) ([e24465c](https://www.github.com/ethersphere/swarm-cli/commit/e24465c4333c838b0bfd0bf834b88d98b091d5d7))
+* print index-document before spinner to avoid text glitch ([#220](https://www.github.com/ethersphere/swarm-cli/issues/220)) ([9f596f4](https://www.github.com/ethersphere/swarm-cli/commit/9f596f4b40905dfbe7805e175680949f3415bcf7))
+
 ## [1.2.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.1.0...v1.2.0) (2021-07-21)
 
 
