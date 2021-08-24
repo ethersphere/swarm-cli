@@ -39,7 +39,7 @@ describeCommand('Test unsure bee-debug', ({ consoleMessages, hasMessageContainin
     delete process.env.BEE_API_URL
     delete process.env.BEE_DEBUG_API_URL
     const identityName = 'i' + Date.now()
-    await invokeTestCli(['identity', 'create', 'disposable-test', '--only-keypair'])
+    await invokeTestCli(['identity', 'create', identityName, '--only-keypair'])
     await invokeTestCli([
       'feed',
       'upload',
