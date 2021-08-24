@@ -51,7 +51,7 @@ export function enrichStamp(stamp: DebugPostageBatch): EnrichedStamp {
 export function printStamp(stamp: EnrichedStamp, console: CommandLog): void {
   console.log(createKeyValue('Stamp ID', stamp.batchID))
   console.log(createKeyValue('Usage', stamp.usageText))
-  console.log(createKeyValue('TTL', stamp.batchTTL))
+  console.log(createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : stamp.batchTTL + ' seconds'))
   console.verbose(createKeyValue('Depth', stamp.depth))
   console.verbose(createKeyValue('Bucket Depth', stamp.bucketDepth))
   console.verbose(createKeyValue('Amount', stamp.amount))
