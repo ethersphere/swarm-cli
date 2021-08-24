@@ -34,7 +34,7 @@ export class RootCommand {
   public bee!: Bee
   public _beeDebug!: BeeDebug
   public console!: CommandLog
-  public appName = 'swarm-cli'
+  public readonly appName = 'swarm-cli'
   public commandConfig!: CommandConfig
   private sourcemap!: Sourcemap
   /**
