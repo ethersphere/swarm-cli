@@ -59,6 +59,10 @@ export class RootCommand {
     }
   }
 
+  protected debugApiIsUsable(): boolean {
+    return this.debugApiErrors.length === 0
+  }
+
   public get beeDebug(): BeeDebug {
     if (this.debugApiErrors.length) {
       for (const message of this.debugApiErrors) {

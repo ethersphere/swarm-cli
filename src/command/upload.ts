@@ -150,7 +150,6 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.log(createKeyValue('Swarm hash', this.hash))
 
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
-    //refresh tag before populate tracking
 
     if (this.sync && tag) {
       tag = await this.bee.retrieveTag(tag.uid)
@@ -163,7 +162,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
 
-      if (!isGateway(this.beeApiUrl) && !this.quiet) {
+      if (!isGateway(this.beeApiUrl) && !this.quiet && this.debugApiIsUsable()) {
         printEnrichedStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console)
       }
     }
