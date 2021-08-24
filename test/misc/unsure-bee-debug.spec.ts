@@ -3,6 +3,8 @@ import { getStampOption } from '../utility/stamp'
 
 describeCommand('Test unsure bee-debug', ({ consoleMessages, hasMessageContaining }) => {
   it('should fail for cheque commands (mandatory)', async () => {
+    delete process.env.BEE_API_URL
+    delete process.env.BEE_DEBUG_API_URL
     await invokeTestCli(['cheque', 'balance', '--bee-api-url', 'http://localhost:1633'])
     expect(consoleMessages[1]).toContain('Cannot ensure Debug API correctness!')
     expect(consoleMessages[2]).toContain('--bee-api-url is set explicitly, but --bee-debug-api-url is left default.')
@@ -13,6 +15,8 @@ describeCommand('Test unsure bee-debug', ({ consoleMessages, hasMessageContainin
   })
 
   it('should fail for stamp commands (mandatory)', async () => {
+    delete process.env.BEE_API_URL
+    delete process.env.BEE_DEBUG_API_URL
     await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:1633'])
     expect(consoleMessages[0]).toContain('Cannot ensure Debug API correctness!')
     expect(consoleMessages[1]).toContain('--bee-api-url is set explicitly, but --bee-debug-api-url is left default.')
@@ -23,6 +27,8 @@ describeCommand('Test unsure bee-debug', ({ consoleMessages, hasMessageContainin
   })
 
   it('should work for upload (optional)', async () => {
+    delete process.env.BEE_API_URL
+    delete process.env.BEE_DEBUG_API_URL
     await invokeTestCli(['upload', 'README.md', '--bee-api-url', 'http://localhost:1633', ...getStampOption()])
     expect(hasMessageContaining('Swarm hash')).toBeTruthy()
     expect(hasMessageContaining('Cannot ensure Debug API correctness')).toBeFalsy()
@@ -30,6 +36,8 @@ describeCommand('Test unsure bee-debug', ({ consoleMessages, hasMessageContainin
   })
 
   it('should work for feed upload (optional)', async () => {
+    delete process.env.BEE_API_URL
+    delete process.env.BEE_DEBUG_API_URL
     const identityName = 'i' + Date.now()
     await invokeTestCli(['identity', 'create', 'disposable-test', '--only-keypair'])
     await invokeTestCli([
