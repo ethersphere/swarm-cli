@@ -1,4 +1,4 @@
-import { DebugPostageBatch } from '@ethersphere/bee-js';
+import { DebugPostageBatch } from '@ethersphere/bee-js'
 
 export interface EnrichedStamp extends DebugPostageBatch {
   usage: number
