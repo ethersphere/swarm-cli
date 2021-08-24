@@ -35,6 +35,26 @@ describeCommand('Test Stamp command', ({ consoleMessages, getLastMessage, getNth
     await sleep(11_000)
   })
 
+  it('should buy stamp with immutable flag', async () => {
+    const execution = await invokeTestCli([
+      'stamp',
+      'buy',
+      '--amount',
+      '100000',
+      '--depth',
+      '20',
+      '--immutable',
+      '--wait-usable',
+    ])
+    const command = execution.runnable as Buy
+
+    const id = command.postageBatchId
+    await invokeTestCli(['stamp', 'show', id, '--verbose'])
+    expect(getLastMessage()).toContain('Immutable')
+    expect(getLastMessage()).toContain('true')
+    await sleep(11_000)
+  })
+
   it('should print custom message when there are no stamps', async () => {
     await invokeTestCli(['stamp', 'list', '--bee-debug-api-url', 'http://localhost:11635'])
     expect(getNthLastMessage(4)).toContain('You do not have any stamps.')
