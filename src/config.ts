@@ -4,6 +4,7 @@ import { Addresses } from './command/addresses'
 import { Cheque } from './command/cheque'
 import { Feed } from './command/feed'
 import { Identity } from './command/identity'
+import { Manifest } from './command/manifest'
 import { Pinning } from './command/pinning'
 import { Pss } from './command/pss'
 import { Stamp } from './command/stamp'
@@ -91,4 +92,4 @@ export const optionParameters: IOption<unknown>[] = [
   curl,
 ]
 
-export const rootCommandClasses = [Upload, Status, Pinning, Identity, Feed, Cheque, Stamp, Pss, Addresses]
+export const rootCommandClasses = [Upload, Status, Pinning, Identity, Feed, Cheque, Stamp, Pss, Addresses, Manifest]
