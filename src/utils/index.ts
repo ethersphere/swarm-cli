@@ -20,6 +20,16 @@ export function fileExists(path: string): boolean {
   }
 }
 
+export function directoryExists(path: string): boolean {
+  try {
+    const stat = fs.statSync(path)
+
+    return !stat.isFile()
+  } catch {
+    return false
+  }
+}
+
 export function isGateway(url: string): boolean {
   return url.includes('gateway.ethswarm.org')
 }
@@ -35,6 +45,7 @@ export function getByteSize(data: string | Uint8Array): number {
 async function* walkTreeAsync(path: string): AsyncGenerator<string> {
   for await (const directory of await fs.promises.opendir(path)) {
     const entry = join(path, directory.name)
+
     if (directory.isDirectory()) {
       yield* walkTreeAsync(entry)
     } else if (directory.isFile()) {
@@ -46,13 +57,15 @@ async function* walkTreeAsync(path: string): AsyncGenerator<string> {
 function removeLeadingDirectory(path: string, directory: string) {
   directory = directory.startsWith('./') ? directory.slice(2) : directory
   directory = directory.endsWith('/') ? directory : directory + '/'
+
   return path.replace(directory, '')
 }
 
-export async function readdirDeepAsync(path: string, cwd: string) {
+export async function readdirDeepAsync(path: string, cwd: string): Promise<string[]> {
   const entries = []
   for await (const entry of walkTreeAsync(path)) {
     entries.push(cwd ? removeLeadingDirectory(entry, cwd) : entry)
   }
+
   return entries
 }

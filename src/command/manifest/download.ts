@@ -1,6 +1,7 @@
-import { writeFileSync } from 'fs'
+import { mkdirSync, writeFileSync } from 'fs'
 import { Argument, LeafCommand } from 'furious-commander'
 import { join } from 'path'
+import { directoryExists } from '../../utils'
 import { ManifestCommand } from './manifest-command'
 
 export class Download extends ManifestCommand implements LeafCommand {
@@ -10,11 +11,15 @@ export class Download extends ManifestCommand implements LeafCommand {
   @Argument({ key: 'address', description: 'Root manifest reference', required: true })
   public reference!: string
 
-  @Argument({ key: 'folder', description: 'Destination folder (must exist)', required: true })
+  @Argument({ key: 'folder', description: 'Destination folder', required: true })
   public folder!: string
 
   public async run(): Promise<void> {
     await super.init()
+
+    if (!directoryExists(this.folder)) {
+      mkdirSync(this.folder, { recursive: true })
+    }
     const node = await this.initializeNode(this.reference)
     const forks = this.findAllValueForks(node)
     for (const fork of forks) {

@@ -18,6 +18,7 @@ export class Merge extends ManifestCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     await super.init()
+
     if (!this.stamp) {
       this.stamp = await pickStamp(this.beeDebug, this.console)
     }

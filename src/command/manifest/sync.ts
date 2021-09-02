@@ -28,6 +28,7 @@ export class Sync extends ManifestCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     await super.init()
+
     if (!this.stamp) {
       this.stamp = await pickStamp(this.beeDebug, this.console)
     }
@@ -36,10 +37,12 @@ export class Sync extends ManifestCommand implements LeafCommand {
     const forks = this.getValueForkMap(this.findAllValueForks(node))
     for (const file of files) {
       const fork = forks[file]
+
       if (fork) {
         fork.found = true
         const remoteData = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
         const localData = readFileSync(this.folder + '/' + file)
+
         if (localData.equals(remoteData)) {
           this.console.log('[ok ]', file)
         } else {
@@ -53,6 +56,7 @@ export class Sync extends ManifestCommand implements LeafCommand {
         this.console.log('[new]', file)
       }
     }
+
     if (this.remove) {
       for (const fork of Object.values(forks).filter(x => !x.found)) {
         node.removePath(this.encodePath(fork.path))
