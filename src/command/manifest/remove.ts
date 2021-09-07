@@ -10,7 +10,7 @@ export class Remove extends ManifestCommand implements LeafCommand {
   @Argument({ key: 'address', description: 'Root manifest reference', required: true })
   public reference!: string
 
-  @Argument({ key: 'path', description: 'Path to be removed from the manifest', required: true })
+  @Argument({ key: 'path', description: 'Path of file or folder be removed from the manifest', required: true })
   public path!: string
 
   @Option(stampProperties)
@@ -23,7 +23,14 @@ export class Remove extends ManifestCommand implements LeafCommand {
       this.stamp = await pickStamp(this.beeDebug, this.console)
     }
     const node = await this.initializeNode(this.reference)
-    node.removePath(this.encodePath(this.path))
+    const forks = this.findAllValueForks(node)
+    const map = this.getValueForkMap(forks)
+    for (const key of Object.keys(map)) {
+      // TODO does it handle empty folders?
+      if (key === this.path || key.startsWith(this.path + '/')) {
+        node.removePath(this.encodePath(key))
+      }
+    }
     await this.saveAndPrintNode(node, this.stamp)
   }
 }

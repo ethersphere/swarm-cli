@@ -8,6 +8,8 @@ interface EnrichedFork extends MantarayFork {
 }
 
 export class ManifestCommand extends RootCommand {
+  public resultHash!: string
+
   protected async init(): Promise<void> {
     await super.init()
   }
@@ -67,6 +69,7 @@ export class ManifestCommand extends RootCommand {
 
   protected async saveAndPrintNode(node: MantarayNode, stamp: string): Promise<void> {
     const reference = await node.save(this.createSaver(stamp))
-    this.console.log((reference as Buffer).toString('hex'))
+    this.resultHash = (reference as Buffer).toString('hex')
+    this.console.log(this.resultHash)
   }
 }

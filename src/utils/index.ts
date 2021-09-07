@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs, { statSync } from 'fs'
 import { join } from 'path'
 
 /**
@@ -68,4 +68,14 @@ export async function readdirDeepAsync(path: string, cwd: string): Promise<strin
   }
 
   return entries
+}
+
+export async function getFiles(path: string): Promise<string[]> {
+  const stat = statSync(path)
+
+  if (stat.isDirectory()) {
+    return await readdirDeepAsync(path, path)
+  } else {
+    return [path]
+  }
 }
