@@ -14,6 +14,9 @@ export class Status extends RootCommand implements LeafCommand {
 
     this.console.log(chalk.bold('Bee Status'))
     this.console.divider()
+    this.console.log(createKeyValue('Bee API URL', this.beeApiUrl))
+    this.console.log(createKeyValue('Bee Debug API URL', this.beeDebugApiUrl))
+    this.console.divider()
     await this.checkBeeApiConnection()
     const version = await this.checkBeeDebugApiConnection()
     await this.checkBeeVersionCompatibility()
