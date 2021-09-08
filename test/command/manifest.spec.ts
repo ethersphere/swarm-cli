@@ -1,4 +1,4 @@
-import { statSync, writeFileSync } from 'fs'
+import { statSync } from 'fs'
 import { ManifestCommand } from '../../src/command/manifest/manifest-command'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
@@ -71,7 +71,6 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should sync folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    writeFileSync('out.json', JSON.stringify(consoleMessages))
     expect(hasMessageContaining('[new] address.ts')).toBeTruthy()
     expect(hasMessageContaining('[new] index.ts')).toBeTruthy()
     expect(hasMessageContaining('[new] stamp.ts')).toBeTruthy()
@@ -95,7 +94,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should download folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
-    hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
+    hash = await runAndGetManifest(['manifest', 'add', hash, 'test/utility', '--folder', 'test/utility'])
     await invokeTestCli(['manifest', 'download', hash, 'test/data'])
     expect(statSync('test/data/test/utility/address.ts')).toBeTruthy()
     expect(statSync('test/data/test/utility/index.ts')).toBeTruthy()
