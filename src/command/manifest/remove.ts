@@ -22,13 +22,15 @@ export class Remove extends ManifestCommand implements LeafCommand {
     if (!this.stamp) {
       this.stamp = await pickStamp(this.beeDebug, this.console)
     }
+
+    if (this.path.endsWith('/')) {
+      this.path = this.path.slice(0, this.path.length - 1)
+    }
     const node = await this.initializeNode(this.reference)
     const forks = this.findAllValueForks(node)
-    const map = this.getValueForkMap(forks)
-    for (const key of Object.keys(map)) {
-      // TODO does it handle empty folders?
-      if (key === this.path || key.startsWith(this.path + '/')) {
-        node.removePath(this.encodePath(key))
+    for (const fork of forks) {
+      if ([this.path, this.path + '/'].includes(fork.path)) {
+        node.removePath(this.encodePath(fork.path))
       }
     }
     await this.saveAndPrintNode(node, this.stamp)

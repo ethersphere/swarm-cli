@@ -10,7 +10,9 @@ import { buyStamp } from './test/utility/stamp'
 export default async (): Promise<Config.InitialOptions> => {
   process.env.MAX_UPLOAD_SIZE = '5000000' // 5 megabytes
 
-  process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11635')
+  if (!process.env.SKIP_WORKER) {
+    process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11635')
+  }
 
   if (!process.env.STAMP) {
     process.env.STAMP = await buyStamp()

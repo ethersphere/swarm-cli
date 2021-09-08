@@ -1,4 +1,4 @@
-import { statSync } from 'fs'
+import { statSync, writeFileSync } from 'fs'
 import { ManifestCommand } from '../../src/command/manifest/manifest-command'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
@@ -56,6 +56,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'test/utility', '--folder', 'utils'])
+    await invokeTestCli(['manifest', 'list', hash])
     expect(hasMessageContaining('README.md')).toBeTruthy()
     expect(hasMessageContaining('utils/address.ts')).toBeTruthy()
     expect(hasMessageContaining('utils/index.ts')).toBeTruthy()
@@ -64,22 +65,22 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'list', hash])
     expect(hasMessageContaining('README.md')).toBeTruthy()
-    expect(hasMessageContaining('utils/address.ts')).toBeFalsy()
-    expect(hasMessageContaining('utils/index.ts')).toBeFalsy()
-    expect(hasMessageContaining('utils/stamp.ts')).toBeFalsy()
+    expect(hasMessageContaining('utils')).toBeFalsy()
   })
 
   it('should sync folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
+    writeFileSync('out.json', JSON.stringify(consoleMessages))
     expect(hasMessageContaining('[new] address.ts')).toBeTruthy()
     expect(hasMessageContaining('[new] index.ts')).toBeTruthy()
     expect(hasMessageContaining('[new] stamp.ts')).toBeTruthy()
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(hasMessageContaining('[ok ] address.ts')).toBeTruthy()
-    expect(hasMessageContaining('[ok ] index.ts')).toBeTruthy()
-    expect(hasMessageContaining('[ok ] stamp.ts')).toBeTruthy()
+    expect(hasMessageContaining('[ ok] address.ts')).toBeTruthy()
+    expect(hasMessageContaining('[ ok] index.ts')).toBeTruthy()
+    expect(hasMessageContaining('[ ok] stamp.ts')).toBeTruthy()
+    expect(hasMessageContaining('[new]')).toBeFalsy()
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock'])
     expect(hasMessageContaining('[new] cheque-mock.ts')).toBeTruthy()
