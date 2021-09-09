@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync } from 'fs'
-import { Argument, LeafCommand } from 'furious-commander'
+import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { directoryExists } from '../../utils'
 import { ManifestCommand } from './manifest-command'
@@ -11,11 +11,18 @@ export class Download extends ManifestCommand implements LeafCommand {
   @Argument({ key: 'address', description: 'Root manifest reference', required: true })
   public reference!: string
 
-  @Argument({ key: 'folder', description: 'Destination folder', required: true })
+  @Argument({ key: 'destination', description: 'Destination folder', required: true })
+  public destination!: string
+
+  @Option({ key: 'folder', description: 'Only download this folder from the manifest' })
   public folder!: string
 
   public async run(): Promise<void> {
     await super.init()
+
+    if (this.folder && !this.folder.endsWith('/')) {
+      this.folder = this.folder + '/'
+    }
 
     const node = await this.initializeNode(this.reference)
     const forks = this.findAllValueForks(node)
@@ -23,15 +30,19 @@ export class Download extends ManifestCommand implements LeafCommand {
       if (fork.path.endsWith('/')) {
         continue
       }
+
+      if (this.folder && !fork.path.startsWith(this.folder)) {
+        continue
+      }
       const parsedForkPath = parse(fork.path)
       const data = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
       this.console.verbose('Downloading ' + fork.path)
-      const targetFolder = join(this.folder, parsedForkPath.dir)
+      const destinationFolder = join(this.destination, parsedForkPath.dir)
 
-      if (!directoryExists(targetFolder)) {
-        mkdirSync(targetFolder, { recursive: true })
+      if (!directoryExists(destinationFolder)) {
+        mkdirSync(destinationFolder, { recursive: true })
       }
-      writeFileSync(join(this.folder, fork.path), data)
+      writeFileSync(join(this.destination, fork.path), data)
     }
   }
 }

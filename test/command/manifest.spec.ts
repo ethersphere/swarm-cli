@@ -1,5 +1,6 @@
 import { statSync } from 'fs'
 import { ManifestCommand } from '../../src/command/manifest/manifest-command'
+import { readdirDeepAsync } from '../../src/utils'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
@@ -95,10 +96,19 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should download folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'test/utility', '--folder', 'test/utility'])
-    await invokeTestCli(['manifest', 'download', hash, 'test/data'])
-    expect(statSync('test/data/test/utility/address.ts')).toBeTruthy()
-    expect(statSync('test/data/test/utility/index.ts')).toBeTruthy()
-    expect(statSync('test/data/test/utility/stamp.ts')).toBeTruthy()
+    await invokeTestCli(['manifest', 'download', hash, 'test/data/1'])
+    expect(statSync('test/data/1/test/utility/address.ts')).toBeTruthy()
+    expect(statSync('test/data/1/test/utility/index.ts')).toBeTruthy()
+    expect(statSync('test/data/1/test/utility/stamp.ts')).toBeTruthy()
+  })
+
+  it('should download only the specified folder', async () => {
+    let hash = await runAndGetManifest(['manifest', 'create'])
+    hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md'])
+    hash = await runAndGetManifest(['manifest', 'add', hash, 'test/utility', '--folder', 'utils'])
+    await invokeTestCli(['manifest', 'download', hash, 'test/data/2', '--folder', 'utils'])
+    const entries = await readdirDeepAsync('test/data/2', 'test/data/2')
+    expect(entries).toHaveLength(3) // instead of 4
   })
 
   it('should merge manifests', async () => {
