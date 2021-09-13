@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { Reference } from 'mantaray-js'
+import { join } from 'path'
 import { pickStamp } from '../../service/stamp'
 import { readdirDeepAsync } from '../../utils'
 import { stampProperties } from '../../utils/option'
@@ -34,24 +35,24 @@ export class Sync extends ManifestCommand implements LeafCommand {
     }
     const node = await this.initializeNode(this.reference)
     const files = await readdirDeepAsync(this.folder, this.folder)
-    const forks = this.getValueForkMap(this.findAllValueForks(node))
+    const forks = this.getForksPathMapping(this.findAllValueForks(node))
     for (const file of files) {
       const fork = forks[file]
 
       if (fork) {
         fork.found = true
         const remoteData = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
-        const localData = readFileSync(this.folder + '/' + file)
+        const localData = readFileSync(join(this.folder, file))
 
         if (localData.equals(remoteData)) {
           this.console.log('[ ok] ' + file)
         } else {
-          const addition = await this.bee.uploadData(this.stamp, readFileSync(this.folder + '/' + file))
+          const addition = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
           node.addFork(this.encodePath(file), Buffer.from(addition, 'hex') as Reference)
           this.console.log('[upd] ' + file)
         }
       } else {
-        const addition = await this.bee.uploadData(this.stamp, readFileSync(this.folder + '/' + file))
+        const addition = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
         node.addFork(this.encodePath(file), Buffer.from(addition, 'hex') as Reference)
         this.console.log('[new] ' + file)
       }

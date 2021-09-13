@@ -1,9 +1,13 @@
-import { Data } from '@ethersphere/bee-js'
+import type { Data } from '@ethersphere/bee-js'
 import { loadAllNodes, MantarayFork, MantarayNode, Reference, StorageSaver } from 'mantaray-js'
 import { RootCommand } from '../root-command'
 
 interface EnrichedFork extends MantarayFork {
   path: string
+  /**
+   * Used to indicated which forks have been visited when traversing a manifest
+   * E.g. in the sync command, unvisited forks are meant to be removed
+   */
   found: boolean
 }
 
@@ -19,11 +23,9 @@ export class ManifestCommand extends RootCommand {
       const path = prefix + Buffer.from(fork.prefix).toString('utf-8')
       Reflect.set(fork, 'path', path)
 
-      if (fork.node.getType !== 4) {
+      if (!fork.node.isEdgeType()) {
         items.push(fork as EnrichedFork)
-      }
-
-      if (fork.node.isEdgeType()) {
+      } else {
         this.findAllValueForks(fork.node, items, path)
       }
     }
@@ -31,7 +33,7 @@ export class ManifestCommand extends RootCommand {
     return items
   }
 
-  protected getValueForkMap(forks: EnrichedFork[]): Record<string, EnrichedFork> {
+  protected getForksPathMapping(forks: EnrichedFork[]): Record<string, EnrichedFork> {
     const target: Record<string, EnrichedFork> = {}
     for (const fork of forks) {
       target[fork.path] = fork

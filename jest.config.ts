@@ -10,6 +10,11 @@ import { buyStamp } from './test/utility/stamp'
 export default async (): Promise<Config.InitialOptions> => {
   process.env.MAX_UPLOAD_SIZE = '5000000' // 5 megabytes
 
+  /**
+   * SKIP_WORKER can be enabled when running a subset of the tests manually,
+   * which do not require any worker nodes, and therefor the stack
+   * only consists a single queen node as well
+   */
   if (!process.env.SKIP_WORKER) {
     process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11635')
   }

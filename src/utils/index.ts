@@ -1,4 +1,4 @@
-import fs, { statSync } from 'fs'
+import { promises, statSync } from 'fs'
 import { join } from 'path'
 
 /**
@@ -12,7 +12,7 @@ export function sleep(ms: number): Promise<void> {
 
 export function fileExists(path: string): boolean {
   try {
-    const stat = fs.statSync(path)
+    const stat = statSync(path)
 
     return stat.isFile()
   } catch {
@@ -22,7 +22,7 @@ export function fileExists(path: string): boolean {
 
 export function directoryExists(path: string): boolean {
   try {
-    const stat = fs.statSync(path)
+    const stat = statSync(path)
 
     return !stat.isFile()
   } catch {
@@ -42,14 +42,19 @@ export function getByteSize(data: string | Uint8Array): number {
   return Buffer.byteLength(data, 'utf-8')
 }
 
+/**
+ * Lists all files recursively in a folder
+ * @param path folder path
+ * @returns an async generator of path strings
+ */
 async function* walkTreeAsync(path: string): AsyncGenerator<string> {
-  for await (const directory of await fs.promises.opendir(path)) {
-    const entry = join(path, directory.name)
+  for await (const entry of await promises.opendir(path)) {
+    const entryPath = join(path, entry.name)
 
-    if (directory.isDirectory()) {
-      yield* walkTreeAsync(entry)
-    } else if (directory.isFile()) {
-      yield entry
+    if (entry.isDirectory()) {
+      yield* walkTreeAsync(entryPath)
+    } else if (entry.isFile()) {
+      yield entryPath
     }
   }
 }
@@ -61,7 +66,7 @@ function removeLeadingDirectory(path: string, directory: string) {
   return path.replace(directory, '')
 }
 
-export async function readdirDeepAsync(path: string, cwd: string): Promise<string[]> {
+export async function readdirDeepAsync(path: string, cwd?: string): Promise<string[]> {
   const entries = []
   for await (const entry of walkTreeAsync(path)) {
     entries.push(cwd ? removeLeadingDirectory(entry, cwd) : entry)

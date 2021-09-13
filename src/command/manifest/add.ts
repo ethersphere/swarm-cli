@@ -17,7 +17,7 @@ export class Add extends ManifestCommand implements LeafCommand {
   @Argument({ key: 'path', description: 'Path to file or folder in local filesystem', required: true })
   public path!: string
 
-  @Option({ key: 'folder', description: 'Folder (can be nested) to put the files in' })
+  @Option({ key: 'folder', description: 'Folder will prefix the path of the added files in the manifest' })
   public folder!: string
 
   @Option(stampProperties)
