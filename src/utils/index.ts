@@ -60,12 +60,23 @@ async function* walkTreeAsync(path: string): AsyncGenerator<string> {
 }
 
 function removeLeadingDirectory(path: string, directory: string) {
-  directory = directory.startsWith('./') ? directory.slice(2) : directory
-  directory = directory.endsWith('/') ? directory : directory + '/'
+  if (directory.startsWith('./')) {
+    directory = directory.slice(2)
+  }
+
+  if (!directory.endsWith('/')) {
+    directory = directory + '/'
+  }
 
   return path.replace(directory, '')
 }
 
+/**
+ * Lists all files recursively in a folder, considering cwd for the relative path
+ * @param path folder path
+ * @param cwd for relative paths
+ * @returns an async generator of path strings
+ */
 export async function readdirDeepAsync(path: string, cwd?: string): Promise<string[]> {
   const entries = []
   for await (const entry of walkTreeAsync(path)) {

@@ -72,25 +72,25 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should sync folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(hasMessageContaining('[new] address.ts')).toBeTruthy()
-    expect(hasMessageContaining('[new] index.ts')).toBeTruthy()
-    expect(hasMessageContaining('[new] stamp.ts')).toBeTruthy()
+    expect(hasMessageContaining('new -> address.ts')).toBeTruthy()
+    expect(hasMessageContaining('new -> index.ts')).toBeTruthy()
+    expect(hasMessageContaining('new -> stamp.ts')).toBeTruthy()
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(hasMessageContaining('[ ok] address.ts')).toBeTruthy()
-    expect(hasMessageContaining('[ ok] index.ts')).toBeTruthy()
-    expect(hasMessageContaining('[ ok] stamp.ts')).toBeTruthy()
-    expect(hasMessageContaining('[new]')).toBeFalsy()
+    expect(hasMessageContaining('ok -> address.ts')).toBeTruthy()
+    expect(hasMessageContaining('ok -> index.ts')).toBeTruthy()
+    expect(hasMessageContaining('ok -> stamp.ts')).toBeTruthy()
+    expect(hasMessageContaining('new ->')).toBeFalsy()
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock'])
-    expect(hasMessageContaining('[new] cheque-mock.ts')).toBeTruthy()
-    expect(hasMessageContaining('[ rm]')).toBeFalsy()
+    expect(hasMessageContaining('new -> cheque-mock.ts')).toBeTruthy()
+    expect(hasMessageContaining('removed ->')).toBeFalsy()
     consoleMessages.length = 0
     await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock', '--remove'])
-    expect(hasMessageContaining('[ ok] cheque-mock.ts')).toBeTruthy()
-    expect(hasMessageContaining('[ rm] address.ts')).toBeTruthy()
-    expect(hasMessageContaining('[ rm] index.ts')).toBeTruthy()
-    expect(hasMessageContaining('[ rm] stamp.ts')).toBeTruthy()
+    expect(hasMessageContaining('ok -> cheque-mock.ts')).toBeTruthy()
+    expect(hasMessageContaining('removed -> address.ts')).toBeTruthy()
+    expect(hasMessageContaining('removed -> index.ts')).toBeTruthy()
+    expect(hasMessageContaining('removed -> stamp.ts')).toBeTruthy()
   })
 
   it('should download folder', async () => {
