@@ -1,4 +1,4 @@
-import { statSync } from 'fs'
+import { readFileSync, statSync, writeFileSync } from 'fs'
 import { ManifestCommand } from '../../src/command/manifest/manifest-command'
 import { readdirDeepAsync } from '../../src/utils'
 import { describeCommand, invokeTestCli } from '../utility'
@@ -39,6 +39,30 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('address.ts')).toBeTruthy()
     expect(hasMessageContaining('index.ts')).toBeTruthy()
     expect(hasMessageContaining('stamp.ts')).toBeTruthy()
+  })
+
+  it('should add file with different name when using --as', async () => {
+    let hash = await runAndGetManifest(['manifest', 'create'])
+    hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md', '--as', 'docs/README.txt'])
+    await invokeTestCli(['manifest', 'list', hash])
+    expect(hasMessageContaining('README.md')).toBeFalsy()
+    expect(hasMessageContaining('docs/README.txt')).toBeTruthy()
+  })
+
+  it('should handle both --as and --folder in add command', async () => {
+    let hash = await runAndGetManifest(['manifest', 'create'])
+    hash = await runAndGetManifest([
+      'manifest',
+      'add',
+      hash,
+      'README.md',
+      '--as',
+      'docs/README.txt',
+      '--folder',
+      'misc',
+    ])
+    await invokeTestCli(['manifest', 'list', hash])
+    expect(hasMessageContaining('misc/docs/README.txt')).toBeTruthy()
   })
 
   it('should remove file', async () => {
@@ -123,5 +147,20 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('address.ts')).toBeTruthy()
     expect(hasMessageContaining('index.ts')).toBeTruthy()
     expect(hasMessageContaining('stamp.ts')).toBeTruthy()
+  })
+
+  it('should merge manifests and overwrite destination', async () => {
+    writeFileSync('test/data/alpha.txt', '1')
+    writeFileSync('test/data/bravo.txt', '2')
+    let hash1 = await runAndGetManifest(['manifest', 'create'])
+    hash1 = await runAndGetManifest(['manifest', 'add', hash1, 'test/data/alpha.txt'])
+    hash1 = await runAndGetManifest(['manifest', 'add', hash1, 'test/data/bravo.txt'])
+    let hash2 = await runAndGetManifest(['manifest', 'create'])
+    hash2 = await runAndGetManifest(['manifest', 'add', hash2, 'test/data/alpha.txt', '--as', 'bravo.txt'])
+    hash2 = await runAndGetManifest(['manifest', 'add', hash2, 'test/data/bravo.txt', '--as', 'alpha.txt'])
+    const hash = await runAndGetManifest(['manifest', 'merge', hash1, hash2])
+    await invokeTestCli(['manifest', 'download', hash, 'test/data/3'])
+    expect(readFileSync('test/data/3/alpha.txt').toString()).toBe('2')
+    expect(readFileSync('test/data/3/bravo.txt').toString()).toBe('1')
   })
 })

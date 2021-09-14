@@ -17,6 +17,9 @@ export class Add extends ManifestCommand implements LeafCommand {
   @Argument({ key: 'path', description: 'Path to file or folder in local filesystem', required: true })
   public path!: string
 
+  @Option({ key: 'as', description: 'Rename uploaded file' })
+  public as!: string
+
   @Option({ key: 'folder', description: 'Folder will prefix the path of the added files in the manifest' })
   public folder!: string
 
@@ -35,11 +38,14 @@ export class Add extends ManifestCommand implements LeafCommand {
     for (const file of files) {
       const path = stat.isDirectory() ? join(this.path, file) : this.path
       const reference = await this.bee.uploadData(this.stamp, readFileSync(path))
-      node.addFork(
-        this.encodePath(this.folder ? join(this.folder, file) : file),
-        Buffer.from(reference, 'hex') as Reference,
-      )
+      node.addFork(this.encodePath(this.getForkPath(files, file)), Buffer.from(reference, 'hex') as Reference)
     }
     await this.saveAndPrintNode(node, this.stamp)
+  }
+
+  private getForkPath(files: string[], file: string): string {
+    const name = files.length === 1 && this.as ? this.as : file
+
+    return this.folder ? join(this.folder, name) : name
   }
 }

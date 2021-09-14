@@ -29,9 +29,8 @@ export class Remove extends ManifestCommand implements LeafCommand {
     const node = await this.initializeNode(this.reference)
     const forks = this.findAllValueForks(node)
     for (const fork of forks) {
-      if ([this.path, this.path + '/'].includes(fork.path)) {
+      if (fork.path === this.path || fork.path.startsWith(this.path + '/')) {
         node.removePath(this.encodePath(fork.path))
-        break
       }
     }
     await this.saveAndPrintNode(node, this.stamp)
