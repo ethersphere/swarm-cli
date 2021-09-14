@@ -106,8 +106,7 @@ Running a command with the `--help` option prints out the usage of a command.
 Running `swarm-cli` without arguments prints the available commands:
 
 ```
-$ swarm-cli
-Swarm CLI 0.10.0 - Manage your Bee node and interact with the Swarm network via the CLI
+Swarm CLI 1.3.0 - Manage your Bee node and interact with the Swarm network via the CLI
 
 █ Usage:
 
@@ -121,17 +120,17 @@ feed       Upload, update and view feeds
 cheque     Deposit, withdraw and manage cheques
 stamp      Buy, list and show postage stamps
 pss        Send, receive, or subscribe to PSS messages
+manifest   Operate on manifests
 
 Run 'swarm-cli GROUP --help' to see available commands in a group
 
 █ Available Commands:
 
-upload   Upload file to Swarm
-status   Check API availability and Bee compatibility
+upload      Upload file to Swarm 
+status      Check API availability and Bee compatibility
 addresses   Display the addresses of the Bee node
 
 Run 'swarm-cli COMMAND --help' for more information on a command
-
 ```
 
 ## Example usage
