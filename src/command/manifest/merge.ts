@@ -26,6 +26,9 @@ export class Merge extends ManifestCommand implements LeafCommand {
     const sourceNode = await this.initializeNode(this.source)
     const forks = this.findAllValueForks(sourceNode)
     for (const fork of forks) {
+      if (!fork.node.getEntry) {
+        continue
+      }
       destinationNode.addFork(this.encodePath(fork.path), fork.node.getEntry)
     }
     await this.saveAndPrintNode(destinationNode, this.stamp)

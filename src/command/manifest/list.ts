@@ -19,6 +19,10 @@ export class List extends ManifestCommand implements LeafCommand {
     const node = await this.initializeNode(this.reference)
     const forks = this.findAllValueForks(node)
     for (const fork of forks) {
+      if (!fork.node.getEntry) {
+        continue
+      }
+
       this.console.log(fork.path + ' -> ' + Buffer.from(fork.node.getEntry).toString('hex'))
 
       if (this.printBzz) {

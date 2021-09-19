@@ -34,6 +34,10 @@ export class Download extends ManifestCommand implements LeafCommand {
       if (this.folder && !fork.path.startsWith(this.folder)) {
         continue
       }
+
+      if (!fork.node.getEntry) {
+        continue
+      }
       const parsedForkPath = parse(fork.path)
       const data = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
       this.console.verbose('Downloading ' + fork.path)

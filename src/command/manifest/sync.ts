@@ -41,6 +41,11 @@ export class Sync extends ManifestCommand implements LeafCommand {
 
       if (fork) {
         fork.found = true
+
+        if (!fork.node.getEntry) {
+          continue
+        }
+
         const remoteData = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
         const localData = readFileSync(join(this.folder, file))
 
