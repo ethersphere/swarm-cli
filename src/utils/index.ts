@@ -1,4 +1,5 @@
-import { statSync } from 'fs'
+import { promises, statSync } from 'fs'
+import { join } from 'path'
 
 /**
  * Sleep for N miliseconds
@@ -19,6 +20,16 @@ export function fileExists(path: string): boolean {
   }
 }
 
+export function directoryExists(path: string): boolean {
+  try {
+    const stat = statSync(path)
+
+    return !stat.isFile()
+  } catch {
+    return false
+  }
+}
+
 export function isGateway(url: string): boolean {
   return url.includes('gateway.ethswarm.org')
 }
@@ -29,4 +40,58 @@ export function getByteSize(data: string | Uint8Array): number {
   }
 
   return Buffer.byteLength(data, 'utf-8')
+}
+
+/**
+ * Lists all files recursively in a folder
+ * @param path folder path
+ * @returns an async generator of path strings
+ */
+async function* walkTreeAsync(path: string): AsyncGenerator<string> {
+  for await (const entry of await promises.opendir(path)) {
+    const entryPath = join(path, entry.name)
+
+    if (entry.isDirectory()) {
+      yield* walkTreeAsync(entryPath)
+    } else if (entry.isFile()) {
+      yield entryPath
+    }
+  }
+}
+
+function removeLeadingDirectory(path: string, directory: string) {
+  if (directory.startsWith('./')) {
+    directory = directory.slice(2)
+  }
+
+  if (!directory.endsWith('/')) {
+    directory = directory + '/'
+  }
+
+  return path.replace(directory, '')
+}
+
+/**
+ * Lists all files recursively in a folder, considering cwd for the relative path
+ * @param path folder path
+ * @param cwd for relative paths
+ * @returns an async generator of path strings
+ */
+export async function readdirDeepAsync(path: string, cwd?: string): Promise<string[]> {
+  const entries = []
+  for await (const entry of walkTreeAsync(path)) {
+    entries.push(cwd ? removeLeadingDirectory(entry, cwd) : entry)
+  }
+
+  return entries
+}
+
+export async function getFiles(path: string): Promise<string[]> {
+  const stat = statSync(path)
+
+  if (stat.isDirectory()) {
+    return await readdirDeepAsync(path, path)
+  } else {
+    return [path]
+  }
 }
