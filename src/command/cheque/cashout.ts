@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import { LeafCommand, Option } from 'furious-commander'
+import { handleError } from '../../utils/error'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
@@ -85,7 +86,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
       this.console.quiet(transaction)
     } catch (error) {
       this.console.error('Could not cashout ' + address)
-      this.console.printBeeError(error, { notFoundMessage: 'No peer found with that address.' })
+      handleError(error, { notFoundMessage: 'No peer found with that address.' })
     }
   }
 }

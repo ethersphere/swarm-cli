@@ -1,4 +1,5 @@
 import { Argument, LeafCommand } from 'furious-commander'
+import { handleError } from '../../utils/error'
 import { PinningCommand } from './pinning-command'
 
 export class Reupload extends PinningCommand implements LeafCommand {
@@ -25,7 +26,7 @@ export class Reupload extends PinningCommand implements LeafCommand {
       await this.bee.reuploadPinnedData(this.address)
       this.console.log('Reuploaded successfully.')
     } catch (error) {
-      this.console.printBeeError(error, { notFoundMessage: 'No locally pinned content found with that address.' })
+      handleError(error, { notFoundMessage: 'No locally pinned content found with that address.' })
     }
   }
 }
