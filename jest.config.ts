@@ -12,7 +12,7 @@ export default async (): Promise<Config.InitialOptions> => {
 
   /**
    * SKIP_WORKER can be enabled when running a subset of the tests manually,
-   * which do not require any worker nodes, and therefor the stack
+   * which do not require any worker nodes, and therefore the stack
    * only consists a single queen node as well
    */
   if (!process.env.SKIP_WORKER) {
