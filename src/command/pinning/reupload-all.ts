@@ -1,5 +1,4 @@
 import { LeafCommand } from 'furious-commander'
-import { handleError } from '../../utils/error'
 import { PinningCommand } from './pinning-command'
 
 export class ReuploadAll extends PinningCommand implements LeafCommand {
@@ -23,7 +22,7 @@ export class ReuploadAll extends PinningCommand implements LeafCommand {
         successful++
       } catch (error) {
         this.console.error('Failed to reupload ' + chunk)
-        handleError(error)
+        this.console.printBeeError(error)
       }
     }
 

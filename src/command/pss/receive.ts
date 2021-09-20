@@ -1,6 +1,5 @@
 import { createWriteStream } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
-import { handleError } from '../../utils/error'
 import { PssCommand } from './pss-command'
 
 export class Receive extends PssCommand implements LeafCommand {
@@ -50,7 +49,7 @@ export class Receive extends PssCommand implements LeafCommand {
       if (typeof error === 'object' && error !== null && Reflect.get(error, 'message') === 'pssReceive timeout') {
         this.console.error('Receive timed out')
       } else {
-        handleError(error)
+        this.console.printBeeError(error)
       }
     }
   }

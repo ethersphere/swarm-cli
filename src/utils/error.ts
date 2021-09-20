@@ -1,6 +1,6 @@
 import { printer } from '../printer'
 
-interface BeeErrorOptions {
+export interface BeeErrorOptions {
   notFoundMessage?: string
 }
 

@@ -1,6 +1,7 @@
 import chalk from 'chalk'
 import { prompt } from 'inquirer'
 import { exit } from 'process'
+import { BeeErrorOptions, handleError } from '../../utils/error'
 import { deletePreviousLine } from '../../utils/text'
 import { Printer } from './printer'
 
@@ -155,5 +156,9 @@ export class CommandLog {
     deletePreviousLine()
 
     return result.value
+  }
+
+  public printBeeError(error: unknown, options?: BeeErrorOptions): void {
+    handleError(error, options)
   }
 }

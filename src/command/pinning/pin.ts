@@ -1,5 +1,4 @@
 import { Argument, LeafCommand } from 'furious-commander'
-import { handleError } from '../../utils/error'
 import { PinningCommand } from './pinning-command'
 
 export class Pin extends PinningCommand implements LeafCommand {
@@ -20,7 +19,7 @@ export class Pin extends PinningCommand implements LeafCommand {
       this.console.log('Pinned successfully')
     } catch (error) {
       this.console.error('Could not pin ' + this.address)
-      handleError(error, { notFoundMessage: 'No root chunk found with that address.' })
+      this.console.printBeeError(error, { notFoundMessage: 'No root chunk found with that address.' })
     }
   }
 }
