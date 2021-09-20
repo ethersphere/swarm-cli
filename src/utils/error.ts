@@ -1,3 +1,4 @@
+import { getFieldOrNull, hasField } from '.'
 import { printer } from '../printer'
 
 export interface BeeErrorOptions {
@@ -5,7 +6,7 @@ export interface BeeErrorOptions {
 }
 
 function hasStatusCode(error: unknown, statusCode: number): boolean {
-  return typeof error === 'object' && error !== null && Reflect.get(error, 'status') === statusCode
+  return getFieldOrNull(error, 'status') === statusCode
 }
 
 function isNotFoundError(error: unknown): boolean {
@@ -24,8 +25,8 @@ export function handleError(error: unknown, options?: BeeErrorOptions): void {
     printer.printError('Check your Bee log to see what went wrong.')
   } else if (isNotFoundError(error) && options?.notFoundMessage) {
     printer.printError(options.notFoundMessage)
-  } else if (typeof error === 'object' && error !== null && 'message' in error) {
-    printer.printError(Reflect.get(error, 'message'))
+  } else if (hasField(error, 'message')) {
+    printer.printError(getFieldOrNull(error, 'message') as string)
   } else {
     printer.printError('Failed to run command!')
     printer.printError('')
