@@ -23,9 +23,11 @@ export class ManifestCommand extends RootCommand {
       const path = prefix + Buffer.from(fork.prefix).toString('utf-8')
       Reflect.set(fork, 'path', path)
 
-      if (!fork.node.isEdgeType()) {
+      if (fork.node.isValueType()) {
         items.push(fork as EnrichedFork)
-      } else {
+      }
+
+      if (fork.node.isEdgeType()) {
         this.findAllValueForks(fork.node, items, path)
       }
     }
