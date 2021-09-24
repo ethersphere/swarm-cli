@@ -49,12 +49,12 @@ describeCommand(
 
     it('feed upload should fail when running in quiet mode and password is wrong', async () => {
       await invokeTestCli(['feed', 'upload', '-q', 'README.md', '-i', 'main', '-P', '_secret', ...getStampOption()])
-      expect(getLastMessage()).toContain('Key derivation failed - possibly wrong passphrase')
+      expect(getNthLastMessage(3)).toContain('Key derivation failed - possibly wrong passphrase')
     })
 
     it('feed upload should fail when running in quiet mode and password is missing', async () => {
       await invokeTestCli(['feed', 'upload', '-q', 'README.md', '-i', 'main', ...getStampOption()])
-      expect(getLastMessage()).toContain('There is no password passed for V3 wallet initialization')
+      expect(getNthLastMessage(3)).toContain('There is no password passed for V3 wallet initialization')
     })
   },
   { configFileName: 'feed-prompt' },
