@@ -129,7 +129,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
-    await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss/index.ts`, 'test/data/4'])
+    await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss/index.ts`, '--destination', 'test/data/4'])
     expect(consoleMessages).toHaveLength(1)
   })
 
