@@ -27,8 +27,7 @@ export class Download extends ManifestCommand implements LeafCommand {
         continue
       }
 
-      // TODO download single files
-      if (address.path && !fork.path.startsWith(address.path + '/')) {
+      if (address.path && !fork.path.startsWith(address.path)) {
         continue
       }
 

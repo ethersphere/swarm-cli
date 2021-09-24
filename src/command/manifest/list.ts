@@ -34,6 +34,10 @@ export class List extends ManifestCommand implements LeafCommand {
         continue
       }
 
+      if (address.path && !fork.path.startsWith(address.path)) {
+        continue
+      }
+
       this.console.log(entryHex + ' ' + this.formatPath(fork.path))
 
       if (this.verbose && isEmptyEntry) {
@@ -59,7 +63,7 @@ export class List extends ManifestCommand implements LeafCommand {
   }
 
   private formatPath(path: string): string {
-    return path === '/' ? path : './' + path
+    return path === '/' ? path : '/' + path
   }
 
   private formatMetaKey(string: string): string {

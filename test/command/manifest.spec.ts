@@ -109,6 +109,38 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('removed -> stamp.ts')).toBeTruthy()
   })
 
+  it('should list single file', async () => {
+    let hash = await runAndGetManifest(['manifest', 'create'])
+    hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
+    consoleMessages.length = 0
+    await invokeTestCli(['manifest', 'list', `bzz://${hash}/command/pss/send.ts`])
+    expect(consoleMessages).toHaveLength(1)
+  })
+
+  it('should list folder', async () => {
+    let hash = await runAndGetManifest(['manifest', 'create'])
+    hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
+    consoleMessages.length = 0
+    await invokeTestCli(['manifest', 'list', `bzz://${hash}/command/pss`])
+    expect(consoleMessages).toHaveLength(5)
+  })
+
+  it('should download single file', async () => {
+    let hash = await runAndGetManifest(['manifest', 'create'])
+    hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
+    consoleMessages.length = 0
+    await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss/index.ts`, 'test/data/4'])
+    expect(consoleMessages).toHaveLength(1)
+  })
+
+  it('should download folder via bzz link', async () => {
+    let hash = await runAndGetManifest(['manifest', 'create'])
+    hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
+    consoleMessages.length = 0
+    await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss`, 'test/data/4'])
+    expect(consoleMessages).toHaveLength(5)
+  })
+
   it('should download folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash + '/test/utility', 'test/utility'])

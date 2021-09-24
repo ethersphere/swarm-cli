@@ -1,6 +1,8 @@
 import type { Data } from '@ethersphere/bee-js'
 import { loadAllNodes, MantarayFork, MantarayNode, Reference, StorageSaver } from 'mantaray-js'
+import { exit } from 'process'
 import { RootCommand } from '../root-command'
+import { Printer } from '../root-command/printer'
 
 interface EnrichedFork extends MantarayFork {
   path: string
@@ -65,10 +67,19 @@ export class ManifestCommand extends RootCommand {
   protected async initializeNode(reference: string): Promise<MantarayNode> {
     const manifest = await this.bee.downloadData(reference)
     const node = new MantarayNode()
-    node.deserialize(manifest)
-    await loadAllNodes(this.load.bind(this), node)
+    try {
+      node.deserialize(manifest)
+      await loadAllNodes(this.load.bind(this), node)
 
-    return node
+      return node
+    } catch (error: unknown) {
+      if (Reflect.get(error as Record<string, unknown>, 'message') === 'Wrong mantaray version') {
+        Printer.error('The reference provided is not a root manifest hash')
+        exit(1)
+      } else {
+        throw error
+      }
+    }
   }
 
   protected async saveAndPrintNode(node: MantarayNode, stamp: string): Promise<void> {
