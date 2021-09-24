@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import { mkdirSync, writeFileSync } from 'fs'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand } from 'furious-commander'
 import { join, parse } from 'path'
 import { directoryExists } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
@@ -13,7 +13,7 @@ export class Download extends ManifestCommand implements LeafCommand {
   @Argument({ key: 'address', description: 'Root manifest reference', required: true })
   public bzzUrl!: string
 
-  @Option({ key: 'destination', description: 'Destination folder' })
+  @Argument({ key: 'destination', description: 'Destination folder' })
   public destination!: string
 
   public async run(): Promise<void> {
