@@ -9,7 +9,7 @@ export class BzzAddress {
     const parts = url.split('/')
     this.hash = parts[0].toLowerCase()
 
-    if (!/[a-z0-9]{64,128}/.test(this.hash)) {
+    if (!/[a-z0-9]{64,128}/i.test(this.hash)) {
       throw new Error('Invalid BZZ address: expected 64 or 128 long hexadecimal hash')
     }
     const pathParts = parts.slice(1).filter(x => x)
