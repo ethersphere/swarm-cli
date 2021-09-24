@@ -33,6 +33,7 @@ This project is intended to be used with **Bee version 1.1.0**. Using it with ol
       * [Stamp Picker](#stamp-picker)
       * [Identity Picker](#identity-picker)
       * [Human Readable Topics](#human-readable-topics)
+      * [Manifest address scheme](#manifest-address-scheme)
       * [Automating tasks with Swarm-CLI](#automating-tasks-with-swarm-cli)
          * [Connectivity](#connectivity)
          * [Postage Stamps](#postage-stamps)
@@ -262,9 +263,9 @@ This is also indicated in the `--help` section:
 Only one is required: [topic] or [topic-string]
 ```
 
-### Manifest address protocol
+### Manifest address scheme
 
-The `manifest` commands enable low-level operation on manifests. These always require a root manifest reference argument as the input. Some commands, however, work with subparts of the manifest. Some examples are: downloading only a folder from a manifest, listing files only under a specific path of a manifest, and adding files or folders not to the root of the manifest, but under some path.
+The `manifest` commands enable low-level operation on manifests. These always require a root manifest reference (hash) argument as the input. Some commands, however, work with subparts of the manifest. A few examples are: downloading only a folder from a manifest, listing files only under a specific path in a manifest, and adding files or folders not to the root of the manifest, but under some path.
 
 These can be achieved by using the `bzz://<hash>/<path>` scheme in the `<address>` argument as follows:
 
