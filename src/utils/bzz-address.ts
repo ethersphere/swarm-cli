@@ -1,7 +1,6 @@
 export class BzzAddress {
   public hash: string
   public path: string | null
-  public folder: boolean
 
   constructor(url: string) {
     if (url.startsWith('bzz://')) {
@@ -15,6 +14,5 @@ export class BzzAddress {
     }
     const pathParts = parts.slice(1).filter(x => x)
     this.path = pathParts.length ? pathParts.join('/') : null
-    this.folder = this.path ? url.endsWith('/') : false
   }
 }
