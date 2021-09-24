@@ -27,7 +27,7 @@ export class Download extends ManifestCommand implements LeafCommand {
         continue
       }
 
-      if (address.path && !fork.path.startsWith(address.path)) {
+      if (!this.pathMatches(address, fork.path)) {
         continue
       }
 
@@ -46,5 +46,13 @@ export class Download extends ManifestCommand implements LeafCommand {
       this.console.log(chalk.gray(fork.path))
       writeFileSync(join(destination, fork.path), data)
     }
+  }
+
+  /**
+   * Should only download files if no path filters are set,
+   * or if the fork path matches the user specified path
+   */
+  public pathMatches(address: BzzAddress, path: string): boolean {
+    return !address.path || path.startsWith(address.path)
   }
 }
