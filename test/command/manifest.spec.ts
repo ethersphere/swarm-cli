@@ -184,7 +184,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     hash2 = await runAndGetManifest(['manifest', 'add', hash2, 'test/data/alpha.txt', '--as', 'bravo.txt'])
     hash2 = await runAndGetManifest(['manifest', 'add', hash2, 'test/data/bravo.txt', '--as', 'alpha.txt'])
     const hash = await runAndGetManifest(['manifest', 'merge', hash1, hash2])
-    await invokeTestCli(['manifest', 'download', hash, 'test/data/3'])
+    await invokeTestCli(['manifest', 'download', hash, '--destination', 'test/data/3'])
     expect(readFileSync('test/data/3/alpha.txt').toString()).toBe('2')
     expect(readFileSync('test/data/3/bravo.txt').toString()).toBe('1')
   })
