@@ -262,6 +262,26 @@ This is also indicated in the `--help` section:
 Only one is required: [topic] or [topic-string]
 ```
 
+### Manifest address protocol
+
+The `manifest` commands enable low-level operation on manifests. These always require a root manifest reference argument as the input. Some commands, however, work with subparts of the manifest. Some examples are: downloading only a folder from a manifest, listing files only under a specific path of a manifest, and adding files or folders not to the root of the manifest, but under some path.
+
+These can be achieved by using the `bzz://<hash>/<path>` scheme in the `<address>` argument as follows:
+
+List entries under the `/command/pss` prefix in manifest `1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f`
+
+```
+swarm-cli manifest list bzz://1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f/command/pss
+```
+
+Download `README.md` from manifest `1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f`
+
+```
+swarm-cli manifest download bzz://1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f/README.md
+```
+
+> Note: The `bzz://` protocol can be omitted.
+
 ### Automating tasks with Swarm-CLI
 
 Running `swarm-cli` with the flag `--quiet` (or `-q` for short) disables all interactive features, and makes commands print information in an easily parsable format. The exit code also indicates whether running the command was successful or not. These may be useful for automating tasks both in CI environments and in your terminal too.

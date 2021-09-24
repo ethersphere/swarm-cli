@@ -28,7 +28,7 @@ export class List extends ManifestCommand implements LeafCommand {
       }
 
       const entryHex = Buffer.from(fork.node.getEntry).toString('hex')
-      const isEmptyEntry = entryHex === '0'.repeat(64)
+      const isEmptyEntry = fork.path === '/'
 
       if (!this.verbose && isEmptyEntry) {
         continue
@@ -40,11 +40,12 @@ export class List extends ManifestCommand implements LeafCommand {
 
       this.console.log(entryHex + ' ' + this.formatPath(fork.path))
 
-      if (this.verbose && isEmptyEntry) {
-        if (fork.node.getMetadata && typeof fork.node.getMetadata === 'object') {
-          for (const entry of Object.entries(fork.node.getMetadata)) {
-            this.console.dim(chalk.gray(this.formatMetaKey(entry[0]) + ': ' + entry[1]))
+      if (this.verbose && fork.node.getMetadata) {
+        for (const entry of Object.entries(fork.node.getMetadata)) {
+          if (!entry[1]) {
+            continue
           }
+          this.console.dim(chalk.gray(this.formatMetaKey(entry[0]) + ': ' + entry[1]))
         }
       }
 
