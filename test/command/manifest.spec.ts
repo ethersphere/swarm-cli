@@ -129,7 +129,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
-    await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss/index.ts`, '--destination', 'test/data/4'])
+    await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss/index.ts`, 'test/data/4'])
     expect(consoleMessages).toHaveLength(1)
   })
 
@@ -137,7 +137,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
-    await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss`, '--destination', 'test/data/4'])
+    await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss`, 'test/data/4'])
     expect(consoleMessages).toHaveLength(5)
   })
 
@@ -145,7 +145,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash + '/test/utility', 'test/utility'])
     consoleMessages.length = 0
-    await invokeTestCli(['manifest', 'download', hash, '--destination', 'test/data/1'])
+    await invokeTestCli(['manifest', 'download', hash, 'test/data/1'])
     expect(statSync('test/data/1/test/utility/address.ts')).toBeTruthy()
     expect(statSync('test/data/1/test/utility/index.ts')).toBeTruthy()
     expect(statSync('test/data/1/test/utility/stamp.ts')).toBeTruthy()
@@ -155,7 +155,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md'])
     hash = await runAndGetManifest(['manifest', 'add', hash + '/utils', 'test/utility'])
-    await invokeTestCli(['manifest', 'download', hash + '/utils', '--destination', 'test/data/2'])
+    await invokeTestCli(['manifest', 'download', hash + '/utils', 'test/data/2'])
     const entries = await readdirDeepAsync('test/data/2', 'test/data/2')
     expect(entries).toHaveLength(3) // instead of 4
   })
@@ -184,7 +184,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     hash2 = await runAndGetManifest(['manifest', 'add', hash2, 'test/data/alpha.txt', '--as', 'bravo.txt'])
     hash2 = await runAndGetManifest(['manifest', 'add', hash2, 'test/data/bravo.txt', '--as', 'alpha.txt'])
     const hash = await runAndGetManifest(['manifest', 'merge', hash1, hash2])
-    await invokeTestCli(['manifest', 'download', hash, '--destination', 'test/data/3'])
+    await invokeTestCli(['manifest', 'download', hash, 'test/data/3'])
     expect(readFileSync('test/data/3/alpha.txt').toString()).toBe('2')
     expect(readFileSync('test/data/3/bravo.txt').toString()).toBe('1')
   })
