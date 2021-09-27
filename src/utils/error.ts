@@ -18,36 +18,35 @@ function isInternalServerError(error: unknown): boolean {
 }
 
 export function handleError(error: unknown, options?: BeeErrorOptions): void {
-  const message = getFieldOrNull(error, 'message')
+  // grab error.message, or error if it is a string
+  const message: string | null = typeof error === 'string' && error ? error : getFieldOrNull(error, 'message')
 
+  // write custom message for 500
   if (isInternalServerError(error)) {
     printer.printError('Bee responded with HTTP 500 (Internal Server Error).')
 
     if (!isGenericErrorPattern('Internal Server Error', message)) {
-      printer.printError('')
-      printer.printError('The error message is: ' + message)
+      printer.printError('\nThe error message is: ' + message)
     }
+    // write custom message for 404
   } else if (isNotFoundError(error)) {
     printer.printError('Bee responded with HTTP 404 (Not Found).')
 
     if (options?.notFoundMessage || !isGenericErrorPattern('Not Found', message)) {
-      printer.printError('')
-      printer.printError('The error message is: ' + (options?.notFoundMessage || message))
+      printer.printError('\nThe error message is: ' + (options?.notFoundMessage || message))
     }
+    // print 'command failed' message with error message if available
   } else if (message) {
     printer.printError('The command failed with error message: ' + message)
-  } else if (typeof error === 'string' && error) {
-    printer.printError('The command failed with error message: ' + error)
   } else {
     printer.printError('The command failed, but there is no error message available.')
   }
 
-  if ((typeof error === 'string' && error) || message) {
-    printer.printError('')
-    printer.printError('There may be additional information in the Bee logs.')
+  // print 'check bee logs' message
+  if (message) {
+    printer.printError('\nThere may be additional information in the Bee logs.')
   } else {
-    printer.printError('')
-    printer.printError('Check your Bee log to learn if your request reached the node.')
+    printer.printError('\nCheck your Bee log to learn if your request reached the node.')
   }
 }
 
@@ -59,5 +58,6 @@ function isGenericErrorPattern(errorName: string, message: string | unknown): bo
   errorName = errorName.toLowerCase()
   message = message.toLowerCase()
 
+  // also handles Internal Server Error: Internal Server Error message pattern
   return message === errorName || message === `${errorName}: ${errorName}`
 }
