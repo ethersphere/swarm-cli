@@ -95,3 +95,11 @@ export async function getFiles(path: string): Promise<string[]> {
     return [path]
   }
 }
+
+export function hasField(some: unknown, key: string): boolean {
+  return typeof some === 'object' && some !== null && key in some
+}
+
+export function getFieldOrNull<T>(some: unknown, key: string): T | null {
+  return typeof some === 'object' && some !== null ? Reflect.get(some, key) : null
+}

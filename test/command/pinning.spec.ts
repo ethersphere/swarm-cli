@@ -56,20 +56,24 @@ describeCommand(
 
     it('should print custom 404 when pinning chunk that does not exist', async () => {
       await invokeTestCli(['pinning', 'pin', 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'])
-      expect(consoleMessages).toHaveLength(2)
-      expect(consoleMessages[0]).toContain(
-        'Could not pin ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-      )
-      expect(consoleMessages[1]).toContain('No root chunk found with that address.')
+      expect(consoleMessages).toStrictEqual([
+        'Bee responded with HTTP 404 (Not Found).',
+        '',
+        'The error message is: No root chunk found with address ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+        '',
+        'There may be additional information in the Bee logs.',
+      ])
     })
 
     it('should print custom 404 when unpinning chunk that does not exist', async () => {
       await invokeTestCli(['pinning', 'unpin', 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'])
-      expect(consoleMessages).toHaveLength(2)
-      expect(consoleMessages[0]).toContain(
-        'Could not unpin ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-      )
-      expect(consoleMessages[1]).toContain('No pinned chunk found with that address.')
+      expect(consoleMessages).toStrictEqual([
+        'Bee responded with HTTP 404 (Not Found).',
+        '',
+        'The error message is: No root chunk found with address ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+        '',
+        'There may be additional information in the Bee logs.',
+      ])
     })
 
     it('should allow reuploading pinned file', async () => {
