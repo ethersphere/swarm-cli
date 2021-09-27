@@ -1,11 +1,13 @@
 import type { Data } from '@ethersphere/bee-js'
 import { loadAllNodes, MantarayFork, MantarayNode, Reference, StorageSaver } from 'mantaray-js'
+import { join } from 'path'
 import { exit } from 'process'
 import { RootCommand } from '../root-command'
 import { Printer } from '../root-command/printer'
 
 interface EnrichedFork extends MantarayFork {
   path: string
+  fsPath: string
   /**
    * Used to indicated which forks have been visited when traversing a manifest
    * E.g. in the sync command, unvisited forks are meant to be removed
@@ -24,6 +26,7 @@ export class ManifestCommand extends RootCommand {
     for (const fork of Object.values(node.forks || {})) {
       const path = prefix + Buffer.from(fork.prefix).toString('utf-8')
       Reflect.set(fork, 'path', path)
+      Reflect.set(fork, 'fsPath', join(...path.split('/')))
 
       if (fork.node.isValueType()) {
         items.push(fork as EnrichedFork)
@@ -73,6 +76,7 @@ export class ManifestCommand extends RootCommand {
 
       return node
     } catch (error: unknown) {
+      // FIXME in mantaray-js
       if (Reflect.get(error as Record<string, unknown>, 'message') === 'Wrong mantaray version') {
         Printer.error('The reference provided is not a root manifest hash')
         exit(1)

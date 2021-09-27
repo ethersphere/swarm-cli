@@ -6,13 +6,17 @@ export class BzzAddress {
     if (url.startsWith('bzz://')) {
       url = url.slice(6)
     }
+
+    if (url.includes('//')) {
+      throw new Error('Invalid BZZ path: cannot contain multiple continuous slashes')
+    }
     const parts = url.split('/')
     this.hash = parts[0].toLowerCase()
 
-    if (!/[a-z0-9]{64,128}/i.test(this.hash)) {
-      throw new Error('Invalid BZZ address: expected 64 or 128 long hexadecimal hash')
+    if (!/[a-z0-9]{64,128}/.test(this.hash)) {
+      throw new Error('Invalid BZZ hash: expected 64 or 128 long hexadecimal hash')
     }
-    const pathParts = parts.slice(1).filter(x => x)
+    const pathParts = parts.slice(1)
     this.path = pathParts.length ? pathParts.join('/') : null
   }
 }

@@ -44,7 +44,7 @@ export class Download extends ManifestCommand implements LeafCommand {
         mkdirSync(destinationFolder, { recursive: true })
       }
       this.console.log(chalk.gray(fork.path))
-      writeFileSync(join(destination, fork.path), data)
+      writeFileSync(join(destination, fork.fsPath), data)
     }
   }
 

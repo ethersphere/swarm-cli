@@ -30,18 +30,17 @@ export class List extends ManifestCommand implements LeafCommand {
       const entryHex = Buffer.from(fork.node.getEntry).toString('hex')
       const isEmptyEntry = fork.path === '/'
 
-      if (!this.verbose && isEmptyEntry) {
-        continue
-      }
-
       if (address.path && !fork.path.startsWith(address.path)) {
         continue
       }
 
-      this.console.log(entryHex + ' ' + this.formatPath(fork.path))
+      if (!isEmptyEntry) {
+        this.console.log(entryHex + ' ' + this.formatPath(fork.path))
+      }
 
       if (this.verbose && fork.node.getMetadata) {
         for (const entry of Object.entries(fork.node.getMetadata)) {
+          // skip if metadata has empty value
           if (!entry[1]) {
             continue
           }
@@ -49,12 +48,14 @@ export class List extends ManifestCommand implements LeafCommand {
         }
       }
 
-      if (this.printBzz) {
-        this.console.log(this.beeApiUrl + '/bzz/' + address.hash + '/' + fork.path)
-      }
+      if (!isEmptyEntry) {
+        if (this.printBzz) {
+          this.console.log(this.beeApiUrl + '/bzz/' + address.hash + '/' + fork.path)
+        }
 
-      if (this.printBytes) {
-        this.console.log(this.beeApiUrl + '/bytes/' + Buffer.from(fork.node.getEntry).toString('hex'))
+        if (this.printBytes) {
+          this.console.log(this.beeApiUrl + '/bytes/' + Buffer.from(fork.node.getEntry).toString('hex'))
+        }
       }
 
       if (this.printBzz || this.printBytes) {
