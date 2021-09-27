@@ -26,14 +26,16 @@ export function handleError(error: unknown, options?: BeeErrorOptions): void {
     printer.printError('Bee responded with HTTP 500 (Internal Server Error).')
 
     if (!isGenericErrorPattern('Internal Server Error', message)) {
-      printer.printError('\nThe error message is: ' + message)
+      printer.printError('')
+      printer.printError('The error message is: ' + message)
     }
     // write custom message for 404
   } else if (isNotFoundError(error)) {
     printer.printError('Bee responded with HTTP 404 (Not Found).')
 
     if (options?.notFoundMessage || !isGenericErrorPattern('Not Found', message)) {
-      printer.printError('\nThe error message is: ' + (options?.notFoundMessage || message))
+      printer.printError('')
+      printer.printError('The error message is: ' + (options?.notFoundMessage || message))
     }
     // print 'command failed' message with error message if available
   } else if (message) {
@@ -44,9 +46,11 @@ export function handleError(error: unknown, options?: BeeErrorOptions): void {
 
   // print 'check bee logs' message
   if (message) {
-    printer.printError('\nThere may be additional information in the Bee logs.')
+    printer.printError('')
+    printer.printError('There may be additional information in the Bee logs.')
   } else {
-    printer.printError('\nCheck your Bee log to learn if your request reached the node.')
+    printer.printError('')
+    printer.printError('Check your Bee log to learn if your request reached the node.')
   }
 }
 
