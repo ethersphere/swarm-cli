@@ -22,7 +22,7 @@ export class Remove extends ManifestCommand implements LeafCommand {
     }
 
     const address = new BzzAddress(this.bzzUrl)
-    const node = await this.initializeNode(address.hash)
+    const { node } = await this.initializeNode(address.hash)
     const forks = this.findAllValueForks(node)
     for (const fork of forks) {
       if (fork.path === address.path || fork.path.startsWith(address.path + '/')) {

@@ -20,8 +20,7 @@ export class Download extends ManifestCommand implements LeafCommand {
     await super.init()
 
     const address = new BzzAddress(this.bzzUrl)
-    const node = await this.initializeNode(address.hash, address.path)
-    const forks = this.findAllValueForks(node)
+    const forks = await this.loadAllValueForks(address.hash, address.path)
     for (const fork of forks) {
       if (!fork.node.getEntry) {
         continue

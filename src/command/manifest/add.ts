@@ -32,7 +32,7 @@ export class Add extends ManifestCommand implements LeafCommand {
       this.stamp = await pickStamp(this.beeDebug, this.console)
     }
     const address = new BzzAddress(this.bzzUrl)
-    const node = await this.initializeNode(address.hash)
+    const { node } = await this.initializeNode(address.hash)
     const stat = statSync(this.path)
     const files = await getFiles(this.path)
     for (const file of files) {

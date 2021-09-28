@@ -15,6 +15,11 @@ interface EnrichedFork extends MantarayFork {
   found: boolean
 }
 
+interface NodeSearchResult {
+  node: MantarayNode
+  prefix: string
+}
+
 export class ManifestCommand extends RootCommand {
   public resultHash!: string
 
@@ -22,9 +27,16 @@ export class ManifestCommand extends RootCommand {
     await super.init()
   }
 
+  protected async loadAllValueForks(hash: string, path?: string | null): Promise<EnrichedFork[]> {
+    const searchResult = await this.initializeNode(hash, path)
+
+    return this.findAllValueForks(searchResult.node, [], searchResult.prefix)
+  }
+
   protected findAllValueForks(node: MantarayNode, items = [] as EnrichedFork[], prefix = ''): EnrichedFork[] {
     for (const fork of Object.values(node.forks || {})) {
       const path = prefix + Buffer.from(fork.prefix).toString('utf-8')
+
       Reflect.set(fork, 'path', path)
       Reflect.set(fork, 'fsPath', join(...path.split('/')))
 
@@ -71,19 +83,19 @@ export class ManifestCommand extends RootCommand {
     return Buffer.from(reference).toString('hex')
   }
 
-  protected async initializeNode(hash: string, path?: string | null): Promise<MantarayNode> {
+  protected async initializeNode(hash: string, path?: string | null): Promise<NodeSearchResult> {
     try {
-      const node = await this.getDeserializedNode(hash, path)
+      const searchResult = await this.getDeserializedNode(hash, path)
 
-      if (!node) {
+      if (!searchResult) {
         if (path) {
           throw new Error('Could not deserialize or find Mantaray node for reference ' + hash + ' and path ' + path)
         }
         throw new Error('Could not deserialize or find Mantaray node for reference ' + hash)
       }
-      await loadAllNodes(this.load.bind(this), node)
+      await loadAllNodes(this.load.bind(this), searchResult.node)
 
-      return node
+      return searchResult
     } catch (error: unknown) {
       // FIXME in mantaray-js
       if (Reflect.get(error as Record<string, unknown>, 'message') === 'Wrong mantaray version') {
@@ -109,7 +121,7 @@ export class ManifestCommand extends RootCommand {
     return node
   }
 
-  private async getDeserializedNode(reference: string, prefix?: string | null): Promise<MantarayNode | null> {
+  private async getDeserializedNode(reference: string, prefix?: string | null): Promise<NodeSearchResult | null> {
     if (prefix) {
       return this.findNodeForPrefix(reference, prefix)
     } else {
@@ -117,11 +129,15 @@ export class ManifestCommand extends RootCommand {
       const node = new MantarayNode()
       node.deserialize(manifest)
 
-      return node
+      return { node, prefix: '' }
     }
   }
 
-  private async findNodeForPrefix(reference: string, prefix: string, currentPath = ''): Promise<MantarayNode | null> {
+  private async findNodeForPrefix(
+    reference: string,
+    prefix: string,
+    currentPath = '',
+  ): Promise<NodeSearchResult | null> {
     const node = await this.getNodeForReference(reference)
 
     if (!node.forks) {
@@ -129,19 +145,15 @@ export class ManifestCommand extends RootCommand {
     }
 
     for (const fork of Object.values(node.forks)) {
-      const path = Buffer.from(fork.prefix).toString('utf-8')
+      const path = currentPath + Buffer.from(fork.prefix).toString('utf-8')
 
-      if (currentPath.startsWith(prefix)) {
+      if (path.startsWith(prefix)) {
         const reference = this.decodeReference(fork.node.getEntry as Reference)
         const match = await this.getNodeForReference(reference)
-        const manifest = await this.bee.downloadData(reference)
-        match.deserialize(manifest)
 
-        return match
+        return { node: match, prefix: path }
       } else if (path.startsWith(prefix)) {
-        currentPath = currentPath + path
-
-        return this.findNodeForPrefix(this.decodeReference(fork.node.getEntry as Reference), prefix, currentPath)
+        return this.findNodeForPrefix(this.decodeReference(fork.node.getEntry as Reference), prefix, path)
       }
     }
 

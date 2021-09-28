@@ -35,7 +35,7 @@ export class Sync extends ManifestCommand implements LeafCommand {
       this.stamp = await pickStamp(this.beeDebug, this.console)
     }
     const address = new BzzAddress(this.bzzUrl)
-    const node = await this.initializeNode(address.hash)
+    const { node } = await this.initializeNode(address.hash)
     const files = await readdirDeepAsync(this.folder, this.folder)
     const forks = this.getForksPathMapping(this.findAllValueForks(node))
     for (const file of files) {
