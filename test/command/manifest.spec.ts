@@ -18,7 +18,13 @@ async function runAndGetManifest(argv: string[]): Promise<string> {
 describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining }) => {
   let srcHash: string
   beforeAll(async () => {
-    const invocation = await invokeTestCli(['upload', 'src', '--index-document', 'index.ts', ...getStampOption()])
+    const invocation = await invokeTestCli([
+      'upload',
+      'test/data/manifest',
+      '--index-document',
+      'index.txt',
+      ...getStampOption(),
+    ])
     srcHash = (invocation.runnable as Upload).hash
   })
 
@@ -197,58 +203,96 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   })
 
   it('should list single file when specified partially', async () => {
-    await invokeTestCli(['manifest', 'list', `${srcHash}/appli`])
-    expect(consoleMessages[0]).toContain(['/application.ts'])
+    await invokeTestCli(['manifest', 'list', `${srcHash}/ind`])
+    expect(consoleMessages[0]).toContain(['/index.txt'])
   })
 
   it('should list single file when specified fully', async () => {
-    await invokeTestCli(['manifest', 'list', `${srcHash}/application.ts`])
-    expect(consoleMessages[0]).toContain(['/application.ts'])
+    await invokeTestCli(['manifest', 'list', `${srcHash}/index.txt`])
+    expect(consoleMessages[0]).toContain(['/index.txt'])
   })
 
   it('should list files in folder when specified partially', async () => {
-    await invokeTestCli(['manifest', 'list', `${srcHash}/utils/ty`])
-    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
-    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+    await invokeTestCli(['manifest', 'list', `${srcHash}/lev`])
+    expect(consoleMessages[0]).toContain(['/level-one/level-two/1.txt'])
+    expect(consoleMessages[1]).toContain(['/level-one/level-two/2.txt'])
   })
 
   it('should list files in folder when specified fully without trailing slash', async () => {
-    await invokeTestCli(['manifest', 'list', `${srcHash}/utils/types`])
-    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
-    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+    await invokeTestCli(['manifest', 'list', `${srcHash}/level-one/level-two`])
+    expect(consoleMessages[0]).toContain(['/level-one/level-two/1.txt'])
+    expect(consoleMessages[1]).toContain(['/level-one/level-two/2.txt'])
   })
 
   it('should list files in folder when specified fully with trailing slash', async () => {
-    await invokeTestCli(['manifest', 'list', `${srcHash}/utils/types/`])
-    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
-    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+    await invokeTestCli(['manifest', 'list', `${srcHash}/level-one/level-two`])
+    expect(consoleMessages[0]).toContain(['/level-one/level-two/1.txt'])
+    expect(consoleMessages[1]).toContain(['/level-one/level-two/2.txt'])
   })
 
   it('should download single file when specified partially', async () => {
-    await invokeTestCli(['manifest', 'download', `${srcHash}/appli`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['application.ts'])
+    await invokeTestCli(['manifest', 'download', `${srcHash}/in`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['index.txt'])
   })
 
   it('should download single file when specified fully', async () => {
-    await invokeTestCli(['manifest', 'download', `${srcHash}/application.ts`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['application.ts'])
+    await invokeTestCli(['manifest', 'download', `${srcHash}/index.txt`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['index.txt'])
   })
 
   it('should download files in folder when specified partially', async () => {
-    await invokeTestCli(['manifest', 'download', `${srcHash}/utils/ty`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['utils/types/config-option.ts'])
-    expect(consoleMessages[1]).toContain(['utils/types/index.ts'])
+    await invokeTestCli(['manifest', 'download', `${srcHash}/level-one/l`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['level-one/level-two/1.txt'])
+    expect(consoleMessages[1]).toContain(['level-one/level-two/2.txt'])
   })
 
   it('should download files in folder when specified fully without trailing slash', async () => {
-    await invokeTestCli(['manifest', 'download', `${srcHash}/utils/types`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['utils/types/config-option.ts'])
-    expect(consoleMessages[1]).toContain(['utils/types/index.ts'])
+    await invokeTestCli(['manifest', 'download', `${srcHash}/level-one/level-two`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['level-one/level-two/1.txt'])
+    expect(consoleMessages[1]).toContain(['level-one/level-two/2.txt'])
   })
 
   it('should download files in folder when specified fully with trailing slash', async () => {
-    await invokeTestCli(['manifest', 'download', `${srcHash}/utils/types/`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['utils/types/config-option.ts'])
-    expect(consoleMessages[1]).toContain(['utils/types/index.ts'])
+    await invokeTestCli(['manifest', 'download', `${srcHash}/level-one/level-two/`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['level-one/level-two/1.txt'])
+    expect(consoleMessages[1]).toContain(['level-one/level-two/2.txt'])
+  })
+
+  it('should handle error for invalid download hash', async () => {
+    await invokeTestCli(['manifest', 'download', 'g'.repeat(64)])
+    expect(consoleMessages[0]).toContain([
+      'The command failed with error message: value not valid hex string of length 128: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
+    ])
+  })
+
+  it('should handle error for invalid list hash', async () => {
+    await invokeTestCli(['manifest', 'list', 'g'.repeat(64)])
+    expect(consoleMessages[0]).toContain([
+      'The command failed with error message: value not valid hex string of length 128: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
+    ])
+  })
+
+  it('should handle error for 404 download hash', async () => {
+    await invokeTestCli(['manifest', 'download', '1'.repeat(64)])
+    expect(consoleMessages[0]).toContain(['Bee responded with HTTP 404 (Not Found).'])
+  })
+
+  it('should handle error for 404 list hash', async () => {
+    await invokeTestCli(['manifest', 'list', '1'.repeat(64)])
+    expect(consoleMessages[0]).toContain(['Bee responded with HTTP 404 (Not Found).'])
+  })
+
+  it('should handle error for invalid download path', async () => {
+    await invokeTestCli(['manifest', 'download', `${srcHash}/b`])
+    expect(consoleMessages[0]).toContain([
+      'The command failed with error message: Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
+    ])
+  })
+
+  it('should handle error for invalid list path', async () => {
+    await invokeTestCli(['manifest', 'list', `${srcHash}/b`])
+    expect(consoleMessages[0]).toContain([
+      'The command failed with error message: Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
+    ])
   })
 })
