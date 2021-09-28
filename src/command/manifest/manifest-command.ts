@@ -152,7 +152,7 @@ export class ManifestCommand extends RootCommand {
         const match = await this.getNodeForReference(reference)
 
         return { node: match, prefix: path }
-      } else if (path.startsWith(prefix)) {
+      } else if (prefix.startsWith(path)) {
         return this.findNodeForPrefix(this.decodeReference(fork.node.getEntry as Reference), prefix, path)
       }
     }
