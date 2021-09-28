@@ -27,17 +27,6 @@ export class ManifestCommand extends RootCommand {
     await super.init()
   }
 
-  private convertToEnrichedFork(node: MantarayNode, path: string): EnrichedFork {
-    return {
-      path,
-      fsPath: join(...path.split('/')),
-      found: false,
-      prefix: new Uint8Array(0),
-      serialize: () => new Uint8Array(0),
-      node,
-    }
-  }
-
   protected async loadAllValueForks(hash: string, path?: string | null): Promise<EnrichedFork[]> {
     const searchResult = await this.initializeNode(hash, path)
 
@@ -76,26 +65,8 @@ export class ManifestCommand extends RootCommand {
     return target
   }
 
-  protected createSaver(stamp: string): StorageSaver {
-    const bee = this.bee
-
-    return async (data: Uint8Array) => {
-      const reference = await bee.uploadData(stamp, data)
-
-      return Buffer.from(reference, 'hex') as Reference
-    }
-  }
-
-  protected load(reference: Uint8Array): Promise<Data> {
-    return this.bee.downloadData(this.decodeReference(reference))
-  }
-
   protected encodePath(path: string): Uint8Array {
     return new TextEncoder().encode(path)
-  }
-
-  protected decodeReference(reference: Reference | Uint8Array): string {
-    return Buffer.from(reference).toString('hex')
   }
 
   protected async initializeNode(hash: string, path?: string | null): Promise<NodeSearchResult> {
@@ -126,6 +97,24 @@ export class ManifestCommand extends RootCommand {
     const reference = await node.save(this.createSaver(stamp))
     this.resultHash = (reference as Buffer).toString('hex')
     this.console.log(this.resultHash)
+  }
+
+  private load(reference: Uint8Array): Promise<Data> {
+    return this.bee.downloadData(this.decodeReference(reference))
+  }
+
+  private decodeReference(reference: Reference | Uint8Array): string {
+    return Buffer.from(reference).toString('hex')
+  }
+
+  private createSaver(stamp: string): StorageSaver {
+    const bee = this.bee
+
+    return async (data: Uint8Array) => {
+      const reference = await bee.uploadData(stamp, data)
+
+      return Buffer.from(reference, 'hex') as Reference
+    }
   }
 
   private async getNodeAtReference(reference: string): Promise<MantarayNode> {
@@ -172,5 +161,16 @@ export class ManifestCommand extends RootCommand {
     }
 
     return null
+  }
+
+  private convertToEnrichedFork(node: MantarayNode, path: string): EnrichedFork {
+    return {
+      path,
+      fsPath: join(...path.split('/')),
+      found: false,
+      prefix: new Uint8Array(0),
+      serialize: () => new Uint8Array(0),
+      node,
+    }
   }
 }
