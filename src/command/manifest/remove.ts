@@ -1,5 +1,6 @@
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
+import { BzzAddress } from '../../utils/bzz-address'
 import { stampProperties } from '../../utils/option'
 import { ManifestCommand } from './manifest-command'
 
@@ -8,10 +9,7 @@ export class Remove extends ManifestCommand implements LeafCommand {
   public readonly description = 'Remove a path from an existing manifest'
 
   @Argument({ key: 'address', description: 'Root manifest reference', required: true })
-  public reference!: string
-
-  @Argument({ key: 'path', description: 'Path of file or folder be removed from the manifest', required: true })
-  public path!: string
+  public bzzUrl!: string
 
   @Option(stampProperties)
   public stamp!: string
@@ -23,13 +21,11 @@ export class Remove extends ManifestCommand implements LeafCommand {
       this.stamp = await pickStamp(this.beeDebug, this.console)
     }
 
-    if (this.path.endsWith('/')) {
-      this.path = this.path.slice(0, this.path.length - 1)
-    }
-    const node = await this.initializeNode(this.reference)
+    const address = new BzzAddress(this.bzzUrl)
+    const { node } = await this.initializeNode(address.hash)
     const forks = this.findAllValueForks(node)
     for (const fork of forks) {
-      if (fork.path === this.path || fork.path.startsWith(this.path + '/')) {
+      if (fork.path === address.path || fork.path.startsWith(address.path + '/')) {
         node.removePath(this.encodePath(fork.path))
       }
     }

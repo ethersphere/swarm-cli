@@ -4,6 +4,7 @@ import { Reference } from 'mantaray-js'
 import { join } from 'path'
 import { pickStamp } from '../../service/stamp'
 import { readdirDeepAsync } from '../../utils'
+import { BzzAddress } from '../../utils/bzz-address'
 import { stampProperties } from '../../utils/option'
 import { ManifestCommand } from './manifest-command'
 
@@ -12,7 +13,7 @@ export class Sync extends ManifestCommand implements LeafCommand {
   public readonly description = 'Sync a local folder to an existing manifest'
 
   @Argument({ key: 'address', description: 'Root manifest reference', required: true })
-  public reference!: string
+  public bzzUrl!: string
 
   @Argument({ key: 'folder', description: 'Local folder to be synced', required: true })
   public folder!: string
@@ -33,7 +34,8 @@ export class Sync extends ManifestCommand implements LeafCommand {
     if (!this.stamp) {
       this.stamp = await pickStamp(this.beeDebug, this.console)
     }
-    const node = await this.initializeNode(this.reference)
+    const address = new BzzAddress(this.bzzUrl)
+    const { node } = await this.initializeNode(address.hash)
     const files = await readdirDeepAsync(this.folder, this.folder)
     const forks = this.getForksPathMapping(this.findAllValueForks(node))
     for (const file of files) {
