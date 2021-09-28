@@ -20,7 +20,7 @@ export class List extends ManifestCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
     const address = new BzzAddress(this.bzzUrl)
-    const node = await this.initializeNode(address.hash)
+    const node = await this.initializeNode(address.hash, address.path)
     const forks = this.findAllValueForks(node)
     for (const fork of forks) {
       if (!fork.node.getEntry) {
@@ -29,10 +29,6 @@ export class List extends ManifestCommand implements LeafCommand {
 
       const entryHex = Buffer.from(fork.node.getEntry).toString('hex')
       const isEmptyEntry = fork.path === '/'
-
-      if (address.path && !fork.path.startsWith(address.path)) {
-        continue
-      }
 
       if (!isEmptyEntry) {
         this.console.log(entryHex + ' ' + this.formatPath(fork.path))

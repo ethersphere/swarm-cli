@@ -60,18 +60,27 @@ export class ManifestCommand extends RootCommand {
   }
 
   protected load(reference: Uint8Array): Promise<Data> {
-    return this.bee.downloadData(Buffer.from(reference).toString('hex'))
+    return this.bee.downloadData(this.decodeReference(reference))
   }
 
   protected encodePath(path: string): Uint8Array {
     return new TextEncoder().encode(path)
   }
 
-  protected async initializeNode(reference: string): Promise<MantarayNode> {
-    const manifest = await this.bee.downloadData(reference)
-    const node = new MantarayNode()
+  protected decodeReference(reference: Reference | Uint8Array): string {
+    return Buffer.from(reference).toString('hex')
+  }
+
+  protected async initializeNode(hash: string, path?: string | null): Promise<MantarayNode> {
     try {
-      node.deserialize(manifest)
+      const node = await this.getDeserializedNode(hash, path)
+
+      if (!node) {
+        if (path) {
+          throw new Error('Could not deserialize or find Mantaray node for reference ' + hash + ' and path ' + path)
+        }
+        throw new Error('Could not deserialize or find Mantaray node for reference ' + hash)
+      }
       await loadAllNodes(this.load.bind(this), node)
 
       return node
@@ -90,5 +99,52 @@ export class ManifestCommand extends RootCommand {
     const reference = await node.save(this.createSaver(stamp))
     this.resultHash = (reference as Buffer).toString('hex')
     this.console.log(this.resultHash)
+  }
+
+  private async getNodeForReference(reference: string): Promise<MantarayNode> {
+    const data = await this.bee.downloadData(reference)
+    const node = new MantarayNode()
+    node.deserialize(data)
+
+    return node
+  }
+
+  private async getDeserializedNode(reference: string, prefix?: string | null): Promise<MantarayNode | null> {
+    if (prefix) {
+      return this.findNodeForPrefix(reference, prefix)
+    } else {
+      const manifest = await this.bee.downloadData(reference)
+      const node = new MantarayNode()
+      node.deserialize(manifest)
+
+      return node
+    }
+  }
+
+  private async findNodeForPrefix(reference: string, prefix: string, currentPath = ''): Promise<MantarayNode | null> {
+    const node = await this.getNodeForReference(reference)
+
+    if (!node.forks) {
+      return null
+    }
+
+    for (const fork of Object.values(node.forks)) {
+      const path = Buffer.from(fork.prefix).toString('utf-8')
+
+      if (currentPath.startsWith(prefix)) {
+        const reference = this.decodeReference(fork.node.getEntry as Reference)
+        const match = await this.getNodeForReference(reference)
+        const manifest = await this.bee.downloadData(reference)
+        match.deserialize(manifest)
+
+        return match
+      } else if (path.startsWith(prefix)) {
+        currentPath = currentPath + path
+
+        return this.findNodeForPrefix(this.decodeReference(fork.node.getEntry as Reference), prefix, currentPath)
+      }
+    }
+
+    return null
   }
 }

@@ -20,17 +20,9 @@ export class Download extends ManifestCommand implements LeafCommand {
     await super.init()
 
     const address = new BzzAddress(this.bzzUrl)
-    const node = await this.initializeNode(address.hash)
+    const node = await this.initializeNode(address.hash, address.path)
     const forks = this.findAllValueForks(node)
     for (const fork of forks) {
-      if (fork.path.endsWith('/')) {
-        continue
-      }
-
-      if (!this.pathMatches(address, fork.path)) {
-        continue
-      }
-
       if (!fork.node.getEntry) {
         continue
       }
@@ -46,13 +38,5 @@ export class Download extends ManifestCommand implements LeafCommand {
       this.console.log(chalk.gray(fork.path))
       writeFileSync(join(destination, fork.fsPath), data)
     }
-  }
-
-  /**
-   * Should only download files if no path filters are set,
-   * or if the fork path matches the user specified path
-   */
-  public pathMatches(address: BzzAddress, path: string): boolean {
-    return !address.path || path.startsWith(address.path)
   }
 }
