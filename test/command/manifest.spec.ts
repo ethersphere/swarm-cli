@@ -1,5 +1,6 @@
 import { readFileSync, statSync, writeFileSync } from 'fs'
 import { ManifestCommand } from '../../src/command/manifest/manifest-command'
+import { Upload } from '../../src/command/upload'
 import { readdirDeepAsync } from '../../src/utils'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
@@ -15,6 +16,12 @@ async function runAndGetManifest(argv: string[]): Promise<string> {
 }
 
 describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining }) => {
+  let srcHash: string
+  beforeAll(async () => {
+    const invocation = await invokeTestCli(['upload', 'src', '--index-document', 'index.ts', ...getStampOption()])
+    srcHash = (invocation.runnable as Upload).hash
+  })
+
   it('should add file', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md'])
@@ -187,5 +194,61 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli(['manifest', 'download', hash, 'test/data/3'])
     expect(readFileSync('test/data/3/alpha.txt').toString()).toBe('2')
     expect(readFileSync('test/data/3/bravo.txt').toString()).toBe('1')
+  })
+
+  it('should list single file when specified partially', async () => {
+    await invokeTestCli(['manifest', 'list', `${srcHash}/appli`])
+    expect(consoleMessages[0]).toContain(['/application.ts'])
+  })
+
+  it('should list single file when specified fully', async () => {
+    await invokeTestCli(['manifest', 'list', `${srcHash}/application.ts`])
+    expect(consoleMessages[0]).toContain(['/application.ts'])
+  })
+
+  it('should list files in folder when specified partially', async () => {
+    await invokeTestCli(['manifest', 'list', `${srcHash}/utils/ty`])
+    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
+    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+  })
+
+  it('should list files in folder when specified fully without trailing slash', async () => {
+    await invokeTestCli(['manifest', 'list', `${srcHash}/utils/types`])
+    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
+    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+  })
+
+  it('should list files in folder when specified fully with trailing slash', async () => {
+    await invokeTestCli(['manifest', 'list', `${srcHash}/utils/types/`])
+    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
+    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+  })
+
+  it('should download single file when specified partially', async () => {
+    await invokeTestCli(['manifest', 'download', `${srcHash}/appli`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['/application.ts'])
+  })
+
+  it('should download single file when specified fully', async () => {
+    await invokeTestCli(['manifest', 'download', `${srcHash}/application.ts`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['/application.ts'])
+  })
+
+  it('should download files in folder when specified partially', async () => {
+    await invokeTestCli(['manifest', 'download', `${srcHash}/utils/ty`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
+    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+  })
+
+  it('should download files in folder when specified fully without trailing slash', async () => {
+    await invokeTestCli(['manifest', 'download', `${srcHash}/utils/types`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
+    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+  })
+
+  it('should download files in folder when specified fully with trailing slash', async () => {
+    await invokeTestCli(['manifest', 'download', `${srcHash}/utils/types/`, 'test/data/6'])
+    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
+    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
   })
 })
