@@ -5,10 +5,7 @@ import { describeCommand, invokeTestCli } from '../utility'
 import { getWorkerPssAddress } from '../utility/address'
 import { getStampOption } from '../utility/stamp'
 
-let topicCounter = 1000
-
-async function sendAndExpect(message: string): Promise<void> {
-  const topic = String(topicCounter++)
+async function sendAndExpect(message: string, topic: string): Promise<void> {
   const receiveCommand = invokeTestCli([
     'pss',
     'receive',
@@ -132,18 +129,18 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
   })
 
   it('should receive multibyte data correctly', async () => {
-    await sendAndExpect('🐝🐝🐝')
+    await sendAndExpect('🐝🐝🐝', '7a20fe')
   })
 
   it('should receive zero bytes correctly', async () => {
-    await sendAndExpect('\x00\x00\x00\x00')
+    await sendAndExpect('\x00\x00\x00\x00', 'fb8f80')
   })
 
   it('should receive ascii text correctly', async () => {
-    await sendAndExpect('A honey bee, a busy, flying insect that lives in a hive and makes honey.')
+    await sendAndExpect('A honey bee, a busy, flying insect that lives in a hive and makes honey.', '3b7263')
   })
 
   it('should receive utf-8 text correctly', async () => {
-    await sendAndExpect('⠓⠑⠇⠇⠕ ⠃⠑⠑')
+    await sendAndExpect('⠓⠑⠇⠇⠕ ⠃⠑⠑', 'b8927b')
   })
 })
