@@ -128,7 +128,7 @@ export class ManifestCommand extends RootCommand {
     this.console.log(this.resultHash)
   }
 
-  private async getNodeForReference(reference: string): Promise<MantarayNode> {
+  private async getNodeAtReference(reference: string): Promise<MantarayNode> {
     const data = await this.bee.downloadData(reference)
     const node = new MantarayNode()
     node.deserialize(data)
@@ -140,9 +140,7 @@ export class ManifestCommand extends RootCommand {
     if (prefix) {
       return this.findNodeForPrefix(reference, prefix)
     } else {
-      const manifest = await this.bee.downloadData(reference)
-      const node = new MantarayNode()
-      node.deserialize(manifest)
+      const node = await this.getNodeAtReference(reference)
 
       return { node, prefix: '' }
     }
@@ -153,7 +151,7 @@ export class ManifestCommand extends RootCommand {
     prefix: string,
     currentPath = '',
   ): Promise<NodeSearchResult | null> {
-    const node = await this.getNodeForReference(reference)
+    const node = await this.getNodeAtReference(reference)
 
     if (!node.forks) {
       return null
@@ -162,13 +160,14 @@ export class ManifestCommand extends RootCommand {
     for (const fork of Object.values(node.forks)) {
       const path = currentPath + Buffer.from(fork.prefix).toString('utf-8')
 
+      const reference = this.decodeReference(fork.node.getEntry as Reference)
+
       if (path.startsWith(prefix)) {
-        const reference = this.decodeReference(fork.node.getEntry as Reference)
-        const match = await this.getNodeForReference(reference)
+        const match = await this.getNodeAtReference(reference)
 
         return { node: match, prefix: path }
       } else if (prefix.startsWith(path)) {
-        return this.findNodeForPrefix(this.decodeReference(fork.node.getEntry as Reference), prefix, path)
+        return this.findNodeForPrefix(reference, prefix, path)
       }
     }
 
