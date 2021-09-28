@@ -226,29 +226,29 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should download single file when specified partially', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/appli`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['/application.ts'])
+    expect(consoleMessages[0]).toContain(['application.ts'])
   })
 
   it('should download single file when specified fully', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/application.ts`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['/application.ts'])
+    expect(consoleMessages[0]).toContain(['application.ts'])
   })
 
   it('should download files in folder when specified partially', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/utils/ty`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
-    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+    expect(consoleMessages[0]).toContain(['utils/types/config-option.ts'])
+    expect(consoleMessages[1]).toContain(['utils/types/index.ts'])
   })
 
   it('should download files in folder when specified fully without trailing slash', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/utils/types`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
-    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+    expect(consoleMessages[0]).toContain(['utils/types/config-option.ts'])
+    expect(consoleMessages[1]).toContain(['utils/types/index.ts'])
   })
 
   it('should download files in folder when specified fully with trailing slash', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/utils/types/`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain(['/utils/types/config-option.ts'])
-    expect(consoleMessages[1]).toContain(['/utils/types/index.ts'])
+    expect(consoleMessages[0]).toContain(['utils/types/config-option.ts'])
+    expect(consoleMessages[1]).toContain(['utils/types/index.ts'])
   })
 })
