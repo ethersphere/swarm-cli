@@ -27,10 +27,25 @@ export class ManifestCommand extends RootCommand {
     await super.init()
   }
 
+  private convertToEnrichedFork(node: MantarayNode, path: string): EnrichedFork {
+    return {
+      path,
+      fsPath: join(...path.split('/')),
+      found: false,
+      prefix: new Uint8Array(0),
+      serialize: () => new Uint8Array(0),
+      node,
+    }
+  }
+
   protected async loadAllValueForks(hash: string, path?: string | null): Promise<EnrichedFork[]> {
     const searchResult = await this.initializeNode(hash, path)
 
-    return this.findAllValueForks(searchResult.node, [], searchResult.prefix)
+    return this.findAllValueForks(
+      searchResult.node,
+      searchResult.node.isValueType() ? [this.convertToEnrichedFork(searchResult.node, searchResult.prefix)] : [],
+      searchResult.prefix,
+    )
   }
 
   protected findAllValueForks(node: MantarayNode, items = [] as EnrichedFork[], prefix = ''): EnrichedFork[] {
