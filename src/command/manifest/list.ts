@@ -30,7 +30,7 @@ export class List extends ManifestCommand implements LeafCommand {
       const isEmptyEntry = fork.path === '/'
 
       if (!isEmptyEntry) {
-        this.console.log(chalk.dim(entryHex + ' ' + this.formatPath(fork.path)))
+        this.console.log(entryHex + ' ' + this.formatPath(fork.path))
       }
 
       if (this.verbose && fork.node.getMetadata) {
