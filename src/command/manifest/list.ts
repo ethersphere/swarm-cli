@@ -39,17 +39,17 @@ export class List extends ManifestCommand implements LeafCommand {
           if (!entry[1]) {
             continue
           }
-          this.console.dim(chalk.gray(this.formatMetaKey(entry[0]) + ': ' + entry[1]))
+          this.console.log(chalk.dim(this.formatMetaKey(entry[0]) + ': ' + entry[1]))
         }
       }
 
       if (!isEmptyEntry) {
         if (this.printBzz) {
-          this.console.log(this.beeApiUrl + '/bzz/' + address.hash + '/' + fork.path)
+          this.console.log(chalk.dim(this.beeApiUrl + '/bzz/' + address.hash + '/' + fork.path))
         }
 
         if (this.printBytes) {
-          this.console.log(this.beeApiUrl + '/bytes/' + Buffer.from(fork.node.getEntry).toString('hex'))
+          this.console.log(chalk.dim(this.beeApiUrl + '/bytes/' + Buffer.from(fork.node.getEntry).toString('hex')))
         }
       }
 
