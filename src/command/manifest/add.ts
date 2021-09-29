@@ -42,9 +42,9 @@ export class Add extends ManifestCommand implements LeafCommand {
       node.addFork(this.encodePath(remotePath), Buffer.from(reference, 'hex') as Reference)
 
       if (file === remotePath) {
-        this.console.log(chalk.gray(file))
+        this.console.log(chalk.dim(file))
       } else {
-        this.console.log(chalk.gray(file + ' -> ' + remotePath))
+        this.console.log(chalk.dim(file + ' -> ' + remotePath))
       }
     }
     await this.saveAndPrintNode(node, this.stamp)

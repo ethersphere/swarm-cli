@@ -39,7 +39,7 @@ export class List extends ManifestCommand implements LeafCommand {
           if (!entry[1]) {
             continue
           }
-          this.console.dim(chalk.gray(this.formatMetaKey(entry[0]) + ': ' + entry[1]))
+          this.console.dim(chalk.dim(this.formatMetaKey(entry[0]) + ': ' + entry[1]))
         }
       }
 
