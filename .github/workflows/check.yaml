@@ -47,5 +47,8 @@ jobs:
         env:
           CI: true
 
+      - name: Types check
+        run: npm run types:check
+
       - name: Build nodejs code
         run: npm run compile

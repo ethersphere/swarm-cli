@@ -28,6 +28,7 @@
     "compile": "webpack --progress --env mode=production",
     "test": "jest --config=jest.config.ts",
     "test:coverage": "jest --config=jest.config.ts --coverage",
+    "types:check": "tsc --project tsconfig.test.json",
     "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\""
   },
