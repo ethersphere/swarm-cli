@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.3.0...v1.4.0) (2021-09-29)
+
+
+### Features
+
+* add manifest commands ([#237](https://www.github.com/ethersphere/swarm-cli/issues/237)) ([277e09e](https://www.github.com/ethersphere/swarm-cli/commit/277e09e6da87ba002696ed388eb9f5af6c3421bc))
+* improve error logging and troubleshooting ([#241](https://www.github.com/ethersphere/swarm-cli/issues/241)) ([96a5c5a](https://www.github.com/ethersphere/swarm-cli/commit/96a5c5a58cbe5f744bed325d20ff40df41dc10d4))
+* print bee api urls in status command ([#239](https://www.github.com/ethersphere/swarm-cli/issues/239)) ([6d9672b](https://www.github.com/ethersphere/swarm-cli/commit/6d9672b3a887dd115f529ab0d1348e035e10e49b))
+
 ## [1.3.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.2.0...v1.3.0) (2021-08-24)
 
 
