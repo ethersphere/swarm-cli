@@ -169,13 +169,14 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadFolder(postageBatchId: string, tag?: Tag): Promise<string> {
-    this.hash = await this.bee.uploadFilesFromDirectory(postageBatchId, this.path, {
+    const { reference } = await this.bee.uploadFilesFromDirectory(postageBatchId, this.path, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
       pin: this.pin,
       encrypt: this.encrypt,
     })
+    this.hash = reference
 
     return `${this.bee.url}/bzz/${this.hash}/`
   }
@@ -184,12 +185,18 @@ export class Upload extends RootCommand implements LeafCommand {
     const { size } = FS.statSync(this.path)
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
-    this.hash = await this.bee.uploadFile(postageBatchId, readable, this.dropName ? undefined : parsedPath.base, {
-      tag: tag && tag.uid,
-      pin: this.pin,
-      encrypt: this.encrypt,
-      size,
-    })
+    const { reference } = await this.bee.uploadFile(
+      postageBatchId,
+      readable,
+      this.dropName ? undefined : parsedPath.base,
+      {
+        tag: tag && tag.uid,
+        pin: this.pin,
+        encrypt: this.encrypt,
+        size,
+      },
+    )
+    this.hash = reference
 
     return `${this.bee.url}/bzz/${this.hash}/`
   }
@@ -271,7 +278,7 @@ export class Upload extends RootCommand implements LeafCommand {
     isDirectory: boolean
   }> {
     const stats = FS.lstatSync(this.path)
-    const size = stats.isDirectory() ? await Utils.Collections.getFolderSize(this.path) : stats.size
+    const size = stats.isDirectory() ? await Utils.getFolderSize(this.path) : stats.size
     this.console.verbose('Upload size is approximately ' + (size / 1000 / 1000).toFixed(2) + ' megabytes')
 
     return {

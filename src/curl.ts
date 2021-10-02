@@ -1,6 +1,7 @@
 import { BeeRequest, Utils } from '@ethersphere/bee-js'
 import { Readable } from 'stream'
 import { printer } from './printer'
+import { getFieldOrNull } from './utils'
 
 const getDataString = (data?: unknown): string | null => {
   if (typeof data === 'string') {
@@ -26,7 +27,8 @@ function printCurlCommand(request: BeeRequest): BeeRequest {
   const queryParameters = new URLSearchParams(params as string[][]).toString()
   const queryString = queryParameters ? '?' + queryParameters : ''
   const methodString = request.method.toUpperCase() === 'GET' ? '' : ` -X ${request.method?.toUpperCase()}`
-  const dataString = request.data ? ` --data "${getDataString(request.data)}"` : ''
+  const data = getFieldOrNull(request, 'data')
+  const dataString = data ? ` --data "${getDataString(data)}"` : ''
   const command = `curl${methodString} ${request.url}${queryString} ${headers}${dataString}`
   printer.print(command)
 

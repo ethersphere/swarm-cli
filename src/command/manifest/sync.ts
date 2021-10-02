@@ -55,13 +55,13 @@ export class Sync extends ManifestCommand implements LeafCommand {
         if (localData.equals(remoteData)) {
           this.console.log('ok -> ' + file)
         } else {
-          const addition = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
-          node.addFork(this.encodePath(file), Buffer.from(addition, 'hex') as Reference)
+          const { reference } = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
+          node.addFork(this.encodePath(file), Buffer.from(reference, 'hex') as Reference)
           this.console.log('updated -> ' + file)
         }
       } else {
-        const addition = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
-        node.addFork(this.encodePath(file), Buffer.from(addition, 'hex') as Reference)
+        const { reference } = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
+        node.addFork(this.encodePath(file), Buffer.from(reference, 'hex') as Reference)
         this.console.log('new -> ' + file)
       }
     }

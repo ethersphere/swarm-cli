@@ -111,7 +111,7 @@ export class ManifestCommand extends RootCommand {
     const bee = this.bee
 
     return async (data: Uint8Array) => {
-      const reference = await bee.uploadData(stamp, data)
+      const { reference } = await bee.uploadData(stamp, data)
 
       return Buffer.from(reference, 'hex') as Reference
     }
