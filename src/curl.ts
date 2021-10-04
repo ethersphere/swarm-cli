@@ -1,25 +1,7 @@
-import { BeeRequest, Utils } from '@ethersphere/bee-js'
-import { Readable } from 'stream'
+import { BeeRequest } from '@ethersphere/bee-js'
 import { printer } from './printer'
-import { getFieldOrNull } from './utils'
 
-const getDataString = (data?: unknown): string | null => {
-  if (typeof data === 'string') {
-    return data
-  }
-
-  if (data instanceof Readable) {
-    return '<stream>'
-  }
-
-  if (data instanceof Uint8Array) {
-    return '<buffer>'
-  }
-
-  return '<unknown>'
-}
-
-function printCurlCommand(request: BeeRequest): BeeRequest {
+export function printCurlCommand(request: BeeRequest): void {
   const params = Object.entries(request.params || {}).filter(([, v]) => v !== undefined)
   const headers = Object.entries(request.headers || {})
     .map(([key, value]) => `-H "${key}: ${value}"`)
@@ -27,16 +9,6 @@ function printCurlCommand(request: BeeRequest): BeeRequest {
   const queryParameters = new URLSearchParams(params as string[][]).toString()
   const queryString = queryParameters ? '?' + queryParameters : ''
   const methodString = request.method.toUpperCase() === 'GET' ? '' : ` -X ${request.method?.toUpperCase()}`
-  const data = getFieldOrNull(request, 'data')
-  const dataString = data ? ` --data "${getDataString(data)}"` : ''
-  const command = `curl${methodString} ${request.url}${queryString} ${headers}${dataString}`
+  const command = `curl${methodString} ${request.url}${queryString} ${headers}`
   printer.print(command)
-
-  return request
-}
-
-export function registerCurlHook(): void {
-  if (typeof process.env.CURL_HOOK_ID === 'undefined') {
-    process.env.CURL_HOOK_ID = String(Utils.Hooks.onRequest(printCurlCommand))
-  }
 }

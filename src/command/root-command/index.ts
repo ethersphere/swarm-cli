@@ -1,7 +1,7 @@
 import { Bee, BeeDebug } from '@ethersphere/bee-js'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
 import { exit } from 'process'
-import { registerCurlHook } from '../../curl'
+import { printCurlCommand, registerCurlHook } from '../../curl'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
@@ -83,8 +83,8 @@ export class RootCommand {
       this.maybeSetFromConfig(option)
     })
 
-    this.bee = new Bee(this.beeApiUrl)
-    this._beeDebug = new BeeDebug(this.beeDebugApiUrl)
+    this.bee = new Bee(this.beeApiUrl, this.curl ? { onRequest: printCurlCommand } : {})
+    this._beeDebug = new BeeDebug(this.beeDebugApiUrl, this.curl ? { onRequest: printCurlCommand } : {})
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
