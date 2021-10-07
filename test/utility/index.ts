@@ -1,8 +1,11 @@
+import chalk from 'chalk'
 import { existsSync, unlinkSync } from 'fs'
 import { cli } from 'furious-commander'
 import { join } from 'path'
 import { optionParameters, rootCommandClasses } from '../../src/config'
 import { handleError } from '../../src/utils/error'
+
+export const FORMATTED_ERROR = chalk.red.bold('ERROR')
 
 export async function invokeTestCli(argv: string[]): ReturnType<typeof cli> {
   const commandBuilder = await cli({
