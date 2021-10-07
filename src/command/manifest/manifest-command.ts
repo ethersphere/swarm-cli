@@ -1,9 +1,7 @@
 import type { Data } from '@ethersphere/bee-js'
 import { loadAllNodes, MantarayFork, MantarayNode, Reference, StorageSaver } from 'mantaray-js'
 import { join } from 'path'
-import { exit } from 'process'
 import { RootCommand } from '../root-command'
-import { Printer } from '../root-command/printer'
 
 interface EnrichedFork extends MantarayFork {
   path: string
@@ -85,8 +83,7 @@ export class ManifestCommand extends RootCommand {
     } catch (error: unknown) {
       // FIXME in mantaray-js
       if (Reflect.get(error as Record<string, unknown>, 'message') === 'Wrong mantaray version') {
-        Printer.error('The reference provided is not a root manifest hash')
-        exit(1)
+        throw Error('The reference provided is not a root manifest hash')
       } else {
         throw error
       }
