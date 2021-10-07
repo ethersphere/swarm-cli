@@ -9,7 +9,7 @@ export const Printer = {
     console.log(char.repeat(process.stdout.columns))
   },
   error: (message: string, ...args: unknown[]): void => {
-    console.error(chalk.red(message), ...args)
+    console.error(message, ...args)
   },
   log: (message: string, ...args: unknown[]): void => {
     console.log(message, ...args)
