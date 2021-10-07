@@ -4,6 +4,7 @@ import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { exit } from 'process'
+import { setCurlStore } from '../curl'
 import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
 import { stampProperties } from '../utils/option'
@@ -169,6 +170,11 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadFolder(postageBatchId: string, tag?: Tag): Promise<string> {
+    setCurlStore({
+      path: this.path,
+      folder: true,
+      type: 'buffer',
+    })
     const { reference } = await this.bee.uploadFilesFromDirectory(postageBatchId, this.path, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
@@ -182,6 +188,11 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadSingleFile(postageBatchId: string, tag?: Tag): Promise<string> {
+    setCurlStore({
+      path: this.path,
+      folder: false,
+      type: 'stream',
+    })
     const { size } = FS.statSync(this.path)
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
