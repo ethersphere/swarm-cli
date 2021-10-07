@@ -1,6 +1,7 @@
 import { BeeResponseError } from '@ethersphere/bee-js'
 import { Utils } from 'furious-commander'
-import { describeCommand, FORMATTED_ERROR, invokeTestCli } from '../utility'
+import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
+import { describeCommand, invokeTestCli } from '../utility'
 
 function expectErrorsToDeepEqual(actual: string[], expected: string[]): void {
   expect(actual).toStrictEqual(expected)

@@ -1,5 +1,6 @@
+import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
-import { describeCommand, FORMATTED_ERROR, invokeTestCli } from '../utility'
+import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
 async function uploadAndGetHash(path: string, indexDocument?: string): Promise<string> {

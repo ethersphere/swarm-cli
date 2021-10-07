@@ -1,5 +1,5 @@
-import chalk from 'chalk'
 import { getFieldOrNull } from '.'
+import { FORMATTED_ERROR } from '../command/root-command/printer'
 import { printer } from '../printer'
 
 export interface BeeErrorOptions {
@@ -24,7 +24,7 @@ export function handleError(error: unknown, options?: BeeErrorOptions): void {
 
   // write custom message for 500
   if (isInternalServerError(error)) {
-    printer.printError(chalk.red.bold('ERROR') + ' Bee responded with HTTP 500 (Internal Server Error).')
+    printer.printError(FORMATTED_ERROR + ' Bee responded with HTTP 500 (Internal Server Error).')
 
     if (!isGenericErrorPattern('Internal Server Error', message)) {
       printer.printError('')
@@ -32,7 +32,7 @@ export function handleError(error: unknown, options?: BeeErrorOptions): void {
     }
     // write custom message for 404
   } else if (isNotFoundError(error)) {
-    printer.printError(chalk.red.bold('ERROR') + ' Bee responded with HTTP 404 (Not Found).')
+    printer.printError(FORMATTED_ERROR + ' Bee responded with HTTP 404 (Not Found).')
 
     if (options?.notFoundMessage || !isGenericErrorPattern('Not Found', message)) {
       printer.printError('')
@@ -40,9 +40,9 @@ export function handleError(error: unknown, options?: BeeErrorOptions): void {
     }
     // print 'command failed' message with error message if available
   } else if (message) {
-    printer.printError(chalk.red.bold('ERROR') + ' ' + message)
+    printer.printError(FORMATTED_ERROR + ' ' + message)
   } else {
-    printer.printError(chalk.red.bold('ERROR') + ' The command failed, but there is no error message available.')
+    printer.printError(FORMATTED_ERROR + ' The command failed, but there is no error message available.')
   }
 
   // print 'check bee logs' message

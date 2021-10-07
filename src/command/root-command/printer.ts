@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import chalk from 'chalk'
 
+export const FORMATTED_ERROR = chalk.red.bold('ERROR')
+
 export const Printer = {
   emptyFunction: (): void => {
     return

@@ -1,8 +1,9 @@
 import { readFileSync, statSync, writeFileSync } from 'fs'
 import { ManifestCommand } from '../../src/command/manifest/manifest-command'
+import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
 import { readdirDeepAsync } from '../../src/utils'
-import { describeCommand, FORMATTED_ERROR, invokeTestCli } from '../utility'
+import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
 async function runAndGetManifest(argv: string[]): Promise<string> {
