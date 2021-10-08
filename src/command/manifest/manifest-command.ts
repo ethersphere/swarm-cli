@@ -1,6 +1,7 @@
 import type { Data } from '@ethersphere/bee-js'
 import { loadAllNodes, MantarayFork, MantarayNode, Reference, StorageSaver } from 'mantaray-js'
 import { join } from 'path'
+import { getFieldOrNull } from '../../utils'
 import { RootCommand } from '../root-command'
 
 interface EnrichedFork extends MantarayFork {
@@ -81,9 +82,11 @@ export class ManifestCommand extends RootCommand {
 
       return searchResult
     } catch (error: unknown) {
+      const message: string | null = getFieldOrNull(error, 'message')
+
       // FIXME in mantaray-js
-      if (Reflect.get(error as Record<string, unknown>, 'message') === 'Wrong mantaray version') {
-        throw Error('The reference provided is not a root manifest hash')
+      if (message && ['Wrong mantaray version', 'serialised input too short'].includes(message)) {
+        throw Error('The reference provided is not a valid root manifest hash')
       } else {
         throw error
       }
