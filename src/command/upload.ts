@@ -194,11 +194,11 @@ export class Upload extends RootCommand implements LeafCommand {
       type: 'stream',
     })
     const { size } = FS.statSync(this.path)
-    const readable = FS.createReadStream(this.path)
+    const buffer = FS.readFileSync(this.path)
     const parsedPath = parse(this.path)
     const { reference } = await this.bee.uploadFile(
       postageBatchId,
-      readable,
+      buffer,
       this.dropName ? undefined : parsedPath.base,
       {
         tag: tag && tag.uid,
