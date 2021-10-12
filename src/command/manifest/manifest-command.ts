@@ -4,6 +4,13 @@ import { join } from 'path'
 import { getFieldOrNull } from '../../utils'
 import { RootCommand } from '../root-command'
 
+// FIXME: review these error messages in mantaray-js
+const GENERALISED_ERROR_MESSAGES = [
+  'Wrong mantaray version',
+  'serialised input too short',
+  'Wrong reference length. Entry only can be 32 or 64 length in bytes',
+]
+
 interface EnrichedFork extends MantarayFork {
   path: string
   fsPath: string
@@ -84,8 +91,7 @@ export class ManifestCommand extends RootCommand {
     } catch (error: unknown) {
       const message: string | null = getFieldOrNull(error, 'message')
 
-      // FIXME in mantaray-js
-      if (message && ['Wrong mantaray version', 'serialised input too short'].includes(message)) {
+      if (message && GENERALISED_ERROR_MESSAGES.includes(message)) {
         throw Error('The reference provided is not a valid root manifest hash')
       } else {
         throw error
