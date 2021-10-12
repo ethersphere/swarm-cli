@@ -1,5 +1,6 @@
 import { readFileSync, statSync, writeFileSync } from 'fs'
 import { ManifestCommand } from '../../src/command/manifest/manifest-command'
+import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
 import { readdirDeepAsync } from '../../src/utils'
 import { describeCommand, invokeTestCli } from '../utility'
@@ -261,14 +262,16 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should handle error for invalid download hash', async () => {
     await invokeTestCli(['manifest', 'download', 'g'.repeat(64)])
     expect(consoleMessages[0]).toContain([
-      'The command failed with error message: value not valid hex string of length 128: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
+      FORMATTED_ERROR +
+        ' value not valid hex string of length 128: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
     ])
   })
 
   it('should handle error for invalid list hash', async () => {
     await invokeTestCli(['manifest', 'list', 'g'.repeat(64)])
     expect(consoleMessages[0]).toContain([
-      'The command failed with error message: value not valid hex string of length 128: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
+      FORMATTED_ERROR +
+        ' value not valid hex string of length 128: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
     ])
   })
 
@@ -285,14 +288,16 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should handle error for invalid download path', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/b`])
     expect(consoleMessages[0]).toContain([
-      'The command failed with error message: Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
+      FORMATTED_ERROR +
+        ' Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
     ])
   })
 
   it('should handle error for invalid list path', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/b`])
     expect(consoleMessages[0]).toContain([
-      'The command failed with error message: Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
+      FORMATTED_ERROR +
+        ' Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
     ])
   })
 })

@@ -1,3 +1,4 @@
+import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
@@ -57,7 +58,7 @@ describeCommand(
     it('should print custom 404 when pinning chunk that does not exist', async () => {
       await invokeTestCli(['pinning', 'pin', 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'])
       expect(consoleMessages).toStrictEqual([
-        'Bee responded with HTTP 404 (Not Found).',
+        FORMATTED_ERROR + ' Bee responded with HTTP 404 (Not Found).',
         '',
         'The error message is: No root chunk found with address ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         '',
@@ -68,7 +69,7 @@ describeCommand(
     it('should print custom 404 when unpinning chunk that does not exist', async () => {
       await invokeTestCli(['pinning', 'unpin', 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'])
       expect(consoleMessages).toStrictEqual([
-        'Bee responded with HTTP 404 (Not Found).',
+        FORMATTED_ERROR + ' Bee responded with HTTP 404 (Not Found).',
         '',
         'The error message is: No root chunk found with address ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         '',

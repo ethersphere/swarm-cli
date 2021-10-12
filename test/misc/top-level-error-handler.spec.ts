@@ -1,10 +1,10 @@
 import { BeeResponseError } from '@ethersphere/bee-js'
-import chalk from 'chalk'
 import { Utils } from 'furious-commander'
+import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { describeCommand, invokeTestCli } from '../utility'
 
 function expectErrorsToDeepEqual(actual: string[], expected: string[]): void {
-  expect(actual).toStrictEqual(expected.map(x => chalk.red(x)))
+  expect(actual).toStrictEqual(expected)
 }
 
 describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
@@ -14,7 +14,7 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      'The command failed with error message: Oops!',
+      FORMATTED_ERROR + ' Oops!',
       '',
       'There may be additional information in the Bee logs.',
     ])
@@ -26,7 +26,7 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      'The command failed with error message: Oops!',
+      FORMATTED_ERROR + ' Oops!',
       '',
       'There may be additional information in the Bee logs.',
     ])
@@ -38,7 +38,7 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      'The command failed, but there is no error message available.',
+      FORMATTED_ERROR + ' The command failed, but there is no error message available.',
       '',
       'Check your Bee log to learn if your request reached the node.',
     ])
@@ -50,7 +50,7 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      'The command failed, but there is no error message available.',
+      FORMATTED_ERROR + ' The command failed, but there is no error message available.',
       '',
       'Check your Bee log to learn if your request reached the node.',
     ])
@@ -62,7 +62,7 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      'Bee responded with HTTP 500 (Internal Server Error).',
+      FORMATTED_ERROR + ' Bee responded with HTTP 500 (Internal Server Error).',
       '',
       'The error message is: This should be printed',
       '',
@@ -76,7 +76,7 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      'Bee responded with HTTP 500 (Internal Server Error).',
+      FORMATTED_ERROR + ' Bee responded with HTTP 500 (Internal Server Error).',
       '',
       'There may be additional information in the Bee logs.',
     ])
@@ -88,7 +88,7 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      'Bee responded with HTTP 404 (Not Found).',
+      FORMATTED_ERROR + ' Bee responded with HTTP 404 (Not Found).',
       '',
       'The error message is: This should be printed',
       '',
@@ -102,7 +102,7 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      'Bee responded with HTTP 404 (Not Found).',
+      FORMATTED_ERROR + ' Bee responded with HTTP 404 (Not Found).',
       '',
       'There may be additional information in the Bee logs.',
     ])
