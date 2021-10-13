@@ -14,7 +14,7 @@ export class Addresses extends RootCommand implements LeafCommand {
   public chequebookAddress!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     this.nodeAddresses = await this.beeDebug.getNodeAddresses()
     this.chequebookAddress = (await this.beeDebug.getChequebookAddress()).chequebookAddress

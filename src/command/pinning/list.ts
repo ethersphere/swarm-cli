@@ -11,7 +11,7 @@ export class List extends PinningCommand implements LeafCommand {
   public readonly description = 'List pinned chunks'
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     this.console.info('Getting pinned chunks...')
 

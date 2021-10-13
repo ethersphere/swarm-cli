@@ -12,14 +12,13 @@ export class Unpin extends PinningCommand implements LeafCommand {
   public address!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     try {
       await this.bee.unpin(this.address)
       this.console.log('Unpinned successfully')
     } catch (error) {
-      this.console.error('Could not unpin ' + this.address)
-      this.console.printBeeError(error, { notFoundMessage: 'No pinned chunk found with that address.' })
+      this.console.printBeeError(error, { notFoundMessage: `No root chunk found with address ${this.address}` })
     }
   }
 }

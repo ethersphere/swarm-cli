@@ -9,6 +9,8 @@
 
 **Warning: This project is in alpha state. There might (and most probably will) be changes in the future to its API and working. Also, no guarantees can be made about its stability, efficiency, and security at this stage.**
 
+This project is intended to be used with **Bee version 1.1.0**. Using it with older or newer Bee versions is not recommended and may not work. Stay up to date by joining the [official Discord](https://discord.gg/GU22h2utj6) and by keeping an eye on the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
+
 # Table of Contents
 
 * [Swarm-CLI](#swarm-cli)
@@ -31,6 +33,7 @@
       * [Stamp Picker](#stamp-picker)
       * [Identity Picker](#identity-picker)
       * [Human Readable Topics](#human-readable-topics)
+      * [Manifest address scheme](#manifest-address-scheme)
       * [Automating tasks with Swarm-CLI](#automating-tasks-with-swarm-cli)
          * [Connectivity](#connectivity)
          * [Postage Stamps](#postage-stamps)
@@ -66,19 +69,30 @@
 > Manage your Bee node and interact with the Swarm network via the CLI
 
 The goal of this project is to handle most of the Swarm operations through CLI at some point in the future.
-For currently supported operations, see [Commands](##Commands) section.
+
+For the currently supported operations, see the [Commands](#commands) section.
 
 ## Installation
 
 ### From npm
 
+To install globally (requires `npm root --global` to be writable):
+
 ```sh
-npm install -g @ethersphere/swarm-cli
+npm install --global @ethersphere/swarm-cli
+```
+
+To install locally:
+
+```sh
+cd [some directory for nodejs files]
+npm install @ethersphere/swarm-cli
+./node_modules/.bin/swarm-cli --help
 ```
 
 ### From source
 
-See the [Development](##Development) section.
+See the [Development](#development) section.
 
 ## Usage
 
@@ -93,8 +107,7 @@ Running a command with the `--help` option prints out the usage of a command.
 Running `swarm-cli` without arguments prints the available commands:
 
 ```
-$ swarm-cli
-Swarm CLI 0.10.0 - Manage your Bee node and interact with the Swarm network via the CLI
+Swarm CLI 1.3.0 - Manage your Bee node and interact with the Swarm network via the CLI
 
 █ Usage:
 
@@ -108,17 +121,17 @@ feed       Upload, update and view feeds
 cheque     Deposit, withdraw and manage cheques
 stamp      Buy, list and show postage stamps
 pss        Send, receive, or subscribe to PSS messages
+manifest   Operate on manifests
 
 Run 'swarm-cli GROUP --help' to see available commands in a group
 
 █ Available Commands:
 
-upload   Upload file to Swarm
-status   Check API availability and Bee compatibility
+upload      Upload file to Swarm 
+status      Check API availability and Bee compatibility
 addresses   Display the addresses of the Bee node
 
 Run 'swarm-cli COMMAND --help' for more information on a command
-
 ```
 
 ## Example usage
@@ -250,6 +263,26 @@ This is also indicated in the `--help` section:
 Only one is required: [topic] or [topic-string]
 ```
 
+### Manifest address scheme
+
+The `manifest` commands enable low-level operation on manifests. These always require a root manifest reference (hash) argument as the input. Some commands, however, work with subparts of the manifest. A few examples are: downloading only a folder from a manifest, listing files only under a specific path in a manifest, and adding files or folders not to the root of the manifest, but under some path.
+
+These can be achieved by using the `bzz://<hash>/<path>` scheme in the `<address>` argument as follows:
+
+List entries under the `/command/pss` prefix in manifest `1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f`
+
+```
+swarm-cli manifest list bzz://1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f/command/pss
+```
+
+Download `README.md` from manifest `1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f`
+
+```
+swarm-cli manifest download bzz://1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f/README.md
+```
+
+> Note: The `bzz://` protocol can be omitted.
+
 ### Automating tasks with Swarm-CLI
 
 Running `swarm-cli` with the flag `--quiet` (or `-q` for short) disables all interactive features, and makes commands print information in an easily parsable format. The exit code also indicates whether running the command was successful or not. These may be useful for automating tasks both in CI environments and in your terminal too.
@@ -333,24 +366,30 @@ With specific system environment variables you can alter the behaviour of the CL
 
 # Development
 
-After cloning the project, install dependencies with:
+After the project has been cloned, the dependencies must be
+installed. Run the following in the project folder:
 
 ```sh
- $ npm i
+ $ npm install
 ```
 
-In order to compile NodeJS code run
+Then you need to compile the TypeScript code:
 
 ```sh
  $ npm run compile
 ```
 
-and you can try out the `swarm-cli` CLI after run command
+To make the local `swarm-cli` files in the `dist/` directory available as a global package:
 
 ```sh
  $ npm link
 ```
-in your project folder.
+
+If all went well you should be able to run `swarm-cli`.
+
+If `npm link` fails, or you don't want to install anything, then you
+can use `node dist/index.js` to run `swarm-cli` from the checked out
+directory.
 
 # Contribute
 
@@ -363,6 +402,8 @@ There are some ways you can make this module better:
 
 - [nugaon](https://github.com/nugaon)
 - [Cafe137](https://github.com/Cafe137)
+
+See what "Maintainer" means [here](https://github.com/ethersphere/repo-maintainer).
 
 # License
 

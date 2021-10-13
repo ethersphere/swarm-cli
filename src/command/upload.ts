@@ -4,6 +4,7 @@ import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { exit } from 'process'
+import { setCurlStore } from '../curl'
 import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
 import { getMime } from '../utils/mime'
@@ -98,7 +99,7 @@ export class Upload extends RootCommand implements LeafCommand {
   public hash!: string
 
   public async run(usedFromOtherCommand = false): Promise<void> {
-    this.initCommand()
+    await super.init()
 
     if (this.hasUnsupportedGatewayOptions()) {
       exit(1)
@@ -113,7 +114,7 @@ export class Upload extends RootCommand implements LeafCommand {
       if (isGateway(this.beeApiUrl)) {
         this.stamp = '0'.repeat(64)
       } else {
-        this.stamp = await pickStamp(this.bee, this.console)
+        this.stamp = await pickStamp(this.beeDebug, this.console)
       }
     }
 
@@ -158,7 +159,6 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.log(createKeyValue('Swarm hash', this.hash))
 
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
-    //refresh tag before populate tracking
 
     if (this.sync && tag) {
       tag = await this.bee.retrieveTag(tag.uid)
@@ -171,41 +171,53 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
 
-      if (!isGateway(this.beeApiUrl) && !this.quiet) {
-        printEnrichedStamp(await this.bee.getPostageBatch(this.stamp), this.console)
+      if (!isGateway(this.beeApiUrl) && !this.quiet && this.debugApiIsUsable()) {
+        printEnrichedStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console)
       }
     }
   }
 
-  /** Init additional properties of class, that are not handled by the CLI framework */
-  private initCommand(): void {
-    super.init()
-  }
-
   private async uploadFolder(postageBatchId: string, tag?: Tag): Promise<string> {
-    this.hash = await this.bee.uploadFilesFromDirectory(postageBatchId, this.path, {
+    setCurlStore({
+      path: this.path,
+      folder: true,
+      type: 'buffer',
+    })
+    const { reference } = await this.bee.uploadFilesFromDirectory(postageBatchId, this.path, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
       pin: this.pin,
       encrypt: this.encrypt,
     })
+    this.hash = reference
 
     return `${this.bee.url}/bzz/${this.hash}/`
   }
 
   private async uploadSingleFile(postageBatchId: string, tag?: Tag): Promise<string> {
     const contentType = this.contentType || getMime(this.path) || undefined
-    const { size } = FS.statSync(this.path)
-    const readable = FS.createReadStream(this.path)
-    const parsedPath = parse(this.path)
-    this.hash = await this.bee.uploadFile(postageBatchId, readable, this.dropName ? undefined : parsedPath.base, {
-      tag: tag && tag.uid,
-      pin: this.pin,
-      encrypt: this.encrypt,
-      size,
-      contentType,
+    setCurlStore({
+      path: this.path,
+      folder: false,
+      type: 'stream',
     })
+    const { size } = FS.statSync(this.path)
+    const buffer = FS.readFileSync(this.path)
+    const parsedPath = parse(this.path)
+    const { reference } = await this.bee.uploadFile(
+      postageBatchId,
+      buffer,
+      this.dropName ? undefined : parsedPath.base,
+      {
+        tag: tag && tag.uid,
+        pin: this.pin,
+        encrypt: this.encrypt,
+        size,
+        contentType,
+      },
+    )
+    this.hash = reference
 
     return `${this.bee.url}/bzz/${this.hash}/`
   }
@@ -287,7 +299,7 @@ export class Upload extends RootCommand implements LeafCommand {
     isDirectory: boolean
   }> {
     const stats = FS.lstatSync(this.path)
-    const size = stats.isDirectory() ? await Utils.Collections.getFolderSize(this.path) : stats.size
+    const size = stats.isDirectory() ? await Utils.getFolderSize(this.path) : stats.size
     this.console.verbose('Upload size is approximately ' + (size / 1000 / 1000).toFixed(2) + ' megabytes')
 
     return {
@@ -345,7 +357,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async getConnectedPeers(): Promise<number | null> {
     try {
-      const { connected } = await this.beeDebug.getTopology()
+      const { connected } = await this._beeDebug.getTopology()
 
       return connected
     } catch {

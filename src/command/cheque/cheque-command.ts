@@ -1,5 +1,3 @@
-import chalk from 'chalk'
-import { exit } from 'process'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 
@@ -9,27 +7,6 @@ interface Cashable {
 }
 
 export class ChequeCommand extends RootCommand {
-  protected async requireHealthyDebugApi(): Promise<void | never> {
-    if (!(await this.checkDebugApiHealth())) {
-      exit(1)
-    }
-  }
-
-  protected async checkDebugApiHealth(): Promise<boolean> {
-    try {
-      this.console.verbose(chalk.dim('Checking Debug API health...'))
-      const health = await this.beeDebug.getHealth()
-
-      return health.status === 'ok'
-    } catch (error) {
-      this.console.error('Could not reach Debug API at ' + this.beeDebugApiUrl)
-      this.console.error('Make sure you have the Debug API enabled in your Bee config')
-      this.console.error('or correct the URL with the --bee-debug-api-url option.')
-
-      return false
-    }
-  }
-
   protected async getFilteredCheques(minimum: bigint): Promise<Cashable[]> {
     const cheques = await this.getCashableCheques()
 

@@ -13,8 +13,8 @@ export class List extends RootCommand implements LeafCommand {
 
   public readonly description = 'List keypairs which can be used to sign chunks'
 
-  public run(): void {
-    this.initCommand()
+  public async run(): Promise<void> {
+    await super.init()
 
     this.console.info('List of your identities')
     this.console.divider('=')
@@ -41,10 +41,5 @@ export class List extends RootCommand implements LeafCommand {
       this.console.quiet(identityName, getPrintableIdentityType(identity.identityType), address)
       this.console.divider()
     }
-  }
-
-  /** Init additional properties of class, that are not handled by the CLI framework */
-  private initCommand(): void {
-    super.init()
   }
 }

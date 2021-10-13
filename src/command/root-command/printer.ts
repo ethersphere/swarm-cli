@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import chalk from 'chalk'
 
+export const FORMATTED_ERROR = chalk.red.bold('ERROR')
+
 export const Printer = {
   emptyFunction: (): void => {
     return
@@ -9,7 +11,7 @@ export const Printer = {
     console.log(char.repeat(process.stdout.columns))
   },
   error: (message: string, ...args: unknown[]): void => {
-    console.error(chalk.bold.white.bgRed(message), ...args)
+    console.error(message, ...args)
   },
   log: (message: string, ...args: unknown[]): void => {
     console.log(message, ...args)

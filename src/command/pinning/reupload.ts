@@ -18,7 +18,7 @@ export class Reupload extends PinningCommand implements LeafCommand {
   public address!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     this.console.log('Reuploading ' + this.address + '...')
     try {

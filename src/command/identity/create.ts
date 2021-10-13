@@ -34,7 +34,7 @@ export class Create extends RootCommand implements LeafCommand {
   public wallet!: Wallet
 
   public async run(): Promise<void> {
-    this.initCommand()
+    await super.init()
 
     //simple wallet
     const privateKey = randomBytes(32)
@@ -84,10 +84,5 @@ export class Create extends RootCommand implements LeafCommand {
     this.console.log(createKeyValue('Private key', this.wallet.getPrivateKeyString()))
     this.console.log(createKeyValue('Public key', this.wallet.getPublicKeyString()))
     this.console.log(createKeyValue('Address', this.wallet.getAddressString()))
-  }
-
-  /** Init additional properties of class, that are not handled by the CLI framework */
-  private initCommand(): void {
-    super.init()
   }
 }

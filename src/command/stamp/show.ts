@@ -12,15 +12,15 @@ export class Show extends StampCommand implements LeafCommand {
   public stamp!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.bee, this.console)
+      this.stamp = await pickStamp(this.beeDebug, this.console)
     }
 
     this.console.verbose(`Looking up postage stamp ${this.stamp}...`)
 
-    const stamp = await this.bee.getPostageBatch(this.stamp)
+    const stamp = await this.beeDebug.getPostageBatch(this.stamp)
 
     printEnrichedStamp(stamp, this.console)
   }
