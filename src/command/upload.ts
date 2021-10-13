@@ -90,7 +90,6 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({
     key: 'content-type',
     description: 'Content type when uploading a single file',
-    default: false,
   })
   public contentType!: string
 
