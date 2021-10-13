@@ -36,8 +36,8 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
 
   it('should detect content type', async () => {
     await invokeTestCli(['upload', 'test/testpage/index.html', '--curl', ...getStampOption()])
-    expect(consoleMessages[1]).toContain('-H "Content-Type: text/html"')
-    expect(consoleMessages[1]).not.toContain('content-type')
+    expect(consoleMessages[1]).toContain('-H "content-type: text/html"')
+    expect(consoleMessages[1]).not.toContain('Content-Type')
   })
 
   it('should use custom content type', async () => {
@@ -49,13 +49,13 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
       '--curl',
       ...getStampOption(),
     ])
-    expect(consoleMessages[1]).toContain('-H "Content-Type: swarm/bzz"')
-    expect(consoleMessages[1]).not.toContain('content-type')
+    expect(consoleMessages[1]).toContain('-H "content-type: swarm/bzz"')
+    expect(consoleMessages[1]).not.toContain('Content-Type')
   })
 
   it('should fall back with undetectable content type', async () => {
     await invokeTestCli(['upload', 'test/testpage/swarm.bzz', '--curl', ...getStampOption()])
-    expect(consoleMessages[1]).toContain('-H "Content-Type: application/x-www-form-urlencoded"')
-    expect(consoleMessages[1]).not.toContain('content-type')
+    expect(consoleMessages[1]).toContain('-H "content-type: application/octet-stream"')
+    expect(consoleMessages[1]).not.toContain('Content-Type')
   })
 })
