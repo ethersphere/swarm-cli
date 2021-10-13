@@ -34,15 +34,13 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
     expect(consoleMessages[1]).toContain('--data @test/testpage/index.html')
   })
 
-  // TODO https://github.com/ethersphere/bee-js/issues/375
-  it.skip('should detect content type', async () => {
+  it('should detect content type', async () => {
     await invokeTestCli(['upload', 'test/testpage/index.html', '--curl', ...getStampOption()])
     expect(consoleMessages[1]).toContain('-H "Content-Type: text/html"')
     expect(consoleMessages[1]).not.toContain('content-type')
   })
 
-  // TODO https://github.com/ethersphere/bee-js/issues/375
-  it.skip('should use custom content type', async () => {
+  it('should use custom content type', async () => {
     await invokeTestCli([
       'upload',
       'test/testpage/index.html',
@@ -55,8 +53,7 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
     expect(consoleMessages[1]).not.toContain('content-type')
   })
 
-  // TODO https://github.com/ethersphere/bee-js/issues/375
-  it.skip('should fall back with undetectable content type', async () => {
+  it('should fall back with undetectable content type', async () => {
     await invokeTestCli(['upload', 'test/testpage/swarm.bzz', '--curl', ...getStampOption()])
     expect(consoleMessages[1]).toContain('-H "Content-Type: application/x-www-form-urlencoded"')
     expect(consoleMessages[1]).not.toContain('content-type')
