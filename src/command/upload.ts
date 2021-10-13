@@ -7,6 +7,7 @@ import { exit } from 'process'
 import { setCurlStore } from '../curl'
 import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, sleep } from '../utils'
+import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
@@ -85,6 +86,12 @@ export class Upload extends RootCommand implements LeafCommand {
     description: 'Default error file on bzz request without with wrong filepath',
   })
   public errorDocument!: string
+
+  @Option({
+    key: 'content-type',
+    description: 'Content type when uploading a single file',
+  })
+  public contentType!: string
 
   // CLASS FIELDS
 
@@ -188,6 +195,7 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadSingleFile(postageBatchId: string, tag?: Tag): Promise<string> {
+    const contentType = this.contentType || getMime(this.path) || undefined
     setCurlStore({
       path: this.path,
       folder: false,
@@ -205,6 +213,7 @@ export class Upload extends RootCommand implements LeafCommand {
         pin: this.pin,
         encrypt: this.encrypt,
         size,
+        contentType,
       },
     )
     this.hash = reference

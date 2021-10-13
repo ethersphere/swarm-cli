@@ -33,4 +33,29 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
     expect(consoleMessages[1]).toContain('curl -X POST "http://localhost:1633/bzz" ')
     expect(consoleMessages[1]).toContain('--data @test/testpage/index.html')
   })
+
+  it('should detect content type', async () => {
+    await invokeTestCli(['upload', 'test/testpage/index.html', '--curl', ...getStampOption()])
+    expect(consoleMessages[1]).toContain('-H "content-type: text/html"')
+    expect(consoleMessages[1]).not.toContain('Content-Type')
+  })
+
+  it('should use custom content type', async () => {
+    await invokeTestCli([
+      'upload',
+      'test/testpage/index.html',
+      '--content-type',
+      'swarm/bzz',
+      '--curl',
+      ...getStampOption(),
+    ])
+    expect(consoleMessages[1]).toContain('-H "content-type: swarm/bzz"')
+    expect(consoleMessages[1]).not.toContain('Content-Type')
+  })
+
+  it('should fall back with undetectable content type', async () => {
+    await invokeTestCli(['upload', 'test/testpage/swarm.bzz', '--curl', ...getStampOption()])
+    expect(consoleMessages[1]).toContain('-H "content-type: application/octet-stream"')
+    expect(consoleMessages[1]).not.toContain('Content-Type')
+  })
 })
