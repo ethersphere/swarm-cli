@@ -132,5 +132,25 @@ describeCommand(
       expect(getNthLastMessage(2)).toContain('Depth')
       expect(getNthLastMessage(2)).toContain('20')
     })
+
+    it('should top up stamp', async () => {
+      const execution = await invokeTestCli([
+        'stamp',
+        'buy',
+        '--amount',
+        '1K',
+        '--depth',
+        '19',
+        '--gas-price',
+        '100_000_000',
+      ])
+      const command = execution.runnable as Buy
+      const { postageBatchId } = command
+      await sleep(11_000)
+      consoleMessages.length = 0
+      await invokeTestCli(['stamp', 'topup', '--stamp', postageBatchId, '--amount', '1k'])
+      expect(getNthLastMessage(3)).toContain('Amount')
+      expect(getNthLastMessage(3)).toContain('2000')
+    })
   },
 )
