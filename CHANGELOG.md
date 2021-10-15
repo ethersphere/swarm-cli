@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.5.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.4.0...v1.5.0) (2021-10-15)
+
+
+### Features
+
+* add bee-js 2.0.0 compatibility ([#260](https://www.github.com/ethersphere/swarm-cli/issues/260)) ([419ef8d](https://www.github.com/ethersphere/swarm-cli/commit/419ef8d8e3a7e8ff6dc5ec5e1be7a1458756457b))
+* add content-type flag and mime detection ([#221](https://www.github.com/ethersphere/swarm-cli/issues/221)) ([ca17ddf](https://www.github.com/ethersphere/swarm-cli/commit/ca17ddf922e52ba2d996c108360e4a5be01e8b39))
+* add dilute and topup stamp commands ([#267](https://www.github.com/ethersphere/swarm-cli/issues/267)) ([2f55c68](https://www.github.com/ethersphere/swarm-cli/commit/2f55c68ed05154ad9bb52a74151fd6c680859cb7))
+* improve error message design ([#262](https://www.github.com/ethersphere/swarm-cli/issues/262)) ([b19957d](https://www.github.com/ethersphere/swarm-cli/commit/b19957d199a5cd09ef5191912b0a9d96a33bfa7a))
+
+
+### Bug Fixes
+
+* print relevant error message for bad manifest references ([#264](https://www.github.com/ethersphere/swarm-cli/issues/264)) ([2e613a0](https://www.github.com/ethersphere/swarm-cli/commit/2e613a053cddddd982865893f927301d01dfe5f2))
+
 ## [1.4.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.3.0...v1.4.0) (2021-09-29)
 
 
