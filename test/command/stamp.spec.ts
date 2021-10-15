@@ -149,8 +149,8 @@ describeCommand(
       await sleep(11_000)
       consoleMessages.length = 0
       await invokeTestCli(['stamp', 'topup', '--stamp', postageBatchId, '--amount', '1k'])
-      expect(getNthLastMessage(3)).toContain('Amount')
-      expect(getNthLastMessage(3)).toContain('2000')
+      expect(getNthLastMessage(1)).toContain('Amount')
+      expect(getNthLastMessage(1)).toContain('2000')
     })
   },
 )
