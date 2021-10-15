@@ -129,6 +129,7 @@ describeCommand(
       expect(hasMessageContaining('This postage stamp already has depth 19. The new value must be higher.')).toBe(true)
       consoleMessages.length = 0
       await invokeTestCli(['stamp', 'dilute', '--stamp', postageBatchId, '--depth', '20'])
+      expect(getNthLastMessage(2)).toContain('Depth')
       expect(getNthLastMessage(2)).toContain('20')
     })
   },
