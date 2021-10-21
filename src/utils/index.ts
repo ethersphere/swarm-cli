@@ -109,3 +109,7 @@ export function extendObject(destination: Record<string, unknown>, source: Recor
     destination[key] = value
   }
 }
+
+export function referenceToHex(reference: Reference | Uint8Array): string {
+  return Buffer.from(reference).toString('hex')
+}

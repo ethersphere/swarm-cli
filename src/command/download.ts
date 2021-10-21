@@ -1,8 +1,8 @@
 import { Data } from '@ethersphere/bee-js'
 import { writeFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { loadAllNodes, MantarayNode, Reference } from 'mantaray-js'
-import { extendObject } from '../utils'
+import { loadAllNodes, MantarayNode } from 'mantaray-js'
+import { extendObject, referenceToHex } from '../utils'
 import { Download as ManifestDownload } from './manifest/download'
 import { RootCommand } from './root-command'
 
@@ -56,10 +56,6 @@ export class Download extends RootCommand implements LeafCommand {
   }
 
   private load(reference: Uint8Array): Promise<Data> {
-    return this.bee.downloadData(this.decodeReference(reference))
-  }
-
-  private decodeReference(reference: Reference | Uint8Array): string {
-    return Buffer.from(reference).toString('hex')
+    return this.bee.downloadData(referenceToHex(reference))
   }
 }
