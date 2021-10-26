@@ -105,12 +105,6 @@ export function getFieldOrNull<T>(some: unknown, key: string): T | null {
   return typeof some === 'object' && some !== null ? Reflect.get(some, key) : null
 }
 
-export function extendObject(destination: Record<string, unknown>, source: Record<string, unknown>): void {
-  for (const [key, value] of Object.entries(source)) {
-    destination[key] = value
-  }
-}
-
 export function referenceToHex(reference: Reference | Uint8Array): string {
   return Buffer.from(reference).toString('hex')
 }
