@@ -300,4 +300,13 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
         ' Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
     ])
   })
+
+  it('should be able to upload and download folder with default index.html', async () => {
+    const invocation = await invokeTestCli(['upload', 'test/testpage', ...getStampOption()])
+    const { hash } = invocation.runnable as Upload
+    await invokeTestCli(['manifest', 'download', hash])
+    expect(consoleMessages[0]).toContain('images/swarm.png')
+    expect(consoleMessages[1]).toContain('index.html')
+    expect(consoleMessages[2]).toContain('swarm.bzz')
+  })
 })
