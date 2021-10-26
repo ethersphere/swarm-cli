@@ -1,3 +1,4 @@
+import { Reference } from '@ethersphere/bee-js'
 import { promises, statSync } from 'fs'
 import { join } from 'path'
 
