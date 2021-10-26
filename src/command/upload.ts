@@ -201,7 +201,6 @@ export class Upload extends RootCommand implements LeafCommand {
       folder: false,
       type: 'stream',
     })
-    const { size } = FS.statSync(this.path)
     const buffer = FS.readFileSync(this.path)
     const parsedPath = parse(this.path)
     const { reference } = await this.bee.uploadFile(
@@ -212,7 +211,6 @@ export class Upload extends RootCommand implements LeafCommand {
         tag: tag && tag.uid,
         pin: this.pin,
         encrypt: this.encrypt,
-        size,
         contentType,
       },
     )
