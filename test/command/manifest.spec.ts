@@ -304,8 +304,8 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should be able to upload and download folder with default index.html', async () => {
     const invocation = await invokeTestCli(['upload', 'test/testpage', ...getStampOption()])
     const { hash } = invocation.runnable as Upload
-    await invokeTestCli(['manifest', 'download', hash])
     consoleMessages.length = 0
+    await invokeTestCli(['manifest', 'download', hash])
     expect(consoleMessages[0]).toContain('images/swarm.png')
     expect(consoleMessages[1]).toContain('index.html')
     expect(consoleMessages[2]).toContain('swarm.bzz')

@@ -25,6 +25,10 @@ export class Download extends ManifestCommand implements LeafCommand {
       if (!fork.node.getEntry) {
         continue
       }
+
+      if (Buffer.from(fork.node.getEntry).toString('hex') === '0'.repeat(64)) {
+        continue
+      }
       const parsedForkPath = parse(fork.path)
       const data = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
       this.console.verbose('Downloading ' + fork.path)
