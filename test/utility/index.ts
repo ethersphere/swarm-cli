@@ -47,11 +47,10 @@ export function describeCommand(
       consoleMessages.push(message)
     })
 
-    global.console.log = jest.fn(message => {
-      consoleMessages.push(message)
-    })
-    global.console.error = jest.fn(message => {
-      consoleMessages.push(message)
+    global.process.stdout.write = jest.fn(message => {
+      consoleMessages.push(message.toString())
+
+      return true
     })
 
     jest.spyOn(process, 'exit').mockImplementation(() => {
