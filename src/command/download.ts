@@ -1,7 +1,7 @@
 import { Data } from '@ethersphere/bee-js'
 import { writeFileSync } from 'fs'
 import { Aggregation, LeafCommand, Option } from 'furious-commander'
-import { loadAllNodes, MantarayNode } from 'mantaray-js'
+import { MantarayNode } from 'mantaray-js'
 import { referenceToHex } from '../utils'
 import { BzzAddress } from '../utils/bzz-address'
 import { Download as ManifestDownload } from './manifest/download'
@@ -50,7 +50,6 @@ export class Download extends RootCommand implements LeafCommand {
       const response = await this.bee.downloadData(this.address.hash)
       const node = new MantarayNode()
       node.deserialize(response)
-      await loadAllNodes(this.load.bind(this), node)
 
       return true
     } catch {
