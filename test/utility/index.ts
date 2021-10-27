@@ -48,7 +48,11 @@ export function describeCommand(
     })
 
     global.process.stdout.write = jest.fn(message => {
-      consoleMessages.push(message.toString())
+      if (typeof message === 'string') {
+        consoleMessages.push(message)
+      } else {
+        consoleMessages.push(new TextDecoder().decode(message))
+      }
 
       return true
     })
