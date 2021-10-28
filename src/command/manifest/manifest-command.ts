@@ -7,7 +7,7 @@ import { RootCommand } from '../root-command'
 // FIXME: review these error messages in mantaray-js
 const GENERALISED_ERROR_MESSAGES = [
   'Wrong mantaray version',
-  'serialised input too short',
+  'The serialised input is too short',
   'Wrong reference length. Entry only can be 32 or 64 length in bytes',
 ]
 

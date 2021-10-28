@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import { mkdirSync, writeFileSync } from 'fs'
-import { Argument, LeafCommand } from 'furious-commander'
+import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { directoryExists } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
@@ -16,21 +16,26 @@ export class Download extends ManifestCommand implements LeafCommand {
   @Argument({ key: 'destination', description: 'Destination folder' })
   public destination!: string
 
+  @Option({ key: 'stdout', type: 'boolean', description: 'Print to stdout (single files only)' })
+  public stdout!: boolean
+
   public async run(): Promise<void> {
     await super.init()
 
     const address = new BzzAddress(this.bzzUrl)
-    const forks = await this.loadAllValueForks(address.hash, address.path)
+    const forks = (await this.loadAllValueForks(address.hash, address.path)).filter(
+      fork => fork.node.entry && fork.node.path !== '/',
+    )
     for (const fork of forks) {
-      if (!fork.node.getEntry) {
-        continue
-      }
-
-      if (Buffer.from(fork.node.getEntry).toString('hex') === '0'.repeat(64)) {
-        continue
-      }
       const parsedForkPath = parse(fork.path)
       const data = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
+
+      if (forks.length === 1 && this.stdout) {
+        process.stdout.write(data)
+
+        return
+      }
+
       this.console.verbose('Downloading ' + fork.path)
       const destination = this.destination || address.hash
       const destinationFolder = join(destination, parsedForkPath.dir)

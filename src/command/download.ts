@@ -1,6 +1,6 @@
 import { Data } from '@ethersphere/bee-js'
 import { writeFileSync } from 'fs'
-import { Aggregation, LeafCommand, Option } from 'furious-commander'
+import { Aggregation, LeafCommand } from 'furious-commander'
 import { MantarayNode } from 'mantaray-js'
 import { referenceToHex } from '../utils'
 import { BzzAddress } from '../utils/bzz-address'
@@ -15,9 +15,6 @@ export class Download extends RootCommand implements LeafCommand {
   @Aggregation(['manifest download'])
   public manifestDownload!: ManifestDownload
 
-  @Option({ key: 'stdout', type: 'boolean', description: 'Print to stdout (single files only)' })
-  public stdout!: boolean
-
   private address!: BzzAddress
 
   public async run(): Promise<void> {
@@ -26,7 +23,6 @@ export class Download extends RootCommand implements LeafCommand {
     this.address = new BzzAddress(this.manifestDownload.bzzUrl)
 
     if (await this.isManifest()) {
-      this.console.log('Given address is a manifest - downloading...')
       await this.manifestDownload.run()
     } else {
       await this.downloadFile()
@@ -37,7 +33,7 @@ export class Download extends RootCommand implements LeafCommand {
     const response = await this.bee.downloadFile(this.address.hash)
     const { name, data } = response
 
-    if (this.stdout) {
+    if (this.manifestDownload.stdout) {
       process.stdout.write(data)
     } else {
       const path = this.manifestDownload.destination || name || this.address.hash
