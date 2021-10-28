@@ -1,8 +1,9 @@
 import chalk from 'chalk'
 import { mkdirSync, writeFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Reference } from 'mantaray-js'
 import { join, parse } from 'path'
-import { directoryExists } from '../../utils'
+import { directoryExists, referenceToHex } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
 import { ManifestCommand } from './manifest-command'
 
@@ -24,11 +25,11 @@ export class Download extends ManifestCommand implements LeafCommand {
 
     const address = new BzzAddress(this.bzzUrl)
     const forks = (await this.loadAllValueForks(address.hash, address.path)).filter(
-      fork => fork.node.entry && fork.node.path !== '/',
+      fork => fork.node.getEntry && fork.path !== '/',
     )
     for (const fork of forks) {
       const parsedForkPath = parse(fork.path)
-      const data = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
+      const data = await this.bee.downloadData(referenceToHex(fork.node.getEntry as Reference))
 
       if (forks.length === 1 && this.stdout) {
         process.stdout.write(data)
