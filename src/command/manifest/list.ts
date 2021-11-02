@@ -8,7 +8,7 @@ export class List extends ManifestCommand implements LeafCommand {
   public readonly aliases = ['ls']
   public readonly description = 'List manifest content'
 
-  @Argument({ key: 'address', description: 'Root manifest reference', required: true })
+  @Argument({ key: 'address', description: 'Manifest reference (with optional path)', required: true })
   public bzzUrl!: string
 
   @Option({ key: 'print-bzz', description: 'Print /bzz urls', type: 'boolean' })

@@ -1,8 +1,6 @@
-import { Data } from '@ethersphere/bee-js'
-import { writeFileSync } from 'fs'
+import fs from 'fs'
 import { Aggregation, LeafCommand } from 'furious-commander'
 import { MantarayNode } from 'mantaray-js'
-import { referenceToHex } from '../utils'
 import { BzzAddress } from '../utils/bzz-address'
 import { Download as ManifestDownload } from './manifest/download'
 import { RootCommand } from './root-command'
@@ -37,7 +35,7 @@ export class Download extends RootCommand implements LeafCommand {
       process.stdout.write(data)
     } else {
       const path = this.manifestDownload.destination || name || this.address.hash
-      writeFileSync(path, data)
+      await fs.promises.writeFile(path, data)
     }
   }
 
@@ -51,9 +49,5 @@ export class Download extends RootCommand implements LeafCommand {
     } catch {
       return false
     }
-  }
-
-  private load(reference: Uint8Array): Promise<Data> {
-    return this.bee.downloadData(referenceToHex(reference))
   }
 }

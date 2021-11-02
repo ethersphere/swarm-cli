@@ -11,7 +11,7 @@ const GENERALISED_ERROR_MESSAGES = [
   'Wrong reference length. Entry only can be 32 or 64 length in bytes',
 ]
 
-interface EnrichedFork extends MantarayFork {
+export interface EnrichedFork extends MantarayFork {
   path: string
   fsPath: string
   /**
