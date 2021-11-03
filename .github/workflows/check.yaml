@@ -52,3 +52,9 @@ jobs:
 
       - name: Build nodejs code
         run: npm run compile
+
+      - name: Check and update the supported Bee version
+        uses: ethersphere/update-supported-bee-action@master
+#        if: github.ref == 'refs/heads/master'
+        with:
+          token: ${{ secrets.REPO_GHA_PAT }}
