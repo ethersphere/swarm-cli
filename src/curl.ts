@@ -1,4 +1,5 @@
 import { BeeRequest } from '@ethersphere/bee-js'
+import chalk from 'chalk'
 import { printer } from './printer'
 
 interface CurlStore {
@@ -26,7 +27,7 @@ export function printCurlCommand(request: BeeRequest): void {
   const queryString = queryParameters ? '?' + queryParameters : ''
   const methodString = request.method.toUpperCase() === 'GET' ? '' : ` -X ${request.method?.toUpperCase()}`
   const dataString = getDataString(request)
-  const command = `curl${methodString} "${request.url}${queryString}" ${headers}${dataString}`
+  const command = chalk.cyan(`curl${methodString} "${request.url}${queryString}" ${headers}${dataString}`)
   printer.print(command)
 }
 
