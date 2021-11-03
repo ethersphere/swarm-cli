@@ -1,17 +1,17 @@
 import type { Data } from '@ethersphere/bee-js'
 import { loadAllNodes, MantarayFork, MantarayNode, Reference, StorageSaver } from 'mantaray-js'
 import { join } from 'path'
-import { getFieldOrNull } from '../../utils'
+import { getFieldOrNull, referenceToHex } from '../../utils'
 import { RootCommand } from '../root-command'
 
 // FIXME: review these error messages in mantaray-js
 const GENERALISED_ERROR_MESSAGES = [
   'Wrong mantaray version',
-  'serialised input too short',
+  'The serialised input is too short',
   'Wrong reference length. Entry only can be 32 or 64 length in bytes',
 ]
 
-interface EnrichedFork extends MantarayFork {
+export interface EnrichedFork extends MantarayFork {
   path: string
   fsPath: string
   /**
@@ -106,11 +106,7 @@ export class ManifestCommand extends RootCommand {
   }
 
   private load(reference: Uint8Array): Promise<Data> {
-    return this.bee.downloadData(this.decodeReference(reference))
-  }
-
-  private decodeReference(reference: Reference | Uint8Array): string {
-    return Buffer.from(reference).toString('hex')
+    return this.bee.downloadData(referenceToHex(reference))
   }
 
   private createSaver(stamp: string): StorageSaver {
@@ -155,7 +151,7 @@ export class ManifestCommand extends RootCommand {
     for (const fork of Object.values(node.forks)) {
       const path = currentPath + Buffer.from(fork.prefix).toString('utf-8')
 
-      const reference = this.decodeReference(fork.node.getEntry as Reference)
+      const reference = referenceToHex(fork.node.getEntry as Reference)
 
       if (path.startsWith(prefix)) {
         const match = await this.getNodeAtReference(reference)

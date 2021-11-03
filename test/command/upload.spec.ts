@@ -127,4 +127,9 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining(':1633/bzz')).toBeTruthy()
     expect(hasMessageContaining('//bzz')).toBeFalsy()
   })
+
+  it('should be able to upload text file', async () => {
+    await invokeTestCli(['upload', 'test/message.txt', ...getStampOption()])
+    expect(consoleMessages[0]).toContain('Swarm hash')
+  })
 })
