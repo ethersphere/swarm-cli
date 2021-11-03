@@ -82,6 +82,36 @@ describeCommand(
       expect(hasMessageContaining('Feed Manifest URL')).toBeTruthy()
       expect(hasMessageContaining('/bzz/')).toBeTruthy()
     })
+
+    it('should increment number of updates for sequence feeds', async () => {
+      await invokeTestCli(['identity', 'create', 'd12617', '--password', 'test'])
+      await invokeTestCli([
+        'feed',
+        'upload',
+        'README.md',
+        '--identity',
+        'd12617',
+        '--password',
+        'test',
+        ...getStampOption(),
+      ])
+      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test', ...getStampOption()])
+      expect(getLastMessage()).toContain('Number of Updates')
+      expect(getLastMessage()).toContain('1')
+      await invokeTestCli([
+        'feed',
+        'upload',
+        'CHANGELOG.md',
+        '--identity',
+        'd12617',
+        '--password',
+        'test',
+        ...getStampOption(),
+      ])
+      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test', ...getStampOption()])
+      expect(getLastMessage()).toContain('Number of Updates')
+      expect(getLastMessage()).toContain('2')
+    })
   },
   { configFileName: 'feed' },
 )
