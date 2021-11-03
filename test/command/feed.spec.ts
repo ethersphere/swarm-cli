@@ -5,7 +5,7 @@ import { getStampOption } from '../utility/stamp'
 
 describeCommand(
   'Test Feed command',
-  ({ consoleMessages, getLastMessage, getNthLastMessage, hasMessageContaining }) => {
+  ({ consoleMessages, getLastMessage, hasMessageContaining }) => {
     it('should upload file, update feed and print it', async () => {
       // create identity
       await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
@@ -36,7 +36,7 @@ describeCommand(
         '--quiet',
         ...getStampOption(),
       ])
-      expect(getNthLastMessage(2)).toMatch(/[a-z0-9]{64}/)
+      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
     })
 
     it('should print feed using address only', async () => {
@@ -57,7 +57,7 @@ describeCommand(
       ])
       // print with address
       await invokeTestCli(['feed', 'print', '--address', address, '--quiet', ...getStampOption()])
-      expect(getNthLastMessage(2)).toMatch(/[a-z0-9]{64}/)
+      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
     })
 
     it('should update feeds', async () => {
