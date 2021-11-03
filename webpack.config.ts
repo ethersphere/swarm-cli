@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import Path from 'path'
-import { DefinePlugin, Configuration, WebpackPluginInstance, BannerPlugin } from 'webpack'
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import TerserPlugin from 'terser-webpack-plugin'
+import { BannerPlugin, Configuration, DefinePlugin, WebpackPluginInstance } from 'webpack'
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import PackageJson from './package.json'
 
 interface WebpackEnvParams {
@@ -28,7 +28,7 @@ const base = (env?: Partial<WebpackEnvParams>): Configuration => {
   return {
     bail: Boolean(isProduction),
     mode: env?.mode || 'development',
-    devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
+    devtool: isProduction ? false : 'cheap-module-source-map',
     entry,
     output: {
       path,
