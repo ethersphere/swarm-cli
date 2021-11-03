@@ -5,7 +5,7 @@ import { getStampOption } from '../utility/stamp'
 
 describeCommand(
   'Test Feed command',
-  ({ consoleMessages, getLastMessage, hasMessageContaining }) => {
+  ({ consoleMessages, getLastMessage, getNthLastMessage, hasMessageContaining }) => {
     it('should upload file, update feed and print it', async () => {
       // create identity
       await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
@@ -36,7 +36,7 @@ describeCommand(
         '--quiet',
         ...getStampOption(),
       ])
-      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
+      expect(getNthLastMessage(2)).toMatch(/[a-z0-9]{64}/)
     })
 
     it('should print feed using address only', async () => {
@@ -57,7 +57,7 @@ describeCommand(
       ])
       // print with address
       await invokeTestCli(['feed', 'print', '--address', address, '--quiet', ...getStampOption()])
-      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
+      expect(getNthLastMessage(2)).toMatch(/[a-z0-9]{64}/)
     })
 
     it('should update feeds', async () => {
@@ -81,6 +81,34 @@ describeCommand(
       ])
       expect(hasMessageContaining('Feed Manifest URL')).toBeTruthy()
       expect(hasMessageContaining('/bzz/')).toBeTruthy()
+    })
+
+    it('should increment number of updates for sequence feeds', async () => {
+      await invokeTestCli(['identity', 'create', 'd12617', '--password', 'test'])
+      await invokeTestCli([
+        'feed',
+        'upload',
+        'README.md',
+        '--identity',
+        'd12617',
+        '--password',
+        'test',
+        ...getStampOption(),
+      ])
+      expect(getLastMessage()).toContain('Number of Updates')
+      expect(getLastMessage()).toContain('1')
+      await invokeTestCli([
+        'feed',
+        'upload',
+        'CHANGELOG.md',
+        '--identity',
+        'd12617',
+        '--password',
+        'test',
+        ...getStampOption(),
+      ])
+      expect(getLastMessage()).toContain('Number of Updates')
+      expect(getLastMessage()).toContain('2')
     })
   },
   { configFileName: 'feed' },
