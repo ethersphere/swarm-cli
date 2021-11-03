@@ -32,6 +32,9 @@ export class Download extends ManifestCommand implements LeafCommand {
   }
 
   private async downloadFork(fork: EnrichedFork, address: BzzAddress, isSingleFork: boolean): Promise<void> {
+    if (!isSingleFork || !this.stdout) {
+      this.console.verbose('Downloading ' + fork.path)
+    }
     const parsedForkPath = parse(fork.path)
     const data = await this.bee.downloadData(referenceToHex(fork.node.getEntry as Reference))
 
@@ -41,7 +44,6 @@ export class Download extends ManifestCommand implements LeafCommand {
       return
     }
 
-    this.console.verbose('Downloading ' + fork.path)
     const destination = this.destination || address.hash
     const destinationFolder = join(destination, parsedForkPath.dir)
 
