@@ -7,7 +7,7 @@
 ![](https://img.shields.io/badge/npm-%3E%3D6.0.0-orange.svg?style=flat-square)
 ![](https://img.shields.io/badge/Node.js-%3E%3D12.0.0-orange.svg?style=flat-square)
 
-This project is intended to be used with **Bee version 1.1.0**. Using it with older or newer Bee versions is not recommended and may not work. Stay up to date by joining the [official Discord](https://discord.gg/GU22h2utj6) and by keeping an eye on the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
+This project is intended to be used with **Bee version <!-- SUPPORTED_BEE_START -->1.2.0-29eb9414<!-- SUPPORTED_BEE_END -->**. Using it with older or newer Bee versions is not recommended and may not work. Stay up to date by joining the [official Discord](https://discord.gg/GU22h2utj6) and by keeping an eye on the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 
 # Table of Contents
 
@@ -236,7 +236,7 @@ Passing identities is also tolerant to errors, so if you provide one which does 
 ```
 The provided identity does not exist. Please select one that exists.
 ? Please select an identity for this action (Use arrow keys)
-❯ main 
+❯ main
 ```
 
 ### Human Readable Topics

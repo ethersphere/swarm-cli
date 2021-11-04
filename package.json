@@ -9,7 +9,6 @@
     "swarm-cli",
     "Decentralised Storage"
   ],
-  "files": [],
   "bin": {
     "swarm-cli": "./dist/index.js"
   },
