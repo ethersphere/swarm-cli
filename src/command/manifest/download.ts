@@ -5,6 +5,8 @@ import { Reference } from 'mantaray-js'
 import { join, parse } from 'path'
 import { directoryExists, referenceToHex } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
+import { createSpinner } from '../../utils/spinner'
+import { VerbosityLevel } from '../root-command/command-log'
 import { EnrichedFork, ManifestCommand } from './manifest-command'
 
 export class Download extends ManifestCommand implements LeafCommand {
@@ -24,7 +26,7 @@ export class Download extends ManifestCommand implements LeafCommand {
     await super.init()
 
     const address = new BzzAddress(this.bzzUrl)
-    const forks = (await this.loadAllValueForks(address.hash, address.path)).filter(this.isDownloadableNode)
+    const forks = await this.collectForks(address)
     const isSingleFork = forks.length === 1
     for (const fork of forks) {
       await this.downloadFork(fork, address, isSingleFork)
@@ -32,8 +34,12 @@ export class Download extends ManifestCommand implements LeafCommand {
   }
 
   private async downloadFork(fork: EnrichedFork, address: BzzAddress, isSingleFork: boolean): Promise<void> {
-    if (!isSingleFork || !this.stdout) {
-      this.console.verbose('Downloading ' + fork.path)
+    if ((!isSingleFork || !this.stdout) && !this.quiet) {
+      if (this.curl) {
+        this.console.log(chalk.dim(fork.path))
+      } else {
+        process.stdout.write(chalk.dim(fork.path))
+      }
     }
     const parsedForkPath = parse(fork.path)
     const data = await this.bee.downloadData(referenceToHex(fork.node.getEntry as Reference))
@@ -50,8 +56,25 @@ export class Download extends ManifestCommand implements LeafCommand {
     if (!directoryExists(destinationFolder)) {
       await fs.promises.mkdir(destinationFolder, { recursive: true })
     }
-    this.console.log(chalk.dim(fork.path))
+
+    if (!this.quiet && !this.curl) {
+      process.stdout.write(' ' + chalk.green('OK') + '\n')
+    }
     await fs.promises.writeFile(join(destination, fork.fsPath), data)
+  }
+
+  private async collectForks(address: BzzAddress): Promise<EnrichedFork[]> {
+    const spinner = createSpinner('Preparing download...')
+    try {
+      if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
+        spinner.start()
+      }
+      const forks = (await this.loadAllValueForks(address.hash, address.path)).filter(this.isDownloadableNode)
+
+      return forks
+    } finally {
+      spinner.stop()
+    }
   }
 
   private isDownloadableNode(fork: EnrichedFork): boolean {

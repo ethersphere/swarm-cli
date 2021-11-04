@@ -244,19 +244,19 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should download files in folder when specified partially', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/level-one/l`, 'test/data/6'])
     expect(consoleMessages[0]).toContain(['level-one/level-two/1.txt'])
-    expect(consoleMessages[1]).toContain(['level-one/level-two/2.txt'])
+    expect(consoleMessages[2]).toContain(['level-one/level-two/2.txt'])
   })
 
   it('should download files in folder when specified fully without trailing slash', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/level-one/level-two`, 'test/data/6'])
     expect(consoleMessages[0]).toContain(['level-one/level-two/1.txt'])
-    expect(consoleMessages[1]).toContain(['level-one/level-two/2.txt'])
+    expect(consoleMessages[2]).toContain(['level-one/level-two/2.txt'])
   })
 
   it('should download files in folder when specified fully with trailing slash', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/level-one/level-two/`, 'test/data/6'])
     expect(consoleMessages[0]).toContain(['level-one/level-two/1.txt'])
-    expect(consoleMessages[1]).toContain(['level-one/level-two/2.txt'])
+    expect(consoleMessages[2]).toContain(['level-one/level-two/2.txt'])
   })
 
   it('should handle error for invalid download hash', async () => {
@@ -307,7 +307,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'download', hash])
     expect(consoleMessages[0]).toContain('images/swarm.png')
-    expect(consoleMessages[1]).toContain('index.html')
-    expect(consoleMessages[2]).toContain('swarm.bzz')
+    expect(consoleMessages[2]).toContain('index.html')
+    expect(consoleMessages[4]).toContain('swarm.bzz')
   })
 })

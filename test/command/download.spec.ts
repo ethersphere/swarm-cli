@@ -17,8 +17,8 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     consoleMessages.length = 0
     await invokeTestCli(['download', hash])
     expect(consoleMessages[0]).toContain('images/swarm.png')
-    expect(consoleMessages[1]).toContain('index.html')
-    expect(consoleMessages[2]).toContain('swarm.bzz')
+    expect(consoleMessages[2]).toContain('index.html')
+    expect(consoleMessages[4]).toContain('swarm.bzz')
   })
 
   it('should ignore --stdout if downloading folder', async () => {
@@ -27,7 +27,7 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     consoleMessages.length = 0
     await invokeTestCli(['download', hash, '--stdout'])
     expect(consoleMessages[0]).toContain('images/swarm.png')
-    expect(consoleMessages[1]).toContain('index.html')
-    expect(consoleMessages[2]).toContain('swarm.bzz')
+    expect(consoleMessages[2]).toContain('index.html')
+    expect(consoleMessages[4]).toContain('swarm.bzz')
   })
 })
