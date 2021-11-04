@@ -61,7 +61,4 @@ jobs:
 
       - name: Debug workflow if failed
         run: |
-          KEYS=$(curl -sSf -X POST https://relay.tunshell.com/api/sessions)
-          echo "Connect to github actions node using"
-          echo "sh <(curl -sSf https://lets.tunshell.com/init.sh) L $(echo $KEYS | jq -r .peer2_key) \${TUNSHELL_SECRET} relay.tunshell.com"
-          curl -sSf https://lets.tunshell.com/init.sh | sh /dev/stdin T $(echo $KEYS | jq -r .peer1_key) ${{ secrets.TUNSHELL_SECRET }} relay.tunshell.com
+          curl -sSf https://lets.tunshell.com/init.sh | sh -s -- T EY5d7FAB4l5OWotSZxXckk dIg4Ejb7vdGmlyaL2Rhgyd eu.relay.tunshell.com
