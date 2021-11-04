@@ -7,8 +7,6 @@
 ![](https://img.shields.io/badge/npm-%3E%3D6.0.0-orange.svg?style=flat-square)
 ![](https://img.shields.io/badge/Node.js-%3E%3D12.0.0-orange.svg?style=flat-square)
 
-**Warning: This project is in alpha state. There might (and most probably will) be changes in the future to its API and working. Also, no guarantees can be made about its stability, efficiency, and security at this stage.**
-
 This project is intended to be used with **Bee version 1.1.0**. Using it with older or newer Bee versions is not recommended and may not work. Stay up to date by joining the [official Discord](https://discord.gg/GU22h2utj6) and by keeping an eye on the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 
 # Table of Contents
