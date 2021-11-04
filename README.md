@@ -7,8 +7,6 @@
 ![](https://img.shields.io/badge/npm-%3E%3D6.0.0-orange.svg?style=flat-square)
 ![](https://img.shields.io/badge/Node.js-%3E%3D12.0.0-orange.svg?style=flat-square)
 
-**Warning: This project is in alpha state. There might (and most probably will) be changes in the future to its API and working. Also, no guarantees can be made about its stability, efficiency, and security at this stage.**
-
 This project is intended to be used with **Bee version <!-- SUPPORTED_BEE_START -->1.2.0-29eb9414<!-- SUPPORTED_BEE_END -->**. Using it with older or newer Bee versions is not recommended and may not work. Stay up to date by joining the [official Discord](https://discord.gg/GU22h2utj6) and by keeping an eye on the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 
 # Table of Contents
@@ -107,7 +105,7 @@ Running a command with the `--help` option prints out the usage of a command.
 Running `swarm-cli` without arguments prints the available commands:
 
 ```
-Swarm CLI 1.3.0 - Manage your Bee node and interact with the Swarm network via the CLI
+Swarm CLI 1.5.0 - Manage your Bee node and interact with the Swarm network via the CLI
 
 █ Usage:
 
@@ -128,6 +126,7 @@ Run 'swarm-cli GROUP --help' to see available commands in a group
 █ Available Commands:
 
 upload      Upload file to Swarm
+download    Download arbitrary Swarm hash
 status      Check API availability and Bee compatibility
 addresses   Display the addresses of the Bee node
 
