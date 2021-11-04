@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.5.0...v1.6.0) (2021-11-04)
+
+
+### Features
+
+* add top level download command ([#271](https://www.github.com/ethersphere/swarm-cli/issues/271)) ([9cb196e](https://www.github.com/ethersphere/swarm-cli/commit/9cb196e478fb88ad0887109dd6263b4a51d69298))
+* display number of updates in feed print command ([#281](https://www.github.com/ethersphere/swarm-cli/issues/281)) ([75371f4](https://www.github.com/ethersphere/swarm-cli/commit/75371f43a0fe4d38ff1dc27c7d1a3136d29740cb))
+* print curl commands in distinct color ([#282](https://www.github.com/ethersphere/swarm-cli/issues/282)) ([f22ae0a](https://www.github.com/ethersphere/swarm-cli/commit/f22ae0ac2a45463f6d2a8e71d47b56a703b4a0c9))
+
 ## [1.5.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.4.0...v1.5.0) (2021-10-15)
 
 
