@@ -1,6 +1,7 @@
 import { Reference } from '@ethersphere/bee-js'
 import { promises, statSync } from 'fs'
 import { join } from 'path'
+import { CommandLog } from '../command/root-command/command-log'
 
 /**
  * Sleep for N miliseconds
@@ -107,4 +108,30 @@ export function getFieldOrNull<T>(some: unknown, key: string): T | null {
 
 export function referenceToHex(reference: Reference | Uint8Array): string {
   return Buffer.from(reference).toString('hex')
+}
+
+export function readStdin(commandLog: CommandLog): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    let sizeCounter = 0
+    let intervals = 0
+    process.stdin.resume()
+    const chunks: Buffer[] = []
+    const interval = setInterval(() => {
+      commandLog.info(`Nothing to read from stdin for ${++intervals * 5} seconds...`)
+    }, 3000)
+    process.stdin.on('data', chunk => {
+      sizeCounter += chunk.length
+
+      if (sizeCounter > 1e9) {
+        reject('Reading more than 1 gigabyte from stdin is currently not supported')
+
+        return
+      }
+      chunks.push(chunk)
+    })
+    process.stdin.on('end', () => {
+      clearInterval(interval)
+      resolve(Buffer.concat(chunks))
+    })
+  })
 }

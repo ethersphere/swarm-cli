@@ -6,7 +6,7 @@ import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
 import { pickStamp, printEnrichedStamp } from '../service/stamp'
-import { fileExists, isGateway, sleep } from '../utils'
+import { fileExists, isGateway, readStdin, sleep } from '../utils'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
@@ -25,8 +25,17 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public readonly description = 'Upload file to Swarm'
 
-  @Argument({ key: 'path', description: 'Path to the file or folder', required: true, autocompletePath: true })
+  @Argument({
+    key: 'path',
+    description: 'Path to the file or folder',
+    required: true,
+    autocompletePath: true,
+    conflicts: 'stdin',
+  })
   public path!: string
+
+  @Option({ key: 'stdin', type: 'boolean', description: 'Take data from standard input', conflicts: 'path' })
+  public stdin!: boolean
 
   @Option(stampProperties)
   public stamp!: string
@@ -97,6 +106,8 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public hash!: string
 
+  public stdinData!: Buffer
+
   public async run(usedFromOtherCommand = false): Promise<void> {
     await super.init()
 
@@ -106,8 +117,16 @@ export class Upload extends RootCommand implements LeafCommand {
 
     await this.maybePrintSyncWarning()
 
-    let url: string
-    let tag: Tag | undefined
+    if (!this.stdin && !FS.existsSync(this.path)) {
+      throw Error(`Given filepath '${this.path}' doesn't exist`)
+    }
+
+    if (this.stdin) {
+      if (!this.stamp) {
+        throw Error('Stamp must be passed when reading data from stdin')
+      }
+      this.stdinData = await readStdin(this.console)
+    }
 
     if (!this.stamp) {
       if (isGateway(this.beeApiUrl)) {
@@ -117,50 +136,24 @@ export class Upload extends RootCommand implements LeafCommand {
       }
     }
 
-    if (this.sync) {
-      tag = await this.bee.createTag()
-    }
-
-    if (!FS.existsSync(this.path)) {
-      this.console.error(`Given filepath '${this.path}' doesn't exist`)
-
-      exit(1)
-    }
-
     await this.maybeRunSizeChecks()
 
-    const spinner = createSpinner('Uploading files...')
+    const tag = this.sync ? await this.bee.createTag() : undefined
 
-    const uploadingFolder = FS.statSync(this.path).isDirectory()
+    const uploadingFolder = !this.stdin && FS.statSync(this.path).isDirectory()
 
     if (uploadingFolder && !this.indexDocument && fileExists(join(this.path, 'index.html'))) {
       this.console.info('Setting --index-document to index.html')
       this.indexDocument = 'index.html'
     }
 
-    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
-      spinner.start()
-    }
-
-    try {
-      if (uploadingFolder) {
-        url = await this.uploadFolder(this.stamp, tag)
-      } else {
-        url = await this.uploadSingleFile(this.stamp, tag)
-      }
-    } finally {
-      if (spinner.isSpinning) {
-        spinner.stop()
-      }
-    }
+    const url = await this.uploadAnyWithSpinner(tag, uploadingFolder)
 
     this.console.dim('Data has been sent to the Bee node successfully!')
     this.console.log(createKeyValue('Swarm hash', this.hash))
-
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
 
     if (this.sync && tag) {
-      tag = await this.bee.retrieveTag(tag.uid)
       await this.waitForFileSynced(tag)
     }
 
@@ -176,13 +169,50 @@ export class Upload extends RootCommand implements LeafCommand {
     }
   }
 
-  private async uploadFolder(postageBatchId: string, tag?: Tag): Promise<string> {
+  private async uploadAnyWithSpinner(tag: Tag | undefined, isFolder: boolean): Promise<string> {
+    const spinner = createSpinner('Uploading data...')
+
+    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
+      spinner.start()
+    }
+
+    try {
+      const url = await this.uploadAny(tag, isFolder)
+
+      return url
+    } finally {
+      if (spinner.isSpinning) {
+        spinner.stop()
+      }
+    }
+  }
+
+  private uploadAny(tag: Tag | undefined, isFolder: boolean): Promise<string> {
+    if (this.stdin) {
+      return this.uploadStdin(tag)
+    } else {
+      if (isFolder) {
+        return this.uploadFolder(tag)
+      } else {
+        return this.uploadSingleFile(tag)
+      }
+    }
+  }
+
+  private async uploadStdin(tag?: Tag): Promise<string> {
+    const response = await this.bee.uploadData(this.stamp, this.stdinData, { tag: tag?.uid })
+    this.hash = response.reference
+
+    return `${this.bee.url}/bytes/${this.hash}`
+  }
+
+  private async uploadFolder(tag?: Tag): Promise<string> {
     setCurlStore({
       path: this.path,
       folder: true,
       type: 'buffer',
     })
-    const { reference } = await this.bee.uploadFilesFromDirectory(postageBatchId, this.path, {
+    const { reference } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
@@ -194,7 +224,7 @@ export class Upload extends RootCommand implements LeafCommand {
     return `${this.bee.url}/bzz/${this.hash}/`
   }
 
-  private async uploadSingleFile(postageBatchId: string, tag?: Tag): Promise<string> {
+  private async uploadSingleFile(tag?: Tag): Promise<string> {
     const contentType = this.contentType || getMime(this.path) || undefined
     setCurlStore({
       path: this.path,
@@ -203,17 +233,12 @@ export class Upload extends RootCommand implements LeafCommand {
     })
     const buffer = FS.readFileSync(this.path)
     const parsedPath = parse(this.path)
-    const { reference } = await this.bee.uploadFile(
-      postageBatchId,
-      buffer,
-      this.dropName ? undefined : parsedPath.base,
-      {
-        tag: tag && tag.uid,
-        pin: this.pin,
-        encrypt: this.encrypt,
-        contentType,
-      },
-    )
+    const { reference } = await this.bee.uploadFile(this.stamp, buffer, this.dropName ? undefined : parsedPath.base, {
+      tag: tag && tag.uid,
+      pin: this.pin,
+      encrypt: this.encrypt,
+      contentType,
+    })
     this.hash = reference
 
     return `${this.bee.url}/bzz/${this.hash}/`
@@ -271,13 +296,13 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!this.sizeCheck) {
       return
     }
-    const { size, isDirectory } = await this.getUploadableInfo()
+    const { size } = await this.getUploadableInfo()
 
     if (size < MAX_UPLOAD_SIZE) {
       return
     }
 
-    const message = `${isDirectory ? 'Folder' : 'File'} size is larger than recommended value.`
+    const message = `The data is larger than the recommended value (${(MAX_UPLOAD_SIZE / 1e6).toFixed(2)} megabytes).`
 
     if (this.quiet) {
       this.console.error(message)
@@ -293,15 +318,19 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async getUploadableInfo(): Promise<{
     size: number
-    isDirectory: boolean
   }> {
-    const stats = FS.lstatSync(this.path)
-    const size = stats.isDirectory() ? await Utils.getFolderSize(this.path) : stats.size
+    let size = -1
+
+    if (this.stdin) {
+      size = this.stdinData.length
+    } else {
+      const stats = FS.lstatSync(this.path)
+      size = stats.isDirectory() ? await Utils.getFolderSize(this.path) : stats.size
+    }
     this.console.verbose('Upload size is approximately ' + (size / 1000 / 1000).toFixed(2) + ' megabytes')
 
     return {
       size,
-      isDirectory: stats.isDirectory(),
     }
   }
 

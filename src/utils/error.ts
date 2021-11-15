@@ -1,3 +1,4 @@
+import { exit } from 'process'
 import { getFieldOrNull } from '.'
 import { FORMATTED_ERROR } from '../command/root-command/printer'
 import { printer } from '../printer'
@@ -19,6 +20,9 @@ function isInternalServerError(error: unknown): boolean {
 }
 
 export function handleError(error: unknown, options?: BeeErrorOptions): void {
+  if (!process.exitCode) {
+    process.exitCode = 1
+  }
   // grab error.message, or error if it is a string
   const message: string | null = typeof error === 'string' && error ? error : getFieldOrNull(error, 'message')
 
@@ -53,6 +57,7 @@ export function handleError(error: unknown, options?: BeeErrorOptions): void {
     printer.printError('')
     printer.printError('Check your Bee log to learn if your request reached the node.')
   }
+  exit()
 }
 
 function isGenericErrorPattern(errorName: string, message: string | unknown): boolean {

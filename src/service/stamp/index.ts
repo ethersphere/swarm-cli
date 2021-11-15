@@ -48,7 +48,7 @@ export function enrichStamp(stamp: DebugPostageBatch): EnrichedStamp {
   }
 }
 
-export function printStamp(stamp: EnrichedStamp, console: CommandLog): void {
+export function printStamp(stamp: EnrichedStamp, console: CommandLog, printUsage: boolean): void {
   console.log(createKeyValue('Stamp ID', stamp.batchID))
   console.log(createKeyValue('Usage', stamp.usageText))
   console.log(createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : stamp.batchTTL + ' seconds'))
@@ -59,10 +59,10 @@ export function printStamp(stamp: EnrichedStamp, console: CommandLog): void {
   console.verbose(createKeyValue('Utilization', stamp.utilization))
   console.verbose(createKeyValue('Block Number', stamp.blockNumber))
   console.verbose(createKeyValue('Immutable Flag', stamp.immutableFlag))
-  console.quiet(stamp.batchID + ' ' + stamp.usageText)
+  console.quiet(printUsage ? `${stamp.batchID} ${stamp.usageText}` : stamp.batchID)
 }
 
 export function printEnrichedStamp(stamp: DebugPostageBatch, console: CommandLog): void {
   const enrichedStamp = enrichStamp(stamp)
-  printStamp(enrichedStamp, console)
+  printStamp(enrichedStamp, console, true)
 }
