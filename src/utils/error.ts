@@ -1,4 +1,3 @@
-import { exit } from 'process'
 import { getFieldOrNull } from '.'
 import { FORMATTED_ERROR } from '../command/root-command/printer'
 import { printer } from '../printer'
@@ -57,7 +56,6 @@ export function handleError(error: unknown, options?: BeeErrorOptions): void {
     printer.printError('')
     printer.printError('Check your Bee log to learn if your request reached the node.')
   }
-  exit()
 }
 
 function isGenericErrorPattern(errorName: string, message: string | unknown): boolean {
