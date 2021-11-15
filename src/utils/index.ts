@@ -135,3 +135,19 @@ export function readStdin(commandLog: CommandLog): Promise<Buffer> {
     })
   })
 }
+
+export function parseHeaders(headers: string[]): Record<string, string> {
+  const object: Record<string, string> = {}
+  for (const item of headers) {
+    const separatorIndex = item.indexOf(':')
+
+    if (separatorIndex === -1) {
+      continue
+    }
+    const key = item.slice(0, separatorIndex).trim()
+    const value = item.slice(separatorIndex + 1).trim()
+    object[key] = value
+  }
+
+  return object
+}

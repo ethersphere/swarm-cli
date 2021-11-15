@@ -1,7 +1,8 @@
-import { Bee, BeeDebug } from '@ethersphere/bee-js'
+import { Bee, BeeDebug, BeeOptions } from '@ethersphere/bee-js'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
 import { exit } from 'process'
 import { printCurlCommand } from '../../curl'
+import { parseHeaders } from '../../utils'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CommandConfig, CONFIG_OPTIONS } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
@@ -30,6 +31,9 @@ export class RootCommand {
 
   @ExternalOption('curl')
   public curl!: boolean
+
+  @ExternalOption('header')
+  public header!: string[]
 
   public bee!: Bee
   public _beeDebug!: BeeDebug
@@ -83,8 +87,17 @@ export class RootCommand {
       this.maybeSetFromConfig(option)
     })
 
-    this.bee = new Bee(this.beeApiUrl, this.curl ? { onRequest: printCurlCommand } : {})
-    this._beeDebug = new BeeDebug(this.beeDebugApiUrl, this.curl ? { onRequest: printCurlCommand } : {})
+    const beeOptions: BeeOptions = {}
+
+    if (this.curl) {
+      beeOptions.onRequest = printCurlCommand
+    }
+
+    if (this.header.length) {
+      beeOptions.defaultHeaders = parseHeaders(this.header)
+    }
+    this.bee = new Bee(this.beeApiUrl, beeOptions)
+    this._beeDebug = new BeeDebug(this.beeDebugApiUrl, beeOptions)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
