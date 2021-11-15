@@ -34,12 +34,12 @@ describeCommand(
 
     it('feed upload should fail when running in quiet mode and stamp is missing', async () => {
       await invokeTestCli(['feed', 'upload', '-q', 'README.md', '-i', 'main', '-P', 'secret'])
-      expect(getLastMessage()).toContain('Required option not provided: stamp')
+      expect(getLastMessage()).toContain('Required option not provided: --stamp')
     })
 
     it('feed upload should fail when running in quiet mode and identity is missing', async () => {
       await invokeTestCli(['feed', 'upload', '-q', 'README.md', '-P', 'secret', ...getStampOption()])
-      expect(getLastMessage()).toContain('Required option not provided: identity')
+      expect(getLastMessage()).toContain('Required option not provided: --identity')
     })
 
     it('feed upload should fail when running in quiet mode and identity is misspelled', async () => {
