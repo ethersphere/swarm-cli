@@ -65,6 +65,7 @@ export class Upload extends RootCommand implements LeafCommand {
     key: 'drop-name',
     type: 'boolean',
     description: 'Erase file name when uploading a single file',
+    conflicts: 'name',
   })
   public dropName!: boolean
 
@@ -95,6 +96,13 @@ export class Upload extends RootCommand implements LeafCommand {
     description: 'Default error file on bzz request without with wrong filepath',
   })
   public errorDocument!: string
+
+  @Option({
+    key: 'name',
+    description: 'Set the name of the uploaded file',
+    conflicts: 'drop-name',
+  })
+  public fileName!: string
 
   @Option({
     key: 'content-type',
@@ -200,10 +208,23 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadStdin(tag?: Tag): Promise<string> {
-    const response = await this.bee.uploadData(this.stamp, this.stdinData, { tag: tag?.uid })
-    this.hash = response.reference
+    if (this.fileName) {
+      const contentType = this.contentType || getMime(this.fileName) || undefined
+      const { reference } = await this.bee.uploadFile(this.stamp, this.stdinData, this.fileName, {
+        tag: tag && tag.uid,
+        pin: this.pin,
+        encrypt: this.encrypt,
+        contentType,
+      })
+      this.hash = reference
 
-    return `${this.bee.url}/bytes/${this.hash}`
+      return `${this.bee.url}/bzz/${this.hash}/`
+    } else {
+      const { reference } = await this.bee.uploadData(this.stamp, this.stdinData, { tag: tag?.uid })
+      this.hash = reference
+
+      return `${this.bee.url}/bytes/${this.hash}`
+    }
   }
 
   private async uploadFolder(tag?: Tag): Promise<string> {
@@ -233,7 +254,7 @@ export class Upload extends RootCommand implements LeafCommand {
     })
     const buffer = FS.readFileSync(this.path)
     const parsedPath = parse(this.path)
-    const { reference } = await this.bee.uploadFile(this.stamp, buffer, this.dropName ? undefined : parsedPath.base, {
+    const { reference } = await this.bee.uploadFile(this.stamp, buffer, this.determineFileName(parsedPath.base), {
       tag: tag && tag.uid,
       pin: this.pin,
       encrypt: this.encrypt,
@@ -389,5 +410,17 @@ export class Upload extends RootCommand implements LeafCommand {
     } catch {
       return null
     }
+  }
+
+  private determineFileName(defaultName: string): string | undefined {
+    if (this.dropName) {
+      return undefined
+    }
+
+    if (this.fileName) {
+      return this.fileName
+    }
+
+    return defaultName
   }
 }
