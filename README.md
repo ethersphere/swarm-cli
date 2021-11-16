@@ -307,19 +307,25 @@ swarm-cli status -q | head -n 1 | grep "^OK"
 Grab the first postage stamp:
 
 ```
-swarm-cli stamp list --limit 1 -q | awk '{ print $1 }'
+swarm-cli stamp list --limit 1 --quiet --hide-usage
+```
+
+Grab the least used postage stamp:
+
+```
+swarm-cli stamp list --limit 1 --quiet --hide-usage --least-used
 ```
 
 List all postage stamps with zero utilization:
 
 ```
-swarm-cli stamp list --max-usage 0 -q | awk '{ print $1 }'
+swarm-cli stamp list --max-usage 0 --quiet --hide-usage
 ```
 
 Sort postage stamps based on utilization (least utilized comes first):
 
 ```
-swarm-cli stamp list --least-used -q
+swarm-cli stamp list --least-used --quiet
 ```
 
 #### Uploading
@@ -327,7 +333,7 @@ swarm-cli stamp list --least-used -q
 Upload a file with the least utilized postage stamp (that has at most 50% usage):
 
 ```
-STAMP=$(swarm-cli stamp list --max-usage 50 --least-used --limit 1 -q | awk '{ print $1 }')
+STAMP=$(swarm-cli stamp list --max-usage 50 --least-used --limit 1 --quiet --hide-usage)
 swarm-cli upload -q README.md --stamp $STAMP
 ```
 
