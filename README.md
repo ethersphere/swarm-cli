@@ -11,38 +11,43 @@ This project is intended to be used with **Bee version <!-- SUPPORTED_BEE_START 
 
 # Table of Contents
 
-* [Swarm-CLI](#swarm-cli)
-* [Table of Contents](#table-of-contents)
-* [Demo](#demo)
-   * [Purchasing a Postage Stamp](#purchasing-a-postage-stamp)
-   * [Uploading a File](#uploading-a-file)
-   * [Creating an Identity](#creating-an-identity)
-   * [Uploading to a Feed](#uploading-to-a-feed)
-* [Description](#description)
-   * [Installation](#installation)
-      * [From npm](#from-npm)
-      * [From source](#from-source)
-   * [Usage](#usage)
-   * [Commands](#commands)
-   * [Example usage](#example-usage)
-   * [Usability Features](#usability-features)
-      * [Autocomplete](#autocomplete)
-      * [Numerical Separator and Units](#numerical-separator-and-units)
-      * [Stamp Picker](#stamp-picker)
-      * [Identity Picker](#identity-picker)
-      * [Human Readable Topics](#human-readable-topics)
-      * [Manifest address scheme](#manifest-address-scheme)
-      * [Automating tasks with Swarm-CLI](#automating-tasks-with-swarm-cli)
-         * [Connectivity](#connectivity)
-         * [Postage Stamps](#postage-stamps)
-         * [Uploading](#uploading)
-   * [Config](#config)
-   * [Assignment priority](#assignment-priority)
-   * [System environment](#system-environment)
-* [Development](#development)
-* [Contribute](#contribute)
-* [Maintainers](#maintainers)
-* [License](#license)
+- [Swarm-CLI](#swarm-cli)
+- [Table of Contents](#table-of-contents)
+- [Demo](#demo)
+  * [Purchasing a Postage Stamp](#purchasing-a-postage-stamp)
+  * [Uploading a File](#uploading-a-file)
+  * [Creating an Identity](#creating-an-identity)
+  * [Uploading to a Feed](#uploading-to-a-feed)
+- [Description](#description)
+  * [Installation](#installation)
+    + [From npm](#from-npm)
+    + [From source](#from-source)
+  * [Usage](#usage)
+  * [Commands](#commands)
+  * [Example usage](#example-usage)
+  * [Usability Features](#usability-features)
+    + [Uploading Files, Folders, Websites, and Arbitrary Data from stdin](#uploading-files--folders--websites--and-arbitrary-data-from-stdin)
+      - [Files](#files)
+      - [Folders and Websites](#folders-and-websites)
+      - [Standard Input](#standard-input)
+    + [Custom HTTP Headers](#custom-http-headers)
+    + [Autocomplete](#autocomplete)
+    + [Numerical Separator and Units](#numerical-separator-and-units)
+    + [Stamp Picker](#stamp-picker)
+    + [Identity Picker](#identity-picker)
+    + [Human Readable Topics](#human-readable-topics)
+    + [Manifest address scheme](#manifest-address-scheme)
+    + [Automating tasks with Swarm-CLI](#automating-tasks-with-swarm-cli)
+      - [Connectivity](#connectivity)
+      - [Postage Stamps](#postage-stamps)
+      - [Uploading](#uploading)
+  * [Config](#config)
+  * [Assignment priority](#assignment-priority)
+  * [System environment](#system-environment)
+- [Development](#development)
+- [Contribute](#contribute)
+- [Maintainers](#maintainers)
+- [License](#license)
 
 # Demo
 
@@ -156,6 +161,68 @@ In this example we are uploading the content of the `dist` folder. If the upload
 This URL will stay the same when we upload an updated version of the website. Because of this we can also put this URL into a reverse proxy configuration or use the reference (the hex string after the `/bzz/`) in an ENS record. There is more information about that in the [Bee documentation](https://docs.ethswarm.org/docs/getting-started/host-your-website-using-ens). The uploaded content can be found on the link in the line starting with `URL`. This will change every time the content is modified.
 
 ## Usability Features
+
+### Uploading Files, Folders, Websites, and Arbitrary Data from stdin
+
+#### Files
+
+Use `swarm-cli` to upload a single file:
+
+```
+swarm-cli upload README.md
+```
+
+The command above will print a `/bzz` URL that may be opened in the browser. If the browser is able to handle the file format then the file is displayed, otherwise it will be offered to be downloaded.
+
+#### Folders and Websites
+
+`swarm-cli` also supports uploading folders with the same `upload` command:
+
+```
+swarm-cli upload build/
+```
+
+This also yields a `/bzz` URL. If there is an `index.html` present in the root of the folder, `--index-document` will be automatically applied by `swarm-cli`. This option sets which file the browser should open for an empty path. You may also freely set `--index-document` during upload to change this.
+
+#### Standard Input
+
+You can pipe data from other commands to `swarm-cli` using the `--stdin` option.
+
+```
+curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...]
+```
+
+Unlike other upload methods, this results in a `/bytes` URL, which cannot be displayed by browsers normally. You can still share your hash and others can download it. However, with the `--name` option, you can give your arbitrary data a file name, and `swarm-cli` will attempt to determine the suitable content type for your data. Given it is successful, `swarm-cli` will print a `/bzz` URL instead of the `/bytes` URL, which is good to be displayed in browsers. Example:
+
+```
+curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...] --name random.jpg
+```
+
+There is also a `--content-type` option if you want to adjust it manually:
+
+```
+curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...] --name random --content-type image/jpeg
+```
+
+Please note that stdin is reserved for the data you are uploading, so interactive features are disabled during this time. Because of that, `--stamp` must be passed beforehand. You may create an alias for grabbing the ID of the least used postage stamp:
+
+```
+alias st='swarm-cli stamp list --least-used --limit 1 --hide-usage --quiet'
+```
+
+Leveraging the alias above, you can use a shortcut for uploading from stdin:
+
+```
+curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp $(st)
+```
+
+### Custom HTTP Headers 
+
+Similarly to `curl`, you may use the `--header` or `-H` option to specify as many additional headers as you want, which will be sent with all requests:
+
+```
+swarm-cli upload README.md -H "Authorization: [...]" -H "X-Custom-Header: Your Value"
+```
 
 ### Autocomplete
 
@@ -307,19 +374,25 @@ swarm-cli status -q | head -n 1 | grep "^OK"
 Grab the first postage stamp:
 
 ```
-swarm-cli stamp list --limit 1 -q | awk '{ print $1 }'
+swarm-cli stamp list --limit 1 --quiet --hide-usage
+```
+
+Grab the least used postage stamp:
+
+```
+swarm-cli stamp list --limit 1 --quiet --hide-usage --least-used
 ```
 
 List all postage stamps with zero utilization:
 
 ```
-swarm-cli stamp list --max-usage 0 -q | awk '{ print $1 }'
+swarm-cli stamp list --max-usage 0 --quiet --hide-usage
 ```
 
 Sort postage stamps based on utilization (least utilized comes first):
 
 ```
-swarm-cli stamp list --least-used -q
+swarm-cli stamp list --least-used --quiet
 ```
 
 #### Uploading
@@ -327,7 +400,7 @@ swarm-cli stamp list --least-used -q
 Upload a file with the least utilized postage stamp (that has at most 50% usage):
 
 ```
-STAMP=$(swarm-cli stamp list --max-usage 50 --least-used --limit 1 -q | awk '{ print $1 }')
+STAMP=$(swarm-cli stamp list --max-usage 50 --least-used --limit 1 --quiet --hide-usage)
 swarm-cli upload -q README.md --stamp $STAMP
 ```
 

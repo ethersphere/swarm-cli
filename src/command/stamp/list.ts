@@ -1,7 +1,9 @@
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { enrichStamp, printStamp } from '../../service/stamp'
+import { EnrichedStamp } from '../../service/stamp/types/stamp'
 import { printDivided } from '../../utils/text'
+import { CommandLog } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
 
 export class List extends StampCommand implements LeafCommand {
@@ -16,6 +18,9 @@ export class List extends StampCommand implements LeafCommand {
 
   @Option({ key: 'limit', type: 'number', minimum: 1, description: 'Limit the amount of printed stamps' })
   public limit!: number
+
+  @Option({ key: 'hide-usage', type: 'boolean', description: 'Do not print usage percentage' })
+  public hideUsage!: boolean
 
   @Option({
     key: 'max-usage',
@@ -60,6 +65,12 @@ export class List extends StampCommand implements LeafCommand {
 
     const orderedStamps = this.leastUsed ? limitedStamps.sort((a, b) => a.usage - b.usage) : limitedStamps
 
-    printDivided(orderedStamps, printStamp, this.console)
+    printDivided(
+      orderedStamps,
+      (items: EnrichedStamp, console: CommandLog) => {
+        printStamp(items, console, !this.hideUsage)
+      },
+      this.console,
+    )
   }
 }

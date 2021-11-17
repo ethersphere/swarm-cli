@@ -81,6 +81,13 @@ export const curl: IOption<boolean> = {
   default: false,
 }
 
+export const header: IOption<string[]> = {
+  key: 'header',
+  alias: 'H',
+  description: 'Send additional header with all requests',
+  array: true,
+}
+
 export const optionParameters: IOption<unknown>[] = [
   beeApiUrl,
   beeDebugApiUrl,
@@ -91,6 +98,7 @@ export const optionParameters: IOption<unknown>[] = [
   help,
   version,
   curl,
+  header,
 ]
 
 export const rootCommandClasses = [

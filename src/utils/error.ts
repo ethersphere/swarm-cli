@@ -19,6 +19,9 @@ function isInternalServerError(error: unknown): boolean {
 }
 
 export function handleError(error: unknown, options?: BeeErrorOptions): void {
+  if (!process.exitCode) {
+    process.exitCode = 1
+  }
   // grab error.message, or error if it is a string
   const message: string | null = typeof error === 'string' && error ? error : getFieldOrNull(error, 'message')
 
