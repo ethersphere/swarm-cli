@@ -157,6 +157,68 @@ This URL will stay the same when we upload an updated version of the website. Be
 
 ## Usability Features
 
+### Uploading Files, Folders, Websites, and Arbitrary Data from stdin
+
+#### Files
+
+Use `swarm-cli` to upload a single file:
+
+```
+swarm-cli upload README.md
+```
+
+The command above will print a `/bzz` URL that may be opened in the browser, and if the file format is suitable, the browser will display it.
+
+#### Folders and Websites
+
+`swarm-cli` also supports uploading folders with the same `upload` command:
+
+```
+swarm-cli upload build/
+```
+
+This also yields a `/bzz` URL. If there is an `index.html` present in the root of the folder, `--index-document` will be automatically applied by `swarm-cli`, which sets which file the browser should open for an empty path. You may also freely set `--index-document` during upload to change this.
+
+#### Standard Input
+
+You can pipe data from other commands to `swarm-cli` using the `--stdin` option.
+
+```
+curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...]
+```
+
+Unlike other upload methods, this results in a `/bytes` URL, which cannot be displayed by browsers normally. You can still share your hash and others can download it. However, with the `--name` option, you can give your arbitrary data a file name, and `swarm-cli` will attempt to determine the suitable content type for your data. Given it is successful, `swarm-cli` will print a `/bzz` URL instead of the `/bytes` URL, which is good to be displayed in browsers. Example:
+
+```
+curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...] --name random.jpg
+```
+
+There is also a `--content-type` option if you want to adjust it manually:
+
+```
+curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...] --name random --content-type image/jpeg
+```
+
+Do note that stdin is reserved for the data you are uploading, so interactive features are disabled during this time. As of that, `--stamp` must be passed beforehand. You may create an alias for grabbing the ID of the least used postage stamp:
+
+```
+alias st='swarm-cli stamp list --least-used --limit 1 --hide-usage --quiet'
+```
+
+Leveraging the alias above, you can use a shortcut for uploading from stdin:
+
+```
+curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp $(st)
+```
+
+### Custom HTTP Headers 
+
+Similarly to `curl`, you may use the `--header` or `-H` option to specify as many additional headers as you want, which will be sent with all requests:
+
+```
+swarm-cli upload README.md -H "Authorization: [...]" -H "X-Custom-Header: Your Value"
+```
+
 ### Autocomplete
 
 `swarm-cli` has support for autocomplete in `bash`, `zsh` and `fish`. This turns on `<tab><tab>` suggestions which can complete commands, paths and options for you.
