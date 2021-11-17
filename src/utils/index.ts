@@ -118,7 +118,7 @@ export function readStdin(commandLog: CommandLog): Promise<Buffer> {
     const chunks: Buffer[] = []
     const interval = setInterval(() => {
       commandLog.info(`Nothing to read from stdin for ${++intervals * 5} seconds...`)
-    }, 3000)
+    }, 5000)
     process.stdin.on('data', chunk => {
       sizeCounter += chunk.length
 
