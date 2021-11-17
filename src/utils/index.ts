@@ -111,14 +111,20 @@ export function referenceToHex(reference: Reference | Uint8Array): string {
 }
 
 export function readStdin(commandLog: CommandLog): Promise<Buffer> {
+  const INTERVAL_SECS = 5
+
   return new Promise((resolve, reject) => {
     let sizeCounter = 0
     let intervals = 0
     process.stdin.resume()
     const chunks: Buffer[] = []
     const interval = setInterval(() => {
-      commandLog.info(`Nothing to read from stdin for ${++intervals * 5} seconds...`)
-    }, 5000)
+      if (!chunks.length) {
+        commandLog.info(`Nothing to read from stdin for ${++intervals * INTERVAL_SECS} seconds...`)
+      } else {
+        clearInterval(interval)
+      }
+    }, INTERVAL_SECS * 1000)
     process.stdin.on('data', chunk => {
       sizeCounter += chunk.length
 
