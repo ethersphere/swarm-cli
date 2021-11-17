@@ -172,7 +172,7 @@ Use `swarm-cli` to upload a single file:
 swarm-cli upload README.md
 ```
 
-The command above will print a `/bzz` URL that may be opened in the browser, and if the file format is suitable, the browser will display it.
+The command above will print a `/bzz` URL that may be opened in the browser. If the browser is able to handle the file format then the file is displayed, otherwise it will be offered to be downloaded.
 
 #### Folders and Websites
 
@@ -182,7 +182,7 @@ The command above will print a `/bzz` URL that may be opened in the browser, and
 swarm-cli upload build/
 ```
 
-This also yields a `/bzz` URL. If there is an `index.html` present in the root of the folder, `--index-document` will be automatically applied by `swarm-cli`, which sets which file the browser should open for an empty path. You may also freely set `--index-document` during upload to change this.
+This also yields a `/bzz` URL. If there is an `index.html` present in the root of the folder, `--index-document` will be automatically applied by `swarm-cli`. This option sets which file the browser should open for an empty path. You may also freely set `--index-document` during upload to change this.
 
 #### Standard Input
 
@@ -204,7 +204,7 @@ There is also a `--content-type` option if you want to adjust it manually:
 curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...] --name random --content-type image/jpeg
 ```
 
-Do note that stdin is reserved for the data you are uploading, so interactive features are disabled during this time. As of that, `--stamp` must be passed beforehand. You may create an alias for grabbing the ID of the least used postage stamp:
+Please note that stdin is reserved for the data you are uploading, so interactive features are disabled during this time. Because of that, `--stamp` must be passed beforehand. You may create an alias for grabbing the ID of the least used postage stamp:
 
 ```
 alias st='swarm-cli stamp list --least-used --limit 1 --hide-usage --quiet'
