@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.6.0...v1.7.0) (2021-11-17)
+
+
+### Features
+
+* add --stdin option to upload command ([#298](https://www.github.com/ethersphere/swarm-cli/issues/298)) ([42ae5da](https://www.github.com/ethersphere/swarm-cli/commit/42ae5da0be73e05a13776c75e70d4f45c4095125))
+* add --hide-usage option to stamp list command ([42ae5da](https://www.github.com/ethersphere/swarm-cli/commit/42ae5da0be73e05a13776c75e70d4f45c4095125))
+* add --header global option to set additional headers ([42ae5da](https://www.github.com/ethersphere/swarm-cli/commit/42ae5da0be73e05a13776c75e70d4f45c4095125))
+* add --name option to upload command for files and stdin ([42ae5da](https://www.github.com/ethersphere/swarm-cli/commit/42ae5da0be73e05a13776c75e70d4f45c4095125))
+
+
+### Bug Fixes
+
+* always set error code on runtime and parsing error ([42ae5da](https://www.github.com/ethersphere/swarm-cli/commit/42ae5da0be73e05a13776c75e70d4f45c4095125))
+
 ## [1.6.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.5.0...v1.6.0) (2021-11-04)
 
 
