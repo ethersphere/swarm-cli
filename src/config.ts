@@ -7,6 +7,7 @@ import { Feed } from './command/feed'
 import { Identity } from './command/identity'
 import { Manifest } from './command/manifest'
 import { Pinning } from './command/pinning'
+import { Profile } from './command/profile'
 import { Pss } from './command/pss'
 import { Stamp } from './command/stamp'
 import { Status } from './command/status'
@@ -113,4 +114,5 @@ export const rootCommandClasses = [
   Pss,
   Addresses,
   Manifest,
+  Profile,
 ]
