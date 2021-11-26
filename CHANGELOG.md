@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.7.0...v1.8.0) (2021-11-26)
+
+
+### Features
+
+* add bee 1.4.0 compatibility and upgrade to bee-js 3.0.0 ([#302](https://www.github.com/ethersphere/swarm-cli/issues/302)) ([4ee8f0c](https://www.github.com/ethersphere/swarm-cli/commit/4ee8f0c103cb984f759abc975d045b7c2492006c))
+
 ## [1.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.6.0...v1.7.0) (2021-11-17)
 
 
