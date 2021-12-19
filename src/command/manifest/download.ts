@@ -1,3 +1,4 @@
+import { ManifestJs } from '@ethersphere/manifest-js'
 import chalk from 'chalk'
 import fs from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -26,6 +27,13 @@ export class Download extends ManifestCommand implements LeafCommand {
     await super.init()
 
     const address = new BzzAddress(this.bzzUrl)
+
+    const feedReference = await new ManifestJs(this.bee).resolveFeedManifest(address.hash)
+
+    if (feedReference) {
+      address.hash = feedReference
+    }
+
     const forks = await this.collectForks(address)
     const isSingleFork = forks.length === 1
     for (const fork of forks) {

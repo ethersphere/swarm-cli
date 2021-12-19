@@ -1,3 +1,4 @@
+import { ManifestJs } from '@ethersphere/manifest-js'
 import fs from 'fs'
 import { Aggregation, LeafCommand } from 'furious-commander'
 import { MantarayNode } from 'mantaray-js'
@@ -19,6 +20,12 @@ export class Download extends RootCommand implements LeafCommand {
     await super.init()
 
     this.address = new BzzAddress(this.manifestDownload.bzzUrl)
+
+    const feedReference = await new ManifestJs(this.bee).resolveFeedManifest(this.address.hash)
+
+    if (feedReference) {
+      this.address.hash = feedReference
+    }
 
     if (await this.isManifest()) {
       await this.manifestDownload.run()
