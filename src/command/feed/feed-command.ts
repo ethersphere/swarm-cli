@@ -10,6 +10,7 @@ import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
+import { encodeFeedReference, encodeManifestReference } from "@ethersphere/swarm-cid";
 
 interface FeedInfo {
   reference: string
@@ -48,6 +49,9 @@ export class FeedCommand extends RootCommand {
     this.console.verbose(createKeyValue('Feed Reference', reference))
     this.console.verbose(createKeyValue('Feed Manifest', manifest))
     this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
+
+    const swarmCid = encodeFeedReference(manifest)
+    this.console.log(createKeyValue('Feed Bzz.link', `https://${swarmCid.toString()}.bzz.link`))
 
     this.console.quiet(manifest)
 
