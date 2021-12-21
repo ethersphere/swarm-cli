@@ -1,4 +1,4 @@
-import { SUPPORTED_BEE_VERSION, SUPPORTED_BEE_VERSION_EXACT } from '@ethersphere/bee-js'
+import { NodesInfo, SUPPORTED_BEE_VERSION, SUPPORTED_BEE_VERSION_EXACT } from '@ethersphere/bee-js'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
 import { createKeyValue } from '../utils/text'
@@ -21,11 +21,18 @@ export class Status extends RootCommand implements LeafCommand {
     const version = await this.checkBeeDebugApiConnection()
     await this.checkBeeVersionCompatibility()
     const topology = await this.checkTopology()
+    const nodeInfo = await this.getNodeInfo()
 
     this.console.log(createKeyValue('Bee Version', version, 'Supported Version'.length))
     this.console.log(
       createKeyValue('Supported Version', SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')'),
     )
+
+    if (nodeInfo) {
+      this.console.divider()
+      this.console.log(createKeyValue('Gateway Mode', nodeInfo.gatewayMode))
+      this.console.log(createKeyValue('Bee Mode', nodeInfo.beeMode))
+    }
     this.console.quiet('Bee version - ' + version)
     this.console.quiet('Supported version - ' + SUPPORTED_BEE_VERSION_EXACT)
 
@@ -73,6 +80,16 @@ export class Status extends RootCommand implements LeafCommand {
       }
     } catch {
       this.handleFailedCheck('Bee Version Compatibility')
+    }
+  }
+
+  private async getNodeInfo(): Promise<NodesInfo | null> {
+    try {
+      const nodeInfo = await this._beeDebug.getNodeInfo()
+
+      return nodeInfo
+    } catch {
+      return null
     }
   }
 

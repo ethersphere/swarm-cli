@@ -29,6 +29,10 @@ export function createChequeMockHttpServer(port: number): Server {
     if (request.url === '/chequebook/cashout/1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad') {
       response.end(JSON.stringify(lastCashoutCheque1))
     }
+
+    if (request.url === '/node') {
+      response.end(JSON.stringify(nodeInfo))
+    }
   })
   server.listen(port)
 
@@ -71,6 +75,11 @@ const lastCashoutCheque1 = {
 }
 
 const balance = { totalBalance: 100026853000000000, availableBalance: 100018560000000000 }
+
+const nodeInfo = {
+  beeMode: 'light',
+  gatewayMode: true,
+}
 
 if (process.argv[2] === 'run') {
   createChequeMockHttpServer(parseInt(process.argv[3], 10))
