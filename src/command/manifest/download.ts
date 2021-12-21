@@ -1,11 +1,10 @@
-import { ManifestJs } from '@ethersphere/manifest-js'
 import chalk from 'chalk'
 import fs from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { Reference } from 'mantaray-js'
 import { join, parse } from 'path'
 import { directoryExists, referenceToHex } from '../../utils'
-import { BzzAddress } from '../../utils/bzz-address'
+import { BzzAddress, makeBzzAddress } from '../../utils/bzz-address'
 import { createSpinner } from '../../utils/spinner'
 import { VerbosityLevel } from '../root-command/command-log'
 import { EnrichedFork, ManifestCommand } from './manifest-command'
@@ -13,6 +12,8 @@ import { EnrichedFork, ManifestCommand } from './manifest-command'
 export class Download extends ManifestCommand implements LeafCommand {
   public readonly name = 'download'
   public readonly description = 'Download manifest content to a folder'
+
+  public address!: BzzAddress
 
   @Argument({ key: 'address', description: 'Manifest reference (with optional path)', required: true })
   public bzzUrl!: string
@@ -26,18 +27,15 @@ export class Download extends ManifestCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    const address = new BzzAddress(this.bzzUrl)
-
-    const feedReference = await new ManifestJs(this.bee).resolveFeedManifest(address.hash)
-
-    if (feedReference) {
-      address.hash = feedReference
+    // can be already set from other command
+    if (!this.address) {
+      this.address = await makeBzzAddress(this.bee, this.bzzUrl)
     }
 
-    const forks = await this.collectForks(address)
+    const forks = await this.collectForks(this.address)
     const isSingleFork = forks.length === 1
     for (const fork of forks) {
-      await this.downloadFork(fork, address, isSingleFork)
+      await this.downloadFork(fork, this.address, isSingleFork)
     }
   }
 

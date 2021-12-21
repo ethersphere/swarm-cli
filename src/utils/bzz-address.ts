@@ -1,3 +1,6 @@
+import { Bee } from '@ethersphere/bee-js'
+import { ManifestJs } from '@ethersphere/manifest-js'
+
 export class BzzAddress {
   public hash: string
   public path: string | null
@@ -19,4 +22,16 @@ export class BzzAddress {
     const pathParts = parts.slice(1)
     this.path = pathParts.length ? pathParts.join('/') : null
   }
+}
+
+export async function makeBzzAddress(bee: Bee, url: string): Promise<BzzAddress> {
+  const address = new BzzAddress(url)
+
+  const feedReference = await new ManifestJs(bee).resolveFeedManifest(address.hash)
+
+  if (feedReference) {
+    address.hash = feedReference
+  }
+
+  return address
 }
