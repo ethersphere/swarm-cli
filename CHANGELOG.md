@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.8.0...v1.9.0) (2021-12-21)
+
+
+### Features
+
+* add feed download ([#305](https://www.github.com/ethersphere/swarm-cli/issues/305)) ([14e11be](https://www.github.com/ethersphere/swarm-cli/commit/14e11be13d11604e8cf65109c68508571720b17c))
+* add node info to status command ([#310](https://www.github.com/ethersphere/swarm-cli/issues/310)) ([5879880](https://www.github.com/ethersphere/swarm-cli/commit/58798802ac1e9c6c4ca215972b93e3b172236a67))
+* bzz.link support ([#307](https://www.github.com/ethersphere/swarm-cli/issues/307)) ([23e490c](https://www.github.com/ethersphere/swarm-cli/commit/23e490c07a190440dfa3168a588c438bf1f1b24e))
+
 ## [1.8.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.7.0...v1.8.0) (2021-11-26)
 
 
