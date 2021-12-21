@@ -1,4 +1,5 @@
 import { readFileSync, statSync, writeFileSync } from 'fs'
+import { Upload as FeedUpload } from '../../src/command/feed/upload'
 import { ManifestCommand } from '../../src/command/manifest/manifest-command'
 import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
@@ -201,6 +202,22 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli(['manifest', 'download', hash, 'test/data/3'])
     expect(readFileSync('test/data/3/alpha.txt').toString()).toBe('2')
     expect(readFileSync('test/data/3/bravo.txt').toString()).toBe('1')
+  })
+
+  it('should list feed content', async () => {
+    const identityName = `feed-resolve-test-${Date.now()}`
+    await invokeTestCli(['identity', 'create', identityName, '--only-keypair'])
+    const invocation = await invokeTestCli([
+      'feed',
+      'upload',
+      '--identity',
+      identityName,
+      'README.md',
+      ...getStampOption(),
+    ])
+    const command = invocation.runnable as unknown as FeedUpload
+    await invokeTestCli(['manifest', 'list', `${command.feedManifest}`])
+    expect(consoleMessages[0]).toContain(['/README.md'])
   })
 
   it('should list single file when specified partially', async () => {

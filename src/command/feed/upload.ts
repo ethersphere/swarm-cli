@@ -8,6 +8,8 @@ export class Upload extends FeedCommand implements LeafCommand {
 
   public readonly description = 'Upload to a feed'
 
+  public feedManifest?: string
+
   @Aggregation(['upload'])
   public fileUpload!: FileUpload
 
@@ -21,7 +23,7 @@ export class Upload extends FeedCommand implements LeafCommand {
     }
 
     const reference = await this.runUpload()
-    await this.updateFeedAndPrint(reference)
+    this.feedManifest = await this.updateFeedAndPrint(reference)
     this.console.dim('Successfully uploaded to feed.')
   }
 

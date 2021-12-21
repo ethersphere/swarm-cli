@@ -1,4 +1,5 @@
 import { Reference } from '@ethersphere/bee-js'
+import { encodeFeedReference } from '@ethersphere/swarm-cid'
 import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { exit } from 'process'
@@ -10,7 +11,6 @@ import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
-import { encodeFeedReference, encodeManifestReference } from '@ethersphere/swarm-cid'
 
 interface FeedInfo {
   reference: string
@@ -39,7 +39,7 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
 
-  protected async updateFeedAndPrint(chunkReference: string): Promise<void> {
+  protected async updateFeedAndPrint(chunkReference: string): Promise<string> {
     const wallet = await this.getWallet()
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
     const { reference, manifest } = await this.writeFeed(wallet, topic, chunkReference)
@@ -58,6 +58,8 @@ export class FeedCommand extends RootCommand {
     if (!this.quiet && this.debugApiIsUsable()) {
       printEnrichedStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console)
     }
+
+    return manifest
   }
 
   protected async getWallet(): Promise<Wallet> {
