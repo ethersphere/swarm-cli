@@ -216,6 +216,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
       ...getStampOption(),
     ])
     const command = invocation.runnable as unknown as FeedUpload
+    consoleMessages.length = 0
     await invokeTestCli(['manifest', 'list', `${command.feedManifest}`])
     expect(consoleMessages[0]).toContain(['/README.md'])
   })
