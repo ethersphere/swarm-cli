@@ -10,7 +10,7 @@ import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
-import { encodeFeedReference, encodeManifestReference } from "@ethersphere/swarm-cid";
+import { encodeFeedReference, encodeManifestReference } from '@ethersphere/swarm-cid'
 
 interface FeedInfo {
   reference: string

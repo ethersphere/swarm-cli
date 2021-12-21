@@ -13,7 +13,7 @@ import { createSpinner } from '../utils/spinner'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
-import { encodeManifestReference } from "@ethersphere/swarm-cid";
+import { encodeManifestReference } from '@ethersphere/swarm-cid'
 
 const MAX_UPLOAD_SIZE = parseInt(process.env.MAX_UPLOAD_SIZE || '', 10) || 100 * 1000 * 1000 // 100 megabytes
 
