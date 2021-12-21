@@ -107,7 +107,7 @@ describeCommand(
       await sleep(11_000)
     })
 
-    it('should only be able to dilute stamp with greater depth', async () => {
+    it.skip('should only be able to dilute stamp with greater depth', async () => {
       const execution = await invokeTestCli([
         'stamp',
         'buy',
@@ -117,10 +117,10 @@ describeCommand(
         '19',
         '--gas-price',
         '100_000_000',
+        '--wait-usable',
       ])
       const command = execution.runnable as Buy
       const { postageBatchId } = command
-      await sleep(11_000)
       consoleMessages.length = 0
       await invokeTestCli(['stamp', 'dilute', '--stamp', postageBatchId, '--depth', '18'])
       expect(hasMessageContaining('This postage stamp already has depth 19. The new value must be higher.')).toBe(true)
@@ -133,7 +133,7 @@ describeCommand(
       expect(getNthLastMessage(2)).toContain('20')
     })
 
-    it('should top up stamp', async () => {
+    it.skip('should top up stamp', async () => {
       const execution = await invokeTestCli([
         'stamp',
         'buy',
@@ -143,10 +143,10 @@ describeCommand(
         '19',
         '--gas-price',
         '100_000_000',
+        '--wait-usable',
       ])
       const command = execution.runnable as Buy
       const { postageBatchId } = command
-      await sleep(11_000)
       consoleMessages.length = 0
       await invokeTestCli(['stamp', 'topup', '--stamp', postageBatchId, '--amount', '1k'])
       expect(getNthLastMessage(1)).toContain('Amount')
