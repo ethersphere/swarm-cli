@@ -29,6 +29,7 @@
     "test": "jest --config=jest.config.ts",
     "test:coverage": "jest --config=jest.config.ts --coverage",
     "types:check": "tsc --project tsconfig.test.json",
+    "start": "ts-node src/index.ts",
     "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\""
   },
@@ -74,6 +75,7 @@
   "dependencies": {
     "@ethersphere/bee-js": "3.1.0",
     "@ethersphere/manifest-js": "1.1.0",
+    "@ethersphere/swarm-cid": "^0.1.0",
     "chalk": "^2.4.2",
     "cli-progress": "^3.8.2",
     "ethereumjs-wallet": "^1.0.1",
