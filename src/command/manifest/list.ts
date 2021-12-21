@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { BzzAddress } from '../../utils/bzz-address'
+import { makeBzzAddress } from '../../utils/bzz-address'
 import { ManifestCommand } from './manifest-command'
 
 export class List extends ManifestCommand implements LeafCommand {
@@ -19,7 +19,7 @@ export class List extends ManifestCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     await super.init()
-    const address = new BzzAddress(this.bzzUrl)
+    const address = await makeBzzAddress(this.bee, this.bzzUrl)
     const forks = await this.loadAllValueForks(address.hash, address.path)
     for (const fork of forks) {
       if (!fork.node.getEntry) {
