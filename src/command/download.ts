@@ -7,7 +7,7 @@ import { RootCommand } from './root-command'
 
 export class Download extends RootCommand implements LeafCommand {
   public readonly name = 'download'
-  public readonly aliases = ['dl']
+  public readonly alias = 'dl'
   public readonly description = 'Download arbitrary Swarm hash'
 
   @Aggregation(['manifest download'])

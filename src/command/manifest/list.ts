@@ -5,7 +5,9 @@ import { ManifestCommand } from './manifest-command'
 
 export class List extends ManifestCommand implements LeafCommand {
   public readonly name = 'list'
-  public readonly aliases = ['ls']
+
+  public readonly alias = 'ls'
+
   public readonly description = 'List manifest content'
 
   @Argument({ key: 'address', description: 'Manifest reference (with optional path)', required: true })

@@ -1,4 +1,5 @@
 import { Tag, Utils } from '@ethersphere/bee-js'
+import { encodeManifestReference } from '@ethersphere/swarm-cid'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -7,23 +8,19 @@ import { exit } from 'process'
 import { setCurlStore } from '../curl'
 import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, readStdin, sleep } from '../utils'
+import { CommandLineError } from '../utils/error'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
-import { encodeManifestReference } from '@ethersphere/swarm-cid'
 
 const MAX_UPLOAD_SIZE = parseInt(process.env.MAX_UPLOAD_SIZE || '', 10) || 100 * 1000 * 1000 // 100 megabytes
 
 export class Upload extends RootCommand implements LeafCommand {
-  // CLI FIELDS
-
   public readonly name = 'upload'
-
-  public readonly aliases = ['up']
-
+  public readonly alias = 'up'
   public readonly description = 'Upload file to Swarm'
 
   @Argument({
@@ -127,12 +124,12 @@ export class Upload extends RootCommand implements LeafCommand {
     await this.maybePrintSyncWarning()
 
     if (!this.stdin && !FS.existsSync(this.path)) {
-      throw Error(`Given filepath '${this.path}' doesn't exist`)
+      throw new CommandLineError(`Given filepath '${this.path}' doesn't exist`)
     }
 
     if (this.stdin) {
       if (!this.stamp) {
-        throw Error('Stamp must be passed when reading data from stdin')
+        throw new CommandLineError('Stamp must be passed when reading data from stdin')
       }
       this.stdinData = await readStdin(this.console)
     }
@@ -169,8 +166,10 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(createKeyValue('URL', url))
 
-    const swarmCid = encodeManifestReference(this.hash)
-    this.console.log(createKeyValue('Bzz.link', `https://${swarmCid.toString()}.bzz.link`))
+    if (url.includes('/bzz/')) {
+      const swarmCid = encodeManifestReference(this.hash)
+      this.console.log(createKeyValue('Bzz.link', `https://${swarmCid.toString()}.bzz.link`))
+    }
 
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)

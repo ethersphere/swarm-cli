@@ -4,12 +4,8 @@ import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
 export class Cashout extends ChequeCommand implements LeafCommand {
-  // CLI FIELDS
-
   public readonly name = 'cashout'
-
-  public readonly aliases = ['co']
-
+  public readonly alias = 'co'
   public readonly description = 'Cashout one or all pending cheques'
 
   @Option({ key: 'peer', alias: 'p', description: 'Peer address', required: true, conflicts: 'all' })

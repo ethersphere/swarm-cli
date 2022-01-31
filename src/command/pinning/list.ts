@@ -2,11 +2,9 @@ import { LeafCommand } from 'furious-commander'
 import { PinningCommand } from './pinning-command'
 
 export class List extends PinningCommand implements LeafCommand {
-  // CLI FIELDS
-
   public readonly name = 'list'
 
-  public readonly aliases = ['ls']
+  public readonly alias = 'ls'
 
   public readonly description = 'List pinned chunks'
 

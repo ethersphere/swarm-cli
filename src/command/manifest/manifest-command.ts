@@ -2,6 +2,7 @@ import type { Data } from '@ethersphere/bee-js'
 import { loadAllNodes, MantarayFork, MantarayNode, Reference, StorageSaver } from 'mantaray-js'
 import { join } from 'path'
 import { getFieldOrNull, referenceToHex } from '../../utils'
+import { CommandLineError } from '../../utils/error'
 import { RootCommand } from '../root-command'
 
 // FIXME: review these error messages in mantaray-js
@@ -92,7 +93,7 @@ export class ManifestCommand extends RootCommand {
       const message: string | null = getFieldOrNull(error, 'message')
 
       if (message && GENERALISED_ERROR_MESSAGES.includes(message)) {
-        throw Error('The reference provided is not a valid root manifest hash')
+        throw new CommandLineError('The reference provided is not a valid root manifest hash')
       } else {
         throw error
       }
