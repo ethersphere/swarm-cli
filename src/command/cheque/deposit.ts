@@ -3,11 +3,9 @@ import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
 export class Deposit extends ChequeCommand implements LeafCommand {
-  // CLI FIELDS
-
   public readonly name = 'deposit'
 
-  public readonly aliases = ['dep']
+  public readonly alias = 'dep'
 
   public readonly description = 'Deposit tokens from overlay address into chequebook'
 
