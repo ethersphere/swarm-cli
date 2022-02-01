@@ -1,7 +1,6 @@
 import chalk from 'chalk'
 import { prompt } from 'inquirer'
-import { exit } from 'process'
-import { BeeErrorOptions, handleError } from '../../utils/error'
+import { BeeErrorOptions, CommandLineError, errorHandler } from '../../utils/error'
 import { deletePreviousLine } from '../../utils/text'
 import { Printer } from './printer'
 
@@ -89,9 +88,8 @@ export class CommandLog {
     const { value } = input
 
     if (!value) {
-      this.error('You did not specify any value')
-
-      exit(1)
+      deletePreviousLine()
+      throw new CommandLineError('No value specified')
     }
 
     deletePreviousLine()
@@ -113,9 +111,8 @@ export class CommandLog {
     })
 
     if (!value) {
-      this.error('You did not specify any password')
-
-      exit(1)
+      deletePreviousLine()
+      throw new CommandLineError('No password specified')
     }
 
     if (clear) {
@@ -130,14 +127,12 @@ export class CommandLog {
    *
    * @returns password
    */
-  public async askForPasswordWithConfirmation(): Promise<string> {
-    const password = await this.askForPassword('Please provide a password', false)
-    const passwordAgain = await this.askForPassword('Please repeat the password', false)
+  public async askForPasswordWithConfirmation(passwordMessage: string, confirmationMessage: string): Promise<string> {
+    const password = await this.askForPassword(passwordMessage, false)
+    const passwordAgain = await this.askForPassword(confirmationMessage, false)
 
     if (password !== passwordAgain) {
-      this.error('The two passwords do not match')
-
-      exit(1)
+      throw new CommandLineError('The two passwords do not match')
     }
 
     return password
@@ -158,7 +153,14 @@ export class CommandLog {
     return result.value
   }
 
+  public async confirmAndDelete(message: string): Promise<boolean> {
+    const value = await this.confirm(message)
+    deletePreviousLine()
+
+    return value
+  }
+
   public printBeeError(error: unknown, options?: BeeErrorOptions): void {
-    handleError(error, options)
+    errorHandler(error, options)
   }
 }

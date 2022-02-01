@@ -2,6 +2,13 @@ import { getFieldOrNull } from '.'
 import { FORMATTED_ERROR } from '../command/root-command/printer'
 import { printer } from '../printer'
 
+/**
+ * Thrown when the error is not related to Bee/network
+ */
+export class CommandLineError extends Error {
+  public readonly type = 'CommandLineError'
+}
+
 export interface BeeErrorOptions {
   notFoundMessage?: string
 }
@@ -18,12 +25,13 @@ function isInternalServerError(error: unknown): boolean {
   return hasStatusCode(error, 500)
 }
 
-export function handleError(error: unknown, options?: BeeErrorOptions): void {
+export function errorHandler(error: unknown, options?: BeeErrorOptions): void {
   if (!process.exitCode) {
     process.exitCode = 1
   }
   // grab error.message, or error if it is a string
-  const message: string | null = typeof error === 'string' && error ? error : getFieldOrNull(error, 'message')
+  const message: string | null = typeof error === 'string' ? error : getFieldOrNull(error, 'message')
+  const type: string | null = getFieldOrNull(error, 'type')
 
   // write custom message for 500
   if (isInternalServerError(error)) {
@@ -48,13 +56,15 @@ export function handleError(error: unknown, options?: BeeErrorOptions): void {
     printer.printError(FORMATTED_ERROR + ' The command failed, but there is no error message available.')
   }
 
-  // print 'check bee logs' message
-  if (message) {
-    printer.printError('')
-    printer.printError('There may be additional information in the Bee logs.')
-  } else {
-    printer.printError('')
-    printer.printError('Check your Bee log to learn if your request reached the node.')
+  // print 'check bee logs' message if error does not originate from the cli
+  if (type !== 'CommandLineError') {
+    if (message) {
+      printer.printError('')
+      printer.printError('There may be additional information in the Bee logs.')
+    } else {
+      printer.printError('')
+      printer.printError('Check your Bee log to learn if your request reached the node.')
+    }
   }
 }
 

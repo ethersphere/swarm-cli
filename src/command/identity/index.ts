@@ -4,11 +4,13 @@ import { Export } from './export'
 import { Import } from './import'
 import { List } from './list'
 import { Remove } from './remove'
+import { Rename } from './rename'
+import { Show } from './show'
 
 export class Identity implements GroupCommand {
   public readonly name = 'identity'
 
   public readonly description = 'Import, export and manage keypairs, identities'
 
-  public subCommandClasses = [Create, List, Remove, Import, Export]
+  public subCommandClasses = [Show, Create, List, Remove, Import, Export, Rename]
 }

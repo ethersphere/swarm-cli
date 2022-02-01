@@ -1,56 +1,34 @@
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
-import { pickIdentity } from '../../service/identity'
 import { IdentityCommand } from './identity-command'
 
 export class Remove extends IdentityCommand implements LeafCommand {
-  // CLI FIELDS
-
   public readonly name = 'remove'
 
-  public readonly aliases = ['rm']
+  public readonly alias = 'rm'
 
   public readonly description = 'Remove identity'
 
-  @Argument({ key: 'identity-name', description: 'Name of the designated identity for delete' })
+  @Argument({ key: 'name', description: 'Name of the identity to be deleted' })
   public identityName!: string
 
-  @Option({ key: 'force', alias: 'f', type: 'boolean', description: 'Perform action without confirm input prompt' })
+  @Option({ key: 'force', alias: 'f', type: 'boolean', description: 'Perform action without confirmation' })
   public force!: boolean
 
   public async run(): Promise<void> {
     await super.init()
-
-    if (!this.commandConfig.config.identities) {
-      this.printNoIdentitiesError()
-
-      return
-    }
-
-    if (!this.identityName) {
-      this.identityName = await pickIdentity(this.commandConfig, this.console)
-    }
-
-    const identityNames = Object.keys(this.commandConfig.config.identities)
-
-    //check identityName does exist
-    if (!identityNames.includes(this.identityName)) {
-      this.console.error('Given identity name does not exist')
-
-      exit(1)
-    }
+    const { name } = await this.getOrPickIdentity(this.identityName)
 
     if (!this.force) {
-      const confirmation = await this.console.confirm(`Are you sure you want delete identity '${this.identityName}'?`)
+      const confirmation = await this.console.confirmAndDelete(`Are you sure you want delete the identity '${name}'?`)
 
       if (!confirmation) {
-        this.console.error('Removal of identity has been cancelled')
-
-        exit(1)
+        this.console.log('Aborted')
+        exit(0)
       }
     }
 
-    this.commandConfig.removeIdentity(this.identityName)
-    this.console.log('Identity has been successfully removed')
+    this.commandConfig.removeIdentity(name)
+    this.console.log(`Identity '${name}' has been successfully deleted`)
   }
 }

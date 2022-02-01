@@ -2,6 +2,7 @@ import { Reference } from '@ethersphere/bee-js'
 import { promises, statSync } from 'fs'
 import { join } from 'path'
 import { CommandLog } from '../command/root-command/command-log'
+import { CommandLineError } from './error'
 
 /**
  * Sleep for N miliseconds
@@ -19,6 +20,12 @@ export function fileExists(path: string): boolean {
     return stat.isFile()
   } catch {
     return false
+  }
+}
+
+export function expectFile(path: string): void {
+  if (!fileExists(path)) {
+    throw new CommandLineError(`Expected file at path '${path}', found none`)
   }
 }
 
@@ -156,4 +163,20 @@ export function parseHeaders(headers: string[]): Record<string, string> {
   }
 
   return object
+}
+
+export function normalizePrivateKey(string: string): string {
+  let normalized = string.toLowerCase()
+
+  if (normalized.startsWith('0x') && normalized.length === 66) {
+    normalized = normalized.slice(2)
+  }
+
+  return normalized
+}
+
+export function isPrivateKey(string: string): boolean {
+  const normalized = normalizePrivateKey(string)
+
+  return /^[a-f0-9]{64}$/.test(normalized)
 }
