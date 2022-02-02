@@ -2,14 +2,14 @@ import { existsSync, unlinkSync } from 'fs'
 import { cli } from 'furious-commander'
 import { join } from 'path'
 import { optionParameters, rootCommandClasses } from '../../src/config'
-import { handleError } from '../../src/utils/error'
+import { errorHandler } from '../../src/utils/error'
 
 export async function invokeTestCli(argv: string[]): ReturnType<typeof cli> {
   const commandBuilder = await cli({
     rootCommandClasses,
     optionParameters,
     testArguments: argv,
-    errorHandler: (error: unknown) => handleError(error),
+    errorHandler,
   })
 
   return commandBuilder
