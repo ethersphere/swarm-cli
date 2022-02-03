@@ -1,24 +1,28 @@
 import Wallet from 'ethereumjs-wallet'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { exit } from 'process'
 import { IdentityType } from '../../service/identity/types'
-import { fileExists } from '../../utils'
-import { createSpinner } from '../../utils/spinner'
+import { expectFile, getFieldOrNull, isPrivateKey, normalizePrivateKey } from '../../utils'
+import { CommandLineError } from '../../utils/error'
+import { Message } from '../../utils/message'
+import { createAndRunSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
 
 export class Import extends RootCommand implements LeafCommand {
-  // CLI FIELDS
-
   public readonly name = 'import'
 
-  public readonly description = 'Import V3 wallet as a new identity'
+  public readonly description = 'Import private key or V3 wallet as a new identity'
 
-  @Argument({ key: 'path', required: true, description: 'Path to the V3 wallet file', autocompletePath: true })
-  public path!: string
+  @Argument({
+    key: 'resource',
+    required: true,
+    description: 'Private key string or path to file with V3 Wallet or private key',
+    autocompletePath: true,
+  })
+  public resource!: string
 
-  @Option({ key: 'identity-name', alias: 'i', description: 'Name of the identity to be saved as' })
+  @Option({ key: 'name', alias: 'i', description: 'Name of the identity to be saved as', required: true })
   public identityName!: string
 
   @Option({ key: 'password', alias: 'P', description: 'Password for the V3 wallet' })
@@ -26,20 +30,57 @@ export class Import extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     await super.init()
-    this.checkForValidPath()
-    await this.ensurePasswordIsProvided()
-    const data = readFileSync(this.path).toString()
-    await this.ensureIdentityNameIsProvided()
-    const spinner = createSpinner('Decrypting V3 wallet...')
 
-    if (this.verbosity === VerbosityLevel.Verbose) {
-      spinner.start()
+    if (this.commandConfig.config.identities[this.identityName]) {
+      throw new CommandLineError(Message.identityNameConflict(this.identityName))
     }
-    const wallet: Wallet = await this.decryptV3Wallet(data)
-    spinner.text = 'Importing V3 wallet...'
-    await this.saveWallet(wallet)
-    spinner.stop()
-    this.console.log(`V3 Wallet imported as identity '${this.identityName}' successfully`)
+
+    if (isPrivateKey(this.resource)) {
+      await this.runImportOnPrivateKey()
+    } else {
+      expectFile(this.resource)
+      this.resource = readFileSync(this.resource, 'utf-8')
+
+      if (isPrivateKey(this.resource)) {
+        await this.runImportOnPrivateKey()
+      } else {
+        if (!this.password) {
+          this.console.log(Message.optionNotDefined('password'))
+          this.password = await this.console.askForPassword(Message.existingV3Password())
+        }
+        const spinner = createAndRunSpinner('Decrypting V3 wallet...', this.verbosity)
+        try {
+          const wallet: Wallet = await this.decryptV3Wallet(this.resource)
+
+          spinner.text = 'Importing V3 wallet...'
+          await this.saveWallet(wallet)
+        } finally {
+          spinner.stop()
+        }
+        this.console.log(`V3 Wallet imported as identity '${this.identityName}' successfully`)
+      }
+    }
+  }
+
+  private async runImportOnPrivateKey(): Promise<void> {
+    if (
+      this.verbosity !== VerbosityLevel.Quiet &&
+      (await this.console.confirmAndDelete('Convert private key to a secure V3 wallet?'))
+    ) {
+      await this.convertPrivateKeyToV3Wallet()
+    } else {
+      const data = {
+        wallet: {
+          privateKey: this.resource,
+        },
+        identityType: IdentityType.simple,
+      }
+
+      if (!this.commandConfig.saveIdentity(this.identityName, data)) {
+        throw new CommandLineError(Message.identityNameConflictOption(this.identityName))
+      }
+      this.console.log(`Private key imported as identity '${this.identityName}' successfully`)
+    }
   }
 
   private async decryptV3Wallet(data: string): Promise<Wallet> {
@@ -47,55 +88,33 @@ export class Import extends RootCommand implements LeafCommand {
       const wallet: Wallet = await Wallet.fromV3(data, this.password)
 
       return wallet
-    } catch (error) {
-      this.console.error('Failed to decrypt wallet:\n' + error.message)
-
-      exit(1)
+    } catch (error: unknown) {
+      const message: string = getFieldOrNull(error, 'message') || 'unknown error'
+      throw new CommandLineError(`Failed to decrypt wallet: ${message}`)
     }
   }
 
-  private async ensurePasswordIsProvided(): Promise<void> {
+  private async convertPrivateKeyToV3Wallet(): Promise<void> {
     if (!this.password) {
-      this.console.log('You have not defined the password with the "--password" option.')
-      this.password = await this.console.askForPassword('Please provide the password for this V3 Wallet')
+      this.console.log(Message.optionNotDefined('password'))
+      this.password = await this.console.askForPasswordWithConfirmation(
+        Message.newV3Password(),
+        Message.newV3PasswordConfirmation(),
+      )
     }
-  }
-
-  private async ensureIdentityNameIsProvided(): Promise<void> {
-    if (!this.identityName) {
-      this.console.log('You have not defined the identity name with the "--identity-name" option.')
-    } else if (this.commandConfig.config.identities[this.identityName]) {
-      this.console.error('An identity with that name already exists, please try again.')
-    }
-    while (!this.identityName || this.commandConfig.config.identities[this.identityName]) {
-      const value = await this.console.askForValue('Please specify an identity name now.')
-
-      if (this.commandConfig.config.identities[value]) {
-        this.console.error('An identity with that name already exists, please try again.')
-      } else {
-        this.identityName = value
-      }
-    }
+    const wallet = Wallet.fromPrivateKey(Buffer.from(normalizePrivateKey(this.resource), 'hex'))
+    await this.saveWallet(wallet)
+    this.console.log(`V3 Wallet imported as identity '${this.identityName}' successfully`)
   }
 
   private async saveWallet(wallet: Wallet): Promise<void> {
-    const successfulSave = this.commandConfig.saveIdentity(this.identityName, {
+    const data = {
       wallet: await wallet.toV3(this.password),
       identityType: IdentityType.v3,
-    })
-
-    if (!successfulSave) {
-      this.console.error(`Identity '${this.identityName}' already exist.`)
-
-      exit(1)
     }
-  }
 
-  private checkForValidPath(): void {
-    if (!fileExists(this.path)) {
-      this.console.error('There is no file at the specified path')
-
-      exit(1)
+    if (!this.commandConfig.saveIdentity(this.identityName, data)) {
+      throw new CommandLineError(Message.identityNameConflict(this.identityName))
     }
   }
 }

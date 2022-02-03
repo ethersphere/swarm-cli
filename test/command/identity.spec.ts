@@ -17,25 +17,27 @@ describeCommand(
     })
 
     it('should create V3 identity "main"', async () => {
-      // create identity
       await invokeTestCli(['identity', 'create', '--password', '1234'])
-      expect(consoleMessages[0]).toBe('Keypair has been generated successfully!')
+      expect(consoleMessages[1]).toContain('Name')
+      expect(consoleMessages[1]).toContain('main')
+      expect(consoleMessages[2]).toContain('Type')
+      expect(consoleMessages[2]).toContain('V3 Wallet')
     })
 
     it('should create simple identity "temporary-identity"', async () => {
-      // create identity
       await invokeTestCli(['identity', 'create', 'temporary-identity', '--only-keypair'])
-      expect(consoleMessages[0]).toBe('Keypair has been generated successfully!')
+      expect(consoleMessages[0]).toContain('Name')
+      expect(consoleMessages[0]).toContain('temporary-identity')
+      expect(consoleMessages[1]).toContain('Type')
+      expect(consoleMessages[1]).toContain('Private Key')
     })
 
     it('should list already created identities', async () => {
-      // create identity
       const commandBuilder = await invokeTestCli(['identity', 'list'])
-      expect(consoleMessages[0]).toContain('List of your identities')
-      expect(consoleMessages[2]).toContain('Identity name')
-      expect(consoleMessages[2]).toContain('main')
-      expect(consoleMessages[6]).toContain('Identity name')
-      expect(consoleMessages[6]).toContain('temporary-identity')
+      expect(consoleMessages[0]).toContain('Name')
+      expect(consoleMessages[0]).toContain('main')
+      expect(consoleMessages[4]).toContain('Name')
+      expect(consoleMessages[4]).toContain('temporary-identity')
       const listCommand = commandBuilder.runnable as List
       expect(Object.keys(listCommand.commandConfig.config.identities)).toHaveLength(2)
       expect(listCommand.commandConfig.config.identities.main).toBeDefined()
@@ -45,7 +47,7 @@ describeCommand(
     it('should remove identity "temporary-identity"', async () => {
       // remove identity
       await invokeTestCli(['identity', 'remove', 'temporary-identity', '-f'])
-      expect(consoleMessages[0]).toBe('Identity has been successfully removed')
+      expect(consoleMessages[0]).toBe("Identity 'temporary-identity' has been successfully deleted")
       // check it removed from the identity list
       const commandBuilder = await invokeTestCli(['identity', 'list'])
       const listCommand = commandBuilder.runnable as List
@@ -69,7 +71,7 @@ describeCommand(
       const path = join(configFolderPath, 'v3-keystore.json')
       writeFileSync(path, v3string)
       // then import it
-      await invokeTestCli(['identity', 'import', path, '--identity-name', 'import-test', '--password', '123'])
+      await invokeTestCli(['identity', 'import', path, '--name', 'import-test', '--password', '123'])
       // and check for successful import message
       expect(getLastMessage()).toContain("V3 Wallet imported as identity 'import-test' successfully")
     })

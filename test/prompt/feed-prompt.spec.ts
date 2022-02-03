@@ -4,7 +4,7 @@ import { getStampOption } from '../utility/stamp'
 
 describeCommand(
   'Using Feed Commands with Prompts',
-  ({ getNthLastMessage, getLastMessage }) => {
+  ({ consoleMessages, getNthLastMessage, getLastMessage }) => {
     it('feed upload should prompt for stamp, identity and password', async () => {
       await invokeTestCli(['identity', 'create', 'main', '-P', 'secret'])
       jest
@@ -54,7 +54,7 @@ describeCommand(
 
     it('feed upload should fail when running in quiet mode and password is missing', async () => {
       await invokeTestCli(['feed', 'upload', '-q', 'README.md', '-i', 'main', ...getStampOption()])
-      expect(getNthLastMessage(3)).toContain('There is no password passed for V3 wallet initialization')
+      expect(consoleMessages[0]).toContain('Password must be passed with the --password option in quiet mode')
     })
   },
   { configFileName: 'feed-prompt' },

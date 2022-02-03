@@ -1,4 +1,3 @@
-import { Create } from '../../src/command/identity/create'
 import { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
@@ -41,9 +40,8 @@ describeCommand(
 
     it('should print feed using address only', async () => {
       // create identity
-      const commandBuilder = await invokeTestCli(['identity', 'create', 'test2', '--password', 'test'])
-      const identityCreate = commandBuilder.runnable as Create
-      const address = identityCreate.wallet.getAddressString()
+      await invokeTestCli(['identity', 'create', 'test2', '--password', 'test'])
+      const address = getLastMessage().split(' ')[1]
       // upload
       await invokeTestCli([
         'feed',
