@@ -7,16 +7,22 @@ import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { createAndRunSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'
+import { VerbosityLevel } from '../root-command/command-log'
 
 export class Import extends RootCommand implements LeafCommand {
   public readonly name = 'import'
 
   public readonly description = 'Import private key or V3 wallet as a new identity'
 
-  @Argument({ key: 'resource', required: true, description: 'Private key or path to wallet', autocompletePath: true })
+  @Argument({
+    key: 'resource',
+    required: true,
+    description: 'Private key string or path to file with V3 Wallet or private key',
+    autocompletePath: true,
+  })
   public resource!: string
 
-  @Option({ key: 'name', alias: 'i', description: 'Name of the identity to be saved as' })
+  @Option({ key: 'name', alias: 'i', description: 'Name of the identity to be saved as', required: true })
   public identityName!: string
 
   @Option({ key: 'password', alias: 'P', description: 'Password for the V3 wallet' })
@@ -24,7 +30,10 @@ export class Import extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     await super.init()
-    await this.ensureIdentityNameIsProvided()
+
+    if (this.commandConfig.config.identities[this.identityName]) {
+      throw new CommandLineError(Message.identityNameConflict(this.identityName))
+    }
 
     if (isPrivateKey(this.resource)) {
       await this.runImportOnPrivateKey()
@@ -54,7 +63,10 @@ export class Import extends RootCommand implements LeafCommand {
   }
 
   private async runImportOnPrivateKey(): Promise<void> {
-    if (await this.console.confirmAndDelete('Convert private key to a secure V3 wallet?')) {
+    if (
+      this.verbosity !== VerbosityLevel.Quiet &&
+      (await this.console.confirmAndDelete('Convert private key to a secure V3 wallet?'))
+    ) {
       await this.convertPrivateKeyToV3Wallet()
     } else {
       const data = {
@@ -67,6 +79,7 @@ export class Import extends RootCommand implements LeafCommand {
       if (!this.commandConfig.saveIdentity(this.identityName, data)) {
         throw new CommandLineError(Message.identityNameConflictOption(this.identityName))
       }
+      this.console.log(`Private key imported as identity '${this.identityName}' successfully`)
     }
   }
 
@@ -92,23 +105,6 @@ export class Import extends RootCommand implements LeafCommand {
     const wallet = Wallet.fromPrivateKey(Buffer.from(normalizePrivateKey(this.resource), 'hex'))
     await this.saveWallet(wallet)
     this.console.log(`V3 Wallet imported as identity '${this.identityName}' successfully`)
-  }
-
-  private async ensureIdentityNameIsProvided(): Promise<void> {
-    if (!this.identityName) {
-      this.console.log(Message.optionNotDefined('name'))
-    } else if (this.commandConfig.config.identities[this.identityName]) {
-      this.console.error(Message.identityNameConflict(this.identityName))
-    }
-    while (!this.identityName || this.commandConfig.config.identities[this.identityName]) {
-      const value = await this.console.askForValue(Message.specifyIdentityName())
-
-      if (this.commandConfig.config.identities[value]) {
-        this.console.error(Message.identityNameConflict(value))
-      } else {
-        this.identityName = value
-      }
-    }
   }
 
   private async saveWallet(wallet: Wallet): Promise<void> {
