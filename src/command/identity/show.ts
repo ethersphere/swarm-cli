@@ -18,13 +18,14 @@ export class Show extends IdentityCommand implements LeafCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password of the wallet' })
   public password!: string
 
+  @Option({ key: 'sensitive', type: 'boolean', description: 'Print sensitive information without confirmation' })
+  public sensitive!: boolean
+
   public async run(): Promise<void> {
     await super.init()
     const { identity } = await this.getOrPickIdentity(this.identityName)
 
-    if (!(await this.console.confirmAndDelete('This will print sensitive information to the console. Continue?'))) {
-      exit(0)
-    }
+    await this.maybePromptForSensitive()
 
     if (isV3Wallet(identity.wallet, identity.identityType)) {
       if (!this.password) {
@@ -32,11 +33,29 @@ export class Show extends IdentityCommand implements LeafCommand {
       }
       const wallet = await Wallet.fromV3(identity.wallet, this.password)
       this.printWallet(wallet)
+      this.printWalletQuietly(wallet)
     } else if (isSimpleWallet(identity.wallet, identity.identityType)) {
       const wallet = Wallet.fromPrivateKey(Buffer.from(normalizePrivateKey(identity.wallet.privateKey), 'hex'))
       this.printWallet(wallet)
+      this.printWalletQuietly(wallet)
     } else {
       throw new CommandLineError('Unsupported identity type')
+    }
+  }
+
+  private async maybePromptForSensitive(): Promise<void | never> {
+    if (this.sensitive) {
+      return
+    }
+
+    if (this.quiet && !this.sensitive) {
+      throw new CommandLineError(
+        Message.requireOptionConfirmation('sensitive', 'This will print sensitive information to the console'),
+      )
+    }
+
+    if (!(await this.console.confirmAndDelete('This will print sensitive information to the console. Continue?'))) {
+      exit(0)
     }
   }
 }

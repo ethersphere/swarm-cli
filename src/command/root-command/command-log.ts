@@ -1,8 +1,14 @@
 import chalk from 'chalk'
 import { prompt } from 'inquirer'
 import { BeeErrorOptions, CommandLineError, errorHandler } from '../../utils/error'
+import { Message } from '../../utils/message'
 import { deletePreviousLine } from '../../utils/text'
 import { Printer } from './printer'
+
+interface NameValue {
+  name: string
+  value: string
+}
 
 export enum VerbosityLevel {
   /** No output message, only at errors or result strings (e.g. hash of uploaded file) */
@@ -14,6 +20,7 @@ export enum VerbosityLevel {
 }
 
 export class CommandLog {
+  public readonly verbosityLevel: VerbosityLevel
   // Callable logging functions (instead of console.log)
 
   /** Error messages */
@@ -32,6 +39,7 @@ export class CommandLog {
   public divider: (char?: string) => void
 
   constructor(verbosityLevel: VerbosityLevel) {
+    this.verbosityLevel = verbosityLevel
     switch (verbosityLevel) {
       case VerbosityLevel.Verbose:
         this.error = Printer.error
@@ -103,6 +111,10 @@ export class CommandLog {
    * @returns password
    */
   public async askForPassword(message: string, clear = true): Promise<string> {
+    if (this.verbosityLevel === VerbosityLevel.Quiet) {
+      throw new CommandLineError(Message.optionNotDefined('password'))
+    }
+
     const { value } = await prompt({
       prefix: chalk.bold.cyan('?'),
       type: 'password',
@@ -138,7 +150,7 @@ export class CommandLog {
     return password
   }
 
-  public async promptList(choices: string[], message: string): Promise<string> {
+  public async promptList(choices: string[] | NameValue[], message: string): Promise<string> {
     const result = await prompt({
       prefix: chalk.bold.cyan('?'),
       name: 'value',

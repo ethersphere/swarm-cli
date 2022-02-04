@@ -52,6 +52,7 @@ export class Create extends IdentityCommand implements LeafCommand {
     this.console.log(createKeyValue('Name', this.identityName))
     this.console.log(createKeyValue('Type', getPrintableIdentityType(identity.identityType)))
     this.printWallet(wallet)
+    this.printWalletQuietly(wallet)
   }
 
   private async createV3Identity(wallet: Wallet): Promise<Identity> {

@@ -38,6 +38,10 @@ function newV3PasswordConfirmation(): string {
   return 'Enter the new password again for the V3 wallet'
 }
 
+function requireOptionConfirmation(option: string, message: string): string {
+  return `${message}. Pass the --${option} option to allow it`
+}
+
 export const Message = {
   specifyIdentityName,
   identityNameConflict,
@@ -49,4 +53,5 @@ export const Message = {
   existingV3Password,
   newV3Password,
   newV3PasswordConfirmation,
+  requireOptionConfirmation,
 }

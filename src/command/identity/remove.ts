@@ -1,5 +1,7 @@
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
+import { CommandLineError } from '../../utils/error'
+import { Message } from '../../utils/message'
 import { IdentityCommand } from './identity-command'
 
 export class Remove extends IdentityCommand implements LeafCommand {
@@ -20,6 +22,11 @@ export class Remove extends IdentityCommand implements LeafCommand {
     const { name } = await this.getOrPickIdentity(this.identityName)
 
     if (!this.force) {
+      if (this.quiet) {
+        throw new CommandLineError(
+          Message.requireOptionConfirmation('force', 'This will delete the identity with no way to recover it'),
+        )
+      }
       const confirmation = await this.console.confirmAndDelete(`Are you sure you want delete the identity '${name}'?`)
 
       if (!confirmation) {
