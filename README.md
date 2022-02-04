@@ -472,7 +472,7 @@ There are some ways you can make this module better:
 
 # Maintainers
 
-- [nugaon](https://github.com/nugaon)
+- [AuHau](https://github.com/auhau)
 - [Cafe137](https://github.com/Cafe137)
 
 See what "Maintainer" means [here](https://github.com/ethersphere/repo-maintainer).

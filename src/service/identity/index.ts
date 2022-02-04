@@ -1,18 +1,19 @@
 import Wallet from 'ethereumjs-wallet'
-import { exit } from 'process'
 import { CommandConfig } from '../../command/root-command/command-config'
 import { CommandLog } from '../../command/root-command/command-log'
+import { CommandLineError } from '../../utils/error'
 import { hexToBytes } from '../../utils/hex'
+import { Message } from '../../utils/message'
 import { Identity, IdentityType, IdentityWallet, SimpleWallet, V3Keystore } from './types'
 
-export function getPrintableIdentityType(identityType: IdentityType): string {
-  switch (identityType) {
+export function getPrintableIdentityType(type: IdentityType): string {
+  switch (type) {
     case IdentityType.simple:
-      return 'only keypair'
+      return 'Private Key'
     case IdentityType.v3:
-      return 'v3 keystore'
+      return 'V3 Wallet'
     default:
-      throw new Error(`IdentityType '${identityType}' is not known.`)
+      return 'Unknown'
   }
 }
 
@@ -48,7 +49,7 @@ export async function getWalletFromIdentity(
   } else if (isV3Wallet(wallet, identityType)) {
     if (!password) {
       if (quiet) {
-        throw new Error('There is no password passed for V3 wallet initialization')
+        throw new CommandLineError('Password must be passed with the --password option in quiet mode')
       }
       password = await console.askForPassword('Please provide the password for this V3 Wallet')
     }
@@ -56,15 +57,14 @@ export async function getWalletFromIdentity(
     return getV3Wallet(wallet, password)
   }
 
-  throw new Error(`Wrong identity 'typeOfWallet' value: ${identity.identityType}`)
+  throw new CommandLineError(`Wrong identity 'typeOfWallet' value: ${identity.identityType}`)
 }
 
 export async function pickIdentity(commandConfig: CommandConfig, console: CommandLog): Promise<string> {
   const names = Object.keys(commandConfig.config.identities)
 
   if (!names.length) {
-    console.error('You need to create an identity for this action.')
-    exit(1)
+    throw new CommandLineError(Message.noIdentity())
   }
 
   const name = await console.promptList(names, 'Please select an identity for this action')
