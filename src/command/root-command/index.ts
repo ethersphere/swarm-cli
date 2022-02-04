@@ -35,6 +35,9 @@ export class RootCommand {
   @ExternalOption('header')
   public header!: string[]
 
+  @ExternalOption('yes')
+  public yes!: boolean
+
   public bee!: Bee
   public _beeDebug!: BeeDebug
   public console!: CommandLog

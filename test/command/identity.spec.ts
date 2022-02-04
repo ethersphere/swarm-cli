@@ -43,7 +43,7 @@ describeCommand(
 
     it('should remove identity "temporary-identity"', async () => {
       // remove identity
-      await invokeTestCli(['identity', 'remove', 'temporary-identity', '-f'])
+      await invokeTestCli(['identity', 'remove', 'temporary-identity', '--yes'])
       expect(consoleMessages[0]).toBe("Identity 'temporary-identity' has been successfully deleted")
       // check it removed from the identity list
       const commandBuilder = await invokeTestCli(['identity', 'list'])
@@ -72,13 +72,13 @@ describeCommand(
         '0x944b0a2e488eddfb11d0666cb144f2c47f5ec2374a94fb637bec7c9f9fe74b8a',
         '--name',
         'Sample 2',
-        '--no-convert',
+        '--yes',
       ])
       expect(getLastMessage()).toBe("Private key imported as identity 'Sample 2' successfully")
     })
 
     it('should import private key identity as path', async () => {
-      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 3', '--no-convert'])
+      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 3', '--yes'])
       expect(getLastMessage()).toBe("Private key imported as identity 'Sample 3' successfully")
     })
 
@@ -110,7 +110,7 @@ describeCommand(
     })
 
     it('should export private key identity', async () => {
-      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 6', '--no-convert'])
+      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 6', '--yes'])
       await invokeTestCli(['identity', 'export', 'Sample 6'])
       expect(getLastMessage()).toBe('0x944b0a2e488eddfb11d0666cb144f2c47f5ec2374a94fb637bec7c9f9fe74b8a')
     })
@@ -125,7 +125,7 @@ describeCommand(
         '-P',
         'TestPassword',
       ])
-      await invokeTestCli(['identity', 'show', 'Sample 7', '--sensitive', '-P', 'TestPassword'])
+      await invokeTestCli(['identity', 'show', 'Sample 7', '--yes', '-P', 'TestPassword'])
       expect(getNthLastMessage(3)).toContain('Private key')
       expect(getNthLastMessage(3)).toContain('0x560feedcad2979e64dd067f67220b5aeca62e8df8e6dda741bb1b20b8144cb1f')
       expect(getNthLastMessage(2)).toContain('Public key')
@@ -137,8 +137,8 @@ describeCommand(
     })
 
     it('should show private key identity', async () => {
-      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 8', '--no-convert'])
-      await invokeTestCli(['identity', 'show', 'Sample 8', '--sensitive'])
+      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 8', '--yes'])
+      await invokeTestCli(['identity', 'show', 'Sample 8', '--yes'])
       expect(getNthLastMessage(3)).toContain('Private key')
       expect(getNthLastMessage(3)).toContain('0x944b0a2e488eddfb11d0666cb144f2c47f5ec2374a94fb637bec7c9f9fe74b8a')
       expect(getNthLastMessage(2)).toContain('Public key')
@@ -150,16 +150,16 @@ describeCommand(
     })
 
     it('should rename identity', async () => {
-      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 9', '--no-convert'])
+      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 9', '--yes'])
       await invokeTestCli(['identity', 'rename', 'Sample 9', 'Renamed Sample 9'])
-      await invokeTestCli(['identity', 'show', 'Renamed Sample 9', '--sensitive'])
+      await invokeTestCli(['identity', 'show', 'Renamed Sample 9', '--yes'])
       expect(getLastMessage()).toContain('Address')
       expect(getLastMessage()).toContain('0xb9dea25cf402403d1429141f4a39afd89897668a')
     })
 
     it('should not rename identity with name conflict', async () => {
-      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 10', '--no-convert'])
-      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 11', '--no-convert'])
+      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 10', '--yes'])
+      await invokeTestCli(['identity', 'import', 'test/data/TestIdentity.txt', '--name', 'Sample 11', '--yes'])
       await invokeTestCli(['identity', 'rename', 'Sample 10', 'Sample 11'])
       expect(getLastMessage()).toContain("An identity with the name 'Sample 11' already exists")
     })

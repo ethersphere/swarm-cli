@@ -18,9 +18,6 @@ export class Show extends IdentityCommand implements LeafCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password of the wallet' })
   public password!: string
 
-  @Option({ key: 'sensitive', type: 'boolean', description: 'Print sensitive information without confirmation' })
-  public sensitive!: boolean
-
   public async run(): Promise<void> {
     await super.init()
     const { identity } = await this.getOrPickIdentity(this.identityName)
@@ -44,13 +41,13 @@ export class Show extends IdentityCommand implements LeafCommand {
   }
 
   private async maybePromptForSensitive(): Promise<void | never> {
-    if (this.sensitive) {
+    if (this.yes) {
       return
     }
 
-    if (this.quiet && !this.sensitive) {
+    if (this.quiet && !this.yes) {
       throw new CommandLineError(
-        Message.requireOptionConfirmation('sensitive', 'This will print sensitive information to the console'),
+        Message.requireOptionConfirmation('yes', 'This will print sensitive information to the console'),
       )
     }
 

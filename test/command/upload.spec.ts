@@ -66,12 +66,12 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   })
 
   it('should not warn for large files with flag', async () => {
-    await invokeTestCli(['upload', 'test/data/8mb.bin', '-v', '--size-check', 'false', ...getStampOption()])
+    await invokeTestCli(['upload', 'test/data/8mb.bin', '-v', '--yes', 'false', ...getStampOption()])
     expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
 
   it('should not warn for large folders with flag', async () => {
-    await invokeTestCli(['upload', 'test/data', '-v', '--size-check', 'false', ...getStampOption()])
+    await invokeTestCli(['upload', 'test/data', '-v', '--yes', 'false', ...getStampOption()])
     expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
 

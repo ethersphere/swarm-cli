@@ -9,6 +9,7 @@ import { setCurlStore } from '../curl'
 import { pickStamp, printEnrichedStamp } from '../service/stamp'
 import { fileExists, isGateway, readStdin, sleep } from '../utils'
 import { CommandLineError } from '../utils/error'
+import { Message } from '../utils/message'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
@@ -43,14 +44,6 @@ export class Upload extends RootCommand implements LeafCommand {
 
   @Option({ key: 'encrypt', type: 'boolean', description: 'Encrypt uploaded data' })
   public encrypt!: boolean
-
-  @Option({
-    key: 'size-check',
-    type: 'boolean',
-    description: 'Check for optimal file or folder sizes before uploading',
-    default: true,
-  })
-  public sizeCheck!: boolean
 
   @Option({
     key: 'sync',
@@ -317,7 +310,7 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async maybeRunSizeChecks(): Promise<void> {
-    if (!this.sizeCheck) {
+    if (this.yes) {
       return
     }
     const { size } = await this.getUploadableInfo()
@@ -326,13 +319,14 @@ export class Upload extends RootCommand implements LeafCommand {
       return
     }
 
-    const message = `The data is larger than the recommended value (${(MAX_UPLOAD_SIZE / 1e6).toFixed(2)} megabytes).`
+    const message = `Size is larger than the recommended maximum value of ${(MAX_UPLOAD_SIZE / 1e6).toFixed(
+      2,
+    )} megabytes`
 
     if (this.quiet) {
-      this.console.error(message)
-      this.console.error('Pass --size-check false to ignore this warning.')
-      exit(1)
+      throw new CommandLineError(Message.requireOptionConfirmation('yes', message))
     }
+
     const confirmation = await this.console.confirm(message + ' Do you want to proceed?')
 
     if (!confirmation) {
