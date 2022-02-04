@@ -25,12 +25,7 @@ export class Show extends IdentityCommand implements LeafCommand {
     await super.init()
     const { identity } = await this.getOrPickIdentity(this.identityName)
 
-    if (
-      !this.sensitive &&
-      !(await this.console.confirmAndDelete('This will print sensitive information to the console. Continue?'))
-    ) {
-      exit(0)
-    }
+    await this.maybePromptForSensitive()
 
     if (isV3Wallet(identity.wallet, identity.identityType)) {
       if (!this.password) {
@@ -45,6 +40,22 @@ export class Show extends IdentityCommand implements LeafCommand {
       this.printWalletQuietly(wallet)
     } else {
       throw new CommandLineError('Unsupported identity type')
+    }
+  }
+
+  private async maybePromptForSensitive(): Promise<void | never> {
+    if (this.sensitive) {
+      return
+    }
+
+    if (this.quiet && !this.sensitive) {
+      throw new CommandLineError(
+        Message.requireOptionConfirmation('sensitive', 'This will print sensitive information to the console'),
+      )
+    }
+
+    if (!(await this.console.confirmAndDelete('This will print sensitive information to the console. Continue?'))) {
+      exit(0)
     }
   }
 }

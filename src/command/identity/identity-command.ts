@@ -1,9 +1,11 @@
 import Wallet from 'ethereumjs-wallet'
+import { getPrintableIdentityType } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
+import { VerbosityLevel } from '../root-command/command-log'
 
 interface NamedIdentity {
   name: string
@@ -24,8 +26,15 @@ export class IdentityCommand extends RootCommand {
       return { name, identity: this.getIdentityByName(name) }
     }
 
-    const names = Object.keys(this.commandConfig.config.identities)
-    const selection = await this.console.promptList(names, 'Select an identity for this action')
+    if (this.verbosity === VerbosityLevel.Quiet) {
+      throw new CommandLineError('Identity name must be specified when running in --quiet mode')
+    }
+
+    const choices = Object.entries(this.commandConfig.config.identities).map(x => ({
+      name: `${x[0]} (${getPrintableIdentityType(x[1].identityType)})`,
+      value: x[0],
+    }))
+    const selection = await this.console.promptList(choices, 'Select an identity for this action')
 
     return { name: selection, identity: this.getIdentityByName(selection) }
   }
