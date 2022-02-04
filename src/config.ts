@@ -106,6 +106,7 @@ export const optionParameters: IOption<unknown>[] = [
   version,
   curl,
   header,
+  yes,
 ]
 
 export const rootCommandClasses = [
