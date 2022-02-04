@@ -36,6 +36,12 @@ export class IdentityCommand extends RootCommand {
     this.console.log(createKeyValue('Address', wallet.getAddressString()))
   }
 
+  protected printWalletQuietly(wallet: Wallet): void {
+    this.console.quiet(wallet.getPrivateKeyString())
+    this.console.quiet(wallet.getPublicKeyString())
+    this.console.quiet(wallet.getAddressString())
+  }
+
   protected getIdentityByName(name: string): Identity {
     const { identities } = this.commandConfig.config
 

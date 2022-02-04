@@ -28,6 +28,13 @@ export class Import extends RootCommand implements LeafCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password for the V3 wallet' })
   public password!: string
 
+  @Option({
+    key: 'no-convert',
+    type: 'boolean',
+    description: 'Do not prompt for converting Private Keys to V3 Wallets',
+  })
+  public noConvert!: boolean
+
   public async run(): Promise<void> {
     await super.init()
 
@@ -63,10 +70,7 @@ export class Import extends RootCommand implements LeafCommand {
   }
 
   private async runImportOnPrivateKey(): Promise<void> {
-    if (
-      this.verbosity !== VerbosityLevel.Quiet &&
-      (await this.console.confirmAndDelete('Convert private key to a secure V3 wallet?'))
-    ) {
+    if (await this.shouldConvertToV3Wallet()) {
       await this.convertPrivateKeyToV3Wallet()
     } else {
       const data = {
@@ -116,5 +120,23 @@ export class Import extends RootCommand implements LeafCommand {
     if (!this.commandConfig.saveIdentity(this.identityName, data)) {
       throw new CommandLineError(Message.identityNameConflict(this.identityName))
     }
+  }
+
+  private async shouldConvertToV3Wallet(): Promise<boolean> {
+    if (this.noConvert) {
+      return false
+    }
+
+    if (this.password) {
+      return true
+    }
+
+    if (this.verbosity !== VerbosityLevel.Quiet) {
+      const answer = await this.console.confirmAndDelete('Convert private key to a secure V3 wallet?')
+
+      return answer
+    }
+
+    return false
   }
 }
