@@ -2,11 +2,9 @@ import { LeafCommand, Option } from 'furious-commander'
 import { ChequeCommand } from './cheque-command'
 
 export class List extends ChequeCommand implements LeafCommand {
-  // CLI FIELDS
-
   public readonly name = 'list'
 
-  public readonly aliases = ['ls']
+  public readonly alias = 'ls'
 
   public readonly description = 'List cashable cheques'
 

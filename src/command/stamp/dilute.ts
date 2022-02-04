@@ -1,5 +1,6 @@
 import { LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
+import { CommandLineError } from '../../utils/error'
 import { stampProperties } from '../../utils/option'
 import { createSpinner } from '../../utils/spinner'
 import { VerbosityLevel } from '../root-command/command-log'
@@ -33,7 +34,7 @@ export class Dilute extends StampCommand implements LeafCommand {
     const details = await this.beeDebug.getPostageBatch(this.stamp)
 
     if (this.depth <= details.depth) {
-      throw new Error(`This postage stamp already has depth ${details.depth}. The new value must be higher.`)
+      throw new CommandLineError(`This postage stamp already has depth ${details.depth}. The new value must be higher.`)
     }
 
     const spinner = createSpinner('Dilute in progress. This may take a while.')

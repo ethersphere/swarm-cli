@@ -1,5 +1,6 @@
 import { Bee } from '@ethersphere/bee-js'
 import { ManifestJs } from '@ethersphere/manifest-js'
+import { CommandLineError } from './error'
 
 export class BzzAddress {
   public hash: string
@@ -11,13 +12,13 @@ export class BzzAddress {
     }
 
     if (url.includes('//')) {
-      throw new Error('Invalid BZZ path: cannot contain multiple continuous slashes')
+      throw new CommandLineError('Invalid BZZ path: cannot contain multiple continuous slashes')
     }
     const parts = url.split('/')
     this.hash = parts[0].toLowerCase()
 
     if (!/[a-z0-9]{64,128}/.test(this.hash)) {
-      throw new Error('Invalid BZZ hash: expected 64 or 128 long hexadecimal hash')
+      throw new CommandLineError('Invalid BZZ hash: expected 64 or 128 long hexadecimal hash')
     }
     const pathParts = parts.slice(1)
     this.path = pathParts.length ? pathParts.join('/') : null

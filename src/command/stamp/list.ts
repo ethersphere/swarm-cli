@@ -9,7 +9,7 @@ import { StampCommand } from './stamp-command'
 export class List extends StampCommand implements LeafCommand {
   public readonly name = 'list'
 
-  public readonly aliases = ['ls']
+  public readonly alias = 'ls'
 
   public readonly description = 'List postage stamps'
 

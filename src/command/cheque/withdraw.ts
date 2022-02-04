@@ -3,11 +3,9 @@ import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
 export class Withdraw extends ChequeCommand implements LeafCommand {
-  // CLI FIELDS
-
   public readonly name = 'withdraw'
 
-  public readonly aliases = ['wd']
+  public readonly alias = 'wd'
 
   public readonly description = 'Withdraw tokens from the chequebook to the overlay address'
 

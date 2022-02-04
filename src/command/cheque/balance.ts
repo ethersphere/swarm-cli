@@ -3,11 +3,9 @@ import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 
 export class Balance extends ChequeCommand implements LeafCommand {
-  // CLI FIELDS
-
   public readonly name = 'balance'
 
-  public readonly aliases = ['bal']
+  public readonly alias = 'bal'
 
   public readonly description = 'Show balance'
 
