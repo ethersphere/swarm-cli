@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.10.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.9.0...v1.10.0) (2022-02-04)
+
+
+### Features
+
+* add identity show command ([#322](https://www.github.com/ethersphere/swarm-cli/issues/322)) ([12f3fa3](https://www.github.com/ethersphere/swarm-cli/commit/12f3fa3de84de3b065e99d1ffec6a4c0b1aa7f76))
+* add-identity-rename-command ([#323](https://www.github.com/ethersphere/swarm-cli/issues/323)) ([948b158](https://www.github.com/ethersphere/swarm-cli/commit/948b1580bc26e139497e757598462535a1d7ea35))
+* improve identity command workflows ([#321](https://www.github.com/ethersphere/swarm-cli/issues/321)) ([47cbb6f](https://www.github.com/ethersphere/swarm-cli/commit/47cbb6f2ff0090c51c70643508ed3fd1dbaac918))
+* update to bee-js 3.2 ([#320](https://www.github.com/ethersphere/swarm-cli/issues/320)) ([95b7045](https://www.github.com/ethersphere/swarm-cli/commit/95b7045adba3b83cf1473817316aacf227a43da5))
+
 ## [1.9.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.8.0...v1.9.0) (2021-12-21)
 
 
