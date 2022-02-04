@@ -29,3 +29,4 @@ node_modules
 test/data/*
 !test/data/.gitkeep
 !test/data/manifest
+!test/data/TestIdentity.*
