@@ -19,7 +19,7 @@ async function sendAndExpect(message: string): Promise<void> {
     '--timeout',
     '120000',
   ])
-  await sleep(1000)
+  await sleep(5000)
   await callSend(message, topic)
   const { receivedMessage } = (await receiveCommand).runnable as Receive
   expect(receivedMessage).toBe(message)
