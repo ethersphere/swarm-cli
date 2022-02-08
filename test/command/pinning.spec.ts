@@ -86,7 +86,7 @@ describeCommand(
     })
 
     it('should allow reuploading pinned folder', async () => {
-      const invocation = await invokeTestCli(['upload', 'test', '--pin', '--yes', 'false', ...getStampOption()])
+      const invocation = await invokeTestCli(['upload', 'test', '--pin', 'false', '--yes', ...getStampOption()])
       const upload = invocation.runnable as Upload
       const { hash } = upload
       await invokeTestCli(['pinning', 'reupload', hash])
