@@ -28,13 +28,6 @@ export class Import extends RootCommand implements LeafCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password for the V3 wallet' })
   public password!: string
 
-  @Option({
-    key: 'no-convert',
-    type: 'boolean',
-    description: 'Do not prompt for converting Private Keys to V3 Wallets',
-  })
-  public noConvert!: boolean
-
   public async run(): Promise<void> {
     await super.init()
 
@@ -123,7 +116,7 @@ export class Import extends RootCommand implements LeafCommand {
   }
 
   private async shouldConvertToV3Wallet(): Promise<boolean> {
-    if (this.noConvert) {
+    if (this.yes) {
       return false
     }
 

@@ -88,6 +88,13 @@ export const header: IOption<string[]> = {
   array: true,
 }
 
+export const yes: IOption<string[]> = {
+  type: 'boolean',
+  key: 'yes',
+  alias: 'y',
+  description: 'Agree to all prompts',
+}
+
 export const optionParameters: IOption<unknown>[] = [
   beeApiUrl,
   beeDebugApiUrl,
@@ -99,6 +106,7 @@ export const optionParameters: IOption<unknown>[] = [
   version,
   curl,
   header,
+  yes,
 ]
 
 export const rootCommandClasses = [
