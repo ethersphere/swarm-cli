@@ -9,7 +9,7 @@ describeCommand(
     it('should list stamps', async () => {
       await invokeTestCli(['stamp', 'list'])
       expect(consoleMessages[0]).toContain('Stamp ID:')
-      expect(consoleMessages[1]).toContain('Label: recovered')
+      expect(consoleMessages[1]).toContain('Label: ')
       expect(consoleMessages[2]).toContain('Usage:')
     })
 
@@ -17,7 +17,7 @@ describeCommand(
       await invokeTestCli(['stamp', 'show', process.env.STAMP || ''])
       expect(consoleMessages[0]).toContain('Stamp ID:')
       expect(consoleMessages[0]).toContain(process.env.STAMP)
-      expect(consoleMessages[1]).toContain('Label: recovered')
+      expect(consoleMessages[1]).toContain('Label: ')
       expect(consoleMessages[2]).toContain('Usage:')
     })
 
