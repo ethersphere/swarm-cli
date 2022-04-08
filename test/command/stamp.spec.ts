@@ -9,14 +9,16 @@ describeCommand(
     it('should list stamps', async () => {
       await invokeTestCli(['stamp', 'list'])
       expect(consoleMessages[0]).toContain('Stamp ID:')
-      expect(consoleMessages[1]).toContain('Usage:')
+      expect(consoleMessages[1]).toContain('Label: ')
+      expect(consoleMessages[2]).toContain('Usage:')
     })
 
     it('should show a specific stamp', async () => {
       await invokeTestCli(['stamp', 'show', process.env.STAMP || ''])
       expect(consoleMessages[0]).toContain('Stamp ID:')
       expect(consoleMessages[0]).toContain(process.env.STAMP)
-      expect(consoleMessages[1]).toContain('Usage:')
+      expect(consoleMessages[1]).toContain('Label: ')
+      expect(consoleMessages[2]).toContain('Usage:')
     })
 
     it('should not allow buying stamp with amount 0', async () => {
@@ -79,8 +81,9 @@ describeCommand(
       expect(getNthLastMessage(4)).toContain('true')
       expect(getNthLastMessage(9)).toContain('Usage')
       expect(getNthLastMessage(9)).toContain('0%')
-      expect(getNthLastMessage(10)).toContain('Stamp ID')
-      expect(getNthLastMessage(10)).toContain(id)
+      expect(getNthLastMessage(10)).toContain('Label:')
+      expect(getNthLastMessage(11)).toContain('Stamp ID')
+      expect(getNthLastMessage(11)).toContain(id)
     })
 
     it('should accept --wait-usable prompt', async () => {
