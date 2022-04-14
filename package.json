@@ -1,6 +1,6 @@
 {
   "name": "@ethersphere/swarm-cli",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Cli tool for Bee",
   "keywords": [
     "Bee",
