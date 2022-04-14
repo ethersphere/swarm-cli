@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.11.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.10.0...v1.11.0) (2022-04-14)
+
+
+### Features
+
+* add top level --yes option ([#336](https://www.github.com/ethersphere/swarm-cli/issues/336)) ([4545f2b](https://www.github.com/ethersphere/swarm-cli/commit/4545f2b29c1a8468fb85a91d98463729682847ab))
+* display stamp label ([#346](https://www.github.com/ethersphere/swarm-cli/issues/346)) ([db10ae9](https://www.github.com/ethersphere/swarm-cli/commit/db10ae91fc91fb69a4350b88898102d024ac147c))
+* update to bee-js 3.3.4 version ([#366](https://www.github.com/ethersphere/swarm-cli/issues/366)) ([b2ad5d3](https://www.github.com/ethersphere/swarm-cli/commit/b2ad5d319e9119b4abc1e6d1b8bb19c4af31e061))
+
+
+### Bug Fixes
+
+* do not print bzz.link when uploading with encryption ([#368](https://www.github.com/ethersphere/swarm-cli/issues/368)) ([f1490f7](https://www.github.com/ethersphere/swarm-cli/commit/f1490f7a550a9a46cf9653ca31157a6fd585ddd8))
+
 ## [1.10.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.9.0...v1.10.0) (2022-02-04)
 
 
