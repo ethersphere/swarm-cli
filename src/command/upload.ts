@@ -107,6 +107,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public stdinData!: Buffer
 
+  // eslint-disable-next-line complexity
   public async run(usedFromOtherCommand = false): Promise<void> {
     await super.init()
 
@@ -159,7 +160,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(createKeyValue('URL', url))
 
-    if (url.includes('/bzz/')) {
+    if (!this.encrypt && url.includes('/bzz/')) {
       const swarmCid = encodeManifestReference(this.hash)
       this.console.log(createKeyValue('Bzz.link', `https://${swarmCid.toString()}.bzz.link`))
     }
