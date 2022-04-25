@@ -1,3 +1,4 @@
+import { getFieldOrNull } from '../../utils'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 
@@ -44,7 +45,9 @@ export class ChequeCommand extends RootCommand {
 
       return BigInt(lastCashout.uncashedAmount)
     } catch (error) {
-      if (error.message === 'Not Found') {
+      const message = getFieldOrNull(error, 'message')
+
+      if (message === 'Not Found') {
         return BigInt(0)
       }
       throw error
