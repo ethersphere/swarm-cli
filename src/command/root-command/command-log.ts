@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { prompt } from 'inquirer'
+import inquirer from 'inquirer'
 import { BeeErrorOptions, CommandLineError, errorHandler } from '../../utils/error'
 import { Message } from '../../utils/message'
 import { deletePreviousLine } from '../../utils/text'
@@ -72,7 +72,7 @@ export class CommandLog {
   }
 
   public async confirm(message: string): Promise<boolean> {
-    const { value } = await prompt({
+    const { value } = await inquirer.prompt({
       prefix: chalk.bold.cyan('?'),
       type: 'confirm',
       name: 'value',
@@ -88,7 +88,7 @@ export class CommandLog {
    * @returns value
    */
   public async askForValue(message: string): Promise<string> {
-    const input = await prompt({
+    const input = await inquirer.prompt({
       prefix: chalk.bold.cyan('?'),
       name: 'value',
       message,
@@ -115,7 +115,7 @@ export class CommandLog {
       throw new CommandLineError(Message.optionNotDefined('password'))
     }
 
-    const { value } = await prompt({
+    const { value } = await inquirer.prompt({
       prefix: chalk.bold.cyan('?'),
       type: 'password',
       name: 'value',
@@ -151,7 +151,7 @@ export class CommandLog {
   }
 
   public async promptList(choices: string[] | NameValue[], message: string): Promise<string> {
-    const result = await prompt({
+    const result = await inquirer.prompt({
       prefix: chalk.bold.cyan('?'),
       name: 'value',
       type: 'list',

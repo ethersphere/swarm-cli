@@ -14,7 +14,7 @@ interface NamedIdentity {
 
 export class IdentityCommand extends RootCommand {
   protected throwIfNoIdentities(): void {
-    if (!this.commandConfig.config.identities) {
+    if (!this.commandConfig.config.identities || Object.keys(this.commandConfig.config.identities).length === 0) {
       throw new CommandLineError(Message.noIdentity())
     }
   }
