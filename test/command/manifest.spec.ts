@@ -280,16 +280,14 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should handle error for invalid download hash', async () => {
     await invokeTestCli(['manifest', 'download', 'g'.repeat(64)])
     expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR +
-        ' value not valid hex string of length 128: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
+      FORMATTED_ERROR + ' ReferenceOrEns is not valid Reference, but also not valid ENS domain.',
     )
   })
 
   it('should handle error for invalid list hash', async () => {
     await invokeTestCli(['manifest', 'list', 'g'.repeat(64)])
     expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR +
-        ' value not valid hex string of length 128: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
+      FORMATTED_ERROR + ' ReferenceOrEns is not valid Reference, but also not valid ENS domain.',
     )
   })
 
