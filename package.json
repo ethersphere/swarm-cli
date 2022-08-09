@@ -41,6 +41,7 @@
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@ethersphere/bee-factory": "^0.4.1",
     "@types/cli-progress": "^3.8.0",
     "@types/configstore": "^4.0.0",
     "@types/glob": "^7.1.3",
