@@ -63,7 +63,6 @@
   },
   "dependencies": {
     "@ethersphere/bee-js": "^3.3.4",
-    "@ethersphere/manifest-js": "1.1.0",
     "@ethersphere/swarm-cid": "^0.1.0",
     "chalk": "^2.4.2",
     "cli-progress": "^3.8.2",
