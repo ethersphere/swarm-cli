@@ -93,7 +93,12 @@ export class FeedCommand extends RootCommand {
     try {
       const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
       const reference = await writer.upload(this.stamp, chunkReference as Reference)
-      const manifest = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, wallet.getAddressString())
+      const { reference: manifest } = await this.bee.createFeedManifest(
+        this.stamp,
+        'sequence',
+        topic,
+        wallet.getAddressString(),
+      )
 
       return { reference, manifest }
     } finally {

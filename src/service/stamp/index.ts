@@ -1,4 +1,4 @@
-import { BeeDebug, DebugPostageBatch } from '@ethersphere/bee-js'
+import { BeeDebug, PostageBatch } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { createKeyValue } from '../../utils/text'
@@ -29,13 +29,13 @@ export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promis
   return hex
 }
 
-export function normalizeUtilization(stamp: DebugPostageBatch): number {
+export function normalizeUtilization(stamp: PostageBatch): number {
   const { depth, bucketDepth, utilization } = stamp
 
   return utilization / Math.pow(2, depth - bucketDepth)
 }
 
-export function enrichStamp(stamp: DebugPostageBatch): EnrichedStamp {
+export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
   const usage = normalizeUtilization(stamp)
   const usageNormal = Math.ceil(usage * 100)
   const usageText = usageNormal + '%'
@@ -63,7 +63,7 @@ export function printStamp(stamp: EnrichedStamp, console: CommandLog, printUsage
   console.quiet(printUsage ? `${stamp.batchID} ${stamp.usageText}` : stamp.batchID)
 }
 
-export function printEnrichedStamp(stamp: DebugPostageBatch, console: CommandLog): void {
+export function printEnrichedStamp(stamp: PostageBatch, console: CommandLog): void {
   const enrichedStamp = enrichStamp(stamp)
   printStamp(enrichedStamp, console, true)
 }
