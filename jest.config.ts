@@ -38,6 +38,7 @@ export default async (): Promise<Config.InitialOptions> => {
     // Run tests from one or more projects
     projects: [
       {
+        preset: 'ts-jest',
         displayName: 'node',
         testEnvironment: 'node',
         testRegex: 'test/.*\\.spec\\.ts',
