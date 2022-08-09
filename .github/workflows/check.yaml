@@ -51,7 +51,7 @@ jobs:
         run: npm run types:check
 
       - name: Build nodejs code
-        run: npm run compile
+        run: npm run build
 
       - name: Check and update the supported Bee version
         uses: ethersphere/update-supported-bee-action@v1
