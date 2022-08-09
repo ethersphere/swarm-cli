@@ -30,11 +30,13 @@
     "types:check": "tsc --project tsconfig.test.json",
     "start": "ts-node src/index.ts",
     "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\""
+    "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "bee": "bee-factory start"
   },
   "engines": {
     "node": ">=12.0.0",
-    "npm": ">=6.0.0"
+    "npm": ">=6.0.0",
+    "bee": "1.7.0-bbf13011"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
