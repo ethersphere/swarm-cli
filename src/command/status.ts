@@ -51,8 +51,9 @@ export class Status extends RootCommand implements LeafCommand {
     try {
       await this.bee.checkConnection()
       this.printSuccessfulCheck('Bee API Connection')
-    } catch {
+    } catch (error) {
       this.handleFailedCheck('Bee API Connection')
+      this.console.error(error as string)
     }
   }
 
