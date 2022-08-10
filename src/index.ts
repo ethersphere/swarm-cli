@@ -1,5 +1,5 @@
+import dns from 'dns'
 import { cli } from 'furious-commander'
-import dns from 'node:dns'
 import { application } from './application'
 import { optionParameters, rootCommandClasses } from './config'
 import { printer } from './printer'
