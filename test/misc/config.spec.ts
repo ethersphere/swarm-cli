@@ -19,19 +19,19 @@ describeCommand(
       )
 
       await invokeTestCli(['cheque', 'list'])
-      expect(consoleMessages[1]).toContain('http://localhost:30003')
+      expect(consoleMessages[1]).toContain('http://127.0.0.1:30003')
     })
 
     it('should use env over config when specified', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:30002'
 
       await invokeTestCli(['cheque', 'list'])
-      expect(consoleMessages[1]).toContain('http://localhost:30002')
+      expect(consoleMessages[1]).toContain('http://127.0.0.1:30002')
     })
 
     it('should use explicit option over all', async () => {
       await invokeTestCli(['cheque', 'list', '--bee-debug-api-url', 'http://localhost:30001'])
-      expect(consoleMessages[1]).toContain('http://localhost:30001')
+      expect(consoleMessages[1]).toContain('http://127.0.0.1:30001')
     })
 
     it('should read config path explicitly, then use it for url', async () => {
@@ -45,7 +45,7 @@ describeCommand(
       )
 
       await invokeTestCli(['cheque', 'list', '--config-file', 'config2.config.json'])
-      expect(consoleMessages[1]).toContain('http://localhost:30004')
+      expect(consoleMessages[1]).toContain('http://127.0.0.1:30004')
     })
   },
   { configFileName: 'test-config' },
