@@ -99,6 +99,10 @@ export class RootCommand {
     if (this.header.length) {
       beeOptions.defaultHeaders = parseHeaders(this.header)
     }
+
+    this.beeApiUrl = this.beeApiUrl.replace('http://localhost', 'http://127.0.0.1')
+    this.beeDebugApiUrl = this.beeDebugApiUrl.replace('http://localhost', 'http://127.0.0.1')
+
     this.bee = new Bee(this.beeApiUrl, beeOptions)
     this._beeDebug = new BeeDebug(this.beeDebugApiUrl, beeOptions)
     this.verbosity = VerbosityLevel.Normal
