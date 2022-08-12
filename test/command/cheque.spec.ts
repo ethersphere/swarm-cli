@@ -28,7 +28,7 @@ describeCommand(
     it('should print helpful error message when api is unavailable', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:16737'
       await invokeTestCli(['cheque', 'list'])
-      expect(getNthLastMessage(6)).toContain('Could not reach Debug API at http://127.0.0.1:16737')
+      expect(getNthLastMessage(6)).toContain('Could not reach Debug API at http://localhost:16737')
       expect(getNthLastMessage(5)).toContain('Make sure you have the Debug API enabled in your Bee config')
       expect(getNthLastMessage(4)).toContain('or correct the URL with the --bee-debug-api-url option.')
     })
