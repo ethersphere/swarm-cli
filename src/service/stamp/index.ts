@@ -49,10 +49,22 @@ export function enrichStamp(stamp: DebugPostageBatch): EnrichedStamp {
 }
 
 export function printStamp(stamp: EnrichedStamp, console: CommandLog, printUsage: boolean): void {
+  const secondsToDhms = (secs: number) => {
+    var d = Math.floor(secs / (3600*24));
+    var h = Math.floor(secs % (3600*24) / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.floor(secs % 60);
+
+    var dDisplay = d > 0 ? d + (d == 1 ? " day, " : " days, ") : "";
+    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+    return dDisplay + hDisplay + mDisplay + sDisplay;
+  }
   console.log(createKeyValue('Stamp ID', stamp.batchID))
   console.log(createKeyValue('Label', stamp.label))
   console.log(createKeyValue('Usage', stamp.usageText))
-  console.log(createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : stamp.batchTTL + ' seconds'))
+  console.log(createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : secondsToDhms(stamp.batchTTL)))
   console.verbose(createKeyValue('Depth', stamp.depth))
   console.verbose(createKeyValue('Bucket Depth', stamp.bucketDepth))
   console.verbose(createKeyValue('Amount', stamp.amount))
