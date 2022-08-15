@@ -29,6 +29,7 @@
     "test:coverage": "jest --config=jest.config.ts --coverage",
     "types:check": "tsc --project tsconfig.test.json",
     "start": "ts-node src/index.ts",
+    "start:node": "npm run build && node dist/src/index.js",
     "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "bee": "bee-factory start"
