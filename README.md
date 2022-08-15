@@ -448,7 +448,7 @@ installed. Run the following in the project folder:
 Then you need to compile the TypeScript code:
 
 ```sh
- $ npm run compile
+ $ npm run build
 ```
 
 To make the local `swarm-cli` files in the `dist/` directory available as a global package:
@@ -460,7 +460,7 @@ To make the local `swarm-cli` files in the `dist/` directory available as a glob
 If all went well you should be able to run `swarm-cli`.
 
 If `npm link` fails, or you don't want to install anything, then you
-can use `node dist/index.js` to run `swarm-cli` from the checked out
+can use `node dist/src/index.js` to run `swarm-cli` from the checked out
 directory.
 
 # Contribute

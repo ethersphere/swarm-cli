@@ -1,4 +1,4 @@
-import { NodesInfo, SUPPORTED_BEE_VERSION, SUPPORTED_BEE_VERSION_EXACT } from '@ethersphere/bee-js'
+import { NodeInfo, SUPPORTED_BEE_VERSION, SUPPORTED_BEE_VERSION_EXACT } from '@ethersphere/bee-js'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
 import { createKeyValue } from '../utils/text'
@@ -83,7 +83,7 @@ export class Status extends RootCommand implements LeafCommand {
     }
   }
 
-  private async getNodeInfo(): Promise<NodesInfo | null> {
+  private async getNodeInfo(): Promise<NodeInfo | null> {
     try {
       const nodeInfo = await this._beeDebug.getNodeInfo()
 
