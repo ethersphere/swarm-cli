@@ -1,6 +1,7 @@
 import { BeeDebug, PostageBatch } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
+import { secondsToDhms } from '../../utils'
 import { createKeyValue } from '../../utils/text'
 import { EnrichedStamp } from './types/stamp'
 
@@ -52,7 +53,7 @@ export function printStamp(stamp: EnrichedStamp, console: CommandLog, printUsage
   console.log(createKeyValue('Stamp ID', stamp.batchID))
   console.log(createKeyValue('Label', stamp.label))
   console.log(createKeyValue('Usage', stamp.usageText))
-  console.log(createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : stamp.batchTTL + ' seconds'))
+  console.log(createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : secondsToDhms(stamp.batchTTL)))
   console.verbose(createKeyValue('Depth', stamp.depth))
   console.verbose(createKeyValue('Bucket Depth', stamp.bucketDepth))
   console.verbose(createKeyValue('Amount', stamp.amount))
