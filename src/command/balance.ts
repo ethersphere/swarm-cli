@@ -1,9 +1,9 @@
 import { LeafCommand } from 'furious-commander'
-import { createKeyValue } from '../../utils/text'
-import { ChequeCommand } from './cheque-command'
+import { createKeyValue } from '../utils/text'
 import { BigNumber } from 'bignumber.js'
+import { RootCommand } from './root-command'
 
-export class Balance extends ChequeCommand implements LeafCommand {
+export class Balance extends RootCommand implements LeafCommand {
   public readonly name = 'balance'
 
   public readonly alias = 'bal'
