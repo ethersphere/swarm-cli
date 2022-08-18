@@ -2,7 +2,7 @@ import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 import { describeCommand, invokeTestCli } from '../utility'
 
 describeCommand('Test Status command', ({ consoleMessages }) => {
-  const server = createChequeMockHttpServer(1333)
+  const server = createChequeMockHttpServer(1377)
 
   afterAll(() => {
     server.close()
