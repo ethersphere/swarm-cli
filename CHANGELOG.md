@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.11.1](https://www.github.com/ethersphere/swarm-cli/compare/v1.11.0...v1.11.1) (2022-08-18)
+
+
+### Bug Fixes
+
+* convert TTL to human readable format ([#395](https://www.github.com/ethersphere/swarm-cli/issues/395)) ([b040aa9](https://www.github.com/ethersphere/swarm-cli/commit/b040aa95ea29f80a342876f3aefa72da4f6f9398))
+
 ## [1.11.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.10.0...v1.11.0) (2022-04-14)
 
 
