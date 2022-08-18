@@ -26,6 +26,10 @@ export function createChequeMockHttpServer(port: number): Server {
       response.end(JSON.stringify(balance))
     }
 
+    if (request.url === '/wallet') {
+      response.end(JSON.stringify(wallet))
+    }
+
     if (request.url === '/chequebook/cashout/1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad') {
       response.end(JSON.stringify(lastCashoutCheque1))
     }
@@ -75,6 +79,13 @@ const lastCashoutCheque1 = {
 }
 
 const balance = { totalBalance: 100026853000000000, availableBalance: 100018560000000000 }
+
+const wallet = {
+  bzz: '3904697022414848',
+  xDai: '96106482372132023',
+  chainID: 100,
+  contractAddress: '0xb48b45c9254c98a122bd42d0f674318ba154e071',
+}
 
 const nodeInfo = {
   beeMode: 'light',
