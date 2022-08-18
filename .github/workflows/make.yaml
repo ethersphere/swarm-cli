@@ -1,0 +1,42 @@
+name: Make binary
+on: [workflow_dispatch]
+
+jobs:
+  make:
+    strategy:
+      matrix:
+        node-version: [16.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Install deps
+        run: npm ci
+      - name: Install ncc
+        run: npm install --global @vercel/ncc
+      - name: Install pkg
+        run: npm install --global pkg
+      - name: Create bin/
+        run: mkdir bin
+      - name: Run ncc
+        run: ncc build esm.js -o bin
+      - name: Run pkg
+        run: pkg bin/index.js
+      - name: Rename binaries
+        run: |
+          mv index-linux Swarm-CLI-Linux
+          mv index-macos Swarm-CLI-MacOS
+          mv index-win.exe Swarm-CLI-Windows.exe
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Swarm-CLI-Linux
+          path: Swarm-CLI-Linux
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Swarm-CLI-MacOS
+          path: Swarm-CLI-MacOS
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Swarm-CLI-Windows.exe
+          path: Swarm-CLI-Windows.exe
