@@ -55,10 +55,14 @@ describeCommand(
     it('should print balance', async () => {
       process.env.BEE_DEBUG_API_URL = 'http://localhost:1377'
       await invokeTestCli(['cheque', 'balance'])
-      expect(getNthLastMessage(2)).toContain('Total:')
-      expect(getNthLastMessage(2)).toContain('100026853000000000 PLUR')
-      expect(getLastMessage()).toContain('Available:')
-      expect(getLastMessage()).toContain('100018560000000000 PLUR')
+      expect(consoleMessages[1]).toContain('Total')
+      expect(consoleMessages[1]).toContain('BZZ')
+      expect(consoleMessages[2]).toContain('Available')
+      expect(consoleMessages[2]).toContain('BZZ')
+      expect(consoleMessages[3]).toContain('Wallet Balance')
+      expect(consoleMessages[3]).toContain('BZZ')
+      expect(consoleMessages[4]).toContain('Wallet Balance')
+      expect(consoleMessages[4]).toContain('DAI')
     })
 
     it('should cashout all cheques', async () => {
