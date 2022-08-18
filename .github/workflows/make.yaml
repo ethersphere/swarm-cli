@@ -20,7 +20,7 @@ jobs:
       - name: Create bin/
         run: mkdir bin
       - name: Run ncc
-        run: ncc build esm.js -o bin
+        run: ncc build src/index.ts -o bin
       - name: Run pkg
         run: pkg bin/index.js
       - name: Rename binaries
