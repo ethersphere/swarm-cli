@@ -5,6 +5,7 @@ import { createSpinner } from '../../utils/spinner'
 import { createKeyValue, deletePreviousLine } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
+import { BigNumber } from 'bignumber.js'
 
 export class Buy extends StampCommand implements LeafCommand {
   public readonly name = 'buy'
@@ -64,9 +65,32 @@ export class Buy extends StampCommand implements LeafCommand {
       this.waitUsable = await this.console.confirm('Would you like to enable it now?')
     }
 
-    const _estimated = Number(this.amount * BigInt(2 ** this.depth))
-    const estimated = _estimated / Math.pow(10, 16)
-    this.console.log('The estimated cost is ' + estimated.toString() + ' BZZ')
+    function toFixed(x: number) {
+      let res = '0'
+
+      if (Math.abs(x) < 1.0) {
+        const e = parseInt(x.toString().split('e-')[1])
+
+        if (e) {
+          x *= Math.pow(10, e - 1)
+          res = '0.' + new Array(e).join('0') + x.toString().substring(2)
+        }
+      } else {
+        let e = parseInt(x.toString().split('+')[1])
+
+        if (e > 20) {
+          e -= 20
+          x /= Math.pow(10, e)
+          res += new Array(e + 1).join('0')
+        }
+      }
+
+      return res
+    }
+    const _estimated = BigNumber(Number(this.amount)).multipliedBy(BigNumber(2).pow(this.depth))
+    const PLURConvertionRate = BigNumber(10).pow(16)
+    const estimated = BigNumber(_estimated).dividedBy(PLURConvertionRate)
+    this.console.log('The estimated cost is ' + toFixed(estimated.toNumber()) + ' BZZ')
     this.estimatedConfirm = await this.console.confirm('Please confirm if you agree (Y,n)')
 
     if (this.estimatedConfirm) {
