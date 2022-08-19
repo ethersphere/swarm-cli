@@ -59,7 +59,7 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
   })
 
   it('should show units after running: cheque balance', async () => {
-    await invokeTestCli(['cheque', 'balance', '--bee-debug-api-url', 'http://localhost:1378'])
+    await invokeTestCli(['balance', '--bee-debug-api-url', 'http://localhost:1378'])
     expectSubstringsPrinted('Total', 'PLUR')
     expectSubstringsPrinted('Available', 'PLUR')
   })
