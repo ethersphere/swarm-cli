@@ -5,7 +5,7 @@ describeCommand('Test unsure bee-debug', ({ consoleMessages, hasMessageContainin
   it('should fail for cheque commands (mandatory)', async () => {
     delete process.env.BEE_API_URL
     delete process.env.BEE_DEBUG_API_URL
-    await invokeTestCli(['cheque', 'balance', '--bee-api-url', 'http://localhost:1633'])
+    await invokeTestCli(['balance', '--bee-api-url', 'http://localhost:1633'])
     expect(consoleMessages[1]).toContain('Cannot ensure Debug API correctness!')
     expect(consoleMessages[2]).toContain('--bee-api-url is set explicitly, but --bee-debug-api-url is left default.')
     expect(consoleMessages[3]).toContain('This may be incorrect and cause unexpected behaviour.')
