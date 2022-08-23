@@ -7,7 +7,6 @@ import { pickStamp } from '../../service/stamp'
 import { createKeyValue } from '../../utils/text'
 import { createSpinner } from '../../utils/spinner'
 import { FeedCommand } from './feed-command'
-import { ExecException } from 'child_process'
 
 export class Print extends FeedCommand implements LeafCommand {
   public readonly name = 'print'
