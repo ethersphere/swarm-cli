@@ -25,7 +25,7 @@ export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promis
 
   const filterChoices = stamps.filter(stamp => stamp.batchTTL > 0)
   const choices = filterChoices.map(
-    stamp => `${stamp.batchID} (${stamp.usageText}) expires in ${secondsToDhms(stamp.batchTTL, false)}`,
+    stamp => `${stamp.batchID} (${stamp.usageText}) expires in ${secondsToDhms(stamp.batchTTL, true)}`,
   )
   const value = await console.promptList(choices, 'Please select a stamp for this action')
   const [hex] = value.split(' ')
