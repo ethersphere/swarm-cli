@@ -48,11 +48,7 @@ export class Buy extends StampCommand implements LeafCommand {
   @Option({ key: 'wait-usable', description: 'Wait until the postage stamp becomes usable', type: 'boolean' })
   public waitUsable!: boolean
 
-  @Option({ key: 'no-estimate-confirm', description: 'Wait until the postage stamp becomes usable', type: 'boolean' })
-  public estimatedConfirm!: boolean
-
   // CLASS FIELDS
-
   public postageBatchId!: string
 
   public async run(): Promise<void> {
@@ -71,11 +67,11 @@ export class Buy extends StampCommand implements LeafCommand {
     const estimated = BigNumber(_estimated).dividedBy(PLURConvertionRate)
     this.console.log('The estimated cost is ' + toFixed(estimated.toNumber()) + ' BZZ')
 
-    if (!this.estimatedConfirm) {
-      this.estimatedConfirm = await this.console.confirm('Please confirm if you agree')
+    if (!this.yes) {
+      this.yes = await this.console.confirm('Please confirm if you agree')
     }
 
-    if (this.estimatedConfirm) {
+    if (this.yes) {
       const spinner = createSpinner('Buying postage stamp. This may take a while.')
 
       if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
