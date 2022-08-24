@@ -62,10 +62,12 @@ export class Buy extends StampCommand implements LeafCommand {
       this.waitUsable = await this.console.confirm('Would you like to enable it now?')
     }
 
-    const _estimated = BigNumber(Number(this.amount)).multipliedBy(BigNumber(2).pow(this.depth))
     const PLURConvertionRate = BigNumber(10).pow(16)
-    const estimated = BigNumber(_estimated).dividedBy(PLURConvertionRate)
-    this.console.log('The estimated cost is ' + toSignificantDigits(estimated) + ' BZZ')
+    const estimatedCost = BigNumber(Number(this.amount))
+      .multipliedBy(BigNumber(2).pow(this.depth))
+      .dividedBy(PLURConvertionRate)
+
+    this.console.log('The estimated cost is ' + toSignificantDigits(estimatedCost) + ' BZZ')
 
     if (!this.yes) {
       this.yes = await this.console.confirm('Please confirm if you agree')
