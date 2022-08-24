@@ -1,6 +1,6 @@
 import { LeafCommand, Option } from 'furious-commander'
 import { printEnrichedStamp } from '../../service/stamp'
-import { sleep, toFixed } from '../../utils'
+import { sleep, toSignificantDigits } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue, deletePreviousLine } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
@@ -65,7 +65,7 @@ export class Buy extends StampCommand implements LeafCommand {
     const _estimated = BigNumber(Number(this.amount)).multipliedBy(BigNumber(2).pow(this.depth))
     const PLURConvertionRate = BigNumber(10).pow(16)
     const estimated = BigNumber(_estimated).dividedBy(PLURConvertionRate)
-    this.console.log('The estimated cost is ' + toFixed(estimated.toNumber()) + ' BZZ')
+    this.console.log('The estimated cost is ' + toSignificantDigits(estimated) + ' BZZ')
 
     if (!this.yes) {
       this.yes = await this.console.confirm('Please confirm if you agree')
