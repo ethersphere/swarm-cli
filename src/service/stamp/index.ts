@@ -24,19 +24,14 @@ export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promis
     exit(1)
   }
 
-  const filterChoices = stamps.filter(stamp => stamp.batchTTL > 0)
-  const choices = filterChoices.map(
-    stamp => `${stamp.batchID} (${stamp.usageText}) expires in ${secondsToDhms(stamp.batchTTL, true)}`,
-  )
+  const choices = stamps
+    .filter(stamp => stamp.batchTTL > 0)
+    .map(stamp => `${stamp.batchID} (${stamp.usageText}) expires in ${secondsToDhms(stamp.batchTTL, true)}`)
 
-  if (choices.length) {
-    const value = await console.promptList(choices, 'Please select a stamp for this action')
-    const [hex] = value.split(' ')
+  const value = await console.promptList(choices, 'Please select a stamp for this action')
+  const [hex] = value.split(' ')
 
-    return hex
-  } else {
-    throw new CommandLineError('You need to buy a stamp before uploading a file')
-  }
+  return hex
 }
 
 export function normalizeUtilization(stamp: PostageBatch): number {
