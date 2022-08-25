@@ -2,6 +2,7 @@ import { BeeDebug, PostageBatch } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { secondsToDhms } from '../../utils'
+import { CommandLineError } from '../../utils/error'
 import { createKeyValue } from '../../utils/text'
 import { EnrichedStamp } from './types/stamp'
 
@@ -27,10 +28,15 @@ export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promis
   const choices = filterChoices.map(
     stamp => `${stamp.batchID} (${stamp.usageText}) expires in ${secondsToDhms(stamp.batchTTL, true)}`,
   )
-  const value = await console.promptList(choices, 'Please select a stamp for this action')
-  const [hex] = value.split(' ')
 
-  return hex
+  if (choices.length) {
+    const value = await console.promptList(choices, 'Please select a stamp for this action')
+    const [hex] = value.split(' ')
+
+    return hex
+  } else {
+    throw new CommandLineError('You need to buy a stamp before uploading a file')
+  }
 }
 
 export function normalizeUtilization(stamp: PostageBatch): number {

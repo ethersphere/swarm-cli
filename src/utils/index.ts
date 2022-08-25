@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import { Reference } from '@ethersphere/bee-js'
 import BigNumber from 'bignumber.js'
 import { promises, statSync } from 'fs'
@@ -53,7 +52,7 @@ export function getByteSize(data: string | Uint8Array): number {
   return Buffer.byteLength(data, 'utf-8')
 }
 
-export function secondsToDhms(secs: number, resumed = false): string {
+export function secondsToDhms(secs: number, abstractTimeFormat = false): string {
   const d = Math.floor(secs / (3600 * 24))
   const h = Math.floor((secs % (3600 * 24)) / 3600)
   const m = Math.floor((secs % 3600) / 60)
@@ -64,15 +63,11 @@ export function secondsToDhms(secs: number, resumed = false): string {
   const mDisplay = m > 0 ? m + (m === 1 ? ' minute ' : ' minutes ') : ''
   const sDisplay = s > 0 ? s + (s === 1 ? ' second' : ' seconds') : ''
 
-  return resumed
-    ? dDisplay.length
-      ? dDisplay
-      : hDisplay.length
-      ? hDisplay
-      : mDisplay.length
-      ? mDisplay
-      : sDisplay
-    : dDisplay + hDisplay + mDisplay + sDisplay
+  if (abstractTimeFormat) {
+    return dDisplay || hDisplay || mDisplay || sDisplay
+  }
+
+  return dDisplay + hDisplay + mDisplay + sDisplay
 }
 
 /**
