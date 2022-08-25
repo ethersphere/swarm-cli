@@ -54,8 +54,11 @@ export class Print extends FeedCommand implements LeafCommand {
       this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex, 10) + 1))
     } catch (ex: any) {
       spinner.stop()
-      this.console.info('Feed topic lookup error:')
-      this.console.error(`Status: ${ex.response.status} Message: ${ex.response.statusText}`)
+      this.console.info('Feed topic lookup error')
+
+      if (ex.response) {
+        this.console.error(`Status: ${ex.response.status} Message: ${ex.response.statusText}`)
+      }
       this.console.error(ex.message)
     } finally {
       spinner.stop()
