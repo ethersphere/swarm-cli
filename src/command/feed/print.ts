@@ -35,7 +35,9 @@ export class Print extends FeedCommand implements LeafCommand {
       const { reference, feedIndex, feedIndexNext } = await reader.download()
 
       if (!this.stamp) {
+        spinner.stop()
         this.stamp = await pickStamp(this.beeDebug, this.console)
+        spinner.start()
       }
 
       const { reference: manifest } = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
@@ -56,9 +58,7 @@ export class Print extends FeedCommand implements LeafCommand {
       this.console.error(`Status: ${ex.response.status} Message: ${ex.response.statusText}`)
       this.console.error(ex.message)
     } finally {
-      if (spinner.isSpinning) {
-        spinner.stop()
-      }
+      spinner.stop()
     }
   }
 
@@ -94,7 +94,8 @@ export class Print extends FeedCommand implements LeafCommand {
 
       return wallet.address
     } else if (isSimpleWallet(wallet, identityType)) {
-      const ethereumWallet = Wallet.fromPrivateKey(Buffer.from(wallet.privateKey, 'hex'))
+      const privateKey = wallet.privateKey.replace('0x', '')
+      const ethereumWallet = Wallet.fromPrivateKey(Buffer.from(privateKey, 'hex'))
 
       return ethereumWallet.getAddressString()
     } else {
