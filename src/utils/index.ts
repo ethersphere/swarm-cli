@@ -64,10 +64,10 @@ export function secondsToDhms(secs: number, abstractTimeFormat = false): string 
   const sDisplay = s > 0 ? s + (s === 1 ? ' second' : ' seconds') : ''
 
   if (abstractTimeFormat) {
-    return dDisplay || hDisplay || mDisplay || sDisplay
+    return (dDisplay || hDisplay || mDisplay || sDisplay).trim()
   }
 
-  return dDisplay + hDisplay + mDisplay + sDisplay
+  return (dDisplay + hDisplay + mDisplay + sDisplay).trim()
 }
 
 /**
