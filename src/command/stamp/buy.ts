@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js'
 import { LeafCommand, Option } from 'furious-commander'
 import { printEnrichedStamp } from '../../service/stamp'
 import { sleep, toSignificantDigits } from '../../utils'
@@ -5,7 +6,6 @@ import { createSpinner } from '../../utils/spinner'
 import { createKeyValue, deletePreviousLine } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
-import { BigNumber } from 'bignumber.js'
 
 export class Buy extends StampCommand implements LeafCommand {
   public readonly name = 'buy'
@@ -73,30 +73,32 @@ export class Buy extends StampCommand implements LeafCommand {
       this.yes = await this.console.confirm('Please confirm if you agree')
     }
 
-    if (this.yes) {
-      const spinner = createSpinner('Buying postage stamp. This may take a while.')
+    if (!this.yes && !this.quiet) {
+      return
+    }
 
-      if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
-        spinner.start()
-      }
+    const spinner = createSpinner('Buying postage stamp. This may take a while.')
 
-      try {
-        const batchId = await this.beeDebug.createPostageBatch(this.amount.toString(), this.depth, {
-          label: this.label,
-          gasPrice: this.gasPrice?.toString(),
-          immutableFlag: this.immutable,
-        })
-        spinner.stop()
-        this.console.quiet(batchId)
-        this.console.log(createKeyValue('Stamp ID', batchId))
-        this.postageBatchId = batchId
-      } finally {
-        spinner.stop()
-      }
+    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
+      spinner.start()
+    }
 
-      if (this.waitUsable) {
-        await this.waitToBecomeUsable()
-      }
+    try {
+      const batchId = await this.beeDebug.createPostageBatch(this.amount.toString(), this.depth, {
+        label: this.label,
+        gasPrice: this.gasPrice?.toString(),
+        immutableFlag: this.immutable,
+      })
+      spinner.stop()
+      this.console.quiet(batchId)
+      this.console.log(createKeyValue('Stamp ID', batchId))
+      this.postageBatchId = batchId
+    } finally {
+      spinner.stop()
+    }
+
+    if (this.waitUsable) {
+      await this.waitToBecomeUsable()
     }
   }
 
