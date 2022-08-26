@@ -2,7 +2,6 @@ import { BeeDebug, PostageBatch } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { secondsToDhms } from '../../utils'
-import { CommandLineError } from '../../utils/error'
 import { createKeyValue } from '../../utils/text'
 import { EnrichedStamp } from './types/stamp'
 
@@ -19,14 +18,14 @@ import { EnrichedStamp } from './types/stamp'
 export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promise<string> {
   const stamps = ((await beeDebug.getAllPostageBatch()) || []).map(enrichStamp)
 
-  if (!stamps.length) {
-    console.error('You need to have at least one stamp for this action.')
-    exit(1)
-  }
-
   const choices = stamps
     .filter(stamp => stamp.batchTTL > 0)
     .map(stamp => `${stamp.batchID} (${stamp.usageText}) expires in ${secondsToDhms(stamp.batchTTL, true)}`)
+
+  if (!choices.length) {
+    console.error('You need to have at least one stamp for this action.')
+    exit(1)
+  }
 
   const value = await console.promptList(choices, 'Please select a stamp for this action')
   const [hex] = value.split(' ')
