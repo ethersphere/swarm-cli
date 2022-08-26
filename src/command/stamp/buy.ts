@@ -1,6 +1,7 @@
+import { BigNumber } from 'bignumber.js'
 import { LeafCommand, Option } from 'furious-commander'
 import { printEnrichedStamp } from '../../service/stamp'
-import { sleep } from '../../utils'
+import { sleep, toSignificantDigits } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue, deletePreviousLine } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
@@ -48,7 +49,6 @@ export class Buy extends StampCommand implements LeafCommand {
   public waitUsable!: boolean
 
   // CLASS FIELDS
-
   public postageBatchId!: string
 
   public async run(): Promise<void> {
@@ -60,6 +60,21 @@ export class Buy extends StampCommand implements LeafCommand {
       )
       this.console.log('You can wait for it using the --wait-usable flag.')
       this.waitUsable = await this.console.confirm('Would you like to enable it now?')
+    }
+
+    const PLURConvertionRate = BigNumber(10).pow(16)
+    const estimatedCost = BigNumber(this.amount.toString())
+      .multipliedBy(BigNumber(2).pow(this.depth))
+      .dividedBy(PLURConvertionRate)
+
+    this.console.log('The estimated cost is ' + toSignificantDigits(estimatedCost) + ' BZZ')
+
+    if (!this.quiet && !this.yes) {
+      this.yes = await this.console.confirm('Please confirm if you agree')
+    }
+
+    if (!this.yes && !this.quiet) {
+      return
     }
 
     const spinner = createSpinner('Buying postage stamp. This may take a while.')

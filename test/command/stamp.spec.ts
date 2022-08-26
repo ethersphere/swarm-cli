@@ -34,7 +34,7 @@ describeCommand(
     })
 
     it('should buy stamp', async () => {
-      await invokeTestCli(['stamp', 'buy', '--amount', '100000', '--depth', '20'])
+      await invokeTestCli(['stamp', 'buy', '--amount', '100000', '--depth', '20', '--yes'])
       expect(getLastMessage()).toContain('Stamp ID:')
       await sleep(11_000)
     })
@@ -49,6 +49,7 @@ describeCommand(
         '20',
         '--immutable',
         '--wait-usable',
+        '--yes',
       ])
       const command = execution.runnable as Buy
 
@@ -70,8 +71,18 @@ describeCommand(
     })
 
     it('should wait until stamp is usable', async () => {
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--wait-usable'])
+      const execution = await invokeTestCli([
+        'stamp',
+        'buy',
+        '--depth',
+        '20',
+        '--amount',
+        '1',
+        '--wait-usable',
+        '--yes',
+      ])
       const command = execution.runnable as Buy
+      expect(command.yes).toBe(true)
 
       const id = command.postageBatchId
       await invokeTestCli(['stamp', 'show', id, '--verbose'])
@@ -88,24 +99,56 @@ describeCommand(
 
     it('should accept --wait-usable prompt', async () => {
       jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: true })
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose'])
+      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose', '--yes'])
       const command = execution.runnable as Buy
       expect(command.waitUsable).toBe(true)
+      expect(command.yes).toBe(true)
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
       await sleep(11_000)
     })
 
     it('should reject --wait-usable prompt', async () => {
       jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose'])
+      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose', '--yes'])
       const command = execution.runnable as Buy
       expect(command.waitUsable).toBe(false)
+      expect(command.yes).toBe(true)
+      expect(inquirer.prompt).toHaveBeenCalledTimes(1)
+      await sleep(11_000)
+    })
+
+    it('should accept estimate cost prompt', async () => {
+      jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: true })
+      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1'])
+      const command = execution.runnable as Buy
+      expect(command.yes).toBe(true)
+      expect(inquirer.prompt).toHaveBeenCalledTimes(1)
+      await sleep(11_000)
+    })
+
+    it('should reject estimate cost prompt', async () => {
+      jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
+      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1'])
+      const command = execution.runnable as Buy
+      expect(command.yes).toBe(false)
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
       await sleep(11_000)
     })
 
     it('should be possible to buy with underscores and units', async () => {
-      await invokeTestCli(['stamp', 'buy', '--amount', '1_000K', '--depth', '17', '--gas-price', '100_000_000'])
+      const execution = await invokeTestCli([
+        'stamp',
+        'buy',
+        '--amount',
+        '1_000K',
+        '--depth',
+        '17',
+        '--gas-price',
+        '100_000_000',
+        '--yes',
+      ])
+      const command = execution.runnable as Buy
+      expect(command.yes).toBe(true)
       expect(getLastMessage()).toContain('Stamp ID:')
       await sleep(11_000)
     })
@@ -121,8 +164,10 @@ describeCommand(
         '--gas-price',
         '100_000_000',
         '--wait-usable',
+        '--yes',
       ])
       const command = execution.runnable as Buy
+      expect(command.yes).toBe(true)
       const { postageBatchId } = command
       consoleMessages.length = 0
       await invokeTestCli(['stamp', 'dilute', '--stamp', postageBatchId, '--depth', '18'])
@@ -147,8 +192,10 @@ describeCommand(
         '--gas-price',
         '100_000_000',
         '--wait-usable',
+        '--yes',
       ])
       const command = execution.runnable as Buy
+      expect(command.yes).toBe(true)
       const { postageBatchId } = command
       consoleMessages.length = 0
       await invokeTestCli(['stamp', 'topup', '--stamp', postageBatchId, '--amount', '1k'])

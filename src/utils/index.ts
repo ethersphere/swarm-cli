@@ -1,4 +1,5 @@
 import { Reference } from '@ethersphere/bee-js'
+import BigNumber from 'bignumber.js'
 import { promises, statSync } from 'fs'
 import { join } from 'path'
 import { CommandLog } from '../command/root-command/command-log'
@@ -193,4 +194,24 @@ export function isPrivateKey(string: string): boolean {
   const normalized = normalizePrivateKey(string)
 
   return /^[a-f0-9]{64}$/.test(normalized)
+}
+
+export function toSignificantDigits(val: BigNumber, digits = 4): string {
+  const asString = val.toFixed(16)
+  let indexOfSignificantDigit = -1
+  let reachedDecimalPoint = false
+
+  for (let i = 0; i < asString.length; i++) {
+    const char = asString[i]
+
+    if (char === '.') {
+      reachedDecimalPoint = true
+      indexOfSignificantDigit = i + 1
+    } else if (reachedDecimalPoint && char !== '0') {
+      indexOfSignificantDigit = i
+      break
+    }
+  }
+
+  return asString.slice(0, indexOfSignificantDigit + digits)
 }
