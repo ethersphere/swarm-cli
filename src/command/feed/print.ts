@@ -4,8 +4,9 @@ import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { pickStamp } from '../../service/stamp'
-import { createKeyValue } from '../../utils/text'
+import { getFieldOrNull } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
+import { createKeyValue } from '../../utils/text'
 import { FeedCommand } from './feed-command'
 
 export class Print extends FeedCommand implements LeafCommand {
@@ -27,7 +28,7 @@ export class Print extends FeedCommand implements LeafCommand {
     await super.init()
 
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
-    const spinner = createSpinner('Looking up feed topic ' + topic)
+    const spinner = createSpinner(`Looking up feed topic ${topic}`)
     spinner.start()
     try {
       const addressString = this.address || (await this.getAddressString())
@@ -50,16 +51,13 @@ export class Print extends FeedCommand implements LeafCommand {
       this.console.verbose(createKeyValue('Feed Manifest', manifest))
 
       this.console.quiet(manifest)
+      this.console.log(createKeyValue('Topic', `${topic}`))
       this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
       this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex, 10) + 1))
-    } catch (ex: any) {
+    } catch (error) {
       spinner.stop()
-      this.console.info('Feed topic lookup error')
-
-      if (ex.response) {
-        this.console.error(`Status: ${ex.response.status} Message: ${ex.response.statusText}`)
-      }
-      this.console.error(ex.message)
+      const message = getFieldOrNull(error, 'message')
+      throw Error(`Feed topic lookup error: ${message || 'unknown'}`)
     } finally {
       spinner.stop()
     }
