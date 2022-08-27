@@ -17,7 +17,7 @@ describeCommand(
         'topic',
         '-P',
         'topic',
-        '.babelrc.js',
+        'test/message.txt',
         ...getStampOption(),
       ])
     })
