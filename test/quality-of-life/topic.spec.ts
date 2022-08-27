@@ -36,7 +36,7 @@ describeCommand(
 
     it('should be possible with --topic in feed', async () => {
       await invokeTestCli(['feed', 'print', '-t', TOPIC_HEX, '-i', 'topic', '-P', 'topic', ...getStampOption()])
-      expect(consoleMessages[0]).toContain('b017c7b25b4378b05fcd4701c05e9db6c7af8aee26d2bf8b1e95f5504da8057f')
+      expect(consoleMessages[0]).toContain('0630a01c3d7d0e5987b46a1fe8c2b9f47d5b29a7ce702db9a78f771d4fc9e44d')
     })
 
     it('should be possible with --topic-string in feed', async () => {
@@ -51,7 +51,7 @@ describeCommand(
         'topic',
         ...getStampOption(),
       ])
-      expect(consoleMessages[0]).toContain('b017c7b25b4378b05fcd4701c05e9db6c7af8aee26d2bf8b1e95f5504da8057f')
+      expect(consoleMessages[0]).toContain('0630a01c3d7d0e5987b46a1fe8c2b9f47d5b29a7ce702db9a78f771d4fc9e44d')
     })
 
     it('should not be possible with both --topic and --topic-string in feed', async () => {
