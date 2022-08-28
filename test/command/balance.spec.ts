@@ -21,7 +21,7 @@ describeCommand('Test Status command', ({ consoleMessages }) => {
 
   it('should print balance in quiet mode', async () => {
     process.env.BEE_DEBUG_API_URL = 'http://localhost:1379'
-    await invokeTestCli(['balance'])
+    await invokeTestCli(['balance', '--quiet'])
     expect(consoleMessages[0]).toContain('wallet.bzz')
     expect(consoleMessages[1]).toContain('wallet.dai')
     expect(consoleMessages[2]).toContain('chequebook.total')
