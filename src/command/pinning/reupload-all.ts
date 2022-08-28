@@ -14,7 +14,7 @@ export class ReuploadAll extends PinningCommand implements LeafCommand {
     const total = chunks.length
     let successful = 0
 
-    this.console.log('Found ' + total + ' root chunks to reupload...')
+    this.console.log(`Found ${total} root chunks to reupload...`)
 
     for (const chunk of chunks) {
       try {
