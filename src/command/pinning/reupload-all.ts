@@ -26,7 +26,7 @@ export class ReuploadAll extends PinningCommand implements LeafCommand {
       }
     }
 
-    this.console.log('Reuploaded ' + successful + ' out of ' + total + ' pinned chunks')
+    this.console.log(`Reuploaded ${successful} out of ${total} pinned root chunks`)
     this.console.quiet(successful + '/' + total)
   }
 
