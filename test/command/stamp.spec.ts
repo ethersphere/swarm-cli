@@ -9,16 +9,14 @@ describeCommand(
     it('should list stamps', async () => {
       await invokeTestCli(['stamp', 'list'])
       expect(consoleMessages[0]).toContain('Stamp ID:')
-      expect(consoleMessages[1]).toContain('Label: ')
-      expect(consoleMessages[2]).toContain('Usage:')
+      expect(consoleMessages[1]).toContain('Usage:')
     })
 
     it('should show a specific stamp', async () => {
       await invokeTestCli(['stamp', 'show', process.env.STAMP || ''])
       expect(consoleMessages[0]).toContain('Stamp ID:')
       expect(consoleMessages[0]).toContain(process.env.STAMP)
-      expect(consoleMessages[1]).toContain('Label: ')
-      expect(consoleMessages[2]).toContain('Usage:')
+      expect(consoleMessages[1]).toContain('Usage:')
     })
 
     it('should not allow buying stamp with amount 0', async () => {
@@ -70,7 +68,17 @@ describeCommand(
     })
 
     it('should wait until stamp is usable', async () => {
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--wait-usable'])
+      const execution = await invokeTestCli([
+        'stamp',
+        'buy',
+        '--depth',
+        '20',
+        '--amount',
+        '1',
+        '--wait-usable',
+        '--label',
+        'Alice',
+      ])
       const command = execution.runnable as Buy
 
       const id = command.postageBatchId
@@ -82,6 +90,7 @@ describeCommand(
       expect(getNthLastMessage(9)).toContain('Usage')
       expect(getNthLastMessage(9)).toContain('0%')
       expect(getNthLastMessage(10)).toContain('Label:')
+      expect(getNthLastMessage(10)).toContain('Alice')
       expect(getNthLastMessage(11)).toContain('Stamp ID')
       expect(getNthLastMessage(11)).toContain(id)
     })
