@@ -51,7 +51,10 @@ export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
 
 export function printStamp(stamp: EnrichedStamp, console: CommandLog, printUsage: boolean): void {
   console.log(createKeyValue('Stamp ID', stamp.batchID))
-  console.log(createKeyValue('Label', stamp.label))
+
+  if (stamp.label) {
+    console.log(createKeyValue('Label', stamp.label))
+  }
   console.log(createKeyValue('Usage', stamp.usageText))
   console.log(createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : secondsToDhms(stamp.batchTTL)))
   console.verbose(createKeyValue('Depth', stamp.depth))
