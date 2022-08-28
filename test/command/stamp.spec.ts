@@ -77,6 +77,7 @@ describeCommand(
         '--amount',
         '59k',
         '--wait-usable',
+        '--yes',
         '--label',
         'Alice',
       ])
