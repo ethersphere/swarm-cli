@@ -60,7 +60,6 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
 
   it('should show units after running: balance', async () => {
     await invokeTestCli(['balance', '--bee-debug-api-url', 'http://localhost:1378'])
-    expectSubstringsPrinted('Total', 'BZZ')
-    expectSubstringsPrinted('Available', 'BZZ')
+    expectSubstringsPrinted('BZZ', 'DAI')
   })
 })
