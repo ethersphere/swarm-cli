@@ -95,7 +95,7 @@ describeCommand(
 
     it('should reupload all pinned content', async () => {
       await invokeTestCli(['pinning', 'reupload-all'])
-      expect(getLastMessage()).toMatch(/Reuploaded \d+ out of \d+ pinned chunks/)
+      expect(getLastMessage()).toMatch(/Reuploaded \d+ out of \d+ pinned root chunks/)
     })
   },
   { configFileName: 'pinning' },
