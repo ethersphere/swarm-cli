@@ -1,3 +1,4 @@
+import chalk from 'chalk'
 import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 import { describeCommand, invokeTestCli } from '../utility'
 
@@ -60,7 +61,14 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
 
   it('should show units after running: balance', async () => {
     await invokeTestCli(['balance', '--bee-debug-api-url', 'http://localhost:1378'])
-    expectSubstringsPrinted('Total', 'BZZ')
-    expectSubstringsPrinted('Available', 'BZZ')
+    expect(consoleMessages).toEqual([
+      chalk.bold('Node wallet'),
+      `${chalk.green.bold('BZZ:')} 0.3904`,
+      `${chalk.green.bold('DAI:')} 0.09610`,
+      '',
+      chalk.bold('Chequebook (BZZ)'),
+      `${chalk.green.bold('Total:')} 10.002685`,
+      `${chalk.green.bold('Available:')} 10.001856`,
+    ])
   })
 })
