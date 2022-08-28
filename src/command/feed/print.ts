@@ -4,6 +4,8 @@ import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { pickStamp } from '../../service/stamp'
+import { getFieldOrNull } from '../../utils'
+import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { FeedCommand } from './feed-command'
 
@@ -26,26 +28,39 @@ export class Print extends FeedCommand implements LeafCommand {
     await super.init()
 
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
-    this.console.info('Looking up feed topic ' + topic + '...')
-    const addressString = this.address || (await this.getAddressString())
-    const reader = this.bee.makeFeedReader('sequence', topic, addressString)
-    const { reference, feedIndex, feedIndexNext } = await reader.download()
+    const spinner = createSpinner(`Looking up feed topic ${topic}`)
+    spinner.start()
+    try {
+      const addressString = this.address || (await this.getAddressString())
+      const reader = this.bee.makeFeedReader('sequence', topic, addressString)
+      const { reference, feedIndex, feedIndexNext } = await reader.download()
 
-    if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      if (!this.stamp) {
+        spinner.stop()
+        this.stamp = await pickStamp(this.beeDebug, this.console)
+        spinner.start()
+      }
+
+      const { reference: manifest } = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
+
+      spinner.stop()
+      this.console.verbose(createKeyValue('Chunk Reference', reference))
+      this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${reference}/`))
+      this.console.verbose(createKeyValue('Feed Index', feedIndex))
+      this.console.verbose(createKeyValue('Next Index', feedIndexNext))
+      this.console.verbose(createKeyValue('Feed Manifest', manifest))
+
+      this.console.quiet(manifest)
+      this.console.log(createKeyValue('Topic', `${topic}`))
+      this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
+      this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex, 10) + 1))
+    } catch (error) {
+      spinner.stop()
+      const message = getFieldOrNull(error, 'message')
+      throw Error(`Feed topic lookup error: ${message || 'unknown'}`)
+    } finally {
+      spinner.stop()
     }
-
-    const { reference: manifest } = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
-
-    this.console.verbose(createKeyValue('Chunk Reference', reference))
-    this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${reference}/`))
-    this.console.verbose(createKeyValue('Feed Index', feedIndex))
-    this.console.verbose(createKeyValue('Next Index', feedIndexNext))
-    this.console.verbose(createKeyValue('Feed Manifest', manifest))
-
-    this.console.quiet(manifest)
-    this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
-    this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex, 10) + 1))
   }
 
   private async getAddressString(): Promise<string> {
@@ -80,7 +95,8 @@ export class Print extends FeedCommand implements LeafCommand {
 
       return wallet.address
     } else if (isSimpleWallet(wallet, identityType)) {
-      const ethereumWallet = Wallet.fromPrivateKey(Buffer.from(wallet.privateKey, 'hex'))
+      const privateKey = wallet.privateKey.replace('0x', '')
+      const ethereumWallet = Wallet.fromPrivateKey(Buffer.from(privateKey, 'hex'))
 
       return ethereumWallet.getAddressString()
     } else {

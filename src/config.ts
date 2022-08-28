@@ -1,6 +1,7 @@
 import { IOption } from 'furious-commander'
 import PackageJson from '../package.json'
 import { Addresses } from './command/addresses'
+import { Balance } from './command/balance'
 import { Cheque } from './command/cheque'
 import { Download } from './command/download'
 import { Feed } from './command/feed'
@@ -121,4 +122,5 @@ export const rootCommandClasses = [
   Pss,
   Addresses,
   Manifest,
+  Balance,
 ]

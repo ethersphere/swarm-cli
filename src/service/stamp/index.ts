@@ -18,12 +18,15 @@ import { EnrichedStamp } from './types/stamp'
 export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promise<string> {
   const stamps = ((await beeDebug.getAllPostageBatch()) || []).map(enrichStamp)
 
-  if (!stamps.length) {
+  const choices = stamps
+    .filter(stamp => stamp.usable || stamp.batchTTL > 0)
+    .map(stamp => `${stamp.batchID} (${stamp.usageText}) expires in ${secondsToDhms(stamp.batchTTL, true)}`)
+
+  if (!choices.length) {
     console.error('You need to have at least one stamp for this action.')
     exit(1)
   }
 
-  const choices = stamps.map(stamp => `${stamp.batchID} (${stamp.usageText})`)
   const value = await console.promptList(choices, 'Please select a stamp for this action')
   const [hex] = value.split(' ')
 
