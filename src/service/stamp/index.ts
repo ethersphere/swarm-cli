@@ -19,7 +19,7 @@ export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promis
   const stamps = ((await beeDebug.getAllPostageBatch()) || []).map(enrichStamp)
 
   const choices = stamps
-    .filter(stamp => stamp.batchTTL > 0)
+    .filter(stamp => stamp.usable || stamp.batchTTL > 0)
     .map(stamp => `${stamp.batchID} (${stamp.usageText}) expires in ${secondsToDhms(stamp.batchTTL, true)}`)
 
   if (!choices.length) {
