@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as dns from 'dns'
 import { cli } from 'furious-commander'
 import { application } from './application'
