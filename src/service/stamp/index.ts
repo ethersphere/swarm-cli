@@ -1,7 +1,7 @@
 import { BeeDebug, PostageBatch } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
-import { secondsToDhms } from '../../utils'
+import { getFieldOrNull, secondsToDhms } from '../../utils'
 import { createKeyValue } from '../../utils/text'
 import { EnrichedStamp } from './types/stamp'
 
@@ -52,14 +52,36 @@ export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
   }
 }
 
-export function printStamp(stamp: EnrichedStamp, console: CommandLog, printUsage: boolean): void {
-  console.log(createKeyValue('Stamp ID', stamp.batchID))
+interface PrintStampSettings {
+  shortenBatchId?: boolean
+  showTtl?: boolean
+  shortenTtl?: boolean
+  printUsageInQuiet?: boolean
+}
+
+export function printStamp(
+  stamp: PostageBatch | EnrichedStamp,
+  console: CommandLog,
+  settings?: PrintStampSettings,
+): void {
+  const richStamp = ensureEnrichedStamp(stamp)
+  const batchId = settings?.shortenBatchId ? stamp.batchID.slice(0, 8) : stamp.batchID
+  console.log(createKeyValue('Stamp ID', batchId))
 
   if (stamp.label) {
     console.log(createKeyValue('Label', stamp.label))
   }
-  console.log(createKeyValue('Usage', stamp.usageText))
-  console.log(createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : secondsToDhms(stamp.batchTTL)))
+  console.log(createKeyValue('Usage', richStamp.usageText))
+
+  if (settings?.showTtl) {
+    console.log(
+      createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : secondsToDhms(stamp.batchTTL, settings?.shortenTtl)),
+    )
+  }
+
+  if (stamp.batchTTL !== -1) {
+    console.log(createKeyValue('Expires', new Date(Date.now() + stamp.batchTTL * 1000).toLocaleDateString()))
+  }
   console.verbose(createKeyValue('Depth', stamp.depth))
   console.verbose(createKeyValue('Bucket Depth', stamp.bucketDepth))
   console.verbose(createKeyValue('Amount', stamp.amount))
@@ -67,10 +89,13 @@ export function printStamp(stamp: EnrichedStamp, console: CommandLog, printUsage
   console.verbose(createKeyValue('Utilization', stamp.utilization))
   console.verbose(createKeyValue('Block Number', stamp.blockNumber))
   console.verbose(createKeyValue('Immutable Flag', stamp.immutableFlag))
-  console.quiet(printUsage ? `${stamp.batchID} ${stamp.usageText}` : stamp.batchID)
+  console.quiet(settings?.printUsageInQuiet ? `${batchId} ${richStamp.usageText}` : batchId)
 }
 
-export function printEnrichedStamp(stamp: PostageBatch, console: CommandLog): void {
-  const enrichedStamp = enrichStamp(stamp)
-  printStamp(enrichedStamp, console, true)
+function ensureEnrichedStamp(stamp: PostageBatch | EnrichedStamp): EnrichedStamp {
+  if (!getFieldOrNull(stamp, 'usageText')) {
+    return enrichStamp(stamp)
+  }
+
+  return stamp as EnrichedStamp
 }

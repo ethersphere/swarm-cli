@@ -6,7 +6,7 @@ import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
-import { pickStamp, printEnrichedStamp } from '../service/stamp'
+import { pickStamp, printStamp } from '../service/stamp'
 import { fileExists, isGateway, readStdin, sleep } from '../utils'
 import { CommandLineError } from '../utils/error'
 import { Message } from '../utils/message'
@@ -169,7 +169,7 @@ export class Upload extends RootCommand implements LeafCommand {
       this.console.quiet(this.hash)
 
       if (!isGateway(this.beeApiUrl) && !this.quiet && this.debugApiIsUsable()) {
-        printEnrichedStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console)
+        printStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
       }
     }
   }

@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js'
 import { LeafCommand, Option } from 'furious-commander'
-import { printEnrichedStamp } from '../../service/stamp'
+import { printStamp } from '../../service/stamp'
 import { sleep, toSignificantDigits } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue, deletePreviousLine } from '../../utils/text'
@@ -125,7 +125,7 @@ export class Buy extends StampCommand implements LeafCommand {
           if (!this.curl) {
             deletePreviousLine()
           }
-          printEnrichedStamp(stamp, this.console)
+          printStamp(stamp, this.console, { showTtl: true })
         }
         running = false
       } catch {
