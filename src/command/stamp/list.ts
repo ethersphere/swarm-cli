@@ -63,12 +63,14 @@ export class List extends StampCommand implements LeafCommand {
 
     const limitedStamps = filteredStamps.slice(0, this.limit)
 
-    const orderedStamps = this.leastUsed ? limitedStamps.sort((a, b) => a.usage - b.usage) : limitedStamps
+    const orderedStamps = this.leastUsed
+      ? limitedStamps.sort((a, b) => a.usage - b.usage)
+      : limitedStamps.sort((a, b) => b.batchTTL - a.batchTTL)
 
     printDivided(
       orderedStamps,
       (items: EnrichedStamp, console: CommandLog) => {
-        printStamp(items, console, !this.hideUsage)
+        printStamp(items, console, { printUsageInQuiet: !this.hideUsage, showTtl: true })
       },
       this.console,
     )

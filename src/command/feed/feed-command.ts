@@ -5,7 +5,7 @@ import { Option } from 'furious-commander'
 import { exit } from 'process'
 import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
-import { printEnrichedStamp } from '../../service/stamp'
+import { printStamp } from '../../service/stamp'
 import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
@@ -56,7 +56,7 @@ export class FeedCommand extends RootCommand {
     this.console.quiet(manifest)
 
     if (!this.quiet && this.debugApiIsUsable()) {
-      printEnrichedStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console)
+      printStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
     }
 
     return manifest
