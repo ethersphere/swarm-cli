@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.12.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.11.0...v1.12.0) (2022-08-30)
+
+
+### Features
+
+* add top level balance command ([#400](https://www.github.com/ethersphere/swarm-cli/issues/400)) ([3617746](https://www.github.com/ethersphere/swarm-cli/commit/3617746da225d2d3f2455338380f135dd75d0b17))
+* calculate and show stamp cost ([#402](https://www.github.com/ethersphere/swarm-cli/issues/402)) ([9f977b9](https://www.github.com/ethersphere/swarm-cli/commit/9f977b9784044e862e60168250c709dc9e77ec7e))
+* display stamp expiration date ([#413](https://www.github.com/ethersphere/swarm-cli/issues/413)) ([3f7803f](https://www.github.com/ethersphere/swarm-cli/commit/3f7803f6edf6141f0fbb46c85408ccf762029f2b))
+* improve stamp ttl display and exclude expired stamps ([#403](https://www.github.com/ethersphere/swarm-cli/issues/403)) ([cc7696d](https://www.github.com/ethersphere/swarm-cli/commit/cc7696d4d4363e35045fa49dcd359a9e34fa71cc))
+
+
+### Bug Fixes
+
+* add spinner to feed print command ([#404](https://www.github.com/ethersphere/swarm-cli/issues/404)) ([b524d9f](https://www.github.com/ethersphere/swarm-cli/commit/b524d9fee02eecd5842d157f9282e6761521888d))
+* convert TTL to human readable format ([#395](https://www.github.com/ethersphere/swarm-cli/issues/395)) ([b040aa9](https://www.github.com/ethersphere/swarm-cli/commit/b040aa95ea29f80a342876f3aefa72da4f6f9398))
+* do not print empty label ([#406](https://www.github.com/ethersphere/swarm-cli/issues/406)) ([31df827](https://www.github.com/ethersphere/swarm-cli/commit/31df827f3508bb17eef5f503faa0ab5a1463d32e))
+
 ## [1.11.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.10.0...v1.11.0) (2022-04-14)
 
 
