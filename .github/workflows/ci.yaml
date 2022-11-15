@@ -9,12 +9,6 @@ on:
       - '**'
 
 env:
-  BEE_VERSION: '1.5.1-d0a77598-stateful'
-  BLOCKCHAIN_VERSION: '1.2.0-for-1.5.1-d0a77598-stateful'
-  BEE_ENV_PREFIX: 'swarm-test'
-  BEE_IMAGE_PREFIX: 'docker.pkg.github.com/ethersphere/bee-factory'
-  COMMIT_VERSION_TAG: 'false'
-  WORKERS: 4
   BEE_API_URL: 'http://localhost:1633'
   BEE_PEER_API_URL: 'http://localhost:11633'
   BEE_DEBUG_API_URL: 'http://localhost:1635'
@@ -26,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [14.x, 16.x, 18.x]
 
     steps:
       - name: Checkout
@@ -56,7 +50,17 @@ jobs:
         if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
 
+
+      # Start Bee Factory environment
       - name: Start Bee Factory environment
+        if:  matrix.node-version != '18.x' && matrix.node-version != '19.x'
+        run: npm run bee -- --verbose --detach
+
+      # Start Bee Factory environment for Node 18 and 19
+      - name: Start Bee Factory environment for Node 18 and 19
+        if:  matrix.node-version == '18.x' || matrix.node-version == '19.x'
+        env:
+          NODE_OPTIONS: '--no-experimental-fetch'
         run: npm run bee -- --verbose --detach
 
       - name: Run node tests
