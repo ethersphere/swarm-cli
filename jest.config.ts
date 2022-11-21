@@ -4,7 +4,7 @@
  */
 import type { Config } from '@jest/types'
 import { getPssAddress } from './test/utility/address'
-import { buyStamp } from './test/utility/stamp'
+import { getOrBuyStamp } from './test/utility/stamp'
 
 export default async (): Promise<Config.InitialOptions> => {
   process.env.MAX_UPLOAD_SIZE = '5000000' // 5 megabytes
@@ -19,7 +19,7 @@ export default async (): Promise<Config.InitialOptions> => {
   }
 
   if (!process.env.STAMP) {
-    process.env.STAMP = await buyStamp()
+    process.env.STAMP = await getOrBuyStamp()
   }
 
   return {
