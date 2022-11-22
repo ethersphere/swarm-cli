@@ -3,7 +3,15 @@ import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 import { describeCommand, invokeTestCli } from '../utility'
 
 describeCommand('Test Monetary units', ({ consoleMessages }) => {
-  const server = createChequeMockHttpServer(1378)
+  let server: ReturnType<typeof createChequeMockHttpServer>
+
+  beforeAll(() => {
+    server = createChequeMockHttpServer(1378)
+  })
+
+  afterAll(() => {
+    server.close()
+  })
 
   const containsAllSubstrings = (string: string, substrings: string[]): boolean => {
     return substrings.every(substring => string.includes(substring))
@@ -16,10 +24,6 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
   const expectSubstringsPrinted = (...substrings: string[]): void => {
     expect(substringsPrinted(substrings)).toBe(true)
   }
-
-  afterAll(() => {
-    server.close()
-  })
 
   it('should show units in help: stamp buy', async () => {
     await invokeTestCli(['stamp', 'buy', '--help'])
