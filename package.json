@@ -34,7 +34,7 @@
     "bee": "bee-factory start"
   },
   "engines": {
-    "node": ">=12.0.0",
+    "node": ">=14.0.0",
     "npm": ">=6.0.0",
     "bee": "1.9.0-13a47043"
   },
