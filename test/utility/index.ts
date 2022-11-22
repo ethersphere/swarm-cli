@@ -40,11 +40,20 @@ export function describeCommand(
     //set config environment variable
     process.env.SWARM_CLI_CONFIG_FOLDER = configFolderPath
 
-    global.console.log = jest.fn(message => {
-      consoleMessages.push(message)
+    const originalLog = global.console.log
+    global.console.log = jest.fn((...message) => {
+      if (process.env.DEBUG) {
+        originalLog(...message)
+      }
+
+      consoleMessages.push(...message)
     })
-    global.console.error = jest.fn(message => {
-      consoleMessages.push(message)
+    global.console.error = jest.fn((...message) => {
+      if (process.env.DEBUG) {
+        originalLog(...message)
+      }
+
+      consoleMessages.push(...message)
     })
 
     global.process.stdout.write = jest.fn(message => {

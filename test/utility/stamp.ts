@@ -1,11 +1,25 @@
-import { invokeTestCli } from '.'
-import { Buy } from '../../src/command/stamp/buy'
+/* eslint-disable no-console */
+import { BeeDebug } from '@ethersphere/bee-js'
 
-export const buyStamp = async (): Promise<string> => {
-  const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1m', '--wait-usable', '--yes'])
-  const command = execution.runnable as Buy
+const DEFAULT_BEE_DEBUG = 'http://localhost:1635'
 
-  return command.postageBatchId
+export const getOrBuyStamp = async (): Promise<string> => {
+  const beeDebug = new BeeDebug(DEFAULT_BEE_DEBUG)
+
+  const availableStamps = await beeDebug.getAllPostageBatch()
+
+  if (availableStamps.length > 0) {
+    const usedStamp = availableStamps[0].batchID
+    console.log('Using existing stamp: ', usedStamp)
+
+    return usedStamp
+  }
+
+  console.log('Buying new stamp.')
+  const newStamp = await beeDebug.createPostageBatch('1000000', 20, { waitForUsable: true })
+  console.log('Bought stamp: ', newStamp)
+
+  return newStamp
 }
 
 export const getStampOption = (): string[] => ['--stamp', process.env.STAMP || '']
