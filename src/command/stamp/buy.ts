@@ -6,6 +6,7 @@ import { createSpinner } from '../../utils/spinner'
 import { createKeyValue, deletePreviousLine } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
+import { PLURConversionRate } from '../../utils/conversions'
 
 export class Buy extends StampCommand implements LeafCommand {
   public readonly name = 'buy'
@@ -62,10 +63,9 @@ export class Buy extends StampCommand implements LeafCommand {
       this.waitUsable = await this.console.confirm('Would you like to enable it now?')
     }
 
-    const PLURConvertionRate = BigNumber(10).pow(16)
     const estimatedCost = BigNumber(this.amount.toString())
       .multipliedBy(BigNumber(2).pow(this.depth))
-      .dividedBy(PLURConvertionRate)
+      .dividedBy(PLURConversionRate)
 
     this.console.log('The estimated cost is ' + toSignificantDigits(estimatedCost) + ' BZZ')
 
