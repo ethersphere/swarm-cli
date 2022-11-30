@@ -23,10 +23,8 @@ export class Status extends RootCommand implements LeafCommand {
     const topology = await this.checkTopology()
     const nodeInfo = await this.getNodeInfo()
 
-    this.console.log(createKeyValue('Bee Version', version, 'Supported Version'.length))
-    this.console.log(
-      createKeyValue('Supported Version', SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')'),
-    )
+    this.console.log(createKeyValue('Bee Version', version))
+    this.console.log(createKeyValue('Tested with', SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')'))
 
     if (nodeInfo) {
       this.console.divider()
@@ -34,7 +32,7 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.log(createKeyValue('Bee Mode', nodeInfo.beeMode))
     }
     this.console.quiet('Bee version - ' + version)
-    this.console.quiet('Supported version - ' + SUPPORTED_BEE_VERSION_EXACT)
+    this.console.quiet('Tested with - ' + SUPPORTED_BEE_VERSION_EXACT)
 
     if (topology) {
       this.console.divider('=')
