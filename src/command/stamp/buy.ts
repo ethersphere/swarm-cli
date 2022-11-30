@@ -2,11 +2,12 @@ import { BigNumber } from 'bignumber.js'
 import { LeafCommand, Option } from 'furious-commander'
 import { printStamp } from '../../service/stamp'
 import { sleep, toSignificantDigits } from '../../utils'
+import { PLURConversionRate } from '../../utils/conversions'
 import { createSpinner } from '../../utils/spinner'
+import { Storage } from '../../utils/storage'
 import { createKeyValue, deletePreviousLine } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
-import { PLURConversionRate } from '../../utils/conversions'
 
 export class Buy extends StampCommand implements LeafCommand {
   public readonly name = 'buy'
@@ -59,7 +60,7 @@ export class Buy extends StampCommand implements LeafCommand {
       this.console.log(
         'You are running in verbose mode, but additional stamp information is only available after a short waiting period.',
       )
-      this.console.log('You can wait for it using the --wait-usable flag.')
+      this.console.log('You can await this using the --wait-usable flag.')
       this.waitUsable = await this.console.confirm('Would you like to enable it now?')
     }
 
@@ -67,10 +68,15 @@ export class Buy extends StampCommand implements LeafCommand {
       .multipliedBy(BigNumber(2).pow(this.depth))
       .dividedBy(PLURConversionRate)
 
-    this.console.log('The estimated cost is ' + toSignificantDigits(estimatedCost) + ' BZZ')
+    const expectedCapacity = new Storage(2 ** this.depth * 4096)
+    this.console.log(
+      `The estimated cost is ${toSignificantDigits(
+        estimatedCost,
+      )} BZZ, expected capacity is at most ${expectedCapacity}`,
+    )
 
     if (!this.quiet && !this.yes) {
-      this.yes = await this.console.confirm('Please confirm if you agree')
+      this.yes = await this.console.confirm('Confirm the purchase')
     }
 
     if (!this.yes && !this.quiet) {

@@ -2,6 +2,7 @@ import { BeeDebug, PostageBatch } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { getFieldOrNull, secondsToDhms } from '../../utils'
+import { Storage } from '../../utils/storage'
 import { createKeyValue } from '../../utils/text'
 import { EnrichedStamp } from './types/stamp'
 
@@ -20,7 +21,7 @@ export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promis
 
   const choices = stamps
     .filter(stamp => stamp.usable || stamp.batchTTL > 0)
-    .map(stamp => `${stamp.batchID} (${stamp.usageText}) expires in ${secondsToDhms(stamp.batchTTL, true)}`)
+    .map(stamp => `${stamp.batchID} ${stamp.remainingCapacity} expires in ${secondsToDhms(stamp.batchTTL, true)}`)
 
   if (!choices.length) {
     console.error('You need to have at least one stamp for this action.')
@@ -43,12 +44,16 @@ export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
   const usage = normalizeUtilization(stamp)
   const usageNormal = Math.ceil(usage * 100)
   const usageText = usageNormal + '%'
+  const capacity = new Storage(2 ** stamp.depth * 4096)
+  const remainingCapacity = new Storage(capacity.getBytes() * (1 - usage))
 
   return {
     ...stamp,
     usage,
     usageNormal,
     usageText,
+    capacity,
+    remainingCapacity,
   }
 }
 
@@ -72,6 +77,8 @@ export function printStamp(
     console.log(createKeyValue('Label', stamp.label))
   }
   console.log(createKeyValue('Usage', richStamp.usageText))
+  console.log(createKeyValue('Remaining Capacity', richStamp.remainingCapacity.toString()))
+  console.verbose(createKeyValue('Total Capacity', richStamp.capacity.toString()))
 
   if (settings?.showTtl) {
     console.log(
