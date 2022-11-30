@@ -17,7 +17,7 @@ export class Balance extends RootCommand implements LeafCommand {
     await super.init()
 
     this.console.dim('Looking up balance...')
-    const stakeBzz = await this._beeDebug.getStake()
+    const stakeBzz = await this.beeDebug.getStake()
     const { bzz, xDai } = await this.beeDebug.getWalletBalance()
     const { totalBalance, availableBalance } = await this.beeDebug.getChequebookBalance()
 

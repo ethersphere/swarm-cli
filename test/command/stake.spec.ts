@@ -1,4 +1,5 @@
 import { describeCommand, invokeTestCli } from '../utility'
+import BigNumber from 'bignumber.js'
 
 describeCommand('Test Stake command', ({ consoleMessages }) => {
   it('should print stake balance', async () => {
@@ -9,9 +10,9 @@ describeCommand('Test Stake command', ({ consoleMessages }) => {
   it('should print balance in quiet mode', async () => {
     await invokeTestCli(['stake', '--quiet'])
 
-    const initialStake = Number(consoleMessages[0])
+    const initialStake = BigNumber(consoleMessages[0])
     await invokeTestCli(['stake', '--quiet', '--deposit', '100_000T'])
-    const afterDepositStake = Number(consoleMessages[1])
-    expect(afterDepositStake - initialStake).toEqual(10)
+    const afterDepositStake = BigNumber(consoleMessages[1])
+    expect(afterDepositStake.minus(initialStake).isEqualTo(10)).toEqual(true)
   })
 })
