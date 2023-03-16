@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.0.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.12.0...v2.0.0) (2023-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop node 12 support (#424)
+
+### Features
+
+* upgrade bee-js to support bee 1.13 ([#449](https://www.github.com/ethersphere/swarm-cli/issues/449)) ([083e926](https://www.github.com/ethersphere/swarm-cli/commit/083e926fa80f75a23241cdc989052d5d3c8190d6))
+
+
+### Bug Fixes
+
+* change "supported version" to "tested with" ([#434](https://www.github.com/ethersphere/swarm-cli/issues/434)) ([8925bb9](https://www.github.com/ethersphere/swarm-cli/commit/8925bb96a2392172970cd6122ca04da19e6f525f))
+
+
+### Miscellaneous Chores
+
+* drop node 12 support ([#424](https://www.github.com/ethersphere/swarm-cli/issues/424)) ([82e63d1](https://www.github.com/ethersphere/swarm-cli/commit/82e63d1098f393e513c3111391f24e606335d741))
+
 ## [1.12.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.11.0...v1.12.0) (2022-08-30)
 
 
