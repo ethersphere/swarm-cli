@@ -1,5 +1,4 @@
 import { Reference } from '@ethersphere/bee-js'
-import { encodeFeedReference } from '@ethersphere/swarm-cid'
 import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { exit } from 'process'
@@ -49,9 +48,6 @@ export class FeedCommand extends RootCommand {
     this.console.verbose(createKeyValue('Feed Reference', reference))
     this.console.verbose(createKeyValue('Feed Manifest', manifest))
     this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
-
-    const swarmCid = encodeFeedReference(manifest)
-    this.console.log(createKeyValue('Feed Bzz.link', `https://${swarmCid.toString()}.bzz.link`))
 
     this.console.quiet(manifest)
 

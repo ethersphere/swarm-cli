@@ -1,5 +1,4 @@
 import { Tag, Utils } from '@ethersphere/bee-js'
-import { encodeManifestReference } from '@ethersphere/swarm-cid'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -159,11 +158,6 @@ export class Upload extends RootCommand implements LeafCommand {
 
     this.console.dim('Uploading was successful!')
     this.console.log(createKeyValue('URL', url))
-
-    if (!this.encrypt && url.includes('/bzz/')) {
-      const swarmCid = encodeManifestReference(this.hash)
-      this.console.log(createKeyValue('Bzz.link', `https://${swarmCid.toString()}.bzz.link`))
-    }
 
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)

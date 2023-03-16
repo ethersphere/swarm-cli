@@ -97,7 +97,7 @@ export class RootCommand {
     }
 
     if (this.header.length) {
-      beeOptions.defaultHeaders = parseHeaders(this.header)
+      beeOptions.headers = parseHeaders(this.header)
     }
     this.bee = new Bee(this.beeApiUrl, beeOptions)
     this._beeDebug = new BeeDebug(this.beeDebugApiUrl, beeOptions)

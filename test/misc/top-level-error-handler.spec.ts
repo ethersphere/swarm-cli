@@ -1,4 +1,3 @@
-import { BeeResponseError, KyRequestOptions } from '@ethersphere/bee-js'
 import { Utils } from 'furious-commander'
 import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { describeCommand, invokeTestCli } from '../utility'
@@ -58,19 +57,11 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
 
   it('should handle 500 errors with custom message', async () => {
     jest.spyOn(Utils, 'getSourcemap').mockImplementation(() => {
-      throw new BeeResponseError(
-        500,
-        null as unknown as Response,
-        'This should be printed',
-        null as unknown as KyRequestOptions,
-        'This should be printed',
-      )
+      throw Error('This should be printed')
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      FORMATTED_ERROR + ' Bee responded with HTTP 500 (Internal Server Error).',
-      '',
-      'The error message is: This should be printed',
+      FORMATTED_ERROR + ' This should be printed',
       '',
       'There may be additional information in the Bee logs.',
     ])
@@ -78,17 +69,11 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
 
   it('should handle 500 errors with default message', async () => {
     jest.spyOn(Utils, 'getSourcemap').mockImplementation(() => {
-      throw new BeeResponseError(
-        500,
-        null as unknown as Response,
-        'Internal Server Error',
-        null as unknown as KyRequestOptions,
-        'Internal Server Error',
-      )
+      throw Error('Internal Server Error')
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      FORMATTED_ERROR + ' Bee responded with HTTP 500 (Internal Server Error).',
+      FORMATTED_ERROR + ' Internal Server Error',
       '',
       'There may be additional information in the Bee logs.',
     ])
@@ -96,19 +81,11 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
 
   it('should handle 404 errors with custom message', async () => {
     jest.spyOn(Utils, 'getSourcemap').mockImplementation(() => {
-      throw new BeeResponseError(
-        404,
-        null as unknown as Response,
-        'This should be printed',
-        null as unknown as KyRequestOptions,
-        'This should be printed',
-      )
+      throw Error('This should be printed')
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      FORMATTED_ERROR + ' Bee responded with HTTP 404 (Not Found).',
-      '',
-      'The error message is: This should be printed',
+      FORMATTED_ERROR + ' This should be printed',
       '',
       'There may be additional information in the Bee logs.',
     ])
@@ -116,17 +93,11 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
 
   it('should handle 404 errors with default message', async () => {
     jest.spyOn(Utils, 'getSourcemap').mockImplementation(() => {
-      throw new BeeResponseError(
-        404,
-        null as unknown as Response,
-        'Not Found',
-        null as unknown as KyRequestOptions,
-        'Not Found',
-      )
+      throw Error('Not found')
     })
     await invokeTestCli(['status'])
     expectErrorsToDeepEqual(consoleMessages, [
-      FORMATTED_ERROR + ' Bee responded with HTTP 404 (Not Found).',
+      FORMATTED_ERROR + ' Not found',
       '',
       'There may be additional information in the Bee logs.',
     ])
