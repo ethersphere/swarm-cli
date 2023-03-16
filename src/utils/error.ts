@@ -13,8 +13,8 @@ export interface BeeErrorOptions {
   notFoundMessage?: string
 }
 
-function hasStatusCode(error: unknown, statusCode: number): boolean {
-  return getFieldOrNull(error, 'status') === statusCode
+function hasStatusCode(error: any, statusCode: number): boolean {
+  return error?.response?.status === statusCode
 }
 
 function isNotFoundError(error: unknown): boolean {
@@ -25,12 +25,12 @@ function isInternalServerError(error: unknown): boolean {
   return hasStatusCode(error, 500)
 }
 
-export function errorHandler(error: unknown, options?: BeeErrorOptions): void {
+export function errorHandler(error: any, options?: BeeErrorOptions): void {
   if (!process.exitCode) {
     process.exitCode = 1
   }
   // grab error.message, or error if it is a string
-  const message: string | null = typeof error === 'string' ? error : getFieldOrNull(error, 'message')
+  const message: string | null = typeof error === 'string' ? error : error?.response?.data?.message || error?.message
   const type: string | null = getFieldOrNull(error, 'type')
 
   // write custom message for 500
