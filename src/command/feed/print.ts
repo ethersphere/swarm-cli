@@ -53,7 +53,7 @@ export class Print extends FeedCommand implements LeafCommand {
       this.console.quiet(manifest)
       this.console.log(createKeyValue('Topic', `${topic}`))
       this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
-      this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex, 10) + 1))
+      this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex, 16) + 1))
     } catch (error) {
       spinner.stop()
       const message = getFieldOrNull(error, 'message')

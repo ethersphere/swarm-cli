@@ -80,7 +80,11 @@ export function printStamp(
   }
 
   if (stamp.batchTTL !== -1) {
-    console.log(createKeyValue('Expires', new Date(Date.now() + stamp.batchTTL * 1000).toISOString().slice(0, 10)))
+    try {
+      console.log(createKeyValue('Expires', new Date(Date.now() + stamp.batchTTL * 1000).toISOString().slice(0, 10)))
+    } catch {
+      // ignore
+    }
   }
   console.verbose(createKeyValue('Depth', stamp.depth))
   console.verbose(createKeyValue('Bucket Depth', stamp.bucketDepth))
