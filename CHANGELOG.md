@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.0.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.0.0...v2.0.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* fix stamp invalid date error ([#452](https://www.github.com/ethersphere/swarm-cli/issues/452)) ([a70f711](https://www.github.com/ethersphere/swarm-cli/commit/a70f711b0c739fa1c4124dbdc1062946bf01824d))
+
 ## [2.0.0](https://www.github.com/ethersphere/swarm-cli/compare/v1.12.0...v2.0.0) (2023-03-16)
 
 
