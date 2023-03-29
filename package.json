@@ -62,8 +62,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@ethersphere/bee-js": "^6.0.0-pre.5",
-    "@ethersphere/swarm-cid": "^0.1.0",
+    "@ethersphere/bee-js": "^6.0.0-pre.6",
     "bignumber.js": "^9.1.0",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
