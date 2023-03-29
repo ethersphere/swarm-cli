@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.0.1...v2.1.0) (2023-03-29)
+
+
+### Features
+
+* add streaming upload for single files ([#454](https://www.github.com/ethersphere/swarm-cli/issues/454)) ([da2caa3](https://www.github.com/ethersphere/swarm-cli/commit/da2caa3e4f0484eac7f0889de5978ee41fd5b6f6))
+
 ### [2.0.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.0.0...v2.0.1) (2023-03-28)
 
 
