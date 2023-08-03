@@ -18,5 +18,3 @@ export function toMatchLinesInOrder(received: string[], pattern: string[][]) {
     message,
   }
 }
-
-export default undefined
