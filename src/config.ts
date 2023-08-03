@@ -12,6 +12,7 @@ import { Pss } from './command/pss'
 import { Stamp } from './command/stamp'
 import { Status } from './command/status'
 import { Upload } from './command/upload'
+import { Stake } from './command/stake'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -123,4 +124,5 @@ export const rootCommandClasses = [
   Addresses,
   Manifest,
   Balance,
+  Stake,
 ]
