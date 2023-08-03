@@ -13,7 +13,7 @@ export class Status extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    this.console.info(chalk.bold('Bee'))
+    this.console.all(chalk.bold('Bee'))
     process.stdout.write(createKeyValue('API', this.beeApiUrl))
     try {
       await this.bee.checkConnection()
