@@ -4,7 +4,7 @@ import { exit } from 'process'
 import { printCurlCommand } from '../../curl'
 import { parseHeaders } from '../../utils'
 import { ConfigOption } from '../../utils/types/config-option'
-import { CommandConfig, CONFIG_OPTIONS } from './command-config'
+import { CONFIG_OPTIONS, CommandConfig } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
 
 export class RootCommand {
@@ -52,17 +52,10 @@ export class RootCommand {
   private debugApiErrors: string[] = []
 
   private async setupBeeDebug(): Promise<void> {
-    if (this.shouldDebugUrlBeSpecified()) {
-      this.debugApiErrors.push('Cannot ensure Debug API correctness!')
-      this.debugApiErrors.push('--bee-api-url is set explicitly, but --bee-debug-api-url is left default.')
-      this.debugApiErrors.push('This may be incorrect and cause unexpected behaviour.')
-      this.debugApiErrors.push('Please run the command again and specify explicitly the --bee-debug-api-url value.')
-    } else {
-      if (!(await this.checkDebugApiHealth())) {
-        this.debugApiErrors.push('Could not reach Debug API at ' + this.beeDebugApiUrl)
-        this.debugApiErrors.push('Make sure you have the Debug API enabled in your Bee config')
-        this.debugApiErrors.push('or correct the URL with the --bee-debug-api-url option.')
-      }
+    if (!(await this.checkDebugApiHealth())) {
+      this.debugApiErrors.push('Could not reach Debug API at ' + this.beeDebugApiUrl)
+      this.debugApiErrors.push('Make sure you have the Debug API enabled in your Bee config')
+      this.debugApiErrors.push('or correct the URL with the --bee-debug-api-url option.')
     }
   }
 
@@ -121,19 +114,6 @@ export class RootCommand {
         this[option.propertyKey] = value
       }
     }
-  }
-
-  /**
-   * Used to catch confusing behaviour, which happens when only one of the Bee APIs is specified.
-   *
-   * e.g. A command uses both the Bee API and the Bee Debug API. The user specifies a remote Bee node
-   *      for the normal API, but forgets about the debug API. The command would run successfully,
-   *      but have confusing results, as two different Bee nodes are used when calling the APIs.
-   *
-   * @returns true is Bee API URL is set explicity, but Bee Debug API URL is left default.
-   */
-  private shouldDebugUrlBeSpecified(): boolean {
-    return this.sourcemap['bee-api-url'] === 'explicit' && this.sourcemap['bee-debug-api-url'] === 'default'
   }
 
   private async checkDebugApiHealth(): Promise<boolean> {

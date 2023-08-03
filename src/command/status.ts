@@ -1,4 +1,5 @@
-import { NodeInfo, SUPPORTED_BEE_VERSION, SUPPORTED_BEE_VERSION_EXACT } from '@ethersphere/bee-js'
+import { BeeModes } from '@ethersphere/bee-js'
+import BigNumber from 'bignumber.js'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
 import { createKeyValue } from '../utils/text'
@@ -7,116 +8,109 @@ import { RootCommand } from './root-command'
 export class Status extends RootCommand implements LeafCommand {
   public readonly name = 'status'
 
-  public readonly description = 'Check API availability and Bee compatibility'
+  public readonly description = 'Check Bee status'
 
   public async run(): Promise<void> {
     await super.init()
 
-    this.console.log(chalk.bold('Bee Status'))
-    this.console.divider()
-    this.console.log(createKeyValue('Bee API URL', this.beeApiUrl))
-    this.console.log(createKeyValue('Bee Debug API URL', this.beeDebugApiUrl))
-    this.console.divider()
-    await this.checkBeeApiConnection()
-    const version = await this.checkBeeDebugApiConnection()
-    await this.checkBeeVersionCompatibility()
-    const topology = await this.checkTopology()
-    const nodeInfo = await this.getNodeInfo()
-
-    this.console.log(createKeyValue('Bee Version', version))
-    this.console.log(createKeyValue('Tested with', SUPPORTED_BEE_VERSION + ' (' + SUPPORTED_BEE_VERSION_EXACT + ')'))
-
-    if (nodeInfo) {
-      this.console.divider()
-      this.console.log(createKeyValue('Gateway Mode', nodeInfo.gatewayMode))
-      this.console.log(createKeyValue('Bee Mode', nodeInfo.beeMode))
-    }
-    this.console.quiet('Bee version - ' + version)
-    this.console.quiet('Tested with - ' + SUPPORTED_BEE_VERSION_EXACT)
-
-    if (topology) {
-      this.console.divider('=')
-      this.console.log(chalk.bold('Topology'))
-      this.console.divider()
-      this.console.log(createKeyValue('Connected Peers', topology.connected))
-      this.console.log(createKeyValue('Population', topology.population))
-      this.console.log(createKeyValue('Depth', topology.depth))
-      this.console.quiet(topology.connected + ' ' + topology.population + ' ' + topology.depth)
-    }
-  }
-
-  private async checkBeeApiConnection(): Promise<void> {
+    this.console.info(chalk.bold('Bee'))
+    process.stdout.write(createKeyValue('API', this.beeApiUrl))
     try {
       await this.bee.checkConnection()
-      this.printSuccessfulCheck('Bee API Connection')
+      process.stdout.write(chalk.bold.green(' [OK]') + '\n')
     } catch {
-      this.handleFailedCheck('Bee API Connection')
+      process.stdout.write(chalk.bold.red(' [FAILED]') + '\n')
     }
-  }
-
-  private async checkBeeDebugApiConnection(): Promise<string> {
+    process.stdout.write(createKeyValue('Debug API', this.beeDebugApiUrl))
     try {
-      const health = await this._beeDebug.getHealth()
-      this.printSuccessfulCheck('Bee Debug API Connection')
-
-      return health.version
+      await this._beeDebug.getHealth()
+      process.stdout.write(chalk.bold.green(' [OK]') + '\n')
     } catch {
-      this.handleFailedCheck('Bee Debug API Connection')
-
-      return 'N/A'
+      process.stdout.write(chalk.bold.red(' [FAILED]') + '\n')
     }
-  }
+    const versions = await this._beeDebug.getVersions()
+    this.console.all(createKeyValue('Version', versions.beeVersion))
+    const nodeInfo = await this._beeDebug.getNodeInfo()
+    this.console.all(createKeyValue('Mode', nodeInfo.beeMode))
 
-  private async checkBeeVersionCompatibility(): Promise<void> {
-    try {
-      const compatible = await this._beeDebug.isSupportedVersion()
+    this.console.all('')
+    this.console.all(chalk.bold('Topology'))
+    const topology = await this._beeDebug.getTopology()
+    this.console.all(createKeyValue('Connected Peers', topology.connected))
+    this.console.all(createKeyValue('Population', topology.population))
+    this.console.all(createKeyValue('Depth', topology.depth))
 
-      if (compatible) {
-        this.printSuccessfulCheck('Bee Version Compatibility')
-      } else {
-        this.handleFailedCheck('Bee Version Compatibility')
-      }
-    } catch {
-      this.handleFailedCheck('Bee Version Compatibility')
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
+      this.console.all('')
+      this.console.all(chalk.bold('Wallet'))
+      const { bzzBalance, nativeTokenBalance } = await this._beeDebug.getWalletBalance()
+      this.console.all(
+        createKeyValue(
+          'xBZZ',
+          BigNumber(bzzBalance)
+            .div(10 ** 16)
+            .toString(10),
+        ),
+      )
+      this.console.all(
+        createKeyValue(
+          'xDAI',
+          BigNumber(nativeTokenBalance)
+            .div(10 ** 18)
+            .toString(10),
+        ),
+      )
     }
-  }
 
-  private async getNodeInfo(): Promise<NodeInfo | null> {
-    try {
-      const nodeInfo = await this._beeDebug.getNodeInfo()
-
-      return nodeInfo
-    } catch {
-      return null
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
+      this.console.all('')
+      this.console.all(chalk.bold('Chequebook'))
+      const { totalBalance, availableBalance } = await this._beeDebug.getChequebookBalance()
+      this.console.all(
+        createKeyValue(
+          'Available BZZ',
+          BigNumber(availableBalance)
+            .div(10 ** 16)
+            .toString(10),
+        ),
+      )
+      this.console.all(
+        createKeyValue(
+          'Total BZZ',
+          BigNumber(totalBalance)
+            .div(10 ** 16)
+            .toString(10),
+        ),
+      )
     }
-  }
 
-  private async checkTopology(): Promise<null | {
-    connected: number
-    population: number
-    depth: number
-  }> {
-    try {
-      const { connected, population, depth } = await this._beeDebug.getTopology()
-
-      return {
-        connected,
-        population,
-        depth,
-      }
-    } catch {
-      return null
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
+      this.console.all('')
+      this.console.all(chalk.bold('Staking'))
+      const stake = await this._beeDebug.getStake()
+      this.console.all(
+        createKeyValue(
+          'Staked BZZ',
+          BigNumber(stake)
+            .div(10 ** 16)
+            .toString(10),
+        ),
+      )
     }
-  }
 
-  private printSuccessfulCheck(message: string): void {
-    this.console.log(chalk.bold.green('[OK]') + ' ' + message)
-    this.console.quiet('OK - ' + message)
-  }
-
-  private handleFailedCheck(message: string): void {
-    this.console.log(chalk.bold.red('[FAILED]') + ' ' + message)
-    this.console.quiet('FAILED - ' + message)
-    process.exitCode = 1
+    if (nodeInfo.beeMode === BeeModes.FULL) {
+      this.console.all('')
+      this.console.all(chalk.bold('Redistribution'))
+      const redistributionState = await this._beeDebug.getRedistributionState()
+      this.console.all(createKeyValue('Reward', redistributionState.reward))
+      this.console.all(createKeyValue('Has sufficient funds', redistributionState.hasSufficientFunds))
+      this.console.all(createKeyValue('Fully synced', redistributionState.isFullySynced))
+      this.console.all(createKeyValue('Frozen', redistributionState.isFrozen))
+      this.console.all(createKeyValue('Last selected round', redistributionState.lastSelectedRound))
+      this.console.all(createKeyValue('Last played round', redistributionState.lastPlayedRound))
+      this.console.all(createKeyValue('Last won round', redistributionState.lastWonRound))
+      this.console.all(createKeyValue('Last selected round', redistributionState.lastSelectedRound))
+      this.console.all(createKeyValue('Minimum gas funds', redistributionState.minimumGasFunds))
+    }
   }
 }

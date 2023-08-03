@@ -25,6 +25,8 @@ export class CommandLog {
 
   /** Error messages */
   public error: (message: string, ...args: unknown[]) => void
+  /** Messages shown in all modes */
+  public all: (message: string, ...args: unknown[]) => void
   /** Identical with console.log */
   public log: (message: string, ...args: unknown[]) => void
   /** Informal messages (e.g. Tips) */
@@ -46,6 +48,7 @@ export class CommandLog {
         this.quiet = Printer.emptyFunction
         this.verbose = Printer.log
         this.log = Printer.log
+        this.all = Printer.log
         this.info = Printer.info
         this.dim = Printer.dimFunction
         this.divider = Printer.divider
@@ -55,6 +58,7 @@ export class CommandLog {
         this.quiet = Printer.emptyFunction
         this.verbose = Printer.emptyFunction
         this.log = Printer.log
+        this.all = Printer.log
         this.info = Printer.info
         this.dim = Printer.emptyFunction
         this.divider = Printer.divider
@@ -65,6 +69,7 @@ export class CommandLog {
         this.quiet = Printer.log
         this.verbose = Printer.emptyFunction
         this.log = Printer.emptyFunction
+        this.all = Printer.log
         this.info = Printer.emptyFunction
         this.dim = Printer.emptyFunction
         this.divider = Printer.emptyFunction
