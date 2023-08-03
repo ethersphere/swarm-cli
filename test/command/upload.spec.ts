@@ -57,12 +57,16 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should fail for large files in quiet mode', async () => {
     await invokeTestCli(['upload', 'test/data/8mb.bin', '--quiet', ...getStampOption()])
-    expect(consoleMessages[0]).toContain('Size is larger than the recommended maximum value of 5.00 megabytes')
+    expect(consoleMessages[0]).toContain(
+      'ERROR Size is larger than the recommended maximum value of 4.77 MB. Pass the --yes option to allow it',
+    )
   })
 
   it('should fail for large folders in quiet mode', async () => {
     await invokeTestCli(['upload', 'test/data', '--quiet', ...getStampOption()])
-    expect(consoleMessages[0]).toContain('Size is larger than the recommended maximum value of 5.00 megabytes')
+    expect(consoleMessages[0]).toContain(
+      'ERROR Size is larger than the recommended maximum value of 4.77 MB. Pass the --yes option to allow it',
+    )
   })
 
   it('should not warn for large files with flag', async () => {
