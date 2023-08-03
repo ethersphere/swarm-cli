@@ -12,11 +12,12 @@ import { Message } from '../utils/message'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
+import { Storage } from '../utils/storage'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
-const MAX_UPLOAD_SIZE = parseInt(process.env.MAX_UPLOAD_SIZE || '', 10) || 100 * 1000 * 1000 // 100 megabytes
+const MAX_UPLOAD_SIZE = new Storage(parseInt(process.env.MAX_UPLOAD_SIZE || '', 10) || 100 * 1000 * 1000) // 100 megabytes
 
 export class Upload extends RootCommand implements LeafCommand {
   public readonly name = 'upload'
@@ -308,15 +309,13 @@ export class Upload extends RootCommand implements LeafCommand {
     if (this.yes) {
       return
     }
-    const { size } = await this.getUploadableInfo()
+    const size = await this.getUploadSize()
 
-    if (size < MAX_UPLOAD_SIZE) {
+    if (size.getBytes() < MAX_UPLOAD_SIZE.getBytes()) {
       return
     }
 
-    const message = `Size is larger than the recommended maximum value of ${(MAX_UPLOAD_SIZE / 1e6).toFixed(
-      2,
-    )} megabytes`
+    const message = `Size is larger than the recommended maximum value of ${MAX_UPLOAD_SIZE}`
 
     if (this.quiet) {
       throw new CommandLineError(Message.requireOptionConfirmation('yes', message))
@@ -329,9 +328,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
   }
 
-  private async getUploadableInfo(): Promise<{
-    size: number
-  }> {
+  private async getUploadSize(): Promise<Storage> {
     let size = -1
 
     if (this.stdin) {
@@ -340,11 +337,11 @@ export class Upload extends RootCommand implements LeafCommand {
       const stats = FS.lstatSync(this.path)
       size = stats.isDirectory() ? await Utils.getFolderSize(this.path) : stats.size
     }
-    this.console.verbose('Upload size is approximately ' + (size / 1000 / 1000).toFixed(2) + ' megabytes')
 
-    return {
-      size,
-    }
+    const storage = new Storage(size)
+    this.console.verbose(`Upload size is approximately ${storage}`)
+
+    return storage
   }
 
   private hasUnsupportedGatewayOptions(): boolean {
