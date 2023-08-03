@@ -45,6 +45,9 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({ key: 'encrypt', type: 'boolean', description: 'Encrypt uploaded data' })
   public encrypt!: boolean
 
+  @Option({ key: 'deferred', type: 'boolean', description: 'Do not wait for network sync' })
+  public deferred!: boolean
+
   @Option({
     key: 'sync',
     type: 'boolean',
@@ -207,12 +210,16 @@ export class Upload extends RootCommand implements LeafCommand {
         pin: this.pin,
         encrypt: this.encrypt,
         contentType,
+        deferred: this.deferred,
       })
       this.hash = reference
 
       return `${this.bee.url}/bzz/${this.hash}/`
     } else {
-      const { reference } = await this.bee.uploadData(this.stamp, this.stdinData, { tag: tag?.uid })
+      const { reference } = await this.bee.uploadData(this.stamp, this.stdinData, {
+        tag: tag?.uid,
+        deferred: this.deferred,
+      })
       this.hash = reference
 
       return `${this.bee.url}/bytes/${this.hash}`
@@ -231,6 +238,7 @@ export class Upload extends RootCommand implements LeafCommand {
       tag: tag && tag.uid,
       pin: this.pin,
       encrypt: this.encrypt,
+      deferred: this.deferred,
     })
     this.hash = reference
 
@@ -251,6 +259,7 @@ export class Upload extends RootCommand implements LeafCommand {
       pin: this.pin,
       encrypt: this.encrypt,
       contentType,
+      deferred: this.deferred,
     })
     this.hash = reference
 

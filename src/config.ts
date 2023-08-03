@@ -1,7 +1,6 @@
 import { IOption } from 'furious-commander'
 import PackageJson from '../package.json'
 import { Addresses } from './command/addresses'
-import { Balance } from './command/balance'
 import { Cheque } from './command/cheque'
 import { Download } from './command/download'
 import { Feed } from './command/feed'
@@ -9,10 +8,10 @@ import { Identity } from './command/identity'
 import { Manifest } from './command/manifest'
 import { Pinning } from './command/pinning'
 import { Pss } from './command/pss'
+import { Stake } from './command/stake'
 import { Stamp } from './command/stamp'
 import { Status } from './command/status'
 import { Upload } from './command/upload'
-import { Stake } from './command/stake'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -123,6 +122,5 @@ export const rootCommandClasses = [
   Pss,
   Addresses,
   Manifest,
-  Balance,
   Stake,
 ]

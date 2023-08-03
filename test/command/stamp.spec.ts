@@ -1,24 +1,33 @@
+import { Types } from 'cafe-utility'
 import inquirer from 'inquirer'
 import { Buy } from '../../src/command/stamp/buy'
 import { sleep } from '../../src/utils'
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 describeCommand(
   'Test Stamp command',
   ({ consoleMessages, getLastMessage, getNthLastMessage, hasMessageContaining }) => {
     it('should list stamps', async () => {
       await invokeTestCli(['stamp', 'list'])
-      expect(consoleMessages[0]).toContain('Stamp ID:')
-      expect(consoleMessages[1]).toContain('Label:')
-      expect(consoleMessages[2]).toContain('Usage:')
+      const pattern = [['Stamp ID'], ['Usage'], ['Remaining Capacity'], ['TTL'], ['Expires']]
+      expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
     it('should show a specific stamp', async () => {
-      await invokeTestCli(['stamp', 'show', process.env.STAMP || ''])
-      expect(consoleMessages[0]).toContain('Stamp ID:')
-      expect(consoleMessages[0]).toContain(process.env.STAMP)
-      expect(consoleMessages[1]).toContain('Label:')
-      expect(consoleMessages[2]).toContain('Usage:')
+      await invokeTestCli(['stamp', 'show', Types.asString(process.env.STAMP)])
+      const pattern = [
+        ['Stamp ID', Types.asString(process.env.STAMP)],
+        ['Usage'],
+        ['Remaining Capacity'],
+        ['TTL'],
+        ['Expires'],
+      ]
+      expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
     it('should not allow buying stamp with amount 0', async () => {
@@ -55,7 +64,7 @@ describeCommand(
 
       const id = command.postageBatchId
       await invokeTestCli(['stamp', 'show', id, '--verbose'])
-      expect(getLastMessage()).toContain('Immutable')
+      expect(getLastMessage()).toContain('Immutable Flag')
       expect(getLastMessage()).toContain('true')
       await sleep(11_000)
     })
@@ -67,7 +76,8 @@ describeCommand(
 
     it('should list with sorting and filter', async () => {
       await invokeTestCli(['stamp', 'list', '--min-usage', '0', '--max-usage', '100', '--least-used', '--limit', '1'])
-      expect(getLastMessage()).toContain('TTL:')
+      const pattern = [['Stamp ID'], ['Usage'], ['Remaining Capacity'], ['TTL'], ['Expires']]
+      expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
     it('should wait until stamp is usable', async () => {
@@ -88,16 +98,12 @@ describeCommand(
 
       const id = command.postageBatchId
       await invokeTestCli(['stamp', 'show', id, '--verbose'])
-      expect(getNthLastMessage(3)).toContain('Utilization')
-      expect(getNthLastMessage(3)).toContain('0')
-      expect(getNthLastMessage(4)).toContain('Usable')
-      expect(getNthLastMessage(4)).toContain('true')
-      expect(getNthLastMessage(9)).toContain('Usage')
-      expect(getNthLastMessage(9)).toContain('0%')
-      expect(getNthLastMessage(10)).toContain('Label:')
-      expect(getNthLastMessage(10)).toContain('Alice')
-      expect(getNthLastMessage(11)).toContain('Stamp ID')
-      expect(getNthLastMessage(11)).toContain(id)
+      const pattern = [
+        ['Stamp ID', id],
+        ['Label', 'Alice'],
+        ['Usable', 'true'],
+      ]
+      expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
     it('should accept --wait-usable prompt', async () => {

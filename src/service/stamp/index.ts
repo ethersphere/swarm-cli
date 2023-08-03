@@ -81,18 +81,13 @@ export function printStamp(
   console.verbose(createKeyValue('Total Capacity', richStamp.capacity.toString()))
 
   if (settings?.showTtl) {
-    console.log(
-      createKeyValue('TTL', stamp.batchTTL === -1 ? 'unknown' : secondsToDhms(stamp.batchTTL, settings?.shortenTtl)),
-    )
+    const ttl = stamp.batchTTL === -1 ? 'unknown' : secondsToDhms(stamp.batchTTL, settings?.shortenTtl)
+    const expires =
+      stamp.batchTTL === -1 ? 'unknown' : new Date(Date.now() + stamp.batchTTL * 1000).toISOString().slice(0, 10)
+    console.log(createKeyValue('TTL', ttl))
+    console.log(createKeyValue('Expires', expires))
   }
 
-  if (stamp.batchTTL !== -1) {
-    try {
-      console.log(createKeyValue('Expires', new Date(Date.now() + stamp.batchTTL * 1000).toISOString().slice(0, 10)))
-    } catch {
-      // ignore
-    }
-  }
   console.verbose(createKeyValue('Depth', stamp.depth))
   console.verbose(createKeyValue('Bucket Depth', stamp.bucketDepth))
   console.verbose(createKeyValue('Amount', stamp.amount))

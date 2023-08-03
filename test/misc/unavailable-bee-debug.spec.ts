@@ -2,13 +2,6 @@ import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
 describeCommand('Test unavailable bee-debug', ({ consoleMessages, hasMessageContaining }) => {
-  it('should fail for cheque commands (mandatory)', async () => {
-    await invokeTestCli(['balance', '--bee-debug-api-url', 'http://localhost:3362'])
-    expect(consoleMessages[0]).toContain('Could not reach Debug API at http://localhost:3362')
-    expect(consoleMessages[1]).toContain('Make sure you have the Debug API enabled in your Bee config')
-    expect(consoleMessages[2]).toContain('or correct the URL with the --bee-debug-api-url option.')
-  })
-
   it('should fail for stamp commands (mandatory)', async () => {
     await invokeTestCli(['stamp', 'list', '--bee-debug-api-url', 'http://localhost:3362'])
     expect(consoleMessages[0]).toContain('Could not reach Debug API at http://localhost:3362')
@@ -19,7 +12,6 @@ describeCommand('Test unavailable bee-debug', ({ consoleMessages, hasMessageCont
   it('should work for upload (optional)', async () => {
     await invokeTestCli(['upload', 'README.md', '--bee-debug-api-url', 'http://localhost:3362', ...getStampOption()])
     expect(hasMessageContaining('Swarm hash')).toBeTruthy()
-    expect(hasMessageContaining('Cannot ensure Debug API correctness')).toBeFalsy()
     expect(hasMessageContaining('Could not reach Debug API')).toBeFalsy()
   })
 
@@ -37,7 +29,6 @@ describeCommand('Test unavailable bee-debug', ({ consoleMessages, hasMessageCont
       ...getStampOption(),
     ])
     expect(hasMessageContaining('Swarm hash')).toBeTruthy()
-    expect(hasMessageContaining('Cannot ensure Debug API correctness')).toBeFalsy()
     expect(hasMessageContaining('Could not reach Debug API')).toBeFalsy()
   })
 })

@@ -8,7 +8,6 @@ import { Storage } from '../../utils/storage'
 import { createKeyValue, deletePreviousLine } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
-import { PLURConversionRate } from '../../utils/conversions'
 
 export class Buy extends StampCommand implements LeafCommand {
   public readonly name = 'buy'

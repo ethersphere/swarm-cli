@@ -1,6 +1,10 @@
-import chalk from 'chalk'
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 import { describeCommand, invokeTestCli } from '../utility'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 describeCommand('Test Monetary units', ({ consoleMessages }) => {
   let server: ReturnType<typeof createChequeMockHttpServer>
@@ -64,15 +68,15 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
   })
 
   it('should show units after running: balance', async () => {
-    await invokeTestCli(['balance', '--bee-debug-api-url', 'http://localhost:1378'])
-    expect(consoleMessages).toEqual([
-      chalk.bold('Node wallet'),
-      `${chalk.green.bold('BZZ:')} 0.3904`,
-      `${chalk.green.bold('DAI:')} 0.09610`,
-      '',
-      chalk.bold('Chequebook (BZZ)'),
-      `${chalk.green.bold('Total:')} 10.002685`,
-      `${chalk.green.bold('Available:')} 10.001856`,
-    ])
+    await invokeTestCli(['status', '--bee-debug-api-url', 'http://localhost:1378'])
+    const pattern = [
+      ['Wallet'],
+      ['xBZZ', '0.3904'],
+      ['xDAI', '0.6339'],
+      ['Chequebook'],
+      ['Available xBZZ', '10.001856'],
+      ['Total xBZZ', '10.002685'],
+    ]
+    expect(consoleMessages).toMatchLinesInOrder(pattern)
   })
 })

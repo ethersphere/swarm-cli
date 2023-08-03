@@ -1,5 +1,5 @@
 import { Argument, LeafCommand } from 'furious-commander'
-import { pickStamp, printStamp } from '../../service/stamp'
+import { enrichStamp, pickStamp, printStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
 import { StampCommand } from './stamp-command'
 
@@ -20,7 +20,7 @@ export class Show extends StampCommand implements LeafCommand {
 
     this.console.verbose(`Looking up postage stamp ${this.stamp}...`)
 
-    const stamp = await this.beeDebug.getPostageBatch(this.stamp)
+    const stamp = enrichStamp(await this.beeDebug.getPostageBatch(this.stamp))
 
     printStamp(stamp, this.console, { printUsageInQuiet: true, showTtl: true })
   }
