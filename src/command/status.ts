@@ -68,7 +68,7 @@ export class Status extends RootCommand implements LeafCommand {
       const { totalBalance, availableBalance } = await this._beeDebug.getChequebookBalance()
       this.console.all(
         createKeyValue(
-          'Available BZZ',
+          'Available xBZZ',
           BigNumber(availableBalance)
             .div(10 ** 16)
             .toString(10),
@@ -76,7 +76,7 @@ export class Status extends RootCommand implements LeafCommand {
       )
       this.console.all(
         createKeyValue(
-          'Total BZZ',
+          'Total xBZZ',
           BigNumber(totalBalance)
             .div(10 ** 16)
             .toString(10),
