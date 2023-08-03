@@ -1,8 +1,13 @@
-import { Strings, Types } from 'cafe-utility'
+import { Types } from 'cafe-utility'
 import inquirer from 'inquirer'
 import { Buy } from '../../src/command/stamp/buy'
 import { sleep } from '../../src/utils'
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 describeCommand(
   'Test Stamp command',
@@ -10,7 +15,7 @@ describeCommand(
     it('should list stamps', async () => {
       await invokeTestCli(['stamp', 'list'])
       const pattern = [['Stamp ID'], ['Usage'], ['Remaining Capacity'], ['TTL'], ['Expires']]
-      expect(Strings.linesMatchInOrder(consoleMessages, pattern)).toBe(true)
+      expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
     it('should show a specific stamp', async () => {
@@ -22,7 +27,7 @@ describeCommand(
         ['TTL'],
         ['Expires'],
       ]
-      expect(Strings.linesMatchInOrder(consoleMessages, pattern)).toBe(true)
+      expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
     it('should not allow buying stamp with amount 0', async () => {
@@ -72,7 +77,7 @@ describeCommand(
     it('should list with sorting and filter', async () => {
       await invokeTestCli(['stamp', 'list', '--min-usage', '0', '--max-usage', '100', '--least-used', '--limit', '1'])
       const pattern = [['Stamp ID'], ['Usage'], ['Remaining Capacity'], ['TTL'], ['Expires']]
-      expect(Strings.linesMatchInOrder(consoleMessages, pattern)).toBe(true)
+      expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
     it('should wait until stamp is usable', async () => {
@@ -98,7 +103,7 @@ describeCommand(
         ['Label', 'Alice'],
         ['Usable', 'true'],
       ]
-      expect(Strings.linesMatchInOrder(consoleMessages, pattern)).toBe(true)
+      expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
     it('should accept --wait-usable prompt', async () => {

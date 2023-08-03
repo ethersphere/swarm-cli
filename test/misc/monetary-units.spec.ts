@@ -1,6 +1,10 @@
-import { Strings } from 'cafe-utility'
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 import { describeCommand, invokeTestCli } from '../utility'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 describeCommand('Test Monetary units', ({ consoleMessages }) => {
   let server: ReturnType<typeof createChequeMockHttpServer>
@@ -73,6 +77,6 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
       ['Available xBZZ', '10.001856'],
       ['Total xBZZ', '10.002685'],
     ]
-    expect(Strings.linesMatchInOrder(consoleMessages, pattern)).toBe(true)
+    expect(consoleMessages).toMatchLinesInOrder(pattern)
   })
 })
