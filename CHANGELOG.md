@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.3.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.2.0...v2.3.0) (2023-08-03)
+
+
+### Features
+
+* add redistribution state to status ([#460](https://www.github.com/ethersphere/swarm-cli/issues/460)) ([dd44fcc](https://www.github.com/ethersphere/swarm-cli/commit/dd44fcc9ec0d34fe28713207bbb2de95c4b153a8))
+* add staking support ([#431](https://www.github.com/ethersphere/swarm-cli/issues/431)) ([75e4aba](https://www.github.com/ethersphere/swarm-cli/commit/75e4aba11baf0f03b9676e52b88f1f7c1f0737cd))
+* add stamp capacity ([#433](https://www.github.com/ethersphere/swarm-cli/issues/433)) ([e8f5cb1](https://www.github.com/ethersphere/swarm-cli/commit/e8f5cb1cb9566c37e9d18bb2ba6b9bc9fd7ab989))
+
 ## [2.2.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.1.0...v2.2.0) (2023-05-11)
 
 
