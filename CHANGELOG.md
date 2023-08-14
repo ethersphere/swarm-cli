@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.3.0...v2.4.0) (2023-08-14)
+
+
+### Features
+
+* add utility lock and unlock commands ([#464](https://www.github.com/ethersphere/swarm-cli/issues/464)) ([c8b1648](https://www.github.com/ethersphere/swarm-cli/commit/c8b1648823b5fadb923040472f453f8613d3c66b))
+* show stamp mutability ([#465](https://www.github.com/ethersphere/swarm-cli/issues/465)) ([824c14e](https://www.github.com/ethersphere/swarm-cli/commit/824c14e40e64462ca5d5da31448b3fd6f272bc26))
+
 ## [2.3.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.2.0...v2.3.0) (2023-08-03)
 
 
