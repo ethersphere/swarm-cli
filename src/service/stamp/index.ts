@@ -77,7 +77,12 @@ export function printStamp(
     console.log(createKeyValue('Label', stamp.label))
   }
   console.log(createKeyValue('Usage', richStamp.usageText))
-  console.log(createKeyValue('Remaining Capacity', richStamp.remainingCapacity.toString()))
+  console.log(
+    createKeyValue(
+      richStamp.immutableFlag ? 'Remaining Capacity (immutable)' : 'Remaining Capacity (mutable)',
+      richStamp.remainingCapacity.toString(),
+    ),
+  )
   console.verbose(createKeyValue('Total Capacity', richStamp.capacity.toString()))
 
   if (settings?.showTtl) {
@@ -94,7 +99,6 @@ export function printStamp(
   console.verbose(createKeyValue('Usable', stamp.usable))
   console.verbose(createKeyValue('Utilization', stamp.utilization))
   console.verbose(createKeyValue('Block Number', stamp.blockNumber))
-  console.verbose(createKeyValue('Immutable Flag', stamp.immutableFlag))
   console.quiet(settings?.printUsageInQuiet ? `${batchId} ${richStamp.usageText}` : batchId)
 }
 
