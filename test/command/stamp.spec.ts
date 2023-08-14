@@ -64,7 +64,7 @@ describeCommand(
 
       const id = command.postageBatchId
       await invokeTestCli(['stamp', 'show', id, '--verbose'])
-      expect(getLastMessage()).toContain('Immutable Flag')
+      expect(getLastMessage()).toContain('(immutable)')
       expect(getLastMessage()).toContain('true')
       await sleep(11_000)
     })
