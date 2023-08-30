@@ -106,26 +106,6 @@ describeCommand(
       expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
-    it('should accept --wait-usable prompt', async () => {
-      jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: true })
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose', '--yes'])
-      const command = execution.runnable as Buy
-      expect(command.waitUsable).toBe(true)
-      expect(command.yes).toBe(true)
-      expect(inquirer.prompt).toHaveBeenCalledTimes(1)
-      await sleep(11_000)
-    })
-
-    it('should reject --wait-usable prompt', async () => {
-      jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1', '--verbose', '--yes'])
-      const command = execution.runnable as Buy
-      expect(command.waitUsable).toBe(false)
-      expect(command.yes).toBe(true)
-      expect(inquirer.prompt).toHaveBeenCalledTimes(1)
-      await sleep(11_000)
-    })
-
     it('should accept estimate cost prompt', async () => {
       jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: true })
       const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1'])

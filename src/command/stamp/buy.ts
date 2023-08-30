@@ -46,7 +46,12 @@ export class Buy extends StampCommand implements LeafCommand {
   @Option({ key: 'label', description: 'Label of the postage stamp' })
   public label!: string
 
-  @Option({ key: 'wait-usable', description: 'Wait until the postage stamp becomes usable', type: 'boolean' })
+  @Option({
+    key: 'wait-usable',
+    description: 'Wait until the postage stamp becomes usable',
+    type: 'boolean',
+    default: true,
+  })
   public waitUsable!: boolean
 
   // CLASS FIELDS
