@@ -109,7 +109,6 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.all(createKeyValue('Last selected round', redistributionState.lastSelectedRound))
       this.console.all(createKeyValue('Last played round', redistributionState.lastPlayedRound))
       this.console.all(createKeyValue('Last won round', redistributionState.lastWonRound))
-      this.console.all(createKeyValue('Last selected round', redistributionState.lastSelectedRound))
       this.console.all(createKeyValue('Minimum gas funds', redistributionState.minimumGasFunds))
     }
   }
