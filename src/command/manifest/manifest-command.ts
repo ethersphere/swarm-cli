@@ -106,7 +106,7 @@ export class ManifestCommand extends RootCommand {
     this.console.log(this.resultHash)
   }
 
-  private load(reference: Uint8Array): Promise<Data> {
+  private async load(reference: Uint8Array): Promise<Data> {
     return this.bee.downloadData(referenceToHex(reference))
   }
 

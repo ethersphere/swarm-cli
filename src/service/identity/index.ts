@@ -31,7 +31,7 @@ export function getSimpleWallet(wallet: SimpleWallet): Wallet {
   return new Wallet(Buffer.from(privateKeyBytes))
 }
 
-export function getV3Wallet(wallet: V3Keystore, password: string): Promise<Wallet> {
+export async function getV3Wallet(wallet: V3Keystore, password: string): Promise<Wallet> {
   return Wallet.fromV3(wallet, password)
 }
 

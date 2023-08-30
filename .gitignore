@@ -1,8 +1,9 @@
-lib
-
 # Logs
 logs
 *.log
+
+# OS files
+.DS_Store
 
 # Runtime data
 pids
@@ -19,17 +20,11 @@ coverage
 # node-waf configuration
 .lock-wscript
 
-#babel RC
-.babelrc.js
-
 build
 dist
 
 # Dependency directory
 node_modules
 
-# Test data
-test/data/*
-!test/data/.gitkeep
-!test/data/manifest
-!test/data/TestIdentity.*
+# Generated files
+docs
