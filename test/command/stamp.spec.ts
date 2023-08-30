@@ -64,7 +64,7 @@ describeCommand(
 
       const id = command.postageBatchId
       await invokeTestCli(['stamp', 'show', id, '--verbose'])
-      const pattern = [['Remaining Capacity (immutable)']]
+      const pattern = [['Total Capacity (immutable)']]
       expect(consoleMessages).toMatchLinesInOrder(pattern)
       await sleep(11_000)
     })
