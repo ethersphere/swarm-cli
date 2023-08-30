@@ -33,14 +33,16 @@ export class Status extends RootCommand implements LeafCommand {
     const nodeInfo = await this._beeDebug.getNodeInfo()
     this.console.all(createKeyValue('Mode', nodeInfo.beeMode))
 
-    this.console.all('')
-    this.console.all(chalk.bold('Topology'))
-    const topology = await this._beeDebug.getTopology()
-    this.console.all(createKeyValue('Connected Peers', topology.connected))
-    this.console.all(createKeyValue('Population', topology.population))
-    this.console.all(createKeyValue('Depth', topology.depth))
+    if (nodeInfo.beeMode !== BeeModes.DEV) {
+      this.console.all('')
+      this.console.all(chalk.bold('Topology'))
+      const topology = await this._beeDebug.getTopology()
+      this.console.all(createKeyValue('Connected Peers', topology.connected))
+      this.console.all(createKeyValue('Population', topology.population))
+      this.console.all(createKeyValue('Depth', topology.depth))
+    }
 
-    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Wallet'))
       const { bzzBalance, nativeTokenBalance } = await this._beeDebug.getWalletBalance()
@@ -62,7 +64,7 @@ export class Status extends RootCommand implements LeafCommand {
       )
     }
 
-    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Chequebook'))
       const { totalBalance, availableBalance } = await this._beeDebug.getChequebookBalance()
@@ -84,7 +86,7 @@ export class Status extends RootCommand implements LeafCommand {
       )
     }
 
-    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Staking'))
       const stake = await this._beeDebug.getStake()
