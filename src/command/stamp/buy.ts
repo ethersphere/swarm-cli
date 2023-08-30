@@ -1,8 +1,7 @@
-import { BigNumber } from 'bignumber.js'
+import { Utils } from '@ethersphere/bee-js'
 import { LeafCommand, Option } from 'furious-commander'
 import { printStamp } from '../../service/stamp'
-import { sleep, toSignificantDigits } from '../../utils'
-import { PLURConversionRate } from '../../utils/conversions'
+import { secondsToDhms, sleep } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
 import { Storage } from '../../utils/storage'
 import { createKeyValue, deletePreviousLine } from '../../utils/text'
@@ -56,24 +55,24 @@ export class Buy extends StampCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    if (this.verbose && !this.waitUsable) {
-      this.console.log(
-        'You are running in verbose mode, but additional stamp information is only available after a short waiting period.',
+    const estimatedCost = Utils.getStampCostInBzz(this.depth, Number(this.amount))
+    const estimatedCapacity = new Storage(Utils.getStampMaximumCapacityBytes(this.depth))
+    const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount))
+
+    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} BZZ`))
+    this.console.log(createKeyValue('Estimated capacity', estimatedCapacity.toString()))
+    this.console.log(createKeyValue('Estimated TTL', secondsToDhms(estimatedTtl)))
+    this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
+
+    if (this.immutable) {
+      this.console.info(
+        'Once an immutable stamp is maxed out, it disallows further content uploads, thereby safeguarding your previously uploaded content from unintentional overwriting.',
       )
-      this.console.log('You can await this using the --wait-usable flag.')
-      this.waitUsable = await this.console.confirm('Would you like to enable it now?')
+    } else {
+      this.console.info(
+        'When a mutable stamp reaches full capacity, it still permits new content uploads. However, this comes with the caveat of overwriting previously uploaded content associated with the same stamp.',
+      )
     }
-
-    const estimatedCost = BigNumber(this.amount.toString())
-      .multipliedBy(BigNumber(2).pow(this.depth))
-      .dividedBy(PLURConversionRate)
-
-    const expectedCapacity = new Storage(2 ** this.depth * 4096)
-    this.console.log(
-      `The estimated cost is ${toSignificantDigits(
-        estimatedCost,
-      )} BZZ, expected capacity is at most ${expectedCapacity}`,
-    )
 
     if (!this.quiet && !this.yes) {
       this.yes = await this.console.confirm('Confirm the purchase')
@@ -83,7 +82,7 @@ export class Buy extends StampCommand implements LeafCommand {
       return
     }
 
-    const spinner = createSpinner('Buying postage stamp. This may take a while.')
+    const spinner = createSpinner('Buying postage stamp. This may take a few minutes.')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
