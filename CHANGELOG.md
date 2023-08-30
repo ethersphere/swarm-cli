@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.4.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.4.0...v2.4.1) (2023-08-30)
+
+
+### Bug Fixes
+
+* remove duplicate property from status command ([#467](https://www.github.com/ethersphere/swarm-cli/issues/467)) ([ea08a3a](https://www.github.com/ethersphere/swarm-cli/commit/ea08a3a672eed4daf693d585e80ff8b39a7f1762))
+
 ## [2.4.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.3.0...v2.4.0) (2023-08-14)
 
 
