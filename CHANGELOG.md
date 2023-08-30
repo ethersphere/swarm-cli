@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.5.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.4.1...v2.5.0) (2023-08-30)
+
+
+### Features
+
+* add hash command ([#469](https://www.github.com/ethersphere/swarm-cli/issues/469)) ([2416fe0](https://www.github.com/ethersphere/swarm-cli/commit/2416fe02a196ba0096f6938d1953855b1e26d550))
+* estimate stamp cost, capacity and ttl ([#470](https://www.github.com/ethersphere/swarm-cli/issues/470)) ([3f9ec0f](https://www.github.com/ethersphere/swarm-cli/commit/3f9ec0f60254bdac857cd1234196a7c97df9808a))
+
+
+### Bug Fixes
+
+* print less in dev mode in status command ([#471](https://www.github.com/ethersphere/swarm-cli/issues/471)) ([ffb5cea](https://www.github.com/ethersphere/swarm-cli/commit/ffb5ceac03ba7e52f0f3cd857a5b646cad47039c))
+
 ### [2.4.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.4.0...v2.4.1) (2023-08-30)
 
 
