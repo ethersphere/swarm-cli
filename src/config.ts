@@ -4,6 +4,7 @@ import { Addresses } from './command/addresses'
 import { Cheque } from './command/cheque'
 import { Download } from './command/download'
 import { Feed } from './command/feed'
+import { Hash } from './command/hash'
 import { Identity } from './command/identity'
 import { Manifest } from './command/manifest'
 import { Pinning } from './command/pinning'
@@ -114,6 +115,7 @@ export const optionParameters: IOption<unknown>[] = [
 export const rootCommandClasses = [
   Upload,
   Download,
+  Hash,
   Status,
   Pinning,
   Identity,
