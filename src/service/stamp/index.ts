@@ -1,4 +1,4 @@
-import { BeeDebug, PostageBatch } from '@ethersphere/bee-js'
+import { BeeDebug, PostageBatch, Utils } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { getFieldOrNull, secondsToDhms } from '../../utils'
@@ -34,17 +34,11 @@ export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promis
   return hex
 }
 
-export function normalizeUtilization(stamp: PostageBatch): number {
-  const { depth, bucketDepth, utilization } = stamp
-
-  return utilization / Math.pow(2, depth - bucketDepth)
-}
-
 export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
-  const usage = normalizeUtilization(stamp)
+  const usage = Utils.getStampUsage(stamp.utilization, stamp.depth, stamp.bucketDepth)
   const usageNormal = Math.ceil(usage * 100)
   const usageText = usageNormal + '%'
-  const capacity = new Storage(2 ** stamp.depth * 4096)
+  const capacity = new Storage(Utils.getStampMaximumCapacityBytes(stamp.depth))
   const remainingCapacity = new Storage(capacity.getBytes() * (1 - usage))
 
   return {
@@ -77,13 +71,13 @@ export function printStamp(
     console.log(createKeyValue('Label', stamp.label))
   }
   console.log(createKeyValue('Usage', richStamp.usageText))
-  console.log(
+  console.log(createKeyValue('Remaining Capacity', richStamp.remainingCapacity.toString()))
+  console.verbose(
     createKeyValue(
-      richStamp.immutableFlag ? 'Remaining Capacity (immutable)' : 'Remaining Capacity (mutable)',
-      richStamp.remainingCapacity.toString(),
+      richStamp.immutableFlag ? 'Total Capacity (immutable)' : 'Total Capacity (mutable)',
+      richStamp.capacity.toString(),
     ),
   )
-  console.verbose(createKeyValue('Total Capacity', richStamp.capacity.toString()))
 
   if (settings?.showTtl) {
     const ttl = stamp.batchTTL === -1 ? 'unknown' : secondsToDhms(stamp.batchTTL, settings?.shortenTtl)
