@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.5.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.5.0...v2.5.1) (2023-08-31)
+
+
+### Bug Fixes
+
+* track sync progress on uploads ([#474](https://www.github.com/ethersphere/swarm-cli/issues/474)) ([4535a30](https://www.github.com/ethersphere/swarm-cli/commit/4535a3072439db50c05ac0580560ffcc5e3d9a5c))
+
 ## [2.5.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.4.1...v2.5.0) (2023-08-30)
 
 
