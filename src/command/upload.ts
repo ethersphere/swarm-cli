@@ -45,7 +45,7 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({ key: 'encrypt', type: 'boolean', description: 'Encrypt uploaded data' })
   public encrypt!: boolean
 
-  @Option({ key: 'deferred', type: 'boolean', description: 'Do not wait for network sync' })
+  @Option({ key: 'deferred', type: 'boolean', description: 'Do not wait for network sync', default: true })
   public deferred!: boolean
 
   @Option({
@@ -278,29 +278,32 @@ export class Upload extends RootCommand implements LeafCommand {
     const pollingTime = this.syncPollingTime
     const pollingTrials = this.syncPollingTrials
     let synced = false
-    let syncStatus = 0
+    let syncProgress = 0
     const progressBar = new SingleBar({ clearOnComplete: true }, Presets.rect)
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
-      progressBar.start(tag.total, 0)
+      progressBar.start(tag.split, 0)
     }
     for (let i = 0; i < pollingTrials; i++) {
       tag = await this.bee.retrieveTag(tagUid)
+      const newSyncProgress = tag.seen + tag.synced
 
-      if (syncStatus !== tag.synced) {
+      if (newSyncProgress > syncProgress) {
         i = 0
-        syncStatus = tag.synced
+      }
+
+      syncProgress = newSyncProgress
+
+      if (syncProgress >= tag.split) {
+        synced = true
+        break
       }
 
       if (this.curl) {
-        this.console.log(`${syncStatus} / ${tag.total}`)
+        this.console.log(`${syncProgress} / ${tag.split}`)
       } else {
-        progressBar.update(syncStatus)
-      }
-
-      if (syncStatus >= tag.total) {
-        synced = true
-        break
+        progressBar.setTotal(tag.split)
+        progressBar.update(syncProgress)
       }
       await sleep(pollingTime)
     }
