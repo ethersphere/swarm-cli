@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.5.1...v2.6.0) (2023-11-13)
+
+
+### Features
+
+* upgrade to bee-js 6.5.1 ([#481](https://www.github.com/ethersphere/swarm-cli/issues/481)) ([a2306ff](https://www.github.com/ethersphere/swarm-cli/commit/a2306ffaca1e0329d44ef506d4758efaabc5a5c0))
+
 ### [2.5.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.5.0...v2.5.1) (2023-08-31)
 
 
