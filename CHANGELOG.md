@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.6.0...v2.7.0) (2023-11-29)
+
+
+### Features
+
+* add all manifest commands ([#483](https://www.github.com/ethersphere/swarm-cli/issues/483)) ([80395c9](https://www.github.com/ethersphere/swarm-cli/commit/80395c96406f74ea064b1394b5bb4990c8c63f9c))
+
 ## [2.6.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.5.1...v2.6.0) (2023-11-13)
 
 
