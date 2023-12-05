@@ -62,10 +62,12 @@ export class Buy extends StampCommand implements LeafCommand {
 
     const estimatedCost = Utils.getStampCostInBzz(this.depth, Number(this.amount))
     const estimatedCapacity = new Storage(Utils.getStampMaximumCapacityBytes(this.depth))
+    const estimatedEffectiveVolume = new Storage(Utils.getStampEffectiveBytes(this.depth))
     const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount))
 
     this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} BZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity.toString()))
+    this.console.log(createKeyValue('Estimated effective volume', estimatedEffectiveVolume.toString()))
     this.console.log(createKeyValue('Estimated TTL', secondsToDhms(estimatedTtl)))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
