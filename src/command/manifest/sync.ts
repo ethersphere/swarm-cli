@@ -2,11 +2,13 @@ import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { Reference } from 'mantaray-js'
 import { join } from 'path'
+import { makeChunkedFile } from '@fairdatasociety/bmt-js'
 import { pickStamp } from '../../service/stamp'
 import { readdirDeepAsync } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
 import { stampProperties } from '../../utils/option'
 import { ManifestCommand } from './manifest-command'
+import { bytesToHex } from '../../utils/hex'
 
 export class Sync extends ManifestCommand implements LeafCommand {
   public readonly name = 'sync'
@@ -48,11 +50,13 @@ export class Sync extends ManifestCommand implements LeafCommand {
           continue
         }
 
-        const remoteData = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
-        const localData = readFileSync(join(this.folder, file))
+        const remoteAddress = Buffer.from(fork.node.getEntry).toString('hex')
 
-        // TODO make this more efficient once the chunker is available
-        if (localData.equals(remoteData)) {
+        const localData = readFileSync(join(this.folder, file))
+        const rootChunk = makeChunkedFile(localData).rootChunk()
+        const localAddress = bytesToHex(rootChunk.address())
+
+        if (localAddress === remoteAddress) {
           this.console.log('ok -> ' + file)
         } else {
           const { reference } = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
