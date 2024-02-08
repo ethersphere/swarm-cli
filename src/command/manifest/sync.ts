@@ -1,14 +1,15 @@
+import { makeChunkedFile } from '@fairdatasociety/bmt-js'
+import chalk from 'chalk'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { Reference } from 'mantaray-js'
 import { join } from 'path'
-import { makeChunkedFile } from '@fairdatasociety/bmt-js'
 import { pickStamp } from '../../service/stamp'
 import { readdirDeepAsync } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
+import { bytesToHex } from '../../utils/hex'
 import { stampProperties } from '../../utils/option'
 import { ManifestCommand } from './manifest-command'
-import { bytesToHex } from '../../utils/hex'
 
 export class Sync extends ManifestCommand implements LeafCommand {
   public readonly name = 'sync'
@@ -57,23 +58,23 @@ export class Sync extends ManifestCommand implements LeafCommand {
         const localAddress = bytesToHex(rootChunk.address())
 
         if (localAddress === remoteAddress) {
-          this.console.log('ok -> ' + file)
+          this.console.log(chalk.gray(file) + ' ' + chalk.blue('UNCHANGED'))
         } else {
-          const { reference } = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
+          const { reference } = await this.bee.uploadData(this.stamp, localData)
           node.addFork(this.encodePath(file), Buffer.from(reference, 'hex') as Reference)
-          this.console.log('updated -> ' + file)
+          this.console.log(chalk.gray(file) + ' ' + chalk.yellow('CHANGED'))
         }
       } else {
         const { reference } = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
         node.addFork(this.encodePath(file), Buffer.from(reference, 'hex') as Reference)
-        this.console.log('new -> ' + file)
+        this.console.log(chalk.gray(file) + ' ' + chalk.green('NEW'))
       }
     }
 
     if (this.remove) {
       for (const fork of Object.values(forks).filter(x => !x.found)) {
         node.removePath(this.encodePath(fork.path))
-        this.console.log('removed -> ' + fork.path)
+        this.console.log(chalk.gray(fork.path) + ' ' + chalk.red('REMOVED'))
       }
     }
     await this.saveAndPrintNode(node, this.stamp)

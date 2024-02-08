@@ -46,14 +46,14 @@ export class Print extends FeedCommand implements LeafCommand {
       spinner.stop()
       this.console.verbose(createKeyValue('Chunk Reference', reference))
       this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${reference}/`))
-      this.console.verbose(createKeyValue('Feed Index', feedIndex))
+      this.console.verbose(createKeyValue('Feed Index', feedIndex as string))
       this.console.verbose(createKeyValue('Next Index', feedIndexNext))
       this.console.verbose(createKeyValue('Feed Manifest', manifest))
 
       this.console.quiet(manifest)
       this.console.log(createKeyValue('Topic', `${topic}`))
       this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
-      this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex, 16) + 1))
+      this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex as string, 16) + 1))
     } catch (error) {
       spinner.stop()
       const message = getFieldOrNull(error, 'message')
