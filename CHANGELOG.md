@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.8.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.7.0...v2.8.0) (2024-02-08)
+
+
+### Features
+
+* speed up manifest sync ([#490](https://www.github.com/ethersphere/swarm-cli/issues/490)) ([90fc2d0](https://www.github.com/ethersphere/swarm-cli/commit/90fc2d081e6152decb7b42676933154ff3c05de0))
+* upgrade to bee-js 6.7.2 ([#493](https://www.github.com/ethersphere/swarm-cli/issues/493)) ([ab3e13e](https://www.github.com/ethersphere/swarm-cli/commit/ab3e13e6442a503d38cf6980a3c6257c7accd066))
+
 ## [2.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.6.0...v2.7.0) (2023-11-29)
 
 
