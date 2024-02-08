@@ -1,10 +1,9 @@
 import { Utils } from '@ethersphere/bee-js'
 import { LeafCommand, Option } from 'furious-commander'
-import { printStamp } from '../../service/stamp'
-import { secondsToDhms, sleep } from '../../utils'
+import { secondsToDhms } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
 import { Storage } from '../../utils/storage'
-import { createKeyValue, deletePreviousLine } from '../../utils/text'
+import { createKeyValue } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
 
@@ -87,7 +86,7 @@ export class Buy extends StampCommand implements LeafCommand {
       return
     }
 
-    const spinner = createSpinner('Buying postage stamp. This may take a few minutes.')
+    const spinner = createSpinner('Creating postage batch. This may take up to 5 minutes.')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
@@ -98,6 +97,7 @@ export class Buy extends StampCommand implements LeafCommand {
         label: this.label,
         gasPrice: this.gasPrice?.toString(),
         immutableFlag: this.immutable,
+        waitForUsable: this.waitUsable === false ? false : true,
       })
       spinner.stop()
       this.console.quiet(batchId)
@@ -106,42 +106,5 @@ export class Buy extends StampCommand implements LeafCommand {
     } finally {
       spinner.stop()
     }
-
-    if (this.waitUsable) {
-      await this.waitToBecomeUsable()
-    }
-  }
-
-  private async waitToBecomeUsable(): Promise<void> {
-    const spinner = createSpinner('Waiting for postage stamp to become usable...')
-
-    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
-      spinner.start()
-    }
-    let running = true
-
-    while (running) {
-      try {
-        const stamp = await this.beeDebug.getPostageBatch(this.postageBatchId)
-
-        if (!stamp.usable) {
-          await sleep(1000)
-          continue
-        }
-
-        spinner.stop()
-
-        if (this.verbosity === VerbosityLevel.Verbose) {
-          if (!this.curl) {
-            deletePreviousLine()
-          }
-          printStamp(stamp, this.console, { showTtl: true })
-        }
-        running = false
-      } catch {
-        await sleep(1000)
-      }
-    }
-    spinner.stop()
   }
 }
