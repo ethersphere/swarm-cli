@@ -67,7 +67,14 @@ export class Buy extends StampCommand implements LeafCommand {
 
     this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} BZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity.toString()))
-    this.console.log(createKeyValue('Estimated effective volume', estimatedEffectiveVolume.toString()))
+    this.console.log(
+      createKeyValue(
+        'Estimated effective volume',
+        estimatedEffectiveVolume.getBytes() === 0
+          ? "It's likely to be smaller than estimated capacity"
+          : estimatedEffectiveVolume.toString(),
+      ),
+    )
     this.console.log(createKeyValue('Estimated TTL', secondsToDhms(estimatedTtl)))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
