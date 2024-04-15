@@ -1,4 +1,4 @@
-import { Tag, Utils } from '@ethersphere/bee-js'
+import { RedundancyLevel, Tag, Utils } from '@ethersphere/bee-js'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -104,6 +104,12 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public contentType!: string
 
+  @Option({
+    key: 'redundancy',
+    description: 'Redundancy of the upload (MEDIUM, STRONG, INSANE, PARANOID)',
+  })
+  public redundancy!: string
+
   // CLASS FIELDS
 
   public hash!: string
@@ -140,6 +146,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     await this.maybeRunSizeChecks()
+    await this.maybePrintRedundancyStats()
 
     const tag = this.sync ? await this.bee.createTag() : undefined
 
@@ -211,6 +218,7 @@ export class Upload extends RootCommand implements LeafCommand {
         encrypt: this.encrypt,
         contentType,
         deferred: this.deferred,
+        redundancyLevel: this.determineRedundancyLevel(),
       })
       this.hash = reference
 
@@ -219,6 +227,8 @@ export class Upload extends RootCommand implements LeafCommand {
       const { reference } = await this.bee.uploadData(this.stamp, this.stdinData, {
         tag: tag?.uid,
         deferred: this.deferred,
+        encrypt: this.encrypt,
+        redundancyLevel: this.determineRedundancyLevel(),
       })
       this.hash = reference
 
@@ -239,6 +249,7 @@ export class Upload extends RootCommand implements LeafCommand {
       pin: this.pin,
       encrypt: this.encrypt,
       deferred: this.deferred,
+      redundancyLevel: this.determineRedundancyLevel(),
     })
     this.hash = reference
 
@@ -260,6 +271,7 @@ export class Upload extends RootCommand implements LeafCommand {
       encrypt: this.encrypt,
       contentType,
       deferred: this.deferred,
+      redundancyLevel: this.determineRedundancyLevel(),
     })
     this.hash = reference
 
@@ -337,6 +349,35 @@ export class Upload extends RootCommand implements LeafCommand {
 
     if (!confirmation) {
       exit(1)
+    }
+  }
+
+  private async maybePrintRedundancyStats(): Promise<void> {
+    if (!this.redundancy || this.quiet) {
+      return
+    }
+
+    const currentSetting = Utils.getRedundancyStat(this.redundancy)
+    const originalSize = await this.getUploadSize()
+    const originalChunks = Math.ceil(originalSize.getBytes() / 4e3)
+    const sizeMultiplier = Utils.approximateOverheadForRedundancyLevel(
+      originalChunks,
+      currentSetting.value,
+      this.encrypt,
+    )
+    const newSize = new Storage(originalChunks * 4e3 * (1 + sizeMultiplier))
+    const extraSize = new Storage(newSize.getBytes() - originalSize.getBytes())
+
+    this.console.log(createKeyValue('Redundancy setting', currentSetting.label))
+    this.console.log(`This setting will provide ${Math.round(currentSetting.errorTolerance * 100)}% error tolerance.`)
+    this.console.log(`An additional ${extraSize.toString()} of data will be uploaded approximately.`)
+    this.console.log(`${originalSize.toString()} → ${newSize.toString()} (+${extraSize.toString()})`)
+    if (!this.yes && !this.quiet) {
+      const confirmation = await this.console.confirm('Do you want to proceed?')
+
+      if (!confirmation) {
+        exit(0)
+      }
     }
   }
 
@@ -423,5 +464,23 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     return defaultName
+  }
+
+  private determineRedundancyLevel(): RedundancyLevel | undefined {
+    if (!this.redundancy) {
+      return undefined
+    }
+    switch (this.redundancy.toUpperCase()) {
+      case 'MEDIUM':
+        return RedundancyLevel.MEDIUM
+      case 'STRONG':
+        return RedundancyLevel.STRONG
+      case 'INSANE':
+        return RedundancyLevel.INSANE
+      case 'PARANOID':
+        return RedundancyLevel.PARANOID
+      default:
+        throw new CommandLineError(`Invalid redundancy level: ${this.redundancy}`)
+    }
   }
 }
