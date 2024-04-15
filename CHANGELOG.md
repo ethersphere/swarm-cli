@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.9.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.8.0...v2.9.0) (2024-04-15)
+
+
+### Features
+
+* add redundancy options ([#487](https://www.github.com/ethersphere/swarm-cli/issues/487)) ([0452759](https://www.github.com/ethersphere/swarm-cli/commit/045275982ecba9caa07c9d3e2ac8d231a0711420))
+
 ## [2.8.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.7.0...v2.8.0) (2024-02-08)
 
 
