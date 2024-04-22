@@ -48,6 +48,9 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({ key: 'deferred', type: 'boolean', description: 'Do not wait for network sync', default: true })
   public deferred!: boolean
 
+  @Option({ key: 'act', type: 'boolean', description: 'Upload with ACT', default: false })
+  public act!: boolean
+
   @Option({
     key: 'sync',
     type: 'boolean',
@@ -206,6 +209,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (this.fileName) {
       const contentType = this.contentType || getMime(this.fileName) || undefined
       const { reference } = await this.bee.uploadFile(this.stamp, this.stdinData, this.fileName, {
+        act: this.act,
         tag: tag && tag.uid,
         pin: this.pin,
         encrypt: this.encrypt,
@@ -237,6 +241,7 @@ export class Upload extends RootCommand implements LeafCommand {
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
       pin: this.pin,
+      act: this.act,
       encrypt: this.encrypt,
       deferred: this.deferred,
     })
@@ -255,6 +260,7 @@ export class Upload extends RootCommand implements LeafCommand {
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
     const { reference } = await this.bee.uploadFile(this.stamp, readable, this.determineFileName(parsedPath.base), {
+      act: this.act,
       tag: tag && tag.uid,
       pin: this.pin,
       encrypt: this.encrypt,
@@ -359,6 +365,13 @@ export class Upload extends RootCommand implements LeafCommand {
   private hasUnsupportedGatewayOptions(): boolean {
     if (!isGateway(this.beeApiUrl)) {
       return false
+    }
+
+    if (this.act) {
+      this.console.error('You are trying to upload to the gateway which does not support ACT.')
+      this.console.error('Please try again without the --act option.')
+
+      return true
     }
 
     if (this.pin) {
