@@ -110,6 +110,7 @@ export class Upload extends RootCommand implements LeafCommand {
   // CLASS FIELDS
 
   public hash!: string
+  public history_address!: string
 
   public stdinData!: Buffer
 
@@ -157,6 +158,9 @@ export class Upload extends RootCommand implements LeafCommand {
 
     this.console.dim('Data has been sent to the Bee node successfully!')
     this.console.log(createKeyValue('Swarm hash', this.hash))
+    if (this.act) {
+      this.console.log(createKeyValue('Swarm history address', this.history_address))
+    }
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
 
     if (this.sync && tag) {
@@ -208,7 +212,7 @@ export class Upload extends RootCommand implements LeafCommand {
   private async uploadStdin(tag?: Tag): Promise<string> {
     if (this.fileName) {
       const contentType = this.contentType || getMime(this.fileName) || undefined
-      const { reference } = await this.bee.uploadFile(this.stamp, this.stdinData, this.fileName, {
+      const { reference, history_address } = await this.bee.uploadFile(this.stamp, this.stdinData, this.fileName, {
         act: this.act,
         tag: tag && tag.uid,
         pin: this.pin,
@@ -217,14 +221,20 @@ export class Upload extends RootCommand implements LeafCommand {
         deferred: this.deferred,
       })
       this.hash = reference
+      if (this.act && history_address !== undefined) {
+        this.history_address = history_address
+      }
 
       return `${this.bee.url}/bzz/${this.hash}/`
     } else {
-      const { reference } = await this.bee.uploadData(this.stamp, this.stdinData, {
+      const { reference, history_address } = await this.bee.uploadData(this.stamp, this.stdinData, {
         tag: tag?.uid,
         deferred: this.deferred,
       })
       this.hash = reference
+      if (this.act && history_address !== undefined) {
+        this.history_address = history_address
+      }
 
       return `${this.bee.url}/bytes/${this.hash}`
     }
@@ -236,7 +246,7 @@ export class Upload extends RootCommand implements LeafCommand {
       folder: true,
       type: 'buffer',
     })
-    const { reference } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, {
+    const { reference, history_address } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
@@ -246,6 +256,9 @@ export class Upload extends RootCommand implements LeafCommand {
       deferred: this.deferred,
     })
     this.hash = reference
+    if (this.act && history_address !== undefined) {
+      this.history_address = history_address
+    }
 
     return `${this.bee.url}/bzz/${this.hash}/`
   }
@@ -259,7 +272,7 @@ export class Upload extends RootCommand implements LeafCommand {
     })
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
-    const { reference } = await this.bee.uploadFile(this.stamp, readable, this.determineFileName(parsedPath.base), {
+    const { reference, history_address } = await this.bee.uploadFile(this.stamp, readable, this.determineFileName(parsedPath.base), {
       act: this.act,
       tag: tag && tag.uid,
       pin: this.pin,
@@ -268,6 +281,9 @@ export class Upload extends RootCommand implements LeafCommand {
       deferred: this.deferred,
     })
     this.hash = reference
+    if (this.act && history_address !== undefined) {
+      this.history_address = history_address
+    }
 
     return `${this.bee.url}/bzz/${this.hash}/`
   }
