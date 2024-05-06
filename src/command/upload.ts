@@ -249,9 +249,9 @@ export class Upload extends RootCommand implements LeafCommand {
     const { reference, history_address } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
+      act: this.act,
       tag: tag && tag.uid,
       pin: this.pin,
-      act: this.act,
       encrypt: this.encrypt,
       deferred: this.deferred,
     })
