@@ -27,10 +27,9 @@ export class BzzAddress {
   }
 }
 
-export async function makeBzzAddress(bee: Bee, url: string): Promise<BzzAddress> {
+export async function makeBzzAddress(bee: Bee, url: string, headers?: Record<string, string>): Promise<BzzAddress> {
   const address = new BzzAddress(url)
-
-  const feedReference = await resolveFeedManifest(bee, address.hash)
+  const feedReference = await resolveFeedManifest(bee, address.hash, headers)
 
   if (feedReference) {
     address.hash = feedReference
@@ -39,8 +38,8 @@ export async function makeBzzAddress(bee: Bee, url: string): Promise<BzzAddress>
   return address
 }
 
-async function resolveFeedManifest(bee: Bee, hash: string): Promise<string | null> {
-  const metadata = await getRootSlashMetadata(bee, hash)
+async function resolveFeedManifest(bee: Bee, hash: string, headers?: Record<string, string>): Promise<string | null> {
+  const metadata = await getRootSlashMetadata(bee, hash, headers)
 
   if (!metadata) {
     return null
@@ -59,8 +58,10 @@ async function resolveFeedManifest(bee: Bee, hash: string): Promise<string | nul
   return response.reference
 }
 
-async function getRootSlashMetadata(bee: Bee, hash: string): Promise<MetadataMapping | null> {
-  const data = await bee.downloadData(hash)
+async function getRootSlashMetadata(bee: Bee, hash: string, reqHeaders?: Record<string, string>): Promise<MetadataMapping | null> {
+  const data = await bee.downloadData(hash, {
+    headers: reqHeaders,
+  })
   const node = new MantarayNode()
   node.deserialize(data)
 

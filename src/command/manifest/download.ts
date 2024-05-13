@@ -24,6 +24,24 @@ export class Download extends ManifestCommand implements LeafCommand {
   @Option({ key: 'stdout', type: 'boolean', description: 'Print to stdout (single files only)' })
   public stdout!: boolean
 
+  @Option({ key: 'act', type: 'boolean', description: 'Download with ACT', default: false })
+  public act!: boolean
+
+  @Option({ key: 'act-timestamp', type: 'string', description: 'ACT history timestamp', default: '1'})
+  public actTimestamp!: string
+
+  // required if act is true
+  @Option({ key: 'act-history-address', type: 'string', description: 'ACT history address',
+    required: { when: 'act' } })
+  public actHistoryAddress!: string
+
+  // required if act is true
+  @Option({ key: 'act-publisher', type: 'string', description: 'ACT publisher',
+    required: { when: 'act' } })
+  public actPublisher!: string
+
+  
+
   public async run(): Promise<void> {
     await super.init()
 

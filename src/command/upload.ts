@@ -158,6 +158,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
     this.console.dim('Data has been sent to the Bee node successfully!')
     this.console.log(createKeyValue('Swarm hash', this.hash))
+
     if (this.act) {
       this.console.log(createKeyValue('Swarm history address', this.history_address))
     }
@@ -232,6 +233,7 @@ export class Upload extends RootCommand implements LeafCommand {
         deferred: this.deferred,
       })
       this.hash = reference
+
       if (this.act && history_address !== undefined) {
         this.history_address = history_address
       }
@@ -272,14 +274,18 @@ export class Upload extends RootCommand implements LeafCommand {
     })
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
-    const { reference, history_address } = await this.bee.uploadFile(this.stamp, readable, this.determineFileName(parsedPath.base), {
-      act: this.act,
-      tag: tag && tag.uid,
-      pin: this.pin,
-      encrypt: this.encrypt,
-      contentType,
-      deferred: this.deferred,
-    })
+    const { reference, history_address } = await this.bee.uploadFile(
+      this.stamp,
+      readable,
+      this.determineFileName(parsedPath.base),
+      {
+        act: this.act,
+        tag: tag && tag.uid,
+        pin: this.pin,
+        encrypt: this.encrypt,
+        contentType,
+        deferred: this.deferred,
+      })
     this.hash = reference
     if (this.act && history_address !== undefined) {
       this.history_address = history_address
