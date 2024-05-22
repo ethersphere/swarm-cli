@@ -48,8 +48,11 @@ export class Upload extends RootCommand implements LeafCommand {
   @Option({ key: 'deferred', type: 'boolean', description: 'Do not wait for network sync', default: true })
   public deferred!: boolean
 
-  @Option({ key: 'act', type: 'boolean', description: 'Upload with ACT', default: false })
+  @Option({ key: 'act', type: 'boolean', description: 'Upload with ACT', default: false, required: {when: 'act-history-address'} })
   public act!: boolean
+
+  @Option({ key: 'act-history-address', type: 'string', description: 'ACT history address'  })
+  public optHistoryAddress!: string
 
   @Option({
     key: 'sync',
@@ -210,6 +213,13 @@ export class Upload extends RootCommand implements LeafCommand {
     }
   }
 
+  private actHeaders(): Record<string, string> {
+    if (this.act && this.optHistoryAddress) {
+      return { 'swarm-act-history-address': this.optHistoryAddress };
+    }
+    return {};
+  }
+
   private async uploadStdin(tag?: Tag): Promise<string> {
     if (this.fileName) {
       const contentType = this.contentType || getMime(this.fileName) || undefined
@@ -220,7 +230,8 @@ export class Upload extends RootCommand implements LeafCommand {
         encrypt: this.encrypt,
         contentType,
         deferred: this.deferred,
-      })
+
+      }, { headers: this.actHeaders()} )
       this.hash = reference
       if (this.act && history_address !== undefined) {
         this.history_address = history_address
@@ -231,7 +242,7 @@ export class Upload extends RootCommand implements LeafCommand {
       const { reference, history_address } = await this.bee.uploadData(this.stamp, this.stdinData, {
         tag: tag?.uid,
         deferred: this.deferred,
-      })
+      }, { headers: this.actHeaders() })
       this.hash = reference
 
       if (this.act && history_address !== undefined) {
@@ -256,7 +267,7 @@ export class Upload extends RootCommand implements LeafCommand {
       pin: this.pin,
       encrypt: this.encrypt,
       deferred: this.deferred,
-    })
+    }, { headers: this.actHeaders() })
     this.hash = reference
     if (this.act && history_address !== undefined) {
       this.history_address = history_address
@@ -285,7 +296,7 @@ export class Upload extends RootCommand implements LeafCommand {
         encrypt: this.encrypt,
         contentType,
         deferred: this.deferred,
-      })
+      }, { headers: this.actHeaders() })
     this.hash = reference
     if (this.act && history_address !== undefined) {
       this.history_address = history_address
