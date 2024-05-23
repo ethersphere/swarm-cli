@@ -8,6 +8,7 @@ import { getFieldOrNull } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { FeedCommand } from './feed-command'
+import { FetchFeedUpdateResponse } from '@ethersphere/bee-js/dist/types/modules/feed'
 
 export class Print extends FeedCommand implements LeafCommand {
   public readonly name = 'print'
@@ -28,12 +29,24 @@ export class Print extends FeedCommand implements LeafCommand {
     await super.init()
 
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
+    const index: number | undefined = this.index
     const spinner = createSpinner(`Looking up feed topic ${topic}`)
     spinner.start()
     try {
       const addressString = this.address || (await this.getAddressString())
       const reader = this.bee.makeFeedReader('sequence', topic, addressString)
-      const { reference, feedIndex, feedIndexNext } = await reader.download()
+      
+      let result: FetchFeedUpdateResponse | null = null;
+      if (index === undefined) {
+        // Index was not specified
+        result = await reader.download()
+      } else {
+        // Index was specified
+        const x = Number(index)       // typeof index is string, and we don't understand why. This is why we are doing this conversion.
+        result = await reader.download({ index: x })
+      }
+      if (!result) throw Error('Error downloading feed update')
+      const { reference, feedIndex, feedIndexNext } = result;
 
       if (!this.stamp) {
         spinner.stop()

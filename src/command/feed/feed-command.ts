@@ -39,12 +39,12 @@ export class FeedCommand extends RootCommand {
   public password!: string
 
   @Option({ key: 'index', description: 'Feed index to write to or read from', required: false })
-  public index!: number
+  public index!: number | undefined
 
   protected async updateFeedAndPrint(chunkReference: string): Promise<string> {
     const wallet = await this.getWallet()
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
-    const { reference, manifest } = await this.writeFeed(wallet, topic, chunkReference)
+    const { reference, manifest } = await this.writeFeed(wallet, topic, chunkReference, this.index)
 
     this.console.verbose(createKeyValue('Chunk Reference', chunkReference))
     this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${chunkReference}/`))
