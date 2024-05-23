@@ -110,6 +110,9 @@ describeCommand(
       expect(getLastMessage()).toContain('Number of Updates')
       expect(getLastMessage()).toContain('2')
     })
+
+    // Write feed index specific unit tests here
+    
   },
   { configFileName: 'feed' },
 )
