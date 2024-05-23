@@ -39,8 +39,8 @@ export class FeedCommand extends RootCommand {
   public password!: string
 
   @Option({ key: 'index', description: 'Feed index to write to or read from', required: false })
+  public index!: number
 
-  public act!: boolean
   protected async updateFeedAndPrint(chunkReference: string): Promise<string> {
     const wallet = await this.getWallet()
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
