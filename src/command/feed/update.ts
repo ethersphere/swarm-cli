@@ -5,7 +5,7 @@ import { FeedCommand } from './feed-command'
 export class Update extends FeedCommand implements LeafCommand {
   public readonly name = 'update'
 
-  public readonly description = 'Update feed'
+  public readonly description = 'Update feed (with reference)'
 
   @Option({ key: 'reference', alias: 'r', description: 'The new reference', required: true })
   public reference!: string

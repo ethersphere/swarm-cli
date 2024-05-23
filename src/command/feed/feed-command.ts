@@ -38,6 +38,9 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
 
+  @Option({ key: 'index', description: 'Feed index to write to or read from', required: false })
+  public index!: number
+
   protected async updateFeedAndPrint(chunkReference: string): Promise<string> {
     const wallet = await this.getWallet()
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
@@ -79,7 +82,7 @@ export class FeedCommand extends RootCommand {
     return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
   }
 
-  private async writeFeed(wallet: Wallet, topic: string, chunkReference: string): Promise<FeedInfo> {
+  private async writeFeed(wallet: Wallet, topic: string, chunkReference: string, index?: number): Promise<FeedInfo> {
     const spinner = createSpinner('Writing feed...')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
@@ -88,7 +91,14 @@ export class FeedCommand extends RootCommand {
 
     try {
       const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-      const reference = await writer.upload(this.stamp, chunkReference as Reference)
+      let reference: Reference
+      if (index === undefined) {
+        // Index was not specified
+        reference = await writer.upload(this.stamp, chunkReference as Reference)
+      } else {
+        // Index was specified
+        reference = await writer.upload(this.stamp, chunkReference as Reference, { index })
+      }
       const { reference: manifest } = await this.bee.createFeedManifest(
         this.stamp,
         'sequence',
