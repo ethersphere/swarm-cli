@@ -111,8 +111,90 @@ describeCommand(
       expect(getLastMessage()).toContain('2')
     })
 
-    // Write feed index specific unit tests here
-    
+    it('should write to correct index', async () => {
+      // create identity
+      await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
+      // upload data to index 22
+      await invokeTestCli([
+        'feed',
+        'upload',
+        `${__dirname}/../testpage/images/swarm.png`,
+        '--identity',
+        'test',
+        '--topic-string',
+        'test',
+        '--password',
+        'test',
+        '--quiet',
+        '--index',
+        '22',
+        ...getStampOption(),
+      ])
+      // print with identity and password
+      await invokeTestCli([
+        'feed',
+        'print',
+        '--identity',
+        'test',
+        '--topic-string',
+        'test',
+        '--password',
+        'test',
+        '--quiet',
+        '--index',
+        '22',
+        ...getStampOption(),
+      ])
+      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
+
+      // Zero index should work as well
+      await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
+      await invokeTestCli([
+        'feed',
+        'upload',
+        `${__dirname}/../testpage/images/swarm.png`,
+        '--identity', 'test',
+        '--topic-string',
+        'test',
+        '--password',
+        'test',
+        '--quiet',
+        '--index',
+        '0',
+        ...getStampOption(),
+      ])
+      await invokeTestCli([
+        'feed',
+        'print',
+        '--identity',
+        'test',
+        '--topic-string',
+        'test',
+        '--password',
+        'test',
+        '--quiet',
+        '--index',
+        '0',
+        ...getStampOption(),
+      ])
+      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
+
+      // It should work without specifying the index as well
+      await invokeTestCli([
+        'feed',
+        'print',
+        '--identity',
+        'test',
+        '--topic-string',
+        'test',
+        '--password',
+        'test',
+        '--quiet',
+        ...getStampOption(),
+      ])
+      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
+    })
+
   },
   { configFileName: 'feed' },
 )
