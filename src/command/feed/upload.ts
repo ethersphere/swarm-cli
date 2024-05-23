@@ -6,7 +6,7 @@ import { FeedCommand } from './feed-command'
 export class Upload extends FeedCommand implements LeafCommand {
   public readonly name = 'upload'
 
-  public readonly description = 'Upload to a feed'
+  public readonly description = 'Upload to a feed (file or folder)'
 
   public feedManifest?: string
 
