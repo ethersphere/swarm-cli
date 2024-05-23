@@ -111,8 +111,11 @@ describeCommand(
       expect(getLastMessage()).toContain('2')
     })
 
-    it('should write to correct index', async () => {
+    
+    it('upload should write to correct index', async () => {
       const identityName = 'test'
+      const topicName = 'test'
+      const password = 'test'
       // create identity
       await invokeTestCli(['identity', 'create', identityName, '--password', 'test'])
       // upload data to index 22
@@ -123,9 +126,9 @@ describeCommand(
         '--identity',
         identityName,
         '--topic-string',
-        'test',
+        topicName,
         '--password',
-        'test',
+        password,
         '--quiet',
         '--index',
         '22',
@@ -138,6 +141,103 @@ describeCommand(
         '--identity',
         identityName,
         '--topic-string',
+        topicName,
+        '--password',
+        password,
+        '--quiet',
+        '--index',
+        '22',
+        ...getStampOption(),
+      ])
+      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
+      
+      // Zero index should work as well
+      await invokeTestCli([
+        'feed',
+        'upload',
+        `${__dirname}/../testpage/images/swarm.png`,
+        '--identity',
+        identityName,
+        '--topic-string',
+        topicName,
+        '--password',
+        password,
+        '--quiet',
+        '--index',
+        '0',
+        ...getStampOption(),
+      ])
+      await invokeTestCli([
+        'feed',
+        'print',
+        '--identity',
+        identityName,
+        '--topic-string',
+        topicName,
+        '--password',
+        password,
+        '--quiet',
+        '--index',
+        '0',
+        ...getStampOption(),
+      ])
+      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
+      
+      // It should work without specifying the index as well
+      await invokeTestCli([
+        'feed',
+        'print',
+        '--identity',
+        identityName,
+        '--topic-string',
+        topicName,
+        '--password',
+        password,
+        '--quiet',
+        ...getStampOption(),
+      ])
+      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
+    })
+    
+    it('update should write to correct index', async () => {
+      const identityName = 'test'
+      const topicName = 'test'
+      const password = 'test'
+      // create identity
+      await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
+      // upload data and get reference
+      await invokeTestCli([
+        'upload',
+        `${__dirname}/../testpage/images/swarm.png`,
+        '--quiet',
+        ...getStampOption(),
+      ])
+      const reference = getLastMessage();
+      // update the feed with newly got reference
+      await invokeTestCli([
+        'feed',
+        'update',
+        '--reference',
+        reference,
+        '--identity',
+        identityName,
+        '--topic-string',
+        topicName,
+        '--password',
+        password,
+        '--quiet',
+        '--index',
+        '22',
+        ...getStampOption(),
+      ])
+  
+      // print with identity and password
+      await invokeTestCli([
+        'feed',
+        'print',
+        '--identity',
+        'test',
+        '--topic-string',
         'test',
         '--password',
         'test',
@@ -147,55 +247,8 @@ describeCommand(
         ...getStampOption(),
       ])
       expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
-
-      // Zero index should work as well
-      await invokeTestCli([
-        'feed',
-        'upload',
-        `${__dirname}/../testpage/images/swarm.png`,
-        '--identity',
-        identityName,
-        '--topic-string',
-        'test',
-        '--password',
-        'test',
-        '--quiet',
-        '--index',
-        '0',
-        ...getStampOption(),
-      ])
-      await invokeTestCli([
-        'feed',
-        'print',
-        '--identity',
-        identityName,
-        '--topic-string',
-        'test',
-        '--password',
-        'test',
-        '--quiet',
-        '--index',
-        '0',
-        ...getStampOption(),
-      ])
-      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
-
-      // It should work without specifying the index as well
-      await invokeTestCli([
-        'feed',
-        'print',
-        '--identity',
-        identityName,
-        '--topic-string',
-        'test',
-        '--password',
-        'test',
-        '--quiet',
-        ...getStampOption(),
-      ])
-      expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
     })
-
+    
   },
   { configFileName: 'feed' },
 )
