@@ -38,7 +38,7 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
 
-  @Option({ key: 'index', description: 'Index for the feed to write to, or read from', required: false })
+  @Option({ key: 'index', description: 'Feed index to write to or read from', required: false })
 
   public act!: boolean
   protected async updateFeedAndPrint(chunkReference: string): Promise<string> {
