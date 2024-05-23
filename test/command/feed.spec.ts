@@ -112,15 +112,16 @@ describeCommand(
     })
 
     it('should write to correct index', async () => {
+      const identityName = 'test'
       // create identity
-      await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
+      await invokeTestCli(['identity', 'create', identityName, '--password', 'test'])
       // upload data to index 22
       await invokeTestCli([
         'feed',
         'upload',
         `${__dirname}/../testpage/images/swarm.png`,
         '--identity',
-        'test',
+        identityName,
         '--topic-string',
         'test',
         '--password',
@@ -135,7 +136,7 @@ describeCommand(
         'feed',
         'print',
         '--identity',
-        'test',
+        identityName,
         '--topic-string',
         'test',
         '--password',
@@ -148,12 +149,12 @@ describeCommand(
       expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
 
       // Zero index should work as well
-      await invokeTestCli(['identity', 'create', 'test', '--password', 'test'])
       await invokeTestCli([
         'feed',
         'upload',
         `${__dirname}/../testpage/images/swarm.png`,
-        '--identity', 'test',
+        '--identity',
+        identityName,
         '--topic-string',
         'test',
         '--password',
@@ -167,7 +168,7 @@ describeCommand(
         'feed',
         'print',
         '--identity',
-        'test',
+        identityName,
         '--topic-string',
         'test',
         '--password',
@@ -184,7 +185,7 @@ describeCommand(
         'feed',
         'print',
         '--identity',
-        'test',
+        identityName,
         '--topic-string',
         'test',
         '--password',

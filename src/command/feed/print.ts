@@ -42,8 +42,8 @@ export class Print extends FeedCommand implements LeafCommand {
         result = await reader.download()
       } else {
         // Index was specified
-        const x = Number(index)       // typeof index is string, and we don't understand why. This is why we are doing this conversion.
-        result = await reader.download({ index: x })
+        // typeof index is string, and we don't understand why. This is why we are doing this conversion.
+        result = await reader.download({ index: Number(index) })
       }
       if (!result) throw Error('Error downloading feed update')
       const { reference, feedIndex, feedIndexNext } = result;

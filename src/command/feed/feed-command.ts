@@ -88,7 +88,7 @@ export class FeedCommand extends RootCommand {
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
     }
-
+ 
     try {
       const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
       let reference: Reference
@@ -97,7 +97,7 @@ export class FeedCommand extends RootCommand {
         reference = await writer.upload(this.stamp, chunkReference as Reference)
       } else {
         // Index was specified
-        reference = await writer.upload(this.stamp, chunkReference as Reference, { index })
+        reference = await writer.upload(this.stamp, chunkReference as Reference, { index: Number(index) })
       }
       const { reference: manifest } = await this.bee.createFeedManifest(
         this.stamp,
