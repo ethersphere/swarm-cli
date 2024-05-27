@@ -58,7 +58,11 @@ async function resolveFeedManifest(bee: Bee, hash: string, headers?: Record<stri
   return response.reference
 }
 
-async function getRootSlashMetadata(bee: Bee, hash: string, reqHeaders?: Record<string, string>): Promise<MetadataMapping | null> {
+async function getRootSlashMetadata(
+  bee: Bee,
+  hash: string,
+  reqHeaders?: Record<string, string>,
+): Promise<MetadataMapping | null> {
   const data = await bee.downloadData(hash, {
     headers: reqHeaders,
   })

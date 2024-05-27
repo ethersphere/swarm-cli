@@ -1,4 +1,3 @@
 import { RootCommand } from '../root-command'
 
-export class GranteeCommand extends RootCommand {
-}
+export class GranteeCommand extends RootCommand {}
