@@ -12,7 +12,6 @@ export class Unlock extends RootCommand implements LeafCommand {
     description: 'Wallet source (path or private key string)',
     required: true,
     autocompletePath: true,
-    conflicts: 'stdin',
   })
   public walletSource!: string
 

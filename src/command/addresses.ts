@@ -16,8 +16,8 @@ export class Addresses extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    this.nodeAddresses = await this.beeDebug.getNodeAddresses()
-    this.chequebookAddress = (await this.beeDebug.getChequebookAddress()).chequebookAddress
+    this.nodeAddresses = await this.bee.getNodeAddresses()
+    this.chequebookAddress = (await this.bee.getChequebookAddress()).chequebookAddress
 
     const longest = 'PSS Public Key'.length
     this.console.log(chalk.bold('Node Addresses'))

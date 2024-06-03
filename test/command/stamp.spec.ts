@@ -70,7 +70,7 @@ describeCommand(
     })
 
     it.skip('should print custom message when there are no stamps', async () => {
-      await invokeTestCli(['stamp', 'list', '--bee-debug-api-url', 'http://localhost:11635'])
+      await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:11633'])
       expect(getNthLastMessage(4)).toContain('You do not have any stamps.')
     })
 

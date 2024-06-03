@@ -51,8 +51,8 @@ export class FeedCommand extends RootCommand {
 
     this.console.quiet(manifest)
 
-    if (!this.quiet && this.debugApiIsUsable()) {
-      printStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
+    if (!this.quiet) {
+      printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
     }
 
     return manifest

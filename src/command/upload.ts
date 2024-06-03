@@ -141,7 +141,7 @@ export class Upload extends RootCommand implements LeafCommand {
       if (isGateway(this.beeApiUrl)) {
         this.stamp = '0'.repeat(64)
       } else {
-        this.stamp = await pickStamp(this.beeDebug, this.console)
+        this.stamp = await pickStamp(this.bee, this.console)
       }
     }
 
@@ -173,8 +173,8 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
 
-      if (!isGateway(this.beeApiUrl) && !this.quiet && this.debugApiIsUsable()) {
-        printStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
+      if (!isGateway(this.beeApiUrl) && !this.quiet) {
+        printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
       }
     }
   }
@@ -372,6 +372,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.log(`This setting will provide ${Math.round(currentSetting.errorTolerance * 100)}% error tolerance.`)
     this.console.log(`An additional ${extraSize.toString()} of data will be uploaded approximately.`)
     this.console.log(`${originalSize.toString()} → ${newSize.toString()} (+${extraSize.toString()})`)
+
     if (!this.yes && !this.quiet) {
       const confirmation = await this.console.confirm('Do you want to proceed?')
 
@@ -435,7 +436,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (connectedPeers === null) {
       this.console.log(warningSymbol())
       this.console.log(warningText('Could not fetch connected peers info.'))
-      this.console.log(warningText('Either the debug API is not enabled, or you are uploading to a gateway node.'))
+      this.console.log(warningText('Are you uploading to a gateway node?'))
       this.console.log(warningText('Synchronization may time out.'))
     } else if (connectedPeers === 0) {
       this.console.log(warningSymbol())
@@ -446,7 +447,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async getConnectedPeers(): Promise<number | null> {
     try {
-      const { connected } = await this._beeDebug.getTopology()
+      const { connected } = await this.bee.getTopology()
 
       return connected
     } catch {

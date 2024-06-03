@@ -18,7 +18,7 @@ export class Remove extends ManifestCommand implements LeafCommand {
     await super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      this.stamp = await pickStamp(this.bee, this.console)
     }
 
     const address = new BzzAddress(this.bzzUrl)

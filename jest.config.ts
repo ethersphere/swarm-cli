@@ -15,7 +15,7 @@ export default async (): Promise<Config.InitialOptions> => {
    * only consists a single queen node as well
    */
   if (!process.env.SKIP_WORKER) {
-    process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11635')
+    process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11633')
   }
 
   if (!process.env.STAMP) {

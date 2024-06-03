@@ -11,8 +11,6 @@ on:
 env:
   BEE_API_URL: 'http://localhost:1633'
   BEE_PEER_API_URL: 'http://localhost:11633'
-  BEE_DEBUG_API_URL: 'http://localhost:1635'
-  BEE_PEER_DEBUG_API_URL: 'http://localhost:11635'
 
 jobs:
   node-tests:

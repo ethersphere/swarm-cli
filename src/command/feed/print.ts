@@ -37,7 +37,7 @@ export class Print extends FeedCommand implements LeafCommand {
 
       if (!this.stamp) {
         spinner.stop()
-        this.stamp = await pickStamp(this.beeDebug, this.console)
+        this.stamp = await pickStamp(this.bee, this.console)
         spinner.start()
       }
 

@@ -1,11 +1,11 @@
 import { BigNumber } from 'bignumber.js'
 import { LeafCommand, Option } from 'furious-commander'
 import { toSignificantDigits } from '../utils'
+import { PLURConversionRate } from '../utils/conversions'
+import { createSpinner } from '../utils/spinner'
 import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
-import { createSpinner } from '../utils/spinner'
 import { VerbosityLevel } from './root-command/command-log'
-import { PLURConversionRate } from '../utils/conversions'
 
 const MIN_INITIAL_STAKE_PLUR = BigInt('100000000000000000')
 const MIN_INITIAL_STAKE_BZZ = 10
@@ -24,7 +24,7 @@ export class Stake extends RootCommand implements LeafCommand {
   public amount!: bigint | undefined
 
   private async deposit(amount: bigint): Promise<void> {
-    const currentStake = BigInt(await this.beeDebug.getStake())
+    const currentStake = BigInt(await this.bee.getStake())
 
     if (!currentStake && amount < MIN_INITIAL_STAKE_PLUR) {
       if (this.quiet) {
@@ -59,7 +59,7 @@ export class Stake extends RootCommand implements LeafCommand {
     }
 
     try {
-      await this.beeDebug.depositStake(amount.toString())
+      await this.bee.depositStake(amount.toString())
       spinner.stop()
 
       this.console.log('PLUR successfully staked!')
@@ -76,7 +76,7 @@ export class Stake extends RootCommand implements LeafCommand {
       await this.deposit(this.amount)
     }
 
-    const stake = await this.beeDebug.getStake()
+    const stake = await this.bee.getStake()
     const stakeBN = BigNumber(stake).dividedBy(PLURConversionRate)
 
     this.console.log(createKeyValue('Staked BZZ', toSignificantDigits(stakeBN)))
