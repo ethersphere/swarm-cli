@@ -1,12 +1,9 @@
 /* eslint-disable no-console */
-import { BeeDebug } from '@ethersphere/bee-js'
-
-const DEFAULT_BEE_DEBUG = 'http://localhost:1635'
+import { Bee } from '@ethersphere/bee-js'
 
 export const getOrBuyStamp = async (): Promise<string> => {
-  const beeDebug = new BeeDebug(DEFAULT_BEE_DEBUG)
-
-  const availableStamps = await beeDebug.getAllPostageBatch()
+  const bee = new Bee('http://localhost:1633')
+  const availableStamps = await bee.getAllPostageBatch()
 
   if (availableStamps.length > 0) {
     const usedStamp = availableStamps[0].batchID
@@ -16,7 +13,7 @@ export const getOrBuyStamp = async (): Promise<string> => {
   }
 
   console.log('Buying new stamp.')
-  const newStamp = await beeDebug.createPostageBatch('1000000', 20, { waitForUsable: true })
+  const newStamp = await bee.createPostageBatch('500000000', 20, { waitForUsable: true })
   console.log('Bought stamp: ', newStamp)
 
   return newStamp

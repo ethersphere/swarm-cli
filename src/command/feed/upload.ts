@@ -17,7 +17,7 @@ export class Upload extends FeedCommand implements LeafCommand {
     await super.init()
 
     if (!this.stamp) {
-      const stamp = await pickStamp(this.beeDebug, this.console)
+      const stamp = await pickStamp(this.bee, this.console)
       this.stamp = stamp
       this.fileUpload.stamp = stamp
     }

@@ -14,7 +14,7 @@ export class Update extends FeedCommand implements LeafCommand {
     await super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      this.stamp = await pickStamp(this.bee, this.console)
     }
 
     await this.updateFeedAndPrint(this.reference)

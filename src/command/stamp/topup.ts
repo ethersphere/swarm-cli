@@ -26,7 +26,7 @@ export class Topup extends StampCommand implements LeafCommand {
     await super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      this.stamp = await pickStamp(this.bee, this.console)
     }
 
     const spinner = createSpinner('Topup in progress. This may take a while.')
@@ -36,7 +36,7 @@ export class Topup extends StampCommand implements LeafCommand {
     }
 
     try {
-      await this.beeDebug.topUpBatch(this.stamp, this.amount.toString())
+      await this.bee.topUpBatch(this.stamp, this.amount.toString())
     } finally {
       spinner.stop()
     }

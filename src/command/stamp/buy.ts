@@ -93,7 +93,7 @@ export class Buy extends StampCommand implements LeafCommand {
     }
 
     try {
-      const batchId = await this.beeDebug.createPostageBatch(this.amount.toString(), this.depth, {
+      const batchId = await this.bee.createPostageBatch(this.amount.toString(), this.depth, {
         label: this.label,
         gasPrice: this.gasPrice?.toString(),
         immutableFlag: this.immutable,

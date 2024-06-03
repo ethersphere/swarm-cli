@@ -21,22 +21,15 @@ export class Status extends RootCommand implements LeafCommand {
     } catch {
       process.stdout.write(chalk.bold.red(' [FAILED]') + '\n')
     }
-    process.stdout.write(createKeyValue('Debug API', this.beeDebugApiUrl))
-    try {
-      await this._beeDebug.getHealth()
-      process.stdout.write(chalk.bold.green(' [OK]') + '\n')
-    } catch {
-      process.stdout.write(chalk.bold.red(' [FAILED]') + '\n')
-    }
-    const versions = await this._beeDebug.getVersions()
+    const versions = await this.bee.getVersions()
     this.console.all(createKeyValue('Version', versions.beeVersion))
-    const nodeInfo = await this._beeDebug.getNodeInfo()
+    const nodeInfo = await this.bee.getNodeInfo()
     this.console.all(createKeyValue('Mode', nodeInfo.beeMode))
 
     if (nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Topology'))
-      const topology = await this._beeDebug.getTopology()
+      const topology = await this.bee.getTopology()
       this.console.all(createKeyValue('Connected Peers', topology.connected))
       this.console.all(createKeyValue('Population', topology.population))
       this.console.all(createKeyValue('Depth', topology.depth))
@@ -45,7 +38,7 @@ export class Status extends RootCommand implements LeafCommand {
     if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Wallet'))
-      const { bzzBalance, nativeTokenBalance } = await this._beeDebug.getWalletBalance()
+      const { bzzBalance, nativeTokenBalance } = await this.bee.getWalletBalance()
       this.console.all(
         createKeyValue(
           'xBZZ',
@@ -67,7 +60,7 @@ export class Status extends RootCommand implements LeafCommand {
     if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Chequebook'))
-      const { totalBalance, availableBalance } = await this._beeDebug.getChequebookBalance()
+      const { totalBalance, availableBalance } = await this.bee.getChequebookBalance()
       this.console.all(
         createKeyValue(
           'Available xBZZ',
@@ -89,7 +82,7 @@ export class Status extends RootCommand implements LeafCommand {
     if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Staking'))
-      const stake = await this._beeDebug.getStake()
+      const stake = await this.bee.getStake()
       this.console.all(
         createKeyValue(
           'Staked BZZ',
@@ -103,7 +96,7 @@ export class Status extends RootCommand implements LeafCommand {
     if (nodeInfo.beeMode === BeeModes.FULL) {
       this.console.all('')
       this.console.all(chalk.bold('Redistribution'))
-      const redistributionState = await this._beeDebug.getRedistributionState()
+      const redistributionState = await this.bee.getRedistributionState()
       this.console.all(createKeyValue('Reward', redistributionState.reward))
       this.console.all(createKeyValue('Has sufficient funds', redistributionState.hasSufficientFunds))
       this.console.all(createKeyValue('Fully synced', redistributionState.isFullySynced))

@@ -1,4 +1,4 @@
-import { BeeDebug, PostageBatch, Utils } from '@ethersphere/bee-js'
+import { Bee, PostageBatch, Utils } from '@ethersphere/bee-js'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { getFieldOrNull, secondsToDhms } from '../../utils'
@@ -16,8 +16,8 @@ import { EnrichedStamp } from './types/stamp'
  *
  * @returns {Promise<string>} Hex representation of the Stamp ID.
  */
-export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promise<string> {
-  const stamps = ((await beeDebug.getAllPostageBatch()) || []).map(enrichStamp)
+export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> {
+  const stamps = ((await bee.getAllPostageBatch()) || []).map(enrichStamp)
 
   const choices = stamps
     .filter(stamp => stamp.usable || stamp.batchTTL > 0)
