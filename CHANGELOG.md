@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.9.0...v2.10.0) (2024-06-03)
+
+
+### Features
+
+* merge api ([#503](https://www.github.com/ethersphere/swarm-cli/issues/503)) ([0106e4d](https://www.github.com/ethersphere/swarm-cli/commit/0106e4de697dfe97dfcae42eff8d2c74755df410))
+
 ## [2.9.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.8.0...v2.9.0) (2024-04-15)
 
 
