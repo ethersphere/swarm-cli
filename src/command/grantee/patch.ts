@@ -11,7 +11,7 @@ export class Patch extends GranteeCommand implements LeafCommand {
 
   @Argument({
     key: 'path',
-    description: 'Path to the file with grantee list',
+    description: 'Path to the JSON file with grantee patch (add, revoke)',
     required: true,
     autocompletePath: true,
     conflicts: 'stdin',
@@ -24,16 +24,22 @@ export class Patch extends GranteeCommand implements LeafCommand {
   @Option(stampProperties)
   public stamp!: string
 
+  @Option({ key: 'reference', type: 'string', description: 'Encrypted grantee list reference with 128 characters length', length: 128, required: true})
+  public eref!: string;
+
+  @Option({ key: 'history', type: 'string', description: 'Swarm address reference to the ACT history entry', length: 64, required: true})
+  public history!: string;
+
   public async run(): Promise<void> {
     await super.init()
     this.actReqHeaders = {
       'Swarm-Act': 'true',
+      'Swarm-Act-Timestamp': Date.now().toString(),
     }
-    const fileContent = fs.readFileSync(this.path, 'utf8')
-    const grantees = fileContent.split('\n')
+    const patch = fs.readFileSync(this.path, 'utf8')
 
-    const response = await this.bee.addGrantees(this.stamp, grantees)
-    //this.console.log(createKeyValue('Grantee reference', response.ref))
-    //this.console.log(createKeyValue('Grantee history reference', response.historyref))
+    const response = await this.bee.patchGrantees(this.eref, this.history, this.stamp, patch, this.actReqHeaders)
+    this.console.log(createKeyValue('Grantee reference', response.ref))
+    this.console.log(createKeyValue('Grantee history reference', response.historyref))
   }
 }
