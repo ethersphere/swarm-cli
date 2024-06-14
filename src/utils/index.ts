@@ -10,7 +10,7 @@ import { CommandLineError } from './error'
  *
  * @param ms Number of miliseconds to sleep
  */
-export function sleep(ms: number): Promise<void> {
+export async function sleep(ms: number): Promise<void> {
   return new Promise<void>(resolve => setTimeout(() => resolve(), ms))
 }
 
@@ -136,7 +136,7 @@ export function referenceToHex(reference: Reference | Uint8Array): string {
   return Buffer.from(reference).toString('hex')
 }
 
-export function readStdin(commandLog: CommandLog): Promise<Buffer> {
+export async function readStdin(commandLog: CommandLog): Promise<Buffer> {
   const INTERVAL_SECS = 5
 
   return new Promise((resolve, reject) => {

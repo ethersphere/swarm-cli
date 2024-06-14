@@ -197,7 +197,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
   }
 
-  private uploadAny(tag: Tag | undefined, isFolder: boolean): Promise<string> {
+  private async uploadAny(tag: Tag | undefined, isFolder: boolean): Promise<string> {
     if (this.stdin) {
       return this.uploadStdin(tag)
     } else {
