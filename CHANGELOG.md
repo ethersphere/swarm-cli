@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.10.0...v2.11.0) (2024-06-18)
+
+
+### Features
+
+* upgrade bee-js to 7.0.3 ([#505](https://www.github.com/ethersphere/swarm-cli/issues/505)) ([f4b24ac](https://www.github.com/ethersphere/swarm-cli/commit/f4b24acbce3e6e9ae783f29e234e9c999f4e60fc))
+
 ## [2.10.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.9.0...v2.10.0) (2024-06-03)
 
 
