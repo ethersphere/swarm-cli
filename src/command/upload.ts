@@ -9,7 +9,6 @@ import { setCurlStore } from '../curl'
 import { pickStamp, printStamp } from '../service/stamp'
 import { fileExists, isGateway, readStdin } from '../utils'
 import { CommandLineError } from '../utils/error'
-import { Message } from '../utils/message'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
@@ -146,7 +145,6 @@ export class Upload extends RootCommand implements LeafCommand {
       }
     }
 
-    await this.maybeRunSizeChecks()
     await this.maybePrintRedundancyStats()
 
     const tag = this.sync ? await this.bee.createTag() : undefined
@@ -326,29 +324,6 @@ export class Upload extends RootCommand implements LeafCommand {
       this.console.dim('Data has been synced on Swarm network')
     } else {
       this.console.error('Data syncing timeout.')
-      exit(1)
-    }
-  }
-
-  private async maybeRunSizeChecks(): Promise<void> {
-    if (this.yes) {
-      return
-    }
-    const size = await this.getUploadSize()
-
-    if (size.getBytes() < MAX_UPLOAD_SIZE.getBytes()) {
-      return
-    }
-
-    const message = `Size is larger than the recommended maximum value of ${MAX_UPLOAD_SIZE}`
-
-    if (this.quiet) {
-      throw new CommandLineError(Message.requireOptionConfirmation('yes', message))
-    }
-
-    const confirmation = await this.console.confirm(message + ' Do you want to proceed?')
-
-    if (!confirmation) {
       exit(1)
     }
   }
