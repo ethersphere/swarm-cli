@@ -14,6 +14,7 @@ export class WithdrawAll extends ChequeCommand implements LeafCommand {
     await super.init()
 
     const balance = await this.bee.getChequebookBalance()
+
     if (balance.availableBalance === '0') {
       this.console.error('No tokens to withdraw.')
       return
