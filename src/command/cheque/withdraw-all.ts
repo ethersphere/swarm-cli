@@ -17,6 +17,7 @@ export class WithdrawAll extends ChequeCommand implements LeafCommand {
 
     if (balance.availableBalance === '0') {
       this.console.error('No tokens to withdraw.')
+
       return
     }
     this.console.log(`Withdrawing ${Numbers.fromDecimals(balance.availableBalance, 16)} xBZZ from the chequebook`)
