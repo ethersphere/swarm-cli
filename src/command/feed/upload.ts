@@ -1,5 +1,6 @@
-import { Aggregation, LeafCommand } from 'furious-commander'
+import { Aggregation, LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
+import { stampProperties } from '../../utils/option'
 import { Upload as FileUpload } from '../upload'
 import { FeedCommand } from './feed-command'
 
@@ -13,6 +14,9 @@ export class Upload extends FeedCommand implements LeafCommand {
   @Aggregation(['upload'])
   public fileUpload!: FileUpload
 
+  @Option(stampProperties)
+  public stamp!: string
+
   public async run(): Promise<void> {
     await super.init()
 
@@ -23,7 +27,7 @@ export class Upload extends FeedCommand implements LeafCommand {
     }
 
     const reference = await this.runUpload()
-    this.feedManifest = await this.updateFeedAndPrint(reference)
+    this.feedManifest = await this.updateFeedAndPrint(this.stamp, reference)
     this.console.dim('Successfully uploaded to feed.')
   }
 
