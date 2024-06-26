@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.12.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.11.0...v2.12.0) (2024-06-26)
+
+
+### Features
+
+* add cheque withdraw-all command ([#519](https://www.github.com/ethersphere/swarm-cli/issues/519)) ([764f958](https://www.github.com/ethersphere/swarm-cli/commit/764f958f01efdbf2d934d0e49c8b735b18804426))
+* disambiguate xdai and xbzz values ([#511](https://www.github.com/ethersphere/swarm-cli/issues/511)) ([c0a5337](https://www.github.com/ethersphere/swarm-cli/commit/c0a53379cdb1e0558659f3e6d8386ebe5a4034c1))
+* improve stamp capacity listing ([#514](https://www.github.com/ethersphere/swarm-cli/issues/514)) ([cf776ab](https://www.github.com/ethersphere/swarm-cli/commit/cf776abac64d8755dbf89c227efaac3f6921f8a4))
+* print helpful message after topup and dilute ([#516](https://www.github.com/ethersphere/swarm-cli/issues/516)) ([391ca6f](https://www.github.com/ethersphere/swarm-cli/commit/391ca6f18e29cb0e0abc290bef961bd61e2a616c))
+* remove upload size warning ([#515](https://www.github.com/ethersphere/swarm-cli/issues/515)) ([fb11c19](https://www.github.com/ethersphere/swarm-cli/commit/fb11c1985657d2bb45c371386a85127fb2afd5ff))
+
+
+### Bug Fixes
+
+* do not error out on dev mode ttl ([#517](https://www.github.com/ethersphere/swarm-cli/issues/517)) ([6de29f9](https://www.github.com/ethersphere/swarm-cli/commit/6de29f993df6a819c8e6ef816a5c759157f3280f))
+* set immutable stamps as default ([#513](https://www.github.com/ethersphere/swarm-cli/issues/513)) ([55eacab](https://www.github.com/ethersphere/swarm-cli/commit/55eacabd33e340ef4e6a126c2714fdc4f67e44ff))
+
 ## [2.11.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.10.0...v2.11.0) (2024-06-18)
 
 
