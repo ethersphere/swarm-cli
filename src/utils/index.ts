@@ -1,18 +1,8 @@
 import { Reference } from '@ethersphere/bee-js'
-import BigNumber from 'bignumber.js'
 import { promises, statSync } from 'fs'
 import { join } from 'path'
 import { CommandLog } from '../command/root-command/command-log'
 import { CommandLineError } from './error'
-
-/**
- * Sleep for N miliseconds
- *
- * @param ms Number of miliseconds to sleep
- */
-export function sleep(ms: number): Promise<void> {
-  return new Promise<void>(resolve => setTimeout(() => resolve(), ms))
-}
 
 export function fileExists(path: string): boolean {
   try {
@@ -50,24 +40,6 @@ export function getByteSize(data: string | Uint8Array): number {
   }
 
   return Buffer.byteLength(data, 'utf-8')
-}
-
-export function secondsToDhms(secs: number, abstractTimeFormat = false): string {
-  const d = Math.floor(secs / (3600 * 24))
-  const h = Math.floor((secs % (3600 * 24)) / 3600)
-  const m = Math.floor((secs % 3600) / 60)
-  const s = Math.floor(secs % 60)
-
-  const dDisplay = d > 0 ? d + (d === 1 ? ' day ' : ' days ') : ''
-  const hDisplay = h > 0 ? h + (h === 1 ? ' hour ' : ' hours ') : ''
-  const mDisplay = m > 0 ? m + (m === 1 ? ' minute ' : ' minutes ') : ''
-  const sDisplay = s > 0 ? s + (s === 1 ? ' second' : ' seconds') : ''
-
-  if (abstractTimeFormat) {
-    return (dDisplay || hDisplay || mDisplay || sDisplay).trim()
-  }
-
-  return (dDisplay + hDisplay + mDisplay + sDisplay).trim()
 }
 
 /**
@@ -198,24 +170,4 @@ export function isPrivateKey(string: string): boolean {
   const normalized = normalizePrivateKey(string)
 
   return /^[a-f0-9]{64}$/.test(normalized)
-}
-
-export function toSignificantDigits(val: BigNumber, digits = 4): string {
-  const asString = val.toFixed(16)
-  let indexOfSignificantDigit = -1
-  let reachedDecimalPoint = false
-
-  for (let i = 0; i < asString.length; i++) {
-    const char = asString[i]
-
-    if (char === '.') {
-      reachedDecimalPoint = true
-      indexOfSignificantDigit = i + 1
-    } else if (reachedDecimalPoint && char !== '0') {
-      indexOfSignificantDigit = i
-      break
-    }
-  }
-
-  return asString.slice(0, indexOfSignificantDigit + digits)
 }

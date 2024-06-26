@@ -153,7 +153,7 @@ to sign updates. It's also possible to import and export Ethereum JSON V3 format
 (e.g. wallets).
 
 Another requirement for uploading to the Swarm network is a valid postage batch, also called a postage stamp or simply a
-stamp. Stamps need to be purchased with BZZ tokens. We can use the `stamp buy` command to take care of this step. The
+stamp. Stamps need to be purchased with xBZZ tokens. We can use the `stamp buy` command to take care of this step. The
 `--amount` and `--depth` options alter the capacity of the postage stamp. For example, running
 `stamp buy --amount 1 --depth 20` will get back with a Stamp ID after a while. We will be using that with the `--stamp`
 option in commands which upload files, or write feeds.

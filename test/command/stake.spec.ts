@@ -1,10 +1,10 @@
-import { describeCommand, invokeTestCli } from '../utility'
 import BigNumber from 'bignumber.js'
+import { describeCommand, invokeTestCli } from '../utility'
 
 describeCommand('Test Stake command', ({ consoleMessages }) => {
   it('should print stake balance', async () => {
     await invokeTestCli(['stake'])
-    expect(consoleMessages[0]).toContain('Staked BZZ')
+    expect(consoleMessages[0]).toContain('Staked xBZZ')
   })
 
   it('should print balance in quiet mode', async () => {

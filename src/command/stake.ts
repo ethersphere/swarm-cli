@@ -1,7 +1,5 @@
-import { BigNumber } from 'bignumber.js'
+import { Numbers } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
-import { toSignificantDigits } from '../utils'
-import { PLURConversionRate } from '../utils/conversions'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
@@ -28,15 +26,15 @@ export class Stake extends RootCommand implements LeafCommand {
 
     if (!currentStake && amount < MIN_INITIAL_STAKE_PLUR) {
       if (this.quiet) {
-        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} BZZ!`)
+        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} xBZZ!`)
       }
 
       if (
         !(await this.console.confirm(
-          `Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} BZZ. Do you want to increase the deposit to ${MIN_INITIAL_STAKE_BZZ} BZZ?`,
+          `Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} xBZZ. Do you want to increase the deposit to ${MIN_INITIAL_STAKE_BZZ} xBZZ?`,
         ))
       ) {
-        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} BZZ!`)
+        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} xBZZ!`)
       }
 
       amount = MIN_INITIAL_STAKE_PLUR
@@ -77,9 +75,8 @@ export class Stake extends RootCommand implements LeafCommand {
     }
 
     const stake = await this.bee.getStake()
-    const stakeBN = BigNumber(stake).dividedBy(PLURConversionRate)
 
-    this.console.log(createKeyValue('Staked BZZ', toSignificantDigits(stakeBN)))
-    this.console.quiet(toSignificantDigits(stakeBN))
+    this.console.log(createKeyValue('Staked xBZZ', Numbers.fromDecimals(stake, 16)))
+    this.console.quiet(Numbers.fromDecimals(stake, 16))
   }
 }

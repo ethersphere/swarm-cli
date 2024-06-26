@@ -1,6 +1,6 @@
 import { Utils } from '@ethersphere/bee-js'
+import { Dates } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
-import { secondsToDhms } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
 import { Storage } from '../../utils/storage'
 import { createKeyValue } from '../../utils/text'
@@ -63,9 +63,9 @@ export class Buy extends StampCommand implements LeafCommand {
     const estimatedCapacity = new Storage(Utils.getStampMaximumCapacityBytes(this.depth))
     const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount))
 
-    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} BZZ`))
+    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} xBZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity.toString()))
-    this.console.log(createKeyValue('Estimated TTL', secondsToDhms(estimatedTtl)))
+    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl)))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (this.immutable) {
