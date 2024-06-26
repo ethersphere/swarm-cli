@@ -26,15 +26,15 @@ export class Stake extends RootCommand implements LeafCommand {
 
     if (!currentStake && amount < MIN_INITIAL_STAKE_PLUR) {
       if (this.quiet) {
-        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} BZZ!`)
+        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} xBZZ!`)
       }
 
       if (
         !(await this.console.confirm(
-          `Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} BZZ. Do you want to increase the deposit to ${MIN_INITIAL_STAKE_BZZ} BZZ?`,
+          `Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} xBZZ. Do you want to increase the deposit to ${MIN_INITIAL_STAKE_BZZ} xBZZ?`,
         ))
       ) {
-        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} BZZ!`)
+        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} xBZZ!`)
       }
 
       amount = MIN_INITIAL_STAKE_PLUR

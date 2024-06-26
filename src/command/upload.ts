@@ -1,4 +1,5 @@
 import { RedundancyLevel, Tag, Utils } from '@ethersphere/bee-js'
+import { System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -6,7 +7,7 @@ import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
 import { pickStamp, printStamp } from '../service/stamp'
-import { fileExists, isGateway, readStdin, sleep } from '../utils'
+import { fileExists, isGateway, readStdin } from '../utils'
 import { CommandLineError } from '../utils/error'
 import { Message } from '../utils/message'
 import { getMime } from '../utils/mime'
@@ -317,7 +318,7 @@ export class Upload extends RootCommand implements LeafCommand {
         progressBar.setTotal(tag.split)
         progressBar.update(syncProgress)
       }
-      await sleep(pollingTime)
+      await System.sleepMillis(pollingTime)
     }
     progressBar.stop()
 

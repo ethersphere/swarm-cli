@@ -4,15 +4,6 @@ import { join } from 'path'
 import { CommandLog } from '../command/root-command/command-log'
 import { CommandLineError } from './error'
 
-/**
- * Sleep for N miliseconds
- *
- * @param ms Number of miliseconds to sleep
- */
-export function sleep(ms: number): Promise<void> {
-  return new Promise<void>(resolve => setTimeout(() => resolve(), ms))
-}
-
 export function fileExists(path: string): boolean {
   try {
     const stat = statSync(path)
@@ -49,24 +40,6 @@ export function getByteSize(data: string | Uint8Array): number {
   }
 
   return Buffer.byteLength(data, 'utf-8')
-}
-
-export function secondsToDhms(secs: number, abstractTimeFormat = false): string {
-  const d = Math.floor(secs / (3600 * 24))
-  const h = Math.floor((secs % (3600 * 24)) / 3600)
-  const m = Math.floor((secs % 3600) / 60)
-  const s = Math.floor(secs % 60)
-
-  const dDisplay = d > 0 ? d + (d === 1 ? ' day ' : ' days ') : ''
-  const hDisplay = h > 0 ? h + (h === 1 ? ' hour ' : ' hours ') : ''
-  const mDisplay = m > 0 ? m + (m === 1 ? ' minute ' : ' minutes ') : ''
-  const sDisplay = s > 0 ? s + (s === 1 ? ' second' : ' seconds') : ''
-
-  if (abstractTimeFormat) {
-    return (dDisplay || hDisplay || mDisplay || sDisplay).trim()
-  }
-
-  return (dDisplay + hDisplay + mDisplay + sDisplay).trim()
 }
 
 /**

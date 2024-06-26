@@ -65,7 +65,7 @@
     "@ethersphere/bee-js": "^7.0.3",
     "@fairdatasociety/bmt-js": "^2.1.0",
     "bignumber.js": "^9.1.0",
-    "cafe-utility": "^21.5.0",
+    "cafe-utility": "^22.0.0",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
     "ethereumjs-wallet": "^1.0.2",
