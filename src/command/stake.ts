@@ -1,7 +1,5 @@
-import { BigNumber } from 'bignumber.js'
+import { Numbers } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
-import { toSignificantDigits } from '../utils'
-import { PLURConversionRate } from '../utils/conversions'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
@@ -77,9 +75,8 @@ export class Stake extends RootCommand implements LeafCommand {
     }
 
     const stake = await this.bee.getStake()
-    const stakeBN = BigNumber(stake).dividedBy(PLURConversionRate)
 
-    this.console.log(createKeyValue('Staked BZZ', toSignificantDigits(stakeBN)))
-    this.console.quiet(toSignificantDigits(stakeBN))
+    this.console.log(createKeyValue('Staked xBZZ', Numbers.fromDecimals(stake, 16)))
+    this.console.quiet(Numbers.fromDecimals(stake, 16))
   }
 }
