@@ -78,20 +78,17 @@ For the currently supported operations, see the [Commands](#commands) section.
 
 ## Installation
 
+Requires Node.js 18 or higher. It is recommended to use [NVM](https://github.com/nvm-sh/nvm) to manage Node.js versions.
+
+> Warning! Installing Node.js via package managers (e.g. `apt`, `yum`, `brew`) may not work as expected, as they may
+> install an older version of Node.js.
+
 ### From npm
 
-To install globally (requires `npm root --global` to be writable):
+Install globally:
 
 ```sh
 npm install --global @ethersphere/swarm-cli
-```
-
-To install locally:
-
-```sh
-cd [some directory for nodejs files]
-npm install @ethersphere/swarm-cli
-./node_modules/.bin/swarm-cli --help
 ```
 
 ### From source
@@ -111,7 +108,7 @@ Running a command with the `--help` option prints out the usage of a command.
 Running `swarm-cli` without arguments prints the available commands:
 
 ```
-Swarm CLI 1.5.0 - Manage your Bee node and interact with the Swarm network via the CLI
+Swarm CLI 2.11.0 - Manage your Bee node and interact with the Swarm network via the CLI
 
 █ Usage:
 
@@ -126,6 +123,7 @@ cheque     Deposit, withdraw and manage cheques
 stamp      Buy, list and show postage stamps
 pss        Send, receive, or subscribe to PSS messages
 manifest   Operate on manifests
+utility    Utility commands for managing wallets
 
 Run 'swarm-cli GROUP --help' to see available commands in a group
 
@@ -133,8 +131,10 @@ Run 'swarm-cli GROUP --help' to see available commands in a group
 
 upload      Upload file to Swarm
 download    Download arbitrary Swarm hash
-status      Check API availability and Bee compatibility
+hash        Print the Swarm hash of a file
+status      Check Bee status
 addresses   Display the addresses of the Bee node
+stake       Manages nodes stake
 
 Run 'swarm-cli COMMAND --help' for more information on a command
 ```
