@@ -1,3 +1,4 @@
+import { Numbers } from 'cafe-utility'
 import { LeafCommand } from 'furious-commander'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
@@ -13,6 +14,11 @@ export class WithdrawAll extends ChequeCommand implements LeafCommand {
     await super.init()
 
     const balance = await this.bee.getChequebookBalance()
+    if (balance.availableBalance === '0') {
+      this.console.error('No tokens to withdraw.')
+      return
+    }
+    this.console.log(`Withdrawing ${Numbers.fromDecimals(balance.availableBalance, 16)} xBZZ from the chequebook`)
     const response = await this.bee.withdrawTokens(balance.availableBalance)
     this.console.log(createKeyValue('Tx', response))
     this.console.quiet(response)
