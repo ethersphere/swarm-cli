@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.12.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.12.0...v2.12.1) (2024-06-26)
+
+
+### Bug Fixes
+
+* do not require stamp for feed print ([#520](https://www.github.com/ethersphere/swarm-cli/issues/520)) ([01bc9b7](https://www.github.com/ethersphere/swarm-cli/commit/01bc9b7d1476000c6a85fd25eb68d679796e99dc))
+
 ## [2.12.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.11.0...v2.12.0) (2024-06-26)
 
 
