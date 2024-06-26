@@ -81,7 +81,9 @@ export function printStamp(
   if (settings?.showTtl) {
     const ttl = stamp.batchTTL === -1 ? 'unknown' : Dates.secondsToHumanTime(stamp.batchTTL)
     const expires =
-      stamp.batchTTL === -1 ? 'unknown' : new Date(Date.now() + stamp.batchTTL * 1000).toISOString().slice(0, 10)
+      stamp.batchTTL === -1 || stamp.batchTTL > 1e11
+        ? 'unknown'
+        : new Date(Date.now() + stamp.batchTTL * 1000).toISOString().slice(0, 10)
     console.log(createKeyValue('TTL', `${ttl} (${expires})`))
   }
 
