@@ -13,13 +13,13 @@ describeCommand(
   ({ consoleMessages, getLastMessage, getNthLastMessage, hasMessageContaining }) => {
     it('should list stamps', async () => {
       await invokeTestCli(['stamp', 'list'])
-      const pattern = [['Stamp ID'], ['Usage'], ['Remaining Capacity'], ['TTL']]
+      const pattern = [['Stamp ID'], ['Usage'], ['Capacity'], ['TTL']]
       expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
     it('should show a specific stamp', async () => {
       await invokeTestCli(['stamp', 'show', Types.asString(process.env.STAMP)])
-      const pattern = [['Stamp ID', Types.asString(process.env.STAMP)], ['Usage'], ['Remaining Capacity'], ['TTL']]
+      const pattern = [['Stamp ID', Types.asString(process.env.STAMP)], ['Usage'], ['Capacity'], ['TTL']]
       expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
@@ -57,7 +57,7 @@ describeCommand(
 
       const id = command.postageBatchId
       await invokeTestCli(['stamp', 'show', id, '--verbose'])
-      const pattern = [['Total Capacity (immutable)']]
+      const pattern = [['Capacity (immutable)']]
       expect(consoleMessages).toMatchLinesInOrder(pattern)
       await System.sleepMillis(11_000)
     })
@@ -69,7 +69,7 @@ describeCommand(
 
     it('should list with sorting and filter', async () => {
       await invokeTestCli(['stamp', 'list', '--min-usage', '0', '--max-usage', '100', '--least-used', '--limit', '1'])
-      const pattern = [['Stamp ID'], ['Usage'], ['Remaining Capacity'], ['TTL']]
+      const pattern = [['Stamp ID'], ['Usage'], ['Capacity'], ['TTL']]
       expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
