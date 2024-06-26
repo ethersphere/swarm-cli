@@ -1,3 +1,4 @@
+import { Utils } from '@ethersphere/bee-js'
 import { makeChunk } from '@fairdatasociety/bmt-js'
 import { Binary } from 'cafe-utility'
 import Wallet from 'ethereumjs-wallet'
@@ -25,11 +26,15 @@ export class Print extends FeedCommand implements LeafCommand {
   })
   public address!: string
 
+  @Option({ key: 'list', type: 'boolean', description: 'List all updates' })
+  public list!: boolean
+
   public async run(): Promise<void> {
     await super.init()
 
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
 
+    // construct the feed manifest chunk
     const body = Binary.concatBytes(
       new Uint8Array(32),
       new Uint8Array([
@@ -74,7 +79,25 @@ export class Print extends FeedCommand implements LeafCommand {
       this.console.verbose(createKeyValue('Feed Manifest', manifest))
 
       this.console.log(createKeyValue('Topic', `${topic}`))
-      this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex as string, 16) + 1))
+      const numberOfUpdates = parseInt(feedIndex as string, 16) + 1
+      this.console.log(createKeyValue('Number of Updates', numberOfUpdates))
+
+      if (this.list) {
+        for (let i = 0; i < numberOfUpdates; i++) {
+          const indexBytes = Binary.numberToUint64BE(i)
+          const identifier = Utils.keccak256Hash(Binary.hexToUint8Array(topic), indexBytes)
+          const owner = Binary.hexToUint8Array(this.address)
+          const soc = Binary.uint8ArrayToHex(Utils.keccak256Hash(identifier, owner))
+          const chunk = await this.bee.downloadChunk(soc)
+          // span + identifier + signature + span
+          const cac = Binary.uint8ArrayToHex(chunk.slice(8 + 32 + 65 + 8, 8 + 32 + 65 + 32 + 8))
+          this.console.log('')
+          this.console.log(createKeyValue(`Update ${i}`, cac))
+          this.console.log(`${this.bee.url}/bzz/${cac}/`)
+        }
+      } else {
+        this.console.log('Run with --list to see all updates')
+      }
     } catch (error) {
       spinner.stop()
       const message = getFieldOrNull(error, 'message')
