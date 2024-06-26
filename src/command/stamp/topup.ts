@@ -29,7 +29,7 @@ export class Topup extends StampCommand implements LeafCommand {
       this.stamp = await pickStamp(this.bee, this.console)
     }
 
-    const spinner = createSpinner('Topup in progress. This may take a while.')
+    const spinner = createSpinner('Topup in progress. This may take a few minutes.')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
@@ -41,6 +41,8 @@ export class Topup extends StampCommand implements LeafCommand {
       spinner.stop()
     }
 
-    await this.printDepthAndAmount(this.stamp)
+    this.console.log(`Topup finished. Your Bee node will soon synchronize the new values from the blockchain.`)
+    this.console.log(`This can take a few minutes until the value is updated.`)
+    this.console.log(`Check it later with swarm-cli stamp show ${this.stamp}`)
   }
 }
