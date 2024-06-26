@@ -71,11 +71,10 @@ export function printStamp(
     console.log(createKeyValue('Label', stamp.label))
   }
   console.log(createKeyValue('Usage', richStamp.usageText))
-  console.log(createKeyValue('Remaining Capacity', richStamp.remainingCapacity.toString()))
-  console.verbose(
+  console.log(
     createKeyValue(
-      richStamp.immutableFlag ? 'Total Capacity (immutable)' : 'Total Capacity (mutable)',
-      richStamp.capacity.toString(),
+      richStamp.immutableFlag ? 'Capacity (immutable)' : 'Capacity (mutable)',
+      `${richStamp.remainingCapacity.toString()} remaining out of ${richStamp.capacity.toString()}`,
     ),
   )
 
