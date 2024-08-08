@@ -32,6 +32,11 @@ export class Print extends FeedCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
+    if (!this.address) {
+      const wallet = await this.getWallet()
+      this.address = wallet.getAddressString()
+    }
+
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
 
     // construct the feed manifest chunk
