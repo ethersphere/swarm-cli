@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.13.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.13.0...v2.13.1) (2024-08-08)
+
+
+### Bug Fixes
+
+* support identity in feed print ([#526](https://www.github.com/ethersphere/swarm-cli/issues/526)) ([8f633c0](https://www.github.com/ethersphere/swarm-cli/commit/8f633c035ed2367cb3d789d90bfea0ce4e21ea4d))
+
 ## [2.13.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.12.0...v2.13.0) (2024-06-26)
 
 
