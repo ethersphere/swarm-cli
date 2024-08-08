@@ -56,7 +56,10 @@ export class Print extends FeedCommand implements LeafCommand {
         0x62, 0xa5, 0xb5, 0x89, 0x3f, 0xf0, 0xe4, 0xe1, 0xe2, 0x98, 0x30, 0x48, 0xd2, 0x76, 0x00, 0xbe,
       ]),
       new TextEncoder().encode(
-        `{"swarm-feed-owner":"${this.address}","swarm-feed-topic":"${this.topic}","swarm-feed-type":"Sequence"}`,
+        `{"swarm-feed-owner":"${this.address.replace(
+          '0x',
+          '',
+        )}","swarm-feed-topic":"${topic}","swarm-feed-type":"Sequence"}`,
       ),
       new Uint8Array(12).fill(0x0a),
     )
