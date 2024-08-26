@@ -58,17 +58,17 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
   })
 
   it('should show units after running: cheque list', async () => {
-    await invokeTestCli(['cheque', 'list', '--bee-debug-api-url', 'http://localhost:1378'])
+    await invokeTestCli(['cheque', 'list', '--bee-api-url', 'http://localhost:1378'])
     expectSubstringsPrinted('Cheque Value', 'PLUR')
   })
 
   it('should show units after running: cheque cashout', async () => {
-    await invokeTestCli(['cheque', 'cashout', '--all', '--bee-debug-api-url', 'http://localhost:1378'])
+    await invokeTestCli(['cheque', 'cashout', '--all', '--bee-api-url', 'http://localhost:1378'])
     expectSubstringsPrinted('Cheque Value', 'PLUR')
   })
 
   it('should show units after running: balance', async () => {
-    await invokeTestCli(['status', '--bee-debug-api-url', 'http://localhost:1378'])
+    await invokeTestCli(['status', '--bee-api-url', 'http://localhost:1378'])
     const pattern = [
       ['Wallet'],
       ['xBZZ', '0.3904'],

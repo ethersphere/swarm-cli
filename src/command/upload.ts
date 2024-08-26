@@ -1,4 +1,5 @@
-import { Tag, Utils } from '@ethersphere/bee-js'
+import { RedundancyLevel, Tag, Utils } from '@ethersphere/bee-js'
+import { System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -6,9 +7,8 @@ import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
 import { pickStamp, printStamp } from '../service/stamp'
-import { fileExists, isGateway, readStdin, sleep } from '../utils'
+import { fileExists, isGateway, readStdin } from '../utils'
 import { CommandLineError } from '../utils/error'
-import { Message } from '../utils/message'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
@@ -116,6 +116,12 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public contentType!: string
 
+  @Option({
+    key: 'redundancy',
+    description: 'Redundancy of the upload (MEDIUM, STRONG, INSANE, PARANOID)',
+  })
+  public redundancy!: string
+
   // CLASS FIELDS
 
   public hash!: string
@@ -148,11 +154,11 @@ export class Upload extends RootCommand implements LeafCommand {
       if (isGateway(this.beeApiUrl)) {
         this.stamp = '0'.repeat(64)
       } else {
-        this.stamp = await pickStamp(this.beeDebug, this.console)
+        this.stamp = await pickStamp(this.bee, this.console)
       }
     }
 
-    await this.maybeRunSizeChecks()
+    await this.maybePrintRedundancyStats()
 
     const tag = this.sync ? await this.bee.createTag() : undefined
 
@@ -183,8 +189,8 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!usedFromOtherCommand) {
       this.console.quiet(this.hash)
 
-      if (!isGateway(this.beeApiUrl) && !this.quiet && this.debugApiIsUsable()) {
-        printStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
+      if (!isGateway(this.beeApiUrl) && !this.quiet) {
+        printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
       }
     }
   }
@@ -235,12 +241,13 @@ export class Upload extends RootCommand implements LeafCommand {
         this.stdinData,
         this.fileName,
         {
-          act: this.act,
           tag: tag && tag.uid,
           pin: this.pin,
           encrypt: this.encrypt,
           contentType,
           deferred: this.deferred,
+          redundancyLevel: this.determineRedundancyLevel(),
+          act: this.act,
         },
         { headers: this.actHeaders() },
       )
@@ -258,6 +265,8 @@ export class Upload extends RootCommand implements LeafCommand {
         {
           tag: tag?.uid,
           deferred: this.deferred,
+          encrypt: this.encrypt,
+          redundancyLevel: this.determineRedundancyLevel(),
         },
         { headers: this.actHeaders() },
       )
@@ -283,11 +292,12 @@ export class Upload extends RootCommand implements LeafCommand {
       {
         indexDocument: this.indexDocument,
         errorDocument: this.errorDocument,
-        act: this.act,
         tag: tag && tag.uid,
         pin: this.pin,
         encrypt: this.encrypt,
         deferred: this.deferred,
+        redundancyLevel: this.determineRedundancyLevel(),
+        act: this.act,
       },
       { headers: this.actHeaders() },
     )
@@ -314,12 +324,13 @@ export class Upload extends RootCommand implements LeafCommand {
       readable,
       this.determineFileName(parsedPath.base),
       {
-        act: this.act,
         tag: tag && tag.uid,
         pin: this.pin,
         encrypt: this.encrypt,
         contentType,
         deferred: this.deferred,
+        redundancyLevel: this.determineRedundancyLevel(),
+        act: this.act,
       },
       { headers: this.actHeaders() },
     )
@@ -371,7 +382,7 @@ export class Upload extends RootCommand implements LeafCommand {
         progressBar.setTotal(tag.split)
         progressBar.update(syncProgress)
       }
-      await sleep(pollingTime)
+      await System.sleepMillis(pollingTime)
     }
     progressBar.stop()
 
@@ -383,26 +394,33 @@ export class Upload extends RootCommand implements LeafCommand {
     }
   }
 
-  private async maybeRunSizeChecks(): Promise<void> {
-    if (this.yes) {
-      return
-    }
-    const size = await this.getUploadSize()
-
-    if (size.getBytes() < MAX_UPLOAD_SIZE.getBytes()) {
+  private async maybePrintRedundancyStats(): Promise<void> {
+    if (!this.redundancy || this.quiet) {
       return
     }
 
-    const message = `Size is larger than the recommended maximum value of ${MAX_UPLOAD_SIZE}`
+    const currentSetting = Utils.getRedundancyStat(this.redundancy)
+    const originalSize = await this.getUploadSize()
+    const originalChunks = Math.ceil(originalSize.getBytes() / 4e3)
+    const sizeMultiplier = Utils.approximateOverheadForRedundancyLevel(
+      originalChunks,
+      currentSetting.value,
+      this.encrypt,
+    )
+    const newSize = new Storage(originalChunks * 4e3 * (1 + sizeMultiplier))
+    const extraSize = new Storage(newSize.getBytes() - originalSize.getBytes())
 
-    if (this.quiet) {
-      throw new CommandLineError(Message.requireOptionConfirmation('yes', message))
-    }
+    this.console.log(createKeyValue('Redundancy setting', currentSetting.label))
+    this.console.log(`This setting will provide ${Math.round(currentSetting.errorTolerance * 100)}% error tolerance.`)
+    this.console.log(`An additional ${extraSize.toString()} of data will be uploaded approximately.`)
+    this.console.log(`${originalSize.toString()} → ${newSize.toString()} (+${extraSize.toString()})`)
 
-    const confirmation = await this.console.confirm(message + ' Do you want to proceed?')
+    if (!this.yes && !this.quiet) {
+      const confirmation = await this.console.confirm('Do you want to proceed?')
 
-    if (!confirmation) {
-      exit(1)
+      if (!confirmation) {
+        exit(0)
+      }
     }
   }
 
@@ -467,7 +485,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (connectedPeers === null) {
       this.console.log(warningSymbol())
       this.console.log(warningText('Could not fetch connected peers info.'))
-      this.console.log(warningText('Either the debug API is not enabled, or you are uploading to a gateway node.'))
+      this.console.log(warningText('Are you uploading to a gateway node?'))
       this.console.log(warningText('Synchronization may time out.'))
     } else if (connectedPeers === 0) {
       this.console.log(warningSymbol())
@@ -478,7 +496,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async getConnectedPeers(): Promise<number | null> {
     try {
-      const { connected } = await this._beeDebug.getTopology()
+      const { connected } = await this.bee.getTopology()
 
       return connected
     } catch {
@@ -496,5 +514,23 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     return defaultName
+  }
+
+  private determineRedundancyLevel(): RedundancyLevel | undefined {
+    if (!this.redundancy) {
+      return undefined
+    }
+    switch (this.redundancy.toUpperCase()) {
+      case 'MEDIUM':
+        return RedundancyLevel.MEDIUM
+      case 'STRONG':
+        return RedundancyLevel.STRONG
+      case 'INSANE':
+        return RedundancyLevel.INSANE
+      case 'PARANOID':
+        return RedundancyLevel.PARANOID
+      default:
+        throw new CommandLineError(`Invalid redundancy level: ${this.redundancy}`)
+    }
   }
 }

@@ -28,27 +28,29 @@ export class Dilute extends StampCommand implements LeafCommand {
     await super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      this.stamp = await pickStamp(this.bee, this.console)
     }
 
-    const details = await this.beeDebug.getPostageBatch(this.stamp)
+    const details = await this.bee.getPostageBatch(this.stamp)
 
     if (this.depth <= details.depth) {
       throw new CommandLineError(`This postage stamp already has depth ${details.depth}. The new value must be higher.`)
     }
 
-    const spinner = createSpinner('Dilute in progress. This may take a while.')
+    const spinner = createSpinner('Dilute in progress. This may take a few minutes.')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
     }
 
     try {
-      await this.beeDebug.diluteBatch(this.stamp, this.depth)
+      await this.bee.diluteBatch(this.stamp, this.depth)
     } finally {
       spinner.stop()
     }
 
-    await this.printDepthAndAmount(this.stamp)
+    this.console.log(`Dilute finished. Your Bee node will soon synchronize the new values from the blockchain.`)
+    this.console.log(`This can take a few minutes until the value is updated.`)
+    this.console.log(`Check it later with swarm-cli stamp show ${this.stamp}`)
   }
 }

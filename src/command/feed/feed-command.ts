@@ -5,7 +5,7 @@ import { exit } from 'process'
 import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { printStamp } from '../../service/stamp'
-import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
+import { topicProperties, topicStringProperties } from '../../utils/option'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
@@ -17,9 +17,6 @@ interface FeedInfo {
 }
 
 export class FeedCommand extends RootCommand {
-  @Option(stampProperties)
-  public stamp!: string
-
   @Option({
     key: 'identity',
     alias: 'i',
@@ -38,10 +35,10 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
 
-  protected async updateFeedAndPrint(chunkReference: string): Promise<string> {
+  protected async updateFeedAndPrint(stamp: string, chunkReference: string): Promise<string> {
     const wallet = await this.getWallet()
     const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
-    const { reference, manifest } = await this.writeFeed(wallet, topic, chunkReference)
+    const { reference, manifest } = await this.writeFeed(stamp, wallet, topic, chunkReference)
 
     this.console.verbose(createKeyValue('Chunk Reference', chunkReference))
     this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${chunkReference}/`))
@@ -51,8 +48,8 @@ export class FeedCommand extends RootCommand {
 
     this.console.quiet(manifest)
 
-    if (!this.quiet && this.debugApiIsUsable()) {
-      printStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
+    if (!this.quiet) {
+      printStamp(await this.bee.getPostageBatch(stamp), this.console, { shortenBatchId: true })
     }
 
     return manifest
@@ -79,7 +76,7 @@ export class FeedCommand extends RootCommand {
     return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
   }
 
-  private async writeFeed(wallet: Wallet, topic: string, chunkReference: string): Promise<FeedInfo> {
+  private async writeFeed(stamp: string, wallet: Wallet, topic: string, chunkReference: string): Promise<FeedInfo> {
     const spinner = createSpinner('Writing feed...')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
@@ -88,15 +85,15 @@ export class FeedCommand extends RootCommand {
 
     try {
       const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-      const reference = await writer.upload(this.stamp, chunkReference as Reference)
+      const reference = await writer.upload(stamp, chunkReference as Reference)
       const { reference: manifest } = await this.bee.createFeedManifest(
-        this.stamp,
+        stamp,
         'sequence',
         topic,
         wallet.getAddressString(),
       )
 
-      return { reference, manifest }
+      return { reference: reference.toString(), manifest }
     } finally {
       spinner.stop()
     }

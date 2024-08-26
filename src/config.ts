@@ -23,13 +23,6 @@ export const beeApiUrl: IOption<string> = {
   envKey: 'BEE_API_URL',
 }
 
-export const beeDebugApiUrl: IOption<string> = {
-  key: 'bee-debug-api-url',
-  default: 'http://localhost:1635',
-  description: 'URL of the Bee-client Debug API',
-  envKey: 'BEE_DEBUG_API_URL',
-}
-
 export const configFolder: IOption<string> = {
   key: 'config-folder',
   description: 'Path to the configuration folder that the CLI uses',
@@ -101,7 +94,6 @@ export const yes: IOption<string[]> = {
 
 export const optionParameters: IOption<unknown>[] = [
   beeApiUrl,
-  beeDebugApiUrl,
   configFolder,
   configFile,
   verbose,

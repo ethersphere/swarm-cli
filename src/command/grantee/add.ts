@@ -32,7 +32,7 @@ export class Add extends GranteeCommand implements LeafCommand {
     const fileContent = fs.readFileSync(this.path, 'utf8')
     const grantees = fileContent.split('\n')
 
-    const response = await this.bee.addGrantees(this.stamp, grantees)
+    const response = await this.bee.createGrantees(this.stamp, grantees)
     this.console.log(createKeyValue('Grantee reference', response.ref))
     this.console.log(createKeyValue('Grantee history reference', response.historyref))
   }

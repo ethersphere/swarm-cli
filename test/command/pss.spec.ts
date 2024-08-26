@@ -1,6 +1,6 @@
+import { System } from 'cafe-utility'
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { Receive } from '../../src/command/pss/receive'
-import { sleep } from '../../src/utils'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getWorkerPssAddress } from '../utility/address'
 import { getStampOption } from '../utility/stamp'
@@ -19,7 +19,7 @@ async function sendAndExpect(message: string): Promise<void> {
     '--timeout',
     '120000',
   ])
-  await sleep(1000)
+  await System.sleepMillis(1000)
   await callSend(message, topic)
   const { receivedMessage } = (await receiveCommand).runnable as Receive
   expect(receivedMessage).toBe(message)
@@ -68,7 +68,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       'test/testconfig/in.txt',
       ...getStampOption(),
     ])
-    await sleep(4000)
+    await System.sleepMillis(4000)
     expect(existsSync('test/testconfig/out.txt')).toBeTruthy()
     const messageFromFile = readFileSync('test/testconfig/out.txt', 'ascii')
     expect(messageFromFile).toBe('Message in a file')

@@ -20,7 +20,7 @@ export class Merge extends ManifestCommand implements LeafCommand {
     await super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      this.stamp = await pickStamp(this.bee, this.console)
     }
     const destinationNode = (await this.initializeNode(this.destination)).node
     const sourceNode = (await this.initializeNode(this.source)).node

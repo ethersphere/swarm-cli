@@ -1,5 +1,62 @@
 # Changelog
 
+### [2.13.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.13.0...v2.13.1) (2024-08-08)
+
+
+### Bug Fixes
+
+* support identity in feed print ([#526](https://www.github.com/ethersphere/swarm-cli/issues/526)) ([8f633c0](https://www.github.com/ethersphere/swarm-cli/commit/8f633c035ed2367cb3d789d90bfea0ce4e21ea4d))
+
+## [2.13.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.12.0...v2.13.0) (2024-06-26)
+
+
+### Features
+
+* print feed update references ([#522](https://www.github.com/ethersphere/swarm-cli/issues/522)) ([972c750](https://www.github.com/ethersphere/swarm-cli/commit/972c750edfa73accade0481ff8fd7794e1e17449))
+
+
+### Bug Fixes
+
+* do not require stamp for feed print ([#520](https://www.github.com/ethersphere/swarm-cli/issues/520)) ([01bc9b7](https://www.github.com/ethersphere/swarm-cli/commit/01bc9b7d1476000c6a85fd25eb68d679796e99dc))
+
+## [2.12.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.11.0...v2.12.0) (2024-06-26)
+
+
+### Features
+
+* add cheque withdraw-all command ([#519](https://www.github.com/ethersphere/swarm-cli/issues/519)) ([764f958](https://www.github.com/ethersphere/swarm-cli/commit/764f958f01efdbf2d934d0e49c8b735b18804426))
+* disambiguate xdai and xbzz values ([#511](https://www.github.com/ethersphere/swarm-cli/issues/511)) ([c0a5337](https://www.github.com/ethersphere/swarm-cli/commit/c0a53379cdb1e0558659f3e6d8386ebe5a4034c1))
+* improve stamp capacity listing ([#514](https://www.github.com/ethersphere/swarm-cli/issues/514)) ([cf776ab](https://www.github.com/ethersphere/swarm-cli/commit/cf776abac64d8755dbf89c227efaac3f6921f8a4))
+* print helpful message after topup and dilute ([#516](https://www.github.com/ethersphere/swarm-cli/issues/516)) ([391ca6f](https://www.github.com/ethersphere/swarm-cli/commit/391ca6f18e29cb0e0abc290bef961bd61e2a616c))
+* remove upload size warning ([#515](https://www.github.com/ethersphere/swarm-cli/issues/515)) ([fb11c19](https://www.github.com/ethersphere/swarm-cli/commit/fb11c1985657d2bb45c371386a85127fb2afd5ff))
+
+
+### Bug Fixes
+
+* do not error out on dev mode ttl ([#517](https://www.github.com/ethersphere/swarm-cli/issues/517)) ([6de29f9](https://www.github.com/ethersphere/swarm-cli/commit/6de29f993df6a819c8e6ef816a5c759157f3280f))
+* set immutable stamps as default ([#513](https://www.github.com/ethersphere/swarm-cli/issues/513)) ([55eacab](https://www.github.com/ethersphere/swarm-cli/commit/55eacabd33e340ef4e6a126c2714fdc4f67e44ff))
+
+## [2.11.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.10.0...v2.11.0) (2024-06-18)
+
+
+### Features
+
+* upgrade bee-js to 7.0.3 ([#505](https://www.github.com/ethersphere/swarm-cli/issues/505)) ([f4b24ac](https://www.github.com/ethersphere/swarm-cli/commit/f4b24acbce3e6e9ae783f29e234e9c999f4e60fc))
+
+## [2.10.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.9.0...v2.10.0) (2024-06-03)
+
+
+### Features
+
+* merge api ([#503](https://www.github.com/ethersphere/swarm-cli/issues/503)) ([0106e4d](https://www.github.com/ethersphere/swarm-cli/commit/0106e4de697dfe97dfcae42eff8d2c74755df410))
+
+## [2.9.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.8.0...v2.9.0) (2024-04-15)
+
+
+### Features
+
+* add redundancy options ([#487](https://www.github.com/ethersphere/swarm-cli/issues/487)) ([0452759](https://www.github.com/ethersphere/swarm-cli/commit/045275982ecba9caa07c9d3e2ac8d231a0711420))
+
 ## [2.8.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.7.0...v2.8.0) (2024-02-08)
 
 

@@ -24,11 +24,23 @@ export class Patch extends GranteeCommand implements LeafCommand {
   @Option(stampProperties)
   public stamp!: string
 
-  @Option({ key: 'reference', type: 'string', description: 'Encrypted grantee list reference with 128 characters length', length: 128, required: true})
-  public eref!: string;
+  @Option({
+    key: 'reference',
+    type: 'string',
+    description: 'Encrypted grantee list reference with 128 characters length',
+    length: 128,
+    required: true,
+  })
+  public eref!: string
 
-  @Option({ key: 'history', type: 'string', description: 'Swarm address reference to the ACT history entry', length: 64, required: true})
-  public history!: string;
+  @Option({
+    key: 'history',
+    type: 'string',
+    description: 'Swarm address reference to the ACT history entry',
+    length: 64,
+    required: true,
+  })
+  public history!: string
 
   public async run(): Promise<void> {
     await super.init()
