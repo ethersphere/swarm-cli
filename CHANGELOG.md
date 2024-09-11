@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.14.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.13.1...v2.14.0) (2024-09-11)
+
+
+### Features
+
+* allow setting default stamp with stamp env ([#530](https://www.github.com/ethersphere/swarm-cli/issues/530)) ([4067a19](https://www.github.com/ethersphere/swarm-cli/commit/4067a193a21bac9ae38b8e75a182fc07aa110f81))
+* update to bee-js 7.1.2 ([#528](https://www.github.com/ethersphere/swarm-cli/issues/528)) ([b00a6e9](https://www.github.com/ethersphere/swarm-cli/commit/b00a6e9b824bb13bcf2482f954118d92d46b6e67))
+
 ### [2.13.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.13.0...v2.13.1) (2024-08-08)
 
 
