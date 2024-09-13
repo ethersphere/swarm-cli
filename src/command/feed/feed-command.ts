@@ -92,6 +92,7 @@ export class FeedCommand extends RootCommand {
         wallet.getAddressString(),
       )
       const { reference } = await writer.upload(stamp, chunkReference as Reference)
+
       return { reference, manifest }
     } finally {
       spinner.stop()
