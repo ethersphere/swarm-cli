@@ -35,39 +35,17 @@ describeCommand(
     })
 
     it('should be possible with --topic in feed', async () => {
-      await invokeTestCli(['feed', 'print', '-t', TOPIC_HEX, '-i', 'topic', '-P', 'topic', ...getStampOption()])
+      await invokeTestCli(['feed', 'print', '-t', TOPIC_HEX, '-i', 'topic', '-P', 'topic'])
       expect(consoleMessages[0]).toContain('052ea901df6cdb4d5b2244ff46d0a4988f208541fe34beadc69906b86b4b2b29')
     })
 
     it('should be possible with --topic-string in feed', async () => {
-      await invokeTestCli([
-        'feed',
-        'print',
-        '-T',
-        'Awesome PSS Topic',
-        '-i',
-        'topic',
-        '-P',
-        'topic',
-        ...getStampOption(),
-      ])
+      await invokeTestCli(['feed', 'print', '-T', 'Awesome PSS Topic', '-i', 'topic', '-P', 'topic'])
       expect(consoleMessages[0]).toContain('052ea901df6cdb4d5b2244ff46d0a4988f208541fe34beadc69906b86b4b2b29')
     })
 
     it('should not be possible with both --topic and --topic-string in feed', async () => {
-      await invokeTestCli([
-        'feed',
-        'print',
-        '-t',
-        TOPIC_HEX,
-        '-T',
-        'Awesome PSS Topic',
-        '-i',
-        'topic',
-        '-P',
-        'topic',
-        ...getStampOption(),
-      ])
+      await invokeTestCli(['feed', 'print', '-t', TOPIC_HEX, '-T', 'Awesome PSS Topic', '-i', 'topic', '-P', 'topic'])
       expect(getLastMessage()).toContain('[topic] and [topic-string] are incompatible, please only specify one')
     })
 

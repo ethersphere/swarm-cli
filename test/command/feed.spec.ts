@@ -54,7 +54,7 @@ describeCommand(
         ...getStampOption(),
       ])
       // print with address
-      await invokeTestCli(['feed', 'print', '--address', address, '--quiet', ...getStampOption()])
+      await invokeTestCli(['feed', 'print', '--address', address, '--quiet'])
       expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
     })
 
@@ -93,7 +93,7 @@ describeCommand(
         'test',
         ...getStampOption(),
       ])
-      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test', ...getStampOption()])
+      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test'])
       expect(getLastMessage()).toContain('Number of Updates')
       expect(getLastMessage()).toContain('1')
       await invokeTestCli([
@@ -106,7 +106,7 @@ describeCommand(
         'test',
         ...getStampOption(),
       ])
-      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test', ...getStampOption()])
+      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test'])
       expect(getLastMessage()).toContain('Number of Updates')
       expect(getLastMessage()).toContain('2')
     })
