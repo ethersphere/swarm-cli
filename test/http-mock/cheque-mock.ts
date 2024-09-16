@@ -37,6 +37,14 @@ export function createChequeMockHttpServer(port: number): Server {
     if (request.url === '/node') {
       response.end(JSON.stringify(nodeInfo))
     }
+
+    if (request.url === '/stake') {
+      response.end(
+        JSON.stringify({
+          stakedAmount: '0',
+        }),
+      )
+    }
   })
   server.listen(port)
 
