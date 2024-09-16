@@ -62,7 +62,7 @@ describeCommand(
       await System.sleepMillis(11_000)
     })
 
-    it.skip('should print custom message when there are no stamps', async () => {
+    it('should print custom message when there are no stamps', async () => {
       await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:11633'])
       expect(getNthLastMessage(4)).toContain('You do not have any stamps.')
     })
@@ -135,7 +135,7 @@ describeCommand(
       await System.sleepMillis(11_000)
     })
 
-    it.skip('should only be able to dilute stamp with greater depth', async () => {
+    it('should only be able to dilute stamp with greater depth', async () => {
       const execution = await invokeTestCli([
         'stamp',
         'buy',
@@ -162,7 +162,7 @@ describeCommand(
       expect(getNthLastMessage(3)).toContain('Dilute finished')
     })
 
-    it.skip('should top up stamp', async () => {
+    it('should top up stamp', async () => {
       const execution = await invokeTestCli([
         'stamp',
         'buy',
