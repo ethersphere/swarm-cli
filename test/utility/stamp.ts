@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { Bee } from '@ethersphere/bee-js'
+import { Numbers } from 'cafe-utility'
 
 export const getOrBuyStamp = async (): Promise<string> => {
   const bee = new Bee('http://localhost:1633')
@@ -13,7 +14,7 @@ export const getOrBuyStamp = async (): Promise<string> => {
   }
 
   console.log('Buying new stamp.')
-  const newStamp = await bee.createPostageBatch('500000000', 20, { waitForUsable: true })
+  const newStamp = await bee.createPostageBatch(Numbers.make('2b').toString(), 22, { waitForUsable: true })
   console.log('Bought stamp: ', newStamp)
 
   return newStamp
