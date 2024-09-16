@@ -10,6 +10,10 @@ export function createChequeMockHttpServer(port: number): Server {
   const server = createServer((request, response) => {
     response.writeHead(200, { 'Content-Type': 'application/json' })
 
+    if (request.url === '/') {
+      response.end('Ethereum Swarm Bee')
+    }
+
     if (request.url === '/health') {
       response.end(JSON.stringify(health))
     }
