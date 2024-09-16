@@ -93,10 +93,11 @@ const lastCashoutCheque1 = {
 const balance = { totalBalance: 100026853000000000, availableBalance: 100018560000000000 }
 
 const wallet = {
-  bzz: '3904697022414848',
-  xDai: '96106482372132023',
+  bzzBalance: '3904697022414848',
+  nativeTokenBalance: '96106482372132023',
   chainID: 100,
-  contractAddress: '0xb48b45c9254c98a122bd42d0f674318ba154e071',
+  chequebookContractAddress: '0xb48b45c9254c98a122bd42d0f674318ba154e071',
+  walletAddress: '0xb48b45c9254c98a122bd42d0f674318ba154e071',
 }
 
 const nodeInfo = {
