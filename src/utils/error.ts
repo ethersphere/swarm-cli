@@ -1,3 +1,4 @@
+import { Objects } from 'cafe-utility'
 import { getFieldOrNull } from '.'
 import { FORMATTED_ERROR } from '../command/root-command/printer'
 import { printer } from '../printer'
@@ -18,6 +19,12 @@ function hasStatusCode(error: any, statusCode: number): boolean {
 }
 
 function isNotFoundError(error: unknown): boolean {
+  const message = Objects.getDeep(error, 'message')
+
+  if (typeof message === 'string' && message.includes('status code 404')) {
+    return true
+  }
+
   return hasStatusCode(error, 404)
 }
 
@@ -69,6 +76,7 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
 }
 
 function isGenericErrorPattern(errorName: string, message: string | unknown): boolean {
+  console.log({ errorName, message })
   if (!message || typeof message !== 'string') {
     return true
   }
