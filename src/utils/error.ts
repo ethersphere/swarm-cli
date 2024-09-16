@@ -76,7 +76,6 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
 }
 
 function isGenericErrorPattern(errorName: string, message: string | unknown): boolean {
-  console.log({ errorName, message })
   if (!message || typeof message !== 'string') {
     return true
   }

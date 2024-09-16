@@ -293,12 +293,12 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should handle error for 404 download hash', async () => {
     await invokeTestCli(['manifest', 'download', '1'.repeat(64)])
-    expect(consoleMessages[0]).toContain('Request failed with status code 404')
+    expect(consoleMessages[0]).toContain('Bee responded with HTTP 404 (Not Found).')
   })
 
   it('should handle error for 404 list hash', async () => {
     await invokeTestCli(['manifest', 'list', '1'.repeat(64)])
-    expect(consoleMessages[0]).toContain('Request failed with status code 404')
+    expect(consoleMessages[0]).toContain('Bee responded with HTTP 404 (Not Found).')
   })
 
   it('should handle error for invalid download path', async () => {
