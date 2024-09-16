@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
 
     steps:
       - name: Checkout
@@ -44,21 +44,12 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-${{ matrix.node }}-${{ env.cache-name }}-
             ${{ runner.OS }}-node-${{ matrix.node }}-
+
       - name: Install npm deps
-        if: steps.cache-npm.outputs.cache-hit != 'true'
-        run: npm ci
+        run: npm install -g npm && npm ci && npm install -g @fairdatasociety/fdp-play
 
-      # Start Bee Factory environment
-      - name: Start Bee Factory environment
-        if: matrix.node-version != '18.x' && matrix.node-version != '19.x'
-        run: npm run bee -- --verbose --detach
+      - name: Start fdp-play environment
+        run: npm run bee
 
-      # Start Bee Factory environment for Node 18 and 19
-      - name: Start Bee Factory environment for Node 18 and 19
-        if: matrix.node-version == '18.x' || matrix.node-version == '19.x'
-        env:
-          NODE_OPTIONS: '--no-experimental-fetch'
-        run: npm run bee -- --verbose --detach
-
-      - name: Run node tests
+      - name: Tests
         run: npm run test
