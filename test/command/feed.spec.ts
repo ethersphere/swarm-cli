@@ -33,7 +33,6 @@ describeCommand(
         '--password',
         'test',
         '--quiet',
-        ...getStampOption(),
       ])
       expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
     })

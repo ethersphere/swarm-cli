@@ -13,7 +13,6 @@ describeCommand('--curl flag', ({ consoleMessages }) => {
       [
         'curl -X POST "http://localhost:1633/bzz?name=index.html" ',
         `-H "swarm-postage-batch-id: ${getStampOption()[1]}`,
-        '-H "swarm-encrypt: true"',
       ],
     ])
     expect(consoleMessages.every(x => !x.includes('swarm-encrypt'))).toBeTruthy()
