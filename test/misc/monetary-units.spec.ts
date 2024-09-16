@@ -72,7 +72,7 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
     const pattern = [
       ['Wallet'],
       ['xBZZ', '0.3904'],
-      ['xDAI', '0.6339'],
+      ['xDAI', '0.0961'],
       ['Chequebook'],
       ['Available xBZZ', '10.001856'],
       ['Total xBZZ', '10.002685'],
