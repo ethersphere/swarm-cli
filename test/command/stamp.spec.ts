@@ -36,7 +36,7 @@ describeCommand(
     })
 
     it('should buy stamp', async () => {
-      await invokeTestCli(['stamp', 'buy', '--amount', '100000', '--depth', '20', '--yes'])
+      await invokeTestCli(['stamp', 'buy', '--amount', '600_000_000', '--depth', '20', '--yes'])
       expect(getLastMessage()).toContain('Stamp ID:')
       await System.sleepMillis(11_000)
     })
@@ -46,7 +46,7 @@ describeCommand(
         'stamp',
         'buy',
         '--amount',
-        '100000',
+        '600_000_000',
         '--depth',
         '20',
         '--immutable',
