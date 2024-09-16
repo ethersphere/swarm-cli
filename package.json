@@ -31,7 +31,7 @@
     "start": "ts-node src/index.ts",
     "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
-    "bee": "npx fdp-play start --detach --fresh"
+    "bee": "npx fdp-play@3.2.0 start --detach --fresh"
   },
   "engines": {
     "node": ">=14.0.0",
