@@ -1,6 +1,11 @@
 import inquirer from 'inquirer'
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 describeCommand(
   'Using Feed Commands with Prompts',
@@ -14,8 +19,8 @@ describeCommand(
         .mockResolvedValueOnce({ value: 'main' })
         .mockResolvedValueOnce({ value: 'secret' })
       await invokeTestCli(['feed', 'upload', '-v', 'README.md'])
+      expect(consoleMessages).toMatchLinesInOrder([['Successfully uploaded to feed.']])
       expect(inquirer.prompt).toHaveBeenCalledTimes(3)
-      expect(getLastMessage()).toContain('Successfully uploaded to feed.')
     })
 
     it('feed upload should prompt for identity when it is misspelled', async () => {
@@ -29,12 +34,12 @@ describeCommand(
       jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: 'secret' })
       await invokeTestCli(['feed', 'upload', 'README.md', '-v', '-i', 'main', ...getStampOption()])
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
-      expect(getLastMessage()).toContain('Successfully uploaded to feed.')
+      expect(consoleMessages).toMatchLinesInOrder([['Successfully uploaded to feed.']])
     })
 
     it('feed upload should fail when running in quiet mode and stamp is missing', async () => {
       await invokeTestCli(['feed', 'upload', 'README.md', '-q', '-i', 'main', '-P', 'secret'])
-      expect(getLastMessage()).toContain('Required option not provided: --stamp')
+      expect(consoleMessages).toMatchLinesInOrder([['Required option not provided: --stamp']])
     })
 
     it('feed upload should fail when running in quiet mode and identity is missing', async () => {

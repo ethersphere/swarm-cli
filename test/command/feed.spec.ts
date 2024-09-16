@@ -1,6 +1,11 @@
 import { Upload } from '../../src/command/upload'
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 describeCommand(
   'Test Feed command',
@@ -93,8 +98,7 @@ describeCommand(
         ...getStampOption(),
       ])
       await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test'])
-      expect(getLastMessage()).toContain('Number of Updates')
-      expect(getLastMessage()).toContain('1')
+      expect(consoleMessages).toMatchLinesInOrder([['Number of Updates', '1']])
       await invokeTestCli([
         'feed',
         'upload',
@@ -106,8 +110,10 @@ describeCommand(
         ...getStampOption(),
       ])
       await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test'])
-      expect(getLastMessage()).toContain('Number of Updates')
-      expect(getLastMessage()).toContain('2')
+      expect(consoleMessages).toMatchLinesInOrder([
+        ['Number of Updates', '1'],
+        ['Number of Updates', '2'],
+      ])
     })
   },
   { configFileName: 'feed' },
