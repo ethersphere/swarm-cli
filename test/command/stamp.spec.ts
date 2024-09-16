@@ -18,8 +18,8 @@ describeCommand(
     })
 
     it('should show a specific stamp', async () => {
-      await invokeTestCli(['stamp', 'show', Types.asString(process.env.STAMP)])
-      const pattern = [['Stamp ID', Types.asString(process.env.STAMP)], ['Usage'], ['Capacity'], ['TTL']]
+      await invokeTestCli(['stamp', 'show', Types.asString(process.env.TEST_STAMP)])
+      const pattern = [['Stamp ID', Types.asString(process.env.TEST_STAMP)], ['Usage'], ['Capacity'], ['TTL']]
       expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 

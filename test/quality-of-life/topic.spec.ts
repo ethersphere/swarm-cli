@@ -10,7 +10,7 @@ expect.extend({
 
 describeCommand(
   'Specifying Topics',
-  ({ consoleMessages, getLastMessage }) => {
+  ({ consoleMessages }) => {
     beforeAll(async () => {
       await invokeTestCli(['identity', 'create', 'topic', '-P', 'topic'])
       await invokeTestCli([

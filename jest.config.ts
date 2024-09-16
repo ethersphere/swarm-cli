@@ -18,8 +18,8 @@ export default async (): Promise<Config.InitialOptions> => {
     process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11633')
   }
 
-  if (!process.env.STAMP) {
-    process.env.STAMP = await getOrBuyStamp()
+  if (!process.env.TEST_STAMP) {
+    process.env.TEST_STAMP = await getOrBuyStamp()
   }
 
   return {

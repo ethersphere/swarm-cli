@@ -20,4 +20,4 @@ export const getOrBuyStamp = async (): Promise<string> => {
   return newStamp
 }
 
-export const getStampOption = (): string[] => ['--stamp', process.env.STAMP || '']
+export const getStampOption = (): string[] => ['--stamp', process.env.TEST_STAMP || '']
