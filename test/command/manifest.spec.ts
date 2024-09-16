@@ -128,8 +128,8 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(consoleMessages).toMatchLinesInOrder([
       ['cheque-mock.ts', 'UNCHANGED'],
       ['address.ts', 'REMOVED'],
-      ['stamp.ts', 'REMOVED'],
       ['index.ts', 'REMOVED'],
+      ['stamp.ts', 'REMOVED'],
     ])
   })
 
