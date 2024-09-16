@@ -80,7 +80,7 @@ describeCommand(
         '--depth',
         '20',
         '--amount',
-        '59k',
+        '555m',
         '--wait-usable',
         '--yes',
         '--label',
@@ -101,7 +101,7 @@ describeCommand(
 
     it('should accept estimate cost prompt', async () => {
       jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: true })
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1'])
+      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1b'])
       const command = execution.runnable as Buy
       expect(command.yes).toBe(true)
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
@@ -110,7 +110,7 @@ describeCommand(
 
     it('should reject estimate cost prompt', async () => {
       jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1'])
+      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1b'])
       const command = execution.runnable as Buy
       expect(command.yes).toBe(false)
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
@@ -122,7 +122,7 @@ describeCommand(
         'stamp',
         'buy',
         '--amount',
-        '1_000K',
+        '600_000K',
         '--depth',
         '17',
         '--gas-price',
