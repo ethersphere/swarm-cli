@@ -19,6 +19,10 @@ export class BzzAddress {
     const parts = url.split('/')
     this.hash = parts[0].toLowerCase()
 
+    if (this.hash.startsWith('0x')) {
+      this.hash = this.hash.slice(2)
+    }
+
     if (!/[a-z0-9]{64,128}/.test(this.hash)) {
       throw new CommandLineError('Invalid BZZ hash: expected 64 or 128 long hexadecimal hash')
     }
