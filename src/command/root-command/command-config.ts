@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { homedir, platform } from 'os'
 import { join } from 'path'
 import { exit } from 'process'
-import { beeApiUrl, beeDebugApiUrl } from '../../config'
+import { beeApiUrl } from '../../config'
 import { Identity } from '../../service/identity/types'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CommandLog } from './command-log'
@@ -14,15 +14,10 @@ import { CommandLog } from './command-log'
  * `optionKey` is the kebab-case variant of the argument used in the parser, a.k.a. the key,
  * `propertyKey` is the camelCase variant used in TypeScript command classes, a.k.a. the property.
  */
-export const CONFIG_OPTIONS: ConfigOption[] = [
-  { optionKey: 'bee-api-url', propertyKey: 'beeApiUrl' },
-  { optionKey: 'bee-debug-api-url', propertyKey: 'beeDebugApiUrl' },
-]
+export const CONFIG_OPTIONS: ConfigOption[] = [{ optionKey: 'bee-api-url', propertyKey: 'beeApiUrl' }]
 
 export interface Config {
   beeApiUrl: string
-
-  beeDebugApiUrl: string
 
   identities: { [name: string]: Identity }
 }
@@ -40,7 +35,6 @@ export class CommandConfig {
     this.console = console
     this.config = {
       beeApiUrl: beeApiUrl.default || '',
-      beeDebugApiUrl: beeDebugApiUrl.default || '',
       identities: {},
     }
     this.configFolderPath = this.getConfigFolderPath(appName, configFolder)

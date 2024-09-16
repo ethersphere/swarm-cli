@@ -1,4 +1,5 @@
-import { NodeAddresses } from '@ethersphere/bee-js'
+import { ChequebookAddressResponse, NodeAddresses } from '@ethersphere/bee-js'
+import { Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
 import { createKeyValue } from '../utils/text'
@@ -11,13 +12,23 @@ export class Addresses extends RootCommand implements LeafCommand {
 
   public nodeAddresses!: NodeAddresses
 
-  public chequebookAddress!: string
-
   public async run(): Promise<void> {
     await super.init()
 
-    this.nodeAddresses = await this.beeDebug.getNodeAddresses()
-    this.chequebookAddress = (await this.beeDebug.getChequebookAddress()).chequebookAddress
+    this.nodeAddresses = await this.bee.getNodeAddresses()
+    const wrappedChequebookAddress = await this.bee
+      .getChequebookAddress()
+      .then(x => {
+        return Optional.of(x)
+      })
+      .catch(() => {
+        this.console.error('Could not fetch chequebook address')
+        this.console.error('This is expected if chequebook-enable: false is set in the configuration')
+        this.console.error('or when the Bee node is still syncing with the blockchain')
+        this.console.log('')
+
+        return Optional.empty<ChequebookAddressResponse>()
+      })
 
     const longest = 'PSS Public Key'.length
     this.console.log(chalk.bold('Node Addresses'))
@@ -27,16 +38,21 @@ export class Addresses extends RootCommand implements LeafCommand {
     this.console.log(createKeyValue('PSS Public Key', this.nodeAddresses.pssPublicKey, longest))
     this.console.log(createKeyValue('Public Key', this.nodeAddresses.publicKey, longest))
     this.console.log(createKeyValue('Underlay', this.nodeAddresses.underlay.join(' '), longest))
-    this.console.log('')
-    this.console.log(chalk.bold('Chequebook Address'))
-    this.console.divider()
-    this.console.log(this.chequebookAddress)
+
+    wrappedChequebookAddress.ifPresent(chequebookAddress => {
+      this.console.log('')
+      this.console.log(chalk.bold('Chequebook Address'))
+      this.console.divider()
+      this.console.log(chequebookAddress.chequebookAddress)
+    })
 
     this.console.quiet('Ethereum ' + this.nodeAddresses.ethereum)
     this.console.quiet('Overlay ' + this.nodeAddresses.overlay)
     this.console.quiet('PSS_Public_Key ' + this.nodeAddresses.pssPublicKey)
     this.console.quiet('Public_Key ' + this.nodeAddresses.publicKey)
     this.console.quiet('Underlay ' + this.nodeAddresses.underlay)
-    this.console.quiet('Chequebook ' + this.chequebookAddress)
+    wrappedChequebookAddress.ifPresent(chequebookAddress => {
+      this.console.quiet('Chequebook ' + chequebookAddress.chequebookAddress)
+    })
   }
 }

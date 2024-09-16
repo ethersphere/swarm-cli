@@ -1,11 +1,9 @@
-import { BigNumber } from 'bignumber.js'
+import { Numbers } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
-import { toSignificantDigits } from '../utils'
+import { createSpinner } from '../utils/spinner'
 import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
-import { createSpinner } from '../utils/spinner'
 import { VerbosityLevel } from './root-command/command-log'
-import { PLURConversionRate } from '../utils/conversions'
 
 const MIN_INITIAL_STAKE_PLUR = BigInt('100000000000000000')
 const MIN_INITIAL_STAKE_BZZ = 10
@@ -24,19 +22,19 @@ export class Stake extends RootCommand implements LeafCommand {
   public amount!: bigint | undefined
 
   private async deposit(amount: bigint): Promise<void> {
-    const currentStake = BigInt(await this.beeDebug.getStake())
+    const currentStake = BigInt(await this.bee.getStake())
 
     if (!currentStake && amount < MIN_INITIAL_STAKE_PLUR) {
       if (this.quiet) {
-        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} BZZ!`)
+        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} xBZZ!`)
       }
 
       if (
         !(await this.console.confirm(
-          `Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} BZZ. Do you want to increase the deposit to ${MIN_INITIAL_STAKE_BZZ} BZZ?`,
+          `Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} xBZZ. Do you want to increase the deposit to ${MIN_INITIAL_STAKE_BZZ} xBZZ?`,
         ))
       ) {
-        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} BZZ!`)
+        throw new Error(`Insufficient deposit! Initial deposit has to be at least ${MIN_INITIAL_STAKE_BZZ} xBZZ!`)
       }
 
       amount = MIN_INITIAL_STAKE_PLUR
@@ -59,7 +57,7 @@ export class Stake extends RootCommand implements LeafCommand {
     }
 
     try {
-      await this.beeDebug.depositStake(amount.toString())
+      await this.bee.depositStake(amount.toString())
       spinner.stop()
 
       this.console.log('PLUR successfully staked!')
@@ -76,10 +74,9 @@ export class Stake extends RootCommand implements LeafCommand {
       await this.deposit(this.amount)
     }
 
-    const stake = await this.beeDebug.getStake()
-    const stakeBN = BigNumber(stake).dividedBy(PLURConversionRate)
+    const stake = await this.bee.getStake()
 
-    this.console.log(createKeyValue('Staked BZZ', toSignificantDigits(stakeBN)))
-    this.console.quiet(toSignificantDigits(stakeBN))
+    this.console.log(createKeyValue('Staked xBZZ', Numbers.fromDecimals(stake, 16)))
+    this.console.quiet(Numbers.fromDecimals(stake, 16))
   }
 }

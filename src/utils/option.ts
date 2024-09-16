@@ -2,6 +2,7 @@ import { IOption } from 'furious-commander'
 
 export const stampProperties: IOption = {
   key: 'stamp',
+  envKey: 'STAMP',
   type: 'hex-string',
   length: 64,
   description: 'ID of the postage stamp to use',

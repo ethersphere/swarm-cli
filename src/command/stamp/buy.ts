@@ -1,6 +1,6 @@
 import { Utils } from '@ethersphere/bee-js'
+import { Dates } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
-import { secondsToDhms } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
 import { Storage } from '../../utils/storage'
 import { createKeyValue } from '../../utils/text'
@@ -39,7 +39,7 @@ export class Buy extends StampCommand implements LeafCommand {
   })
   public gasPrice!: bigint
 
-  @Option({ key: 'immutable', description: 'Disable stamp reuse', type: 'boolean' })
+  @Option({ key: 'immutable', description: 'Disable stamp reuse', type: 'boolean', default: true })
   public immutable!: boolean
 
   @Option({ key: 'label', description: 'Label of the postage stamp' })
@@ -63,9 +63,9 @@ export class Buy extends StampCommand implements LeafCommand {
     const estimatedCapacity = new Storage(Utils.getStampMaximumCapacityBytes(this.depth))
     const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount))
 
-    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} BZZ`))
+    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} xBZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity.toString()))
-    this.console.log(createKeyValue('Estimated TTL', secondsToDhms(estimatedTtl)))
+    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl)))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (this.immutable) {
@@ -93,7 +93,7 @@ export class Buy extends StampCommand implements LeafCommand {
     }
 
     try {
-      const batchId = await this.beeDebug.createPostageBatch(this.amount.toString(), this.depth, {
+      const batchId = await this.bee.createPostageBatch(this.amount.toString(), this.depth, {
         label: this.label,
         gasPrice: this.gasPrice?.toString(),
         immutableFlag: this.immutable,

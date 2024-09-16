@@ -15,7 +15,7 @@ export class Create extends ManifestCommand implements LeafCommand {
     await super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      this.stamp = await pickStamp(this.bee, this.console)
     }
     const node = new MantarayNode()
     await this.saveAndPrintNode(node, this.stamp)

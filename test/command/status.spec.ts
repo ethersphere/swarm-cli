@@ -24,21 +24,15 @@ describeCommand('Test Status command', ({ consoleMessages }) => {
     expect(consoleMessages).toMatchLinesInOrder(pattern)
   })
 
-  it('should print when debug api is unavailable', async () => {
-    await invokeTestCli(['status', '--bee-debug-api-url', 'http://localhost:14999'])
-    const pattern = [['Debug API'], ['[FAILED]']]
-    expect(consoleMessages).toMatchLinesInOrder(pattern)
-  })
-
-  it('should print api and debug api connectivity', async () => {
+  it('should print api connectivity', async () => {
     await invokeTestCli(['status'])
-    const pattern = [['API'], ['[OK]'], ['Debug API'], ['[OK]']]
+    const pattern = [['API'], ['[OK]']]
     expect(consoleMessages).toMatchLinesInOrder(pattern)
   })
 
   it('should print bee info', async () => {
     await invokeTestCli(['status'])
-    const pattern = [['API'], ['Debug API'], ['Version'], ['Mode']]
+    const pattern = [['API'], ['Version'], ['Mode']]
     expect(consoleMessages).toMatchLinesInOrder(pattern)
   })
 
