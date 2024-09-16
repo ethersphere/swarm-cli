@@ -90,7 +90,7 @@ const lastCashoutCheque1 = {
   result: { recipient: '0x4f16b90d43aa1f9fd3c2fe17dacd9b21417a4134', lastPayout: 0, bounced: false },
 }
 
-const balance = { totalBalance: 100026853000000000, availableBalance: 100018560000000000 }
+const balance = { totalBalance: '100026853000000000', availableBalance: '100018560000000000' }
 
 const wallet = {
   bzzBalance: '3904697022414848',
