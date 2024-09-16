@@ -4,8 +4,13 @@ import { ManifestCommand } from '../../src/command/manifest/manifest-command'
 import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
 import { readdirDeepAsync } from '../../src/utils'
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 async function runAndGetManifest(argv: string[]): Promise<string> {
   if (['create', 'add', 'sync', 'merge', 'remove'].includes(argv[1])) {
@@ -30,7 +35,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     srcHash = (invocation.runnable as Upload).hash
   })
 
-  it.skip('should add file', async () => {
+  it('should add file', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md'])
     consoleMessages.length = 0
@@ -44,7 +49,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('/bytes')).toBeTruthy()
   })
 
-  it.skip('should add folder', async () => {
+  it('should add folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'test/utility'])
     consoleMessages.length = 0
@@ -54,7 +59,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('stamp.ts')).toBeTruthy()
   })
 
-  it.skip('should add file with different name when using --as', async () => {
+  it('should add file with different name when using --as', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md', '--as', 'docs/README.txt'])
     consoleMessages.length = 0
@@ -63,7 +68,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('docs/README.txt')).toBeTruthy()
   })
 
-  it.skip('should handle both --as and --folder in add command', async () => {
+  it('should handle both --as and --folder in add command', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash + '/misc', 'README.md', '--as', 'docs/README.txt'])
     consoleMessages.length = 0
@@ -71,7 +76,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('misc/docs/README.txt')).toBeTruthy()
   })
 
-  it.skip('should remove file', async () => {
+  it('should remove file', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md'])
     consoleMessages.length = 0
@@ -83,7 +88,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('README.md')).toBeFalsy()
   })
 
-  it.skip('should remove folder', async () => {
+  it('should remove folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md'])
     hash = await runAndGetManifest(['manifest', 'add', hash + '/utils', 'test/utility'])
@@ -100,31 +105,35 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('utils')).toBeFalsy()
   })
 
-  it.skip('should sync folder', async () => {
+  it('should sync folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(hasMessageContaining('new -> address.ts')).toBeTruthy()
-    expect(hasMessageContaining('new -> index.ts')).toBeTruthy()
-    expect(hasMessageContaining('new -> stamp.ts')).toBeTruthy()
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['address.ts', 'NEW'],
+      ['stamp.ts', 'NEW'],
+      ['index.ts', 'NEW'],
+    ])
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(hasMessageContaining('ok -> address.ts')).toBeTruthy()
-    expect(hasMessageContaining('ok -> index.ts')).toBeTruthy()
-    expect(hasMessageContaining('ok -> stamp.ts')).toBeTruthy()
-    expect(hasMessageContaining('new ->')).toBeFalsy()
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['address.ts', 'UNCHANGED'],
+      ['stamp.ts', 'UNCHANGED'],
+      ['index.ts', 'UNCHANGED'],
+    ])
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock'])
-    expect(hasMessageContaining('new -> cheque-mock.ts')).toBeTruthy()
-    expect(hasMessageContaining('removed ->')).toBeFalsy()
+    expect(consoleMessages).toMatchLinesInOrder([['cheque-mock.ts', 'NEW']])
     consoleMessages.length = 0
     await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock', '--remove'])
-    expect(hasMessageContaining('ok -> cheque-mock.ts')).toBeTruthy()
-    expect(hasMessageContaining('removed -> address.ts')).toBeTruthy()
-    expect(hasMessageContaining('removed -> index.ts')).toBeTruthy()
-    expect(hasMessageContaining('removed -> stamp.ts')).toBeTruthy()
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['cheque-mock.ts', 'UNCHANGED'],
+      ['address.ts', 'REMOVED'],
+      ['index.ts', 'REMOVED'],
+      ['stamp.ts', 'REMOVED'],
+    ])
   })
 
-  it.skip('should list single file', async () => {
+  it('should list single file', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
@@ -132,7 +141,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(consoleMessages).toHaveLength(1)
   })
 
-  it.skip('should list folder', async () => {
+  it('should list folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
@@ -140,23 +149,34 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(consoleMessages).toHaveLength(5)
   })
 
-  it.skip('should download single file', async () => {
+  it('should download single file', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss/index.ts`, 'test/data/4'])
-    expect(consoleMessages).toHaveLength(1)
+    expect(consoleMessages).toMatchLinesInOrder([['command/pss/index.ts'], ['OK']])
   })
 
-  it.skip('should download folder via bzz link', async () => {
+  it('should download folder via bzz link', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss`, 'test/data/4'])
-    expect(consoleMessages).toHaveLength(5)
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['command/pss/index.ts'],
+      ['OK'],
+      ['command/pss/pss-command.ts'],
+      ['OK'],
+      ['command/pss/receive.ts'],
+      ['OK'],
+      ['command/pss/send.ts'],
+      ['OK'],
+      ['command/pss/subscribe.ts'],
+      ['OK'],
+    ])
   })
 
-  it.skip('should download folder', async () => {
+  it('should download folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash + '/test/utility', 'test/utility'])
     consoleMessages.length = 0
@@ -166,7 +186,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(statSync('test/data/1/test/utility/stamp.ts')).toBeTruthy()
   })
 
-  it.skip('should download only the specified folder', async () => {
+  it('should download only the specified folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'add', hash, 'README.md'])
     hash = await runAndGetManifest(['manifest', 'add', hash + '/utils', 'test/utility'])
@@ -175,7 +195,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(entries).toHaveLength(3) // instead of 4
   })
 
-  it.skip('should merge manifests', async () => {
+  it('should merge manifests', async () => {
     let hash1 = await runAndGetManifest(['manifest', 'create'])
     hash1 = await runAndGetManifest(['manifest', 'add', hash1, 'README.md'])
     let hash2 = await runAndGetManifest(['manifest', 'create'])
@@ -189,7 +209,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('stamp.ts')).toBeTruthy()
   })
 
-  it.skip('should merge manifests and overwrite destination', async () => {
+  it('should merge manifests and overwrite destination', async () => {
     writeFileSync('test/data/alpha.txt', '1')
     writeFileSync('test/data/bravo.txt', '2')
     let hash1 = await runAndGetManifest(['manifest', 'create'])
@@ -204,15 +224,15 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(readFileSync('test/data/3/bravo.txt').toString()).toBe('1')
   })
 
-  it('should list feed content', async () => {
+  it.skip('should list feed content', async () => {
     const identityName = `feed-resolve-test-${Date.now()}`
     await invokeTestCli(['identity', 'create', identityName, '--only-keypair'])
     const invocation = await invokeTestCli([
       'feed',
       'upload',
+      'README.md',
       '--identity',
       identityName,
-      'README.md',
       ...getStampOption(),
     ])
     const command = invocation.runnable as unknown as FeedUpload
@@ -293,12 +313,12 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should handle error for 404 download hash', async () => {
     await invokeTestCli(['manifest', 'download', '1'.repeat(64)])
-    expect(consoleMessages[0]).toContain('Not Found')
+    expect(consoleMessages[0]).toContain('Bee responded with HTTP 404 (Not Found).')
   })
 
   it('should handle error for 404 list hash', async () => {
     await invokeTestCli(['manifest', 'list', '1'.repeat(64)])
-    expect(consoleMessages[0]).toContain('Not Found')
+    expect(consoleMessages[0]).toContain('Bee responded with HTTP 404 (Not Found).')
   })
 
   it('should handle error for invalid download path', async () => {
