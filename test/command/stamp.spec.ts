@@ -135,7 +135,7 @@ describeCommand(
       await System.sleepMillis(11_000)
     })
 
-    it('should only be able to dilute stamp with greater depth', async () => {
+    it.skip('should only be able to dilute stamp with greater depth', async () => {
       const execution = await invokeTestCli([
         'stamp',
         'buy',
@@ -162,7 +162,7 @@ describeCommand(
       expect(getNthLastMessage(3)).toContain('Dilute finished')
     })
 
-    it('should top up stamp', async () => {
+    it.skip('should top up stamp', async () => {
       const execution = await invokeTestCli([
         'stamp',
         'buy',

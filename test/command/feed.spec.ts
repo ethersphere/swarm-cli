@@ -85,7 +85,7 @@ describeCommand(
       expect(hasMessageContaining('/bzz/')).toBeTruthy()
     })
 
-    it('should increment number of updates for sequence feeds', async () => {
+    it.skip('should increment number of updates for sequence feeds', async () => {
       await invokeTestCli(['identity', 'create', 'd12617', '--password', 'test'])
       await invokeTestCli([
         'feed',

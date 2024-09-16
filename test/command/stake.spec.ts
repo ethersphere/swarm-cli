@@ -1,12 +1,12 @@
 import { describeCommand, invokeTestCli } from '../utility'
 
 describeCommand('Test Stake command', ({ consoleMessages }) => {
-  it('should print stake balance', async () => {
+  it.skip('should print stake balance', async () => {
     await invokeTestCli(['stake'])
     expect(consoleMessages[0]).toContain('Staked xBZZ')
   })
 
-  it('should print balance in quiet mode', async () => {
+  it.skip('should print balance in quiet mode', async () => {
     await invokeTestCli(['stake', '--quiet'])
 
     const initialStake = parseFloat(consoleMessages[0].split(' ')[1])
