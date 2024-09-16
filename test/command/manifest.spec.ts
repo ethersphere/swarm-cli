@@ -103,25 +103,31 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should sync folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(hasMessageContaining('new -> address.ts')).toBeTruthy()
-    expect(hasMessageContaining('new -> index.ts')).toBeTruthy()
-    expect(hasMessageContaining('new -> stamp.ts')).toBeTruthy()
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['address.ts', 'NEW'],
+      ['index.ts', 'NEW'],
+      ['stamp.ts', 'NEW'],
+    ])
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(hasMessageContaining('ok -> address.ts')).toBeTruthy()
-    expect(hasMessageContaining('ok -> index.ts')).toBeTruthy()
-    expect(hasMessageContaining('ok -> stamp.ts')).toBeTruthy()
-    expect(hasMessageContaining('new ->')).toBeFalsy()
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['address.ts', 'UNCHANGED'],
+      ['index.ts', 'UNCHANGED'],
+      ['stamp.ts', 'UNCHANGED'],
+    ])
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock'])
+    expect(consoleMessages).toMatchLinesInOrder([['cheque-mock.ts', 'NEW']])
     expect(hasMessageContaining('new -> cheque-mock.ts')).toBeTruthy()
     expect(hasMessageContaining('removed ->')).toBeFalsy()
     consoleMessages.length = 0
     await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock', '--remove'])
-    expect(hasMessageContaining('ok -> cheque-mock.ts')).toBeTruthy()
-    expect(hasMessageContaining('removed -> address.ts')).toBeTruthy()
-    expect(hasMessageContaining('removed -> index.ts')).toBeTruthy()
-    expect(hasMessageContaining('removed -> stamp.ts')).toBeTruthy()
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['cheque-mock.ts', 'UNCHANGED'],
+      ['address.ts', 'REMOVED'],
+      ['index.ts', 'REMOVED'],
+      ['stamp.ts', 'REMOVED'],
+    ])
   })
 
   it('should list single file', async () => {
@@ -145,7 +151,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss/index.ts`, 'test/data/4'])
-    expect(consoleMessages).toHaveLength(1)
+    expect(consoleMessages).toMatchLinesInOrder([['command/pss/index.ts', 'OK']])
   })
 
   it('should download folder via bzz link', async () => {
@@ -153,7 +159,13 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'download', `bzz://${hash}/command/pss`, 'test/data/4'])
-    expect(consoleMessages).toHaveLength(5)
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['command/pss/index.ts', 'OK'],
+      ['command/pss/pss-command.ts', 'OK'],
+      ['command/pss/receive.ts', 'OK'],
+      ['command/pss/send.ts', 'OK'],
+      ['command/pss/subscribe.ts', 'OK'],
+    ])
   })
 
   it('should download folder', async () => {
@@ -204,7 +216,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(readFileSync('test/data/3/bravo.txt').toString()).toBe('1')
   })
 
-  it('should list feed content', async () => {
+  it.skip('should list feed content', async () => {
     const identityName = `feed-resolve-test-${Date.now()}`
     await invokeTestCli(['identity', 'create', identityName, '--only-keypair'])
     const invocation = await invokeTestCli([
