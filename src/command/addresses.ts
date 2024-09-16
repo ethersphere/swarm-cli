@@ -26,6 +26,7 @@ export class Addresses extends RootCommand implements LeafCommand {
         this.console.error('This is expected if chequebook-enable: false is set in the configuration')
         this.console.error('or when the Bee node is still syncing with the blockchain')
         this.console.log('')
+
         return Optional.empty<ChequebookAddressResponse>()
       })
 
