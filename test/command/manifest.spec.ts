@@ -108,30 +108,28 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should sync folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(consoleMessages).toMatchLinesInOrder([['address.ts'], ['NEW'], ['stamp.ts'], ['NEW'], ['index.ts'], ['NEW']])
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['address.ts', 'NEW'],
+      ['stamp.ts', 'NEW'],
+      ['index.ts', 'NEW'],
+    ])
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
     expect(consoleMessages).toMatchLinesInOrder([
-      ['address.ts'],
-      ['UNCHANGED'],
-      ['stamp.ts'],
-      ['UNCHANGED'],
-      ['index.ts'],
-      ['UNCHANGED'],
+      ['address.ts', 'UNCHANGED'],
+      ['stamp.ts', 'UNCHANGED'],
+      ['index.ts', 'UNCHANGED'],
     ])
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock'])
-    expect(consoleMessages).toMatchLinesInOrder([['cheque-mock.ts'], ['NEW']])
+    expect(consoleMessages).toMatchLinesInOrder([['cheque-mock.ts', 'NEW']])
     consoleMessages.length = 0
     await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock', '--remove'])
     expect(consoleMessages).toMatchLinesInOrder([
       ['cheque-mock.ts', 'UNCHANGED'],
-      ['address.ts'],
-      ['REMOVED'],
-      ['stamp.ts'],
-      ['REMOVED'],
-      ['index.ts'],
-      ['REMOVED'],
+      ['address.ts', 'REMOVED'],
+      ['stamp.ts', 'REMOVED'],
+      ['index.ts', 'REMOVED'],
     ])
   })
 
