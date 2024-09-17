@@ -74,5 +74,9 @@ export class List extends StampCommand implements LeafCommand {
       },
       this.console,
     )
+
+    if (!this.quiet && !this.verbose) {
+      this.console.info('Run with --verbose for more details.')
+    }
   }
 }
