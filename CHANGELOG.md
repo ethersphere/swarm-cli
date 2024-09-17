@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.15.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.14.0...v2.15.0) (2024-09-16)
+
+
+### Features
+
+* upgrade to bee-js 8 ([#531](https://www.github.com/ethersphere/swarm-cli/issues/531)) ([e8b1842](https://www.github.com/ethersphere/swarm-cli/commit/e8b18422c0b72383e51c41596b2b10f85b2529b1))
+
+
+### Bug Fixes
+
+* handle missing chequebook in addresses command ([#534](https://www.github.com/ethersphere/swarm-cli/issues/534)) ([05cb0ed](https://www.github.com/ethersphere/swarm-cli/commit/05cb0ed83dc69cbc964d18630feffd26da8c12ba))
+
 ## [2.14.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.13.1...v2.14.0) (2024-09-11)
 
 
