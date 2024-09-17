@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.15.0...v2.16.0) (2024-09-17)
+
+
+### Features
+
+* add verbose hint to stamp list command ([#537](https://www.github.com/ethersphere/swarm-cli/issues/537)) ([9aa63a4](https://www.github.com/ethersphere/swarm-cli/commit/9aa63a48403ffa85773a7f28d0d0de2755ad6856))
+
 ## [2.15.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.14.0...v2.15.0) (2024-09-16)
 
 
