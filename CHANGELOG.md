@@ -1,5 +1,32 @@
 # Changelog
 
+## [2.16.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.15.0...v2.16.0) (2024-09-17)
+
+
+### Features
+
+* add verbose hint to stamp list command ([#537](https://www.github.com/ethersphere/swarm-cli/issues/537)) ([9aa63a4](https://www.github.com/ethersphere/swarm-cli/commit/9aa63a48403ffa85773a7f28d0d0de2755ad6856))
+
+## [2.15.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.14.0...v2.15.0) (2024-09-16)
+
+
+### Features
+
+* upgrade to bee-js 8 ([#531](https://www.github.com/ethersphere/swarm-cli/issues/531)) ([e8b1842](https://www.github.com/ethersphere/swarm-cli/commit/e8b18422c0b72383e51c41596b2b10f85b2529b1))
+
+
+### Bug Fixes
+
+* handle missing chequebook in addresses command ([#534](https://www.github.com/ethersphere/swarm-cli/issues/534)) ([05cb0ed](https://www.github.com/ethersphere/swarm-cli/commit/05cb0ed83dc69cbc964d18630feffd26da8c12ba))
+
+## [2.14.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.13.1...v2.14.0) (2024-09-11)
+
+
+### Features
+
+* allow setting default stamp with stamp env ([#530](https://www.github.com/ethersphere/swarm-cli/issues/530)) ([4067a19](https://www.github.com/ethersphere/swarm-cli/commit/4067a193a21bac9ae38b8e75a182fc07aa110f81))
+* update to bee-js 7.1.2 ([#528](https://www.github.com/ethersphere/swarm-cli/issues/528)) ([b00a6e9](https://www.github.com/ethersphere/swarm-cli/commit/b00a6e9b824bb13bcf2482f954118d92d46b6e67))
+
 ### [2.13.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.13.0...v2.13.1) (2024-08-08)
 
 

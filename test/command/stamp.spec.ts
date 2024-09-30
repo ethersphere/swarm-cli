@@ -18,8 +18,8 @@ describeCommand(
     })
 
     it('should show a specific stamp', async () => {
-      await invokeTestCli(['stamp', 'show', Types.asString(process.env.STAMP)])
-      const pattern = [['Stamp ID', Types.asString(process.env.STAMP)], ['Usage'], ['Capacity'], ['TTL']]
+      await invokeTestCli(['stamp', 'show', Types.asString(process.env.TEST_STAMP)])
+      const pattern = [['Stamp ID', Types.asString(process.env.TEST_STAMP)], ['Usage'], ['Capacity'], ['TTL']]
       expect(consoleMessages).toMatchLinesInOrder(pattern)
     })
 
@@ -36,7 +36,7 @@ describeCommand(
     })
 
     it('should buy stamp', async () => {
-      await invokeTestCli(['stamp', 'buy', '--amount', '100000', '--depth', '20', '--yes'])
+      await invokeTestCli(['stamp', 'buy', '--amount', '600_000_000', '--depth', '20', '--yes'])
       expect(getLastMessage()).toContain('Stamp ID:')
       await System.sleepMillis(11_000)
     })
@@ -46,7 +46,7 @@ describeCommand(
         'stamp',
         'buy',
         '--amount',
-        '100000',
+        '600_000_000',
         '--depth',
         '20',
         '--immutable',
@@ -62,7 +62,7 @@ describeCommand(
       await System.sleepMillis(11_000)
     })
 
-    it.skip('should print custom message when there are no stamps', async () => {
+    it('should print custom message when there are no stamps', async () => {
       await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:11633'])
       expect(getNthLastMessage(4)).toContain('You do not have any stamps.')
     })
@@ -80,7 +80,7 @@ describeCommand(
         '--depth',
         '20',
         '--amount',
-        '59k',
+        '555m',
         '--wait-usable',
         '--yes',
         '--label',
@@ -101,7 +101,7 @@ describeCommand(
 
     it('should accept estimate cost prompt', async () => {
       jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: true })
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1'])
+      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1b'])
       const command = execution.runnable as Buy
       expect(command.yes).toBe(true)
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
@@ -110,7 +110,7 @@ describeCommand(
 
     it('should reject estimate cost prompt', async () => {
       jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
-      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1'])
+      const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1b'])
       const command = execution.runnable as Buy
       expect(command.yes).toBe(false)
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
@@ -122,7 +122,7 @@ describeCommand(
         'stamp',
         'buy',
         '--amount',
-        '1_000K',
+        '600_000K',
         '--depth',
         '17',
         '--gas-price',

@@ -10,6 +10,10 @@ export function createChequeMockHttpServer(port: number): Server {
   const server = createServer((request, response) => {
     response.writeHead(200, { 'Content-Type': 'application/json' })
 
+    if (request.url === '/') {
+      response.end('Ethereum Swarm Bee')
+    }
+
     if (request.url === '/health') {
       response.end(JSON.stringify(health))
     }
@@ -36,6 +40,14 @@ export function createChequeMockHttpServer(port: number): Server {
 
     if (request.url === '/node') {
       response.end(JSON.stringify(nodeInfo))
+    }
+
+    if (request.url === '/stake') {
+      response.end(
+        JSON.stringify({
+          stakedAmount: '0',
+        }),
+      )
     }
   })
   server.listen(port)
@@ -78,13 +90,14 @@ const lastCashoutCheque1 = {
   result: { recipient: '0x4f16b90d43aa1f9fd3c2fe17dacd9b21417a4134', lastPayout: 0, bounced: false },
 }
 
-const balance = { totalBalance: 100026853000000000, availableBalance: 100018560000000000 }
+const balance = { totalBalance: '100026853000000000', availableBalance: '100018560000000000' }
 
 const wallet = {
-  bzz: '3904697022414848',
-  xDai: '96106482372132023',
+  bzzBalance: '3904697022414848',
+  nativeTokenBalance: '96106482372132023',
   chainID: 100,
-  contractAddress: '0xb48b45c9254c98a122bd42d0f674318ba154e071',
+  chequebookContractAddress: '0xb48b45c9254c98a122bd42d0f674318ba154e071',
+  walletAddress: '0xb48b45c9254c98a122bd42d0f674318ba154e071',
 }
 
 const nodeInfo = {

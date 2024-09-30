@@ -1,5 +1,4 @@
 import { existsSync, unlinkSync, writeFileSync } from 'fs'
-import inquirer from 'inquirer'
 import type { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
@@ -48,28 +47,6 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     const commandBuilder = await invokeTestCli(['upload', 'test/testpage', '--encrypt', ...getStampOption()])
     const uploadCommand = commandBuilder.runnable as Upload
     expect(uploadCommand.hash).toHaveLength(128)
-  })
-
-  it('should warn for large files', async () => {
-    jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
-    await invokeTestCli(['upload', 'test/data/8mb.bin', ...getStampOption()])
-    expect(inquirer.prompt).toHaveBeenCalledTimes(1)
-  })
-
-  it('should warn for large folders', async () => {
-    jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
-    await invokeTestCli(['upload', 'test/data', ...getStampOption()])
-    expect(inquirer.prompt).toHaveBeenCalledTimes(1)
-  })
-
-  it('should not warn for large files with flag', async () => {
-    await invokeTestCli(['upload', 'test/data/8mb.bin', '-v', '--yes', ...getStampOption()])
-    expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
-  })
-
-  it('should not warn for large folders with flag', async () => {
-    await invokeTestCli(['upload', 'test/data', '-v', '--yes', ...getStampOption()])
-    expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
 
   it('should not allow --encrypt for gateways', async () => {

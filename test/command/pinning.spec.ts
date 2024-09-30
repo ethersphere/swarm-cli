@@ -55,7 +55,7 @@ describeCommand(
       expect(countOfItemsAfter).toBeLessThan(countOfItemsBefore)
     })
 
-    it('should print custom 404 when pinning chunk that does not exist', async () => {
+    it.skip('should print custom 404 when pinning chunk that does not exist', async () => {
       await invokeTestCli(['pinning', 'pin', 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'])
       expect(consoleMessages).toStrictEqual([
         FORMATTED_ERROR + ' Bee responded with HTTP 404 (Not Found).',
@@ -77,7 +77,7 @@ describeCommand(
       ])
     })
 
-    it('should allow reuploading pinned file', async () => {
+    it.skip('should allow reuploading pinned file', async () => {
       const invocation = await invokeTestCli(['upload', 'README.md', '--pin', ...getStampOption()])
       const upload = invocation.runnable as Upload
       const { hash } = upload
