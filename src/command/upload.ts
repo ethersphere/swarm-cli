@@ -125,7 +125,7 @@ export class Upload extends RootCommand implements LeafCommand {
   // CLASS FIELDS
 
   public hash!: string
-  public history_address!: string
+  public historyAddress!: string
 
   public stdinData!: Buffer
 
@@ -175,7 +175,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.log(createKeyValue('Swarm hash', this.hash))
 
     if (this.act) {
-      this.console.log(createKeyValue('Swarm history address', this.history_address))
+      this.console.log(createKeyValue('Swarm history address', this.historyAddress))
     }
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
 
@@ -236,7 +236,7 @@ export class Upload extends RootCommand implements LeafCommand {
   private async uploadStdin(tag?: Tag): Promise<string> {
     if (this.fileName) {
       const contentType = this.contentType || getMime(this.fileName) || undefined
-      const { reference, history_address } = await this.bee.uploadFile(
+      const { reference, historyAddress } = await this.bee.uploadFile(
         this.stamp,
         this.stdinData,
         this.fileName,
@@ -253,13 +253,13 @@ export class Upload extends RootCommand implements LeafCommand {
       )
       this.hash = reference
 
-      if (this.act && history_address !== undefined) {
-        this.history_address = history_address
+      if (this.act && historyAddress !== undefined) {
+        this.historyAddress = historyAddress
       }
 
       return `${this.bee.url}/bzz/${this.hash}/`
     } else {
-      const { reference, history_address } = await this.bee.uploadData(
+      const { reference, historyAddress } = await this.bee.uploadData(
         this.stamp,
         this.stdinData,
         {
@@ -272,8 +272,8 @@ export class Upload extends RootCommand implements LeafCommand {
       )
       this.hash = reference
 
-      if (this.act && history_address !== undefined) {
-        this.history_address = history_address
+      if (this.act && historyAddress !== undefined) {
+        this.historyAddress = historyAddress
       }
 
       return `${this.bee.url}/bytes/${this.hash}`
@@ -286,7 +286,7 @@ export class Upload extends RootCommand implements LeafCommand {
       folder: true,
       type: 'buffer',
     })
-    const { reference, history_address } = await this.bee.uploadFilesFromDirectory(
+    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(
       this.stamp,
       this.path,
       {
@@ -303,8 +303,8 @@ export class Upload extends RootCommand implements LeafCommand {
     )
     this.hash = reference
 
-    if (this.act && history_address !== undefined) {
-      this.history_address = history_address
+    if (this.act && historyAddress !== undefined) {
+      this.historyAddress = historyAddress
     }
 
     return `${this.bee.url}/bzz/${this.hash}/`
@@ -319,7 +319,7 @@ export class Upload extends RootCommand implements LeafCommand {
     })
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
-    const { reference, history_address } = await this.bee.uploadFile(
+    const { reference, historyAddress } = await this.bee.uploadFile(
       this.stamp,
       readable,
       this.determineFileName(parsedPath.base),
@@ -336,8 +336,8 @@ export class Upload extends RootCommand implements LeafCommand {
     )
     this.hash = reference
 
-    if (this.act && history_address !== undefined) {
-      this.history_address = history_address
+    if (this.act && historyAddress !== undefined) {
+      this.historyAddress = historyAddress
     }
 
     return `${this.bee.url}/bzz/${this.hash}/`

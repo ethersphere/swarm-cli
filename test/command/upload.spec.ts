@@ -40,7 +40,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     const commandBuilder = await invokeTestCli(['upload', 'README.md', '--act', ...getStampOption()])
     const uploadCommand = commandBuilder.runnable as Upload
     expect(uploadCommand.hash).toHaveLength(64)
-    expect(uploadCommand.history_address).toHaveLength(64)
+    expect(uploadCommand.historyAddress).toHaveLength(64)
   })
 
   it('should upload folder and encrypt', async () => {

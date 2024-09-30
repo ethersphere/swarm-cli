@@ -48,9 +48,10 @@ export class Patch extends GranteeCommand implements LeafCommand {
       'Swarm-Act': 'true',
       'Swarm-Act-Timestamp': Date.now().toString(),
     }
-    const patch = fs.readFileSync(this.path, 'utf8')
+    const patchContent = fs.readFileSync(this.path, 'utf8')
+    const patch = JSON.parse(patchContent)
 
-    const response = await this.bee.patchGrantees(this.eref, this.history, this.stamp, patch, this.actReqHeaders)
+    const response = await this.bee.patchGrantees(this.stamp, this.eref, this.history, patch, this.actReqHeaders)
     this.console.log(createKeyValue('Grantee reference', response.ref))
     this.console.log(createKeyValue('Grantee history reference', response.historyref))
   }
