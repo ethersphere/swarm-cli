@@ -1,6 +1,6 @@
 {
   "name": "@ethersphere/swarm-cli",
-  "version": "2.16.0",
+  "version": "2.17.0",
   "description": "CLI tool for Bee",
   "keywords": [
     "Bee",
@@ -61,7 +61,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@ethersphere/bee-js": "^8.0.2",
+    "@ethersphere/bee-js": "^8.1.0",
     "@fairdatasociety/bmt-js": "^2.1.0",
     "cafe-utility": "^22.0.0",
     "chalk": "^2.4.2",
