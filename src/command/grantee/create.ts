@@ -29,8 +29,9 @@ export class Create extends GranteeCommand implements LeafCommand {
     this.actReqHeaders = {
       'Swarm-Act': 'true',
     }
-    const fileContent = fs.readFileSync(this.path, 'utf8')
-    const grantees = fileContent.split('\n')
+    const granteesFile = fs.readFileSync(this.path, 'utf8')
+    const createGrantees = JSON.parse(granteesFile)
+    const grantees = createGrantees.grantees
 
     const response = await this.bee.createGrantees(this.stamp, grantees)
     this.console.log(createKeyValue('Grantee reference', response.ref))
