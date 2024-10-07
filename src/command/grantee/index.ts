@@ -1,12 +1,12 @@
 import { GroupCommand } from 'furious-commander'
-import { Add } from './add'
+import { Create } from './create'
 import { Get } from './get'
 import { Patch } from './patch'
 
 export class Grantee implements GroupCommand {
   public readonly name = 'grantee'
 
-  public readonly description = 'Add, Get, Patch grantee list'
+  public readonly description = 'Create, Get, Patch grantee list'
 
-  public subCommandClasses = [Add, Get, Patch]
+  public subCommandClasses = [Create, Get, Patch]
 }

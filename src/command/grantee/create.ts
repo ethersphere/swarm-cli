@@ -4,9 +4,9 @@ import { stampProperties } from '../../utils/option'
 import { createKeyValue } from '../../utils/text'
 import fs from 'fs'
 
-export class Add extends GranteeCommand implements LeafCommand {
-  public readonly name = 'add'
-  public readonly description = 'Add grantee list'
+export class Create extends GranteeCommand implements LeafCommand {
+  public readonly name = 'create'
+  public readonly description = 'Create grantee list'
   private actReqHeaders: Record<string, string> = {}
 
   @Argument({
