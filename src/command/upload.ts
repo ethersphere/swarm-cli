@@ -49,6 +49,18 @@ export class Upload extends RootCommand implements LeafCommand {
   public deferred!: boolean
 
   @Option({
+    key: 'act',
+    type: 'boolean',
+    description: 'Upload with ACT',
+    default: false,
+    required: { when: 'act-history-address' },
+  })
+  public act!: boolean
+
+  @Option({ key: 'act-history-address', type: 'string', description: 'ACT history address' })
+  public optHistoryAddress!: string
+
+  @Option({
     key: 'sync',
     type: 'boolean',
     description: 'Wait for chunk synchronization over the network',
@@ -113,6 +125,7 @@ export class Upload extends RootCommand implements LeafCommand {
   // CLASS FIELDS
 
   public hash!: string
+  public historyAddress!: string
 
   public stdinData!: Buffer
 
@@ -160,6 +173,10 @@ export class Upload extends RootCommand implements LeafCommand {
 
     this.console.dim('Data has been sent to the Bee node successfully!')
     this.console.log(createKeyValue('Swarm hash', this.hash))
+
+    if (this.act) {
+      this.console.log(createKeyValue('Swarm history address', this.historyAddress))
+    }
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
 
     if (this.sync && tag) {
@@ -208,28 +225,56 @@ export class Upload extends RootCommand implements LeafCommand {
     }
   }
 
+  private actHeaders(): Record<string, string> {
+    if (this.act && this.optHistoryAddress) {
+      return { 'swarm-act-history-address': this.optHistoryAddress }
+    }
+
+    return {}
+  }
+
   private async uploadStdin(tag?: Tag): Promise<string> {
     if (this.fileName) {
       const contentType = this.contentType || getMime(this.fileName) || undefined
-      const { reference } = await this.bee.uploadFile(this.stamp, this.stdinData, this.fileName, {
-        tag: tag && tag.uid,
-        pin: this.pin,
-        encrypt: this.encrypt,
-        contentType,
-        deferred: this.deferred,
-        redundancyLevel: this.determineRedundancyLevel(),
-      })
+      const { reference, historyAddress } = await this.bee.uploadFile(
+        this.stamp,
+        this.stdinData,
+        this.fileName,
+        {
+          tag: tag && tag.uid,
+          pin: this.pin,
+          encrypt: this.encrypt,
+          contentType,
+          deferred: this.deferred,
+          redundancyLevel: this.determineRedundancyLevel(),
+          act: this.act,
+        },
+        { headers: this.actHeaders() },
+      )
       this.hash = reference
+
+      if (this.act && historyAddress !== undefined) {
+        this.historyAddress = historyAddress
+      }
 
       return `${this.bee.url}/bzz/${this.hash}/`
     } else {
-      const { reference } = await this.bee.uploadData(this.stamp, this.stdinData, {
-        tag: tag?.uid,
-        deferred: this.deferred,
-        encrypt: this.encrypt,
-        redundancyLevel: this.determineRedundancyLevel(),
-      })
+      const { reference, historyAddress } = await this.bee.uploadData(
+        this.stamp,
+        this.stdinData,
+        {
+          tag: tag?.uid,
+          deferred: this.deferred,
+          encrypt: this.encrypt,
+          redundancyLevel: this.determineRedundancyLevel(),
+        },
+        { headers: this.actHeaders() },
+      )
       this.hash = reference
+
+      if (this.act && historyAddress !== undefined) {
+        this.historyAddress = historyAddress
+      }
 
       return `${this.bee.url}/bytes/${this.hash}`
     }
@@ -241,16 +286,26 @@ export class Upload extends RootCommand implements LeafCommand {
       folder: true,
       type: 'buffer',
     })
-    const { reference } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, {
-      indexDocument: this.indexDocument,
-      errorDocument: this.errorDocument,
-      tag: tag && tag.uid,
-      pin: this.pin,
-      encrypt: this.encrypt,
-      deferred: this.deferred,
-      redundancyLevel: this.determineRedundancyLevel(),
-    })
+    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(
+      this.stamp,
+      this.path,
+      {
+        indexDocument: this.indexDocument,
+        errorDocument: this.errorDocument,
+        tag: tag && tag.uid,
+        pin: this.pin,
+        encrypt: this.encrypt,
+        deferred: this.deferred,
+        redundancyLevel: this.determineRedundancyLevel(),
+        act: this.act,
+      },
+      { headers: this.actHeaders() },
+    )
     this.hash = reference
+
+    if (this.act && historyAddress !== undefined) {
+      this.historyAddress = historyAddress
+    }
 
     return `${this.bee.url}/bzz/${this.hash}/`
   }
@@ -264,15 +319,26 @@ export class Upload extends RootCommand implements LeafCommand {
     })
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
-    const { reference } = await this.bee.uploadFile(this.stamp, readable, this.determineFileName(parsedPath.base), {
-      tag: tag && tag.uid,
-      pin: this.pin,
-      encrypt: this.encrypt,
-      contentType,
-      deferred: this.deferred,
-      redundancyLevel: this.determineRedundancyLevel(),
-    })
+    const { reference, historyAddress } = await this.bee.uploadFile(
+      this.stamp,
+      readable,
+      this.determineFileName(parsedPath.base),
+      {
+        tag: tag && tag.uid,
+        pin: this.pin,
+        encrypt: this.encrypt,
+        contentType,
+        deferred: this.deferred,
+        redundancyLevel: this.determineRedundancyLevel(),
+        act: this.act,
+      },
+      { headers: this.actHeaders() },
+    )
     this.hash = reference
+
+    if (this.act && historyAddress !== undefined) {
+      this.historyAddress = historyAddress
+    }
 
     return `${this.bee.url}/bzz/${this.hash}/`
   }
@@ -377,6 +443,13 @@ export class Upload extends RootCommand implements LeafCommand {
   private hasUnsupportedGatewayOptions(): boolean {
     if (!isGateway(this.beeApiUrl)) {
       return false
+    }
+
+    if (this.act) {
+      this.console.error('You are trying to upload to the gateway which does not support ACT.')
+      this.console.error('Please try again without the --act option.')
+
+      return true
     }
 
     if (this.pin) {
