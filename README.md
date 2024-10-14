@@ -73,19 +73,19 @@ the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 
 ![Swarm CLI Feed Upload Command](./docs/feed-upload.gif)
 
-## Upload file with ACT
+## Upload a file with ACT
 
 ```sh
 swarm-cli upload <file> --act --stamp <postage_batch_id>
 ```
 
-## Download file with ACT
+## Download a file with ACT
 
 ```sh
 swarm-cli download <swarm_hash> <file> --act --act-history-address <swarm_history_address> --act-publisher <public_key>
 ```
 
-## Create grantees list
+## Create a grantees list
 
 ```sh
 swarm-cli grantee create grantees.json --stamp <postage_batch_id>
@@ -102,13 +102,13 @@ swarm-cli grantee create grantees.json --stamp <postage_batch_id>
 }
 ```
 
-## Get grantees list
+## Get a grantees list
 
 ```sh
 swarm-cli grantee get <grantee_reference>
 ```
 
-## Patch grantees list
+## Patch a grantees list
 
 ```sh
 swarm-cli  grantee patch grantees-patch.json \
