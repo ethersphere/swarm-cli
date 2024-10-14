@@ -19,6 +19,11 @@ the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
   - [Uploading a File](#uploading-a-file)
   - [Creating an Identity](#creating-an-identity)
   - [Uploading to a Feed](#uploading-to-a-feed)
+  - [Upload file with ACT](#upload-file-with-act)
+  - [Download file with ACT](#download-file-with-act)
+  - [Create grantees list](#create-grantees-list)
+  - [Get grantees list](#get-grantees-list)
+  - [Patch grantees list](#patch-grantees-list)
 - [Description](#description)
   - [Installation](#installation)
     - [From npm](#from-npm)
@@ -67,6 +72,64 @@ the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 ## Uploading to a Feed
 
 ![Swarm CLI Feed Upload Command](./docs/feed-upload.gif)
+
+## Upload file with ACT
+
+```sh
+swarm-cli upload <file> --act --stamp <postage_batch_id>
+```
+
+## Download file with ACT
+
+```sh
+swarm-cli download <swarm_hash> <file> --act --act-history-address <swarm_history_address> --act-publisher <public_key>
+```
+
+## Create grantees list
+
+```sh
+swarm-cli grantee create grantees.json --stamp <postage_batch_id>
+```
+
+`grantees.json`:
+
+```json
+{ "grantees": [
+    "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e8",
+    "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e9",
+    "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12ee"
+]
+}
+```
+
+## Get grantees list
+
+```sh
+swarm-cli grantee get <grantee_reference>
+```
+
+## Patch grantees list
+
+```sh
+swarm-cli  grantee patch grantees-patch.json \
+    --reference <grantee_reference> \
+    --history <grantee_history_reference> \
+    --stamp <postage_batch_id>
+```
+
+`grantees-patch.json`:
+
+```json
+{
+    "add": [
+        "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e7"
+    ],
+    "revoke": [
+        "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e9",
+        "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12ee"
+    ]
+}
+```
 
 # Description
 
