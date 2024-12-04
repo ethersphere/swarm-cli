@@ -36,6 +36,7 @@ export class Redeem extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
+
     if (!this.target) {
       this.console.log('Fetching Bee wallet address...')
       const { ethereum } = await this.bee.getNodeAddresses()
@@ -62,6 +63,7 @@ export class Redeem extends RootCommand implements LeafCommand {
     }
 
     const firstKnownxDAI = xDAI
+
     if (xBZZ !== '0') {
       this.console.log('Transferring xBZZ to Bee wallet...')
       await Rpc.sendBzzTransaction(this.wallet, this.target, xBZZ, this.jsonRpcUrl)
@@ -79,6 +81,7 @@ export class Redeem extends RootCommand implements LeafCommand {
 
       if (xDAI === firstKnownxDAI) {
         this.console.log('xDAI balance did not change, skipping transfer')
+
         return
       }
     }

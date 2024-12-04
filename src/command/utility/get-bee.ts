@@ -32,9 +32,10 @@ export class GetBee extends RootCommand implements LeafCommand {
     const url = `https://github.com/ethersphere/bee/releases/download/v2.3.0/bee-${platformString}-${archString}${suffixString}`
     this.console.info(`Downloading Bee from ${url}`)
     await fetch(url)
-      .then(async x => x.arrayBuffer())
+      .then(x => x.arrayBuffer())
       .then(x => writeFileSync(`bee${suffixString}`, Buffer.from(x)))
     this.console.info('Bee downloaded successfully')
+
     if (process.platform !== 'win32') {
       this.console.info(`Running chmod +x bee`)
       execSync('chmod +x bee')

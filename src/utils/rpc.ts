@@ -45,10 +45,15 @@ interface TransferResponse {
   receipt: providers.TransactionReceipt
 }
 
+interface TransferCost {
+  gasPrice: BN
+  totalCost: BN
+}
+
 export async function estimateNativeTransferTransactionCost(
   privateKey: string,
   jsonRpcProvider: string,
-): Promise<{ gasPrice: BN; totalCost: BN }> {
+): Promise<TransferCost> {
   const signer = await makeReadySigner(privateKey, jsonRpcProvider)
   const gasLimit = '21000'
   const gasPrice = await signer.getGasPrice()
