@@ -1,8 +1,7 @@
 import { Utils } from '@ethersphere/bee-js'
-import { Dates } from 'cafe-utility'
+import { Dates, Numbers } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../../utils/spinner'
-import { Storage } from '../../utils/storage'
 import { createKeyValue } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
@@ -10,7 +9,7 @@ import { StampCommand } from './stamp-command'
 export class Buy extends StampCommand implements LeafCommand {
   public readonly name = 'buy'
 
-  public readonly description = 'Buy postage stamp'
+  public readonly description = 'Buy postage stamp based on depth and amount'
 
   @Option({
     key: 'depth',
@@ -60,11 +59,11 @@ export class Buy extends StampCommand implements LeafCommand {
     await super.init()
 
     const estimatedCost = Utils.getStampCostInBzz(this.depth, Number(this.amount))
-    const estimatedCapacity = new Storage(Utils.getStampMaximumCapacityBytes(this.depth))
+    const estimatedCapacity = Numbers.convertBytes(Utils.getStampMaximumCapacityBytes(this.depth))
     const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount))
 
     this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} xBZZ`))
-    this.console.log(createKeyValue('Estimated capacity', estimatedCapacity.toString()))
+    this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
     this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl)))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
