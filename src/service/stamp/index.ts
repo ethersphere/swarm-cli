@@ -1,9 +1,8 @@
 import { Bee, PostageBatch, Utils } from '@ethersphere/bee-js'
-import { Dates } from 'cafe-utility'
+import { Dates, Numbers } from 'cafe-utility'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { getFieldOrNull } from '../../utils'
-import { Storage } from '../../utils/storage'
 import { createKeyValue } from '../../utils/text'
 import { EnrichedStamp } from './types/stamp'
 
@@ -22,7 +21,12 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
 
   const choices = stamps
     .filter(stamp => stamp.usable || stamp.batchTTL > 0)
-    .map(stamp => `${stamp.batchID} ${stamp.remainingCapacity} expires in ${Dates.secondsToHumanTime(stamp.batchTTL)}`)
+    .map(
+      stamp =>
+        `${stamp.batchID} ${Numbers.convertBytes(stamp.remainingCapacity)} remaining, TTL ${Dates.secondsToHumanTime(
+          stamp.batchTTL,
+        )}`,
+    )
 
   if (!choices.length) {
     console.error('You need to have at least one stamp for this action.')
@@ -39,8 +43,8 @@ export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
   const usage = Utils.getStampUsage(stamp.utilization, stamp.depth, stamp.bucketDepth)
   const usageNormal = Math.ceil(usage * 100)
   const usageText = usageNormal + '%'
-  const capacity = new Storage(Utils.getStampMaximumCapacityBytes(stamp.depth))
-  const remainingCapacity = new Storage(capacity.getBytes() * (1 - usage))
+  const capacity = Utils.getStampMaximumCapacityBytes(stamp.depth)
+  const remainingCapacity = capacity * (1 - usage)
 
   return {
     ...stamp,
@@ -74,7 +78,9 @@ export function printStamp(
   console.log(
     createKeyValue(
       richStamp.immutableFlag ? 'Capacity (immutable)' : 'Capacity (mutable)',
-      `${richStamp.remainingCapacity.toString()} remaining out of ${richStamp.capacity.toString()}`,
+      `${Numbers.convertBytes(richStamp.remainingCapacity)} remaining out of ${Numbers.convertBytes(
+        richStamp.capacity,
+      )}`,
     ),
   )
 

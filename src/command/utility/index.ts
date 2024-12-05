@@ -3,15 +3,17 @@ import { readFile } from 'fs/promises'
 import { GroupCommand } from 'furious-commander'
 import { fileExists } from '../../utils'
 import { CommandLog } from '../root-command/command-log'
+import { GetBee } from './get-bee'
 import { Lock } from './lock'
+import { Redeem } from './redeem'
 import { Unlock } from './unlock'
 
 export class Utility implements GroupCommand {
   public readonly name = 'utility'
 
-  public readonly description = 'Utility commands for managing wallets'
+  public readonly description = 'Utility commands related to Swarm and wallets'
 
-  public subCommandClasses = [Lock, Unlock]
+  public subCommandClasses = [Lock, Unlock, GetBee, Redeem]
 }
 
 export async function createWallet(pathOrPrivateKey: string, console: CommandLog): Promise<Wallet> {
