@@ -22,7 +22,7 @@ export class Create extends StampCommand implements LeafCommand {
 
   @Option({
     key: 'ttl',
-    description: 'Time to live of the postage stamp, e.g. 1h, 1d, 1w',
+    description: 'Time to live of the postage stamp, e.g. 1d, 4w, "6 months", 1y',
     type: 'string',
     required: false,
   })
