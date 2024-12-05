@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.18.0...v2.19.0) (2024-12-05)
+
+
+### Features
+
+* add stamp create, utility get-bee and utility redeem commands ([#551](https://www.github.com/ethersphere/swarm-cli/issues/551)) ([8b0d5a4](https://www.github.com/ethersphere/swarm-cli/commit/8b0d5a491e11c6194da4e167f8f73c0a8e5a7bf2))
+
 ## [2.18.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.17.0...v2.18.0) (2024-10-24)
 
 
