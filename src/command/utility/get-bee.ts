@@ -40,6 +40,8 @@ export class GetBee extends RootCommand implements LeafCommand {
       this.console.info(`Running chmod +x bee`)
       execSync('chmod +x bee')
     }
-    this.console.log('Verify the binary by running ./bee version')
+    this.console.log('Verify the version of the downloaded Bee binary by running:')
+    this.console.log('')
+    this.console.log('./bee version')
   }
 }

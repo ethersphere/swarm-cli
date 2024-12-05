@@ -83,13 +83,9 @@ export class Create extends StampCommand implements LeafCommand {
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (this.immutable) {
-      this.console.info(
-        'Once an immutable stamp is maxed out, it disallows further content uploads, thereby safeguarding your previously uploaded content from unintentional overwriting.',
-      )
+      this.console.info('At full capacity, an immutable stamp no longer allows new content uploads.')
     } else {
-      this.console.info(
-        'When a mutable stamp reaches full capacity, it still permits new content uploads. However, this comes with the caveat of overwriting previously uploaded content associated with the same stamp.',
-      )
+      this.console.info('At full capacity, a mutable stamp allows new content uploads, but overwrites old content.')
     }
 
     if (!this.quiet && !this.yes) {
