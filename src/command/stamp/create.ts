@@ -1,5 +1,6 @@
 import { Utils } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
+import { BigNumber } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
@@ -60,9 +61,17 @@ export class Create extends StampCommand implements LeafCommand {
     }
 
     ttlInMillis = Dates.make(this.ttl)
+    const chainState = await this.bee.getChainState()
+    const minimumAmount = BigNumber.from(chainState.currentPrice).mul(17280)
 
     const depth = Utils.getDepthForCapacity(capacityInBytes / 1024 ** 3)
-    const amount = Utils.getAmountForTtl(ttlInMillis / 1000 / 60 / 60 / 24)
+    const amount = BigNumber.from(Math.ceil(ttlInMillis / 5_000) + 1).mul(chainState.currentPrice)
+
+    if (minimumAmount.gt(amount)) {
+      this.console.error('The minimum amount for the TTL is 1 day')
+
+      return
+    }
 
     this.console.log('You have provided the following parameters:')
     this.console.log(createKeyValue('Capacity', Numbers.convertBytes(capacityInBytes)))
@@ -70,11 +79,11 @@ export class Create extends StampCommand implements LeafCommand {
     this.console.log('')
     this.console.log(`Your parameters are now converted to Swarm's internal parameters:`)
     this.console.log(createKeyValue('Depth (capacity)', depth))
-    this.console.log(createKeyValue('Amount (TTL)', amount))
+    this.console.log(createKeyValue('Amount (TTL)', amount.toString()))
 
     const estimatedCost = Utils.getStampCostInBzz(depth, Number(amount))
     const estimatedCapacity = Numbers.convertBytes(Utils.getStampMaximumCapacityBytes(depth))
-    const estimatedTtl = Utils.getStampTtlSeconds(Number(amount))
+    const estimatedTtl = Utils.getStampTtlSeconds(Number(amount), Number(chainState.currentPrice), 5)
 
     this.console.log('')
     this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} xBZZ`))

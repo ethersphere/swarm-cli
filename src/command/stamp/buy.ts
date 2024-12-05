@@ -1,5 +1,6 @@
 import { Utils } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
+import { BigNumber } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
@@ -56,11 +57,20 @@ export class Buy extends StampCommand implements LeafCommand {
   public postageBatchId!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
+
+    const chainState = await this.bee.getChainState()
+    const minimumAmount = BigNumber.from(chainState.currentPrice).mul(17280)
+
+    if (minimumAmount.gte(BigNumber.from(this.amount))) {
+      this.console.error('The amount is too low. The minimum amount is', minimumAmount.add(1).toString())
+
+      return
+    }
 
     const estimatedCost = Utils.getStampCostInBzz(this.depth, Number(this.amount))
     const estimatedCapacity = Numbers.convertBytes(Utils.getStampMaximumCapacityBytes(this.depth))
-    const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount))
+    const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount), Number(chainState.currentPrice), 5)
 
     this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} xBZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
