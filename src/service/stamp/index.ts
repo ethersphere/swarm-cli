@@ -21,7 +21,12 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
 
   const choices = stamps
     .filter(stamp => stamp.usable || stamp.batchTTL > 0)
-    .map(stamp => `${stamp.batchID} ${stamp.remainingCapacity} expires in ${Dates.secondsToHumanTime(stamp.batchTTL)}`)
+    .map(
+      stamp =>
+        `${stamp.batchID} ${Numbers.convertBytes(stamp.remainingCapacity)} remaining, TTL ${Dates.secondsToHumanTime(
+          stamp.batchTTL,
+        )}`,
+    )
 
   if (!choices.length) {
     console.error('You need to have at least one stamp for this action.')
