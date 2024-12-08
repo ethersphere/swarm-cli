@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.19.0...v2.20.0) (2024-12-08)
+
+
+### Features
+
+* optionally deploy config in get-bee command ([#554](https://www.github.com/ethersphere/swarm-cli/issues/554)) ([e2085b9](https://www.github.com/ethersphere/swarm-cli/commit/e2085b9f3c9d59f516647c61daf89570d58550d1))
+
 ## [2.19.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.18.0...v2.19.0) (2024-12-05)
 
 
