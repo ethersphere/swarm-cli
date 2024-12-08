@@ -31,22 +31,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Auth to Github Package Docker Registry
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u ${GITHUB_ACTOR} --password-stdin
-
-      ## Try getting the node modules from cache, if failed npm ci
-      - uses: actions/cache@v2
-        id: cache-npm
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-${{ matrix.node }}-${{ env.cache-name }}-
-            ${{ runner.OS }}-node-${{ matrix.node }}-
-
       - name: Install npm deps
-        run: npm install -g npm && npm ci && npm install -g @fairdatasociety/fdp-play
+        run: npm ci && npm install -g @fairdatasociety/fdp-play
 
       - name: Start fdp-play environment
         run: npm run bee
