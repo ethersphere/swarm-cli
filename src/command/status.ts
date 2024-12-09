@@ -2,6 +2,7 @@ import { BeeModes } from '@ethersphere/bee-js'
 import { Numbers } from 'cafe-utility'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
+import { exit } from 'process'
 import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'
 
@@ -20,6 +21,8 @@ export class Status extends RootCommand implements LeafCommand {
       process.stdout.write(chalk.bold.green(' [OK]') + '\n')
     } catch {
       process.stdout.write(chalk.bold.red(' [FAILED]') + '\n')
+      process.stdout.write('\nIs your Bee node running?\n')
+      exit(1)
     }
     const versions = await this.bee.getVersions()
     this.console.all(createKeyValue('Version', versions.beeVersion))
