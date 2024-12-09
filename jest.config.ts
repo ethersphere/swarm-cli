@@ -3,6 +3,7 @@
  * https://jestjs.io/docs/en/configuration.html
  */
 import type { Config } from '@jest/types'
+import { Dates } from 'cafe-utility'
 import { getPssAddress } from './test/utility/address'
 import { getOrBuyStamp } from './test/utility/stamp'
 
@@ -52,6 +53,6 @@ export default async (): Promise<Config.InitialOptions> => {
     testPathIgnorePatterns: ['/node_modules/'],
 
     // Increase timeout since we have long running cryptographic functions
-    testTimeout: 4 * 60 * 1000,
+    testTimeout: Dates.minutes(5),
   }
 }

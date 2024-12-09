@@ -92,7 +92,7 @@ export class Print extends FeedCommand implements LeafCommand {
 
       if (this.list) {
         for (let i = 0; i < numberOfUpdates; i++) {
-          const indexBytes = Binary.numberToUint64BE(i)
+          const indexBytes = Binary.numberToUint64(BigInt(i), 'BE')
           const identifier = Utils.keccak256Hash(Binary.hexToUint8Array(topic), indexBytes)
           const owner = Binary.hexToUint8Array(this.address)
           const soc = Binary.uint8ArrayToHex(Utils.keccak256Hash(identifier, owner))

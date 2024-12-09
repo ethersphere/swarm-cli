@@ -1,8 +1,8 @@
 import { Utils } from '@ethersphere/bee-js'
-import { Dates } from 'cafe-utility'
+import { Dates, Numbers } from 'cafe-utility'
+import { BigNumber } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../../utils/spinner'
-import { Storage } from '../../utils/storage'
 import { createKeyValue } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
@@ -10,7 +10,7 @@ import { StampCommand } from './stamp-command'
 export class Buy extends StampCommand implements LeafCommand {
   public readonly name = 'buy'
 
-  public readonly description = 'Buy postage stamp'
+  public readonly description = 'Buy postage stamp based on depth and amount'
 
   @Option({
     key: 'depth',
@@ -57,25 +57,30 @@ export class Buy extends StampCommand implements LeafCommand {
   public postageBatchId!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
+
+    const chainState = await this.bee.getChainState()
+    const minimumAmount = BigNumber.from(chainState.currentPrice).mul(17280)
+
+    if (minimumAmount.gte(BigNumber.from(this.amount))) {
+      this.console.error('The amount is too low. The minimum amount is', minimumAmount.add(1).toString())
+
+      return
+    }
 
     const estimatedCost = Utils.getStampCostInBzz(this.depth, Number(this.amount))
-    const estimatedCapacity = new Storage(Utils.getStampMaximumCapacityBytes(this.depth))
-    const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount))
+    const estimatedCapacity = Numbers.convertBytes(Utils.getStampMaximumCapacityBytes(this.depth))
+    const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount), Number(chainState.currentPrice), 5)
 
     this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} xBZZ`))
-    this.console.log(createKeyValue('Estimated capacity', estimatedCapacity.toString()))
+    this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
     this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl)))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (this.immutable) {
-      this.console.info(
-        'Once an immutable stamp is maxed out, it disallows further content uploads, thereby safeguarding your previously uploaded content from unintentional overwriting.',
-      )
+      this.console.info('At full capacity, an immutable stamp no longer allows new content uploads.')
     } else {
-      this.console.info(
-        'When a mutable stamp reaches full capacity, it still permits new content uploads. However, this comes with the caveat of overwriting previously uploaded content associated with the same stamp.',
-      )
+      this.console.info('At full capacity, a mutable stamp allows new content uploads, but overwrites old content.')
     }
 
     if (!this.quiet && !this.yes) {

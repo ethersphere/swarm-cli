@@ -1,5 +1,5 @@
 import { RedundancyLevel, Tag, Utils } from '@ethersphere/bee-js'
-import { System } from 'cafe-utility'
+import { Numbers, System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -12,12 +12,9 @@ import { CommandLineError } from '../utils/error'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { createSpinner } from '../utils/spinner'
-import { Storage } from '../utils/storage'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
-
-const MAX_UPLOAD_SIZE = new Storage(parseInt(process.env.MAX_UPLOAD_SIZE || '', 10) || 100 * 1000 * 1000) // 100 megabytes
 
 export class Upload extends RootCommand implements LeafCommand {
   public readonly name = 'upload'
@@ -335,19 +332,21 @@ export class Upload extends RootCommand implements LeafCommand {
 
     const currentSetting = Utils.getRedundancyStat(this.redundancy)
     const originalSize = await this.getUploadSize()
-    const originalChunks = Math.ceil(originalSize.getBytes() / 4e3)
+    const originalChunks = Math.ceil(originalSize / 4e3)
     const sizeMultiplier = Utils.approximateOverheadForRedundancyLevel(
       originalChunks,
       currentSetting.value,
       this.encrypt,
     )
-    const newSize = new Storage(originalChunks * 4e3 * (1 + sizeMultiplier))
-    const extraSize = new Storage(newSize.getBytes() - originalSize.getBytes())
+    const newSize = originalChunks * 4e3 * (1 + sizeMultiplier)
+    const extraSize = newSize - originalSize
 
     this.console.log(createKeyValue('Redundancy setting', currentSetting.label))
     this.console.log(`This setting will provide ${Math.round(currentSetting.errorTolerance * 100)}% error tolerance.`)
-    this.console.log(`An additional ${extraSize.toString()} of data will be uploaded approximately.`)
-    this.console.log(`${originalSize.toString()} → ${newSize.toString()} (+${extraSize.toString()})`)
+    this.console.log(`An additional ${Numbers.convertBytes(extraSize)} of data will be uploaded approximately.`)
+    this.console.log(
+      `${Numbers.convertBytes(originalSize)} → ${Numbers.convertBytes(newSize)} (+${Numbers.convertBytes(extraSize)})`,
+    )
 
     if (!this.yes && !this.quiet) {
       const confirmation = await this.console.confirm('Do you want to proceed?')
@@ -358,7 +357,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
   }
 
-  private async getUploadSize(): Promise<Storage> {
+  private async getUploadSize(): Promise<number> {
     let size = -1
 
     if (this.stdin) {
@@ -368,10 +367,9 @@ export class Upload extends RootCommand implements LeafCommand {
       size = stats.isDirectory() ? await Utils.getFolderSize(this.path) : stats.size
     }
 
-    const storage = new Storage(size)
-    this.console.verbose(`Upload size is approximately ${storage}`)
+    this.console.verbose(`Upload size is approximately ${Numbers.convertBytes(size)}`)
 
-    return storage
+    return size
   }
 
   private hasUnsupportedGatewayOptions(): boolean {

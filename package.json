@@ -1,6 +1,6 @@
 {
   "name": "@ethersphere/swarm-cli",
-  "version": "2.17.0",
+  "version": "2.20.0",
   "description": "CLI tool for Bee",
   "keywords": [
     "Bee",
@@ -45,6 +45,7 @@
     "@types/inquirer": "^8.2.5",
     "@types/jest": "^29.2.3",
     "@types/node": "^18.11.9",
+    "@types/node-fetch": "^2.6.12",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "eslint": "^8.27.0",
@@ -63,13 +64,15 @@
   "dependencies": {
     "@ethersphere/bee-js": "^8.3.0",
     "@fairdatasociety/bmt-js": "^2.1.0",
-    "cafe-utility": "^22.0.0",
+    "cafe-utility": "^26.2.1",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
     "ethereumjs-wallet": "^1.0.2",
+    "ethers": "^5.7.2",
     "furious-commander": "^1.7.1",
     "inquirer": "^8.2.5",
     "mantaray-js": "^1.0.3",
+    "node-fetch": "^2.7.0",
     "ora": "^5.3.0",
     "ws": "^8.11.0"
   }

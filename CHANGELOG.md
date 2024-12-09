@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.20.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.19.0...v2.20.0) (2024-12-08)
+
+
+### Features
+
+* optionally deploy config in get-bee command ([#554](https://www.github.com/ethersphere/swarm-cli/issues/554)) ([e2085b9](https://www.github.com/ethersphere/swarm-cli/commit/e2085b9f3c9d59f516647c61daf89570d58550d1))
+
+## [2.19.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.18.0...v2.19.0) (2024-12-05)
+
+
+### Features
+
+* add stamp create, utility get-bee and utility redeem commands ([#551](https://www.github.com/ethersphere/swarm-cli/issues/551)) ([8b0d5a4](https://www.github.com/ethersphere/swarm-cli/commit/8b0d5a491e11c6194da4e167f8f73c0a8e5a7bf2))
+
+## [2.18.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.17.0...v2.18.0) (2024-10-24)
+
+
+### Features
+
+* upgrade to bee-js 8.3 ([#547](https://www.github.com/ethersphere/swarm-cli/issues/547)) ([710ef02](https://www.github.com/ethersphere/swarm-cli/commit/710ef0234d7ff53f8f7e24a056284fe7a5431e29))
+
 ## [2.17.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.16.0...v2.17.0) (2024-10-03)
 
 
