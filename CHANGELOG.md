@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.21.0...v2.22.0) (2024-12-09)
+
+
+### Features
+
+* add chainsync info to status command ([#549](https://www.github.com/ethersphere/swarm-cli/issues/549)) ([951814d](https://www.github.com/ethersphere/swarm-cli/commit/951814dce629ee40d52a95afbbbcf11c2c2f7dca))
+
 ## [2.21.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.20.0...v2.21.0) (2024-12-09)
 
 
