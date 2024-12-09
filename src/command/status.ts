@@ -12,7 +12,7 @@ export class Status extends RootCommand implements LeafCommand {
   public readonly description = 'Check Bee status'
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     this.console.all(chalk.bold('Bee'))
     process.stdout.write(createKeyValue('API', this.beeApiUrl))
@@ -44,6 +44,15 @@ export class Status extends RootCommand implements LeafCommand {
       const { bzzBalance, nativeTokenBalance } = await this.bee.getWalletBalance()
       this.console.all(createKeyValue('xBZZ', Numbers.fromDecimals(bzzBalance, 16)))
       this.console.all(createKeyValue('xDAI', Numbers.fromDecimals(nativeTokenBalance, 18)))
+      this.console.all('')
+      this.console.all(chalk.bold('Chainsync'))
+      const { block, chainTip } = await this.bee.getChainState()
+      this.console.all(
+        createKeyValue(
+          'Block',
+          `${block.toLocaleString()} / ${chainTip.toLocaleString()} (Δ ${(chainTip - block).toLocaleString()})`,
+        ),
+      )
     }
 
     if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
