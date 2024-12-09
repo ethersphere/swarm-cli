@@ -30,6 +30,10 @@ export function createChequeMockHttpServer(port: number): Server {
       response.end(JSON.stringify(balance))
     }
 
+    if (request.url === '/chainstate') {
+      response.end(JSON.stringify(chainstate))
+    }
+
     if (request.url === '/wallet') {
       response.end(JSON.stringify(wallet))
     }
@@ -91,6 +95,13 @@ const lastCashoutCheque1 = {
 }
 
 const balance = { totalBalance: '100026853000000000', availableBalance: '100018560000000000' }
+
+const chainstate = {
+  chainTip: 37439274,
+  block: 37439270,
+  totalAmount: '153434201871',
+  currentPrice: '27356',
+}
 
 const wallet = {
   bzzBalance: '3904697022414848',
