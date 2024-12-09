@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.21.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.20.0...v2.21.0) (2024-12-09)
+
+
+### Features
+
+* improve onboarding flow ([#556](https://www.github.com/ethersphere/swarm-cli/issues/556)) ([2cc2c6f](https://www.github.com/ethersphere/swarm-cli/commit/2cc2c6fbc52b2788873b95405960a16069cce9b9))
+
 ## [2.20.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.19.0...v2.20.0) (2024-12-08)
 
 
