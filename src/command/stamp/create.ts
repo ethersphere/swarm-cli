@@ -14,7 +14,7 @@ export class Create extends StampCommand implements LeafCommand {
 
   @Option({
     key: 'capacity',
-    description: 'Size of data, e.g. 100MB, 1GB',
+    description: 'Size of data, e.g. 1GB',
     type: 'string',
     required: false,
   })
@@ -22,13 +22,18 @@ export class Create extends StampCommand implements LeafCommand {
 
   @Option({
     key: 'ttl',
-    description: 'Time to live of the postage stamp, e.g. 1d, 4w, "6 months", 1y',
+    description: 'Time to live of the postage stamp, e.g. 1d, 1w, 1month',
     type: 'string',
     required: false,
   })
   public ttl!: string
 
-  @Option({ key: 'immutable', description: 'Disable stamp reuse', type: 'boolean', default: true })
+  @Option({
+    key: 'immutable',
+    description: 'At full capacity, immutable prevents; mutable allows further uploads, overwriting old data',
+    type: 'boolean',
+    default: true,
+  })
   public immutable!: boolean
 
   @Option({ key: 'label', description: 'Label of the postage stamp' })
@@ -43,9 +48,9 @@ export class Create extends StampCommand implements LeafCommand {
     let ttlInMillis = 0
 
     if (!this.capacity) {
-      this.console.log('Please provide the capacity of the postage stamp')
-      this.console.log('This is the size of the data that can be uploaded with this stamp')
-      this.console.log('Example: 100MB, 1GB')
+      this.console.log('Please provide the total capacity of the postage stamp batch')
+      this.console.log('This represents the total size of data that can be uploaded')
+      this.console.log('Example: 1GB')
       this.capacity = await this.console.askForValue('Capacity')
       this.console.log('')
     }
@@ -53,9 +58,9 @@ export class Create extends StampCommand implements LeafCommand {
     capacityInBytes = Numbers.makeStorage(this.capacity)
 
     if (!this.ttl) {
-      this.console.log('Please provide the time to live of the postage stamp')
-      this.console.log('This is the time after which the stamp will expire')
-      this.console.log('Example: 1h, 1d, 1w')
+      this.console.log('Please provide the time-to-live (TTL) of the postage stamps')
+      this.console.log('Defines the duration after which the stamp will expire')
+      this.console.log('Example: 1d, 1w, 1month')
       this.ttl = await this.console.askForValue('TTL')
       this.console.log('')
     }
@@ -90,12 +95,6 @@ export class Create extends StampCommand implements LeafCommand {
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
     this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl)))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
-
-    if (this.immutable) {
-      this.console.info('At full capacity, an immutable stamp no longer allows new content uploads.')
-    } else {
-      this.console.info('At full capacity, a mutable stamp allows new content uploads, but overwrites old content.')
-    }
 
     if (!this.quiet && !this.yes) {
       this.yes = await this.console.confirm('Confirm the purchase')

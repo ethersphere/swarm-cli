@@ -42,8 +42,8 @@ export class GetBee extends RootCommand implements LeafCommand {
       execSync('chmod +x bee')
     }
 
-    if (existsSync('config.yaml')) {
-      this.console.log('config.yaml already exists, done')
+    if (existsSync('bee.yaml')) {
+      this.console.log('bee.yaml already exists, done')
 
       return
     }
@@ -54,7 +54,7 @@ export class GetBee extends RootCommand implements LeafCommand {
 
     const type = await this.console.promptList(['ultra-light', 'light'], 'Select the type of configuration to create')
     writeFileSync(
-      'config.yaml',
+      'bee.yaml',
       `api-addr: 127.0.0.1:1633
 blockchain-rpc-endpoint: "https://xdai.fairdatasociety.org"
 cors-allowed-origins: ["*"]
@@ -70,6 +70,6 @@ password: "${Strings.randomAlphanumeric(20)}"`,
     this.console.info('')
     this.console.log('All set! Start Bee node by running:')
     this.console.info('')
-    this.console.log('./bee start --config=config.yaml')
+    this.console.log('./bee start --config=bee.yaml')
   }
 }
