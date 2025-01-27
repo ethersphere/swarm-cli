@@ -14,6 +14,7 @@ import { Stamp } from './command/stamp'
 import { Status } from './command/status'
 import { Upload } from './command/upload'
 import { Utility } from './command/utility'
+import { Grantee } from './command/grantee'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -119,4 +120,5 @@ export const rootCommandClasses = [
   Manifest,
   Stake,
   Utility,
+  Grantee,
 ]
