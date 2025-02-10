@@ -17,7 +17,7 @@ export class Rename extends IdentityCommand implements LeafCommand {
   public newName!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     const identity = this.getIdentityByName(this.identityName)
 
     if (!this.commandConfig.saveIdentity(this.newName, identity)) {

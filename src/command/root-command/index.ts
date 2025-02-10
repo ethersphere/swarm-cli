@@ -1,4 +1,5 @@
-import { Bee, BeeOptions } from '@ethersphere/bee-js'
+import { Bee, BeeOptions, Reference } from '@upcoming/bee-js'
+import { Optional } from 'cafe-utility'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
 import { printCurlCommand } from '../../curl'
 import { parseHeaders } from '../../utils'
@@ -35,10 +36,19 @@ export class RootCommand {
   public yes!: boolean
 
   public bee!: Bee
+
   public console!: CommandLog
+
   public readonly appName = 'swarm-cli'
+
   public commandConfig!: CommandConfig
+
   private sourcemap!: Sourcemap
+
+  /**
+   * Resulting reference of the command for reflection (e.g. in tests)
+   */
+  public result: Optional<Reference> = Optional.empty()
 
   protected init(): void {
     this.commandConfig = new CommandConfig(this.appName, this.console, this.configFile, this.configFolder)

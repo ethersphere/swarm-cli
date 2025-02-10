@@ -1,4 +1,3 @@
-import { Numbers } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue } from '../utils/text'
@@ -22,7 +21,7 @@ export class Stake extends RootCommand implements LeafCommand {
   public amount!: bigint | undefined
 
   private async deposit(amount: bigint): Promise<void> {
-    const currentStake = BigInt(await this.bee.getStake())
+    const currentStake = (await this.bee.getStake()).toPLURBigInt()
 
     if (!currentStake && amount < MIN_INITIAL_STAKE_PLUR) {
       if (this.quiet) {
@@ -68,7 +67,7 @@ export class Stake extends RootCommand implements LeafCommand {
   }
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (this.amount) {
       await this.deposit(this.amount)
@@ -76,7 +75,7 @@ export class Stake extends RootCommand implements LeafCommand {
 
     const stake = await this.bee.getStake()
 
-    this.console.log(createKeyValue('Staked xBZZ', Numbers.fromDecimals(stake, 16)))
-    this.console.quiet(Numbers.fromDecimals(stake, 16))
+    this.console.log(createKeyValue('Staked xBZZ', stake.toDecimalString()))
+    this.console.quiet(stake.toDecimalString())
   }
 }

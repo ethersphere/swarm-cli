@@ -29,7 +29,7 @@ export class Import extends RootCommand implements LeafCommand {
   public password!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (this.commandConfig.config.identities[this.identityName]) {
       throw new CommandLineError(Message.identityNameConflict(this.identityName))

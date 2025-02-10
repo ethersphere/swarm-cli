@@ -14,7 +14,7 @@ export class PssCommand extends RootCommand {
   public topicString!: string
 
   public async init(): Promise<void> {
-    await super.init()
+    super.init()
 
     this.topic = this.topicString
   }

@@ -1,15 +1,13 @@
+import { MantarayNode } from '@upcoming/bee-js'
 import chalk from 'chalk'
 import fs from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { Reference } from 'mantaray-js'
 import { join, parse } from 'path'
-import { directoryExists, referenceToHex } from '../../utils'
+import { directoryExists } from '../../utils'
 import { BzzAddress, makeBzzAddress } from '../../utils/bzz-address'
-import { createSpinner } from '../../utils/spinner'
-import { VerbosityLevel } from '../root-command/command-log'
-import { EnrichedFork, ManifestCommand } from './manifest-command'
+import { RootCommand } from '../root-command'
 
-export class Download extends ManifestCommand implements LeafCommand {
+export class Download extends RootCommand implements LeafCommand {
   public readonly name = 'download'
   public readonly description = 'Download manifest content to a folder'
 
@@ -25,36 +23,32 @@ export class Download extends ManifestCommand implements LeafCommand {
   public stdout!: boolean
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     // can be already set from other command
     if (!this.address) {
       this.address = await makeBzzAddress(this.bee, this.bzzUrl)
     }
 
-    const forks = await this.collectForks(this.address)
-    const isSingleFork = forks.length === 1
-    for (const fork of forks) {
-      await this.downloadFork(fork, this.address, isSingleFork)
+    const node = await MantarayNode.unmarshal(this.bee, this.address.hash)
+    await node.loadRecursively(this.bee)
+    const nodes = node.collect()
+
+    for (const node of nodes) {
+      await this.downloadNode(node, this.address)
     }
   }
 
-  private async downloadFork(fork: EnrichedFork, address: BzzAddress, isSingleFork: boolean): Promise<void> {
-    if ((!isSingleFork || !this.stdout) && !this.quiet) {
+  private async downloadNode(node: MantarayNode, address: BzzAddress): Promise<void> {
+    if (!this.stdout && !this.quiet) {
       if (this.curl) {
-        this.console.log(chalk.dim(fork.path))
+        this.console.log(chalk.dim(node.fullPathString))
       } else {
-        process.stdout.write(chalk.dim(fork.path))
+        process.stdout.write(chalk.dim(node.fullPathString))
       }
     }
-    const parsedForkPath = parse(fork.path)
-    const data = await this.bee.downloadData(referenceToHex(fork.node.getEntry as Reference))
-
-    if (isSingleFork && this.stdout) {
-      process.stdout.write(data)
-
-      return
-    }
+    const parsedForkPath = parse(node.fullPathString)
+    const data = await this.bee.downloadData(node.targetAddress)
 
     const destination = this.destination || address.hash
     const destinationFolder = join(destination, parsedForkPath.dir)
@@ -66,33 +60,6 @@ export class Download extends ManifestCommand implements LeafCommand {
     if (!this.quiet && !this.curl) {
       process.stdout.write(' ' + chalk.green('OK') + '\n')
     }
-    await fs.promises.writeFile(join(destination, fork.fsPath), data)
-  }
-
-  private async collectForks(address: BzzAddress): Promise<EnrichedFork[]> {
-    const spinner = createSpinner('Preparing download...')
-    try {
-      if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
-        spinner.start()
-      }
-      const forks = (await this.loadAllValueForks(address.hash, address.path)).filter(this.isDownloadableNode)
-
-      return forks
-    } finally {
-      spinner.stop()
-    }
-  }
-
-  private isDownloadableNode(fork: EnrichedFork): boolean {
-    if (!fork.node) {
-      return false
-    }
-    const metadata = fork.node.getMetadata
-
-    if (metadata && (metadata['website-index-document'] || metadata['website-error-document'])) {
-      return false
-    }
-
-    return fork.node.isValueType()
+    await fs.promises.writeFile(join(destination, node.fullPathString), data.toUint8Array())
   }
 }

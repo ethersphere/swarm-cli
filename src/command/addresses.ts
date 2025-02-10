@@ -1,4 +1,4 @@
-import { ChequebookAddressResponse, NodeAddresses } from '@ethersphere/bee-js'
+import { ChequebookAddressResponse, NodeAddresses } from '@upcoming/bee-js'
 import { Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
@@ -13,7 +13,7 @@ export class Addresses extends RootCommand implements LeafCommand {
   public nodeAddresses!: NodeAddresses
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     this.nodeAddresses = await this.bee.getNodeAddresses()
     const wrappedChequebookAddress = await this.bee
@@ -33,10 +33,10 @@ export class Addresses extends RootCommand implements LeafCommand {
     const longest = 'PSS Public Key'.length
     this.console.log(chalk.bold('Node Addresses'))
     this.console.divider()
-    this.console.log(createKeyValue('Ethereum', this.nodeAddresses.ethereum, longest))
-    this.console.log(createKeyValue('Overlay', this.nodeAddresses.overlay, longest))
-    this.console.log(createKeyValue('PSS Public Key', this.nodeAddresses.pssPublicKey, longest))
-    this.console.log(createKeyValue('Public Key', this.nodeAddresses.publicKey, longest))
+    this.console.log(createKeyValue('Ethereum', this.nodeAddresses.ethereum.toHex(), longest))
+    this.console.log(createKeyValue('Overlay', this.nodeAddresses.overlay.toHex(), longest))
+    this.console.log(createKeyValue('PSS Public Key', this.nodeAddresses.pssPublicKey.toCompressedHex(), longest))
+    this.console.log(createKeyValue('Public Key', this.nodeAddresses.publicKey.toCompressedHex(), longest))
     this.console.log(createKeyValue('Underlay', this.nodeAddresses.underlay.join(' '), longest))
 
     wrappedChequebookAddress.ifPresent(chequebookAddress => {

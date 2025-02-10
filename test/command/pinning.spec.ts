@@ -1,14 +1,14 @@
+import { Reference } from '@upcoming/bee-js'
 import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
-async function uploadAndGetHash(path: string, indexDocument?: string): Promise<string> {
+async function uploadAndGetHash(path: string, indexDocument?: string): Promise<Reference> {
   const extras = indexDocument ? ['--index-document', indexDocument] : []
   const builder = await invokeTestCli(['upload', path, ...getStampOption(), ...extras])
-  const { hash } = builder.runnable as Upload
 
-  return hash
+  return (builder.runnable as Upload).result.getOrThrow()
 }
 
 describeCommand(
@@ -17,21 +17,21 @@ describeCommand(
     it('should pin a collection with index.html index document', async () => {
       const hash = await uploadAndGetHash('test/testpage')
       expect(hash).toMatch(/[a-z0-9]{64}/)
-      await invokeTestCli(['pinning', 'pin', hash])
+      await invokeTestCli(['pinning', 'pin', hash.toHex()])
       expect(hasMessageContaining('Pinned successfully')).toBeTruthy()
     })
 
     it('should pin a collection with no index document', async () => {
       const hash = await uploadAndGetHash('test/command')
       expect(hash).toMatch(/[a-z0-9]{64}/)
-      await invokeTestCli(['pinning', 'pin', hash])
+      await invokeTestCli(['pinning', 'pin', hash.toHex()])
       expect(hasMessageContaining('Pinned successfully')).toBeTruthy()
     })
 
     it('should pin a collection with explicit index document', async () => {
       const hash = await uploadAndGetHash('test/command', 'pinning.spec.ts')
       expect(hash).toMatch(/[a-z0-9]{64}/)
-      await invokeTestCli(['pinning', 'pin', hash])
+      await invokeTestCli(['pinning', 'pin', hash.toHex()])
       expect(hasMessageContaining('Pinned successfully')).toBeTruthy()
     })
 
@@ -39,17 +39,17 @@ describeCommand(
       const hash = await uploadAndGetHash('test/command')
       consoleMessages.length = 0
       await invokeTestCli(['pinning', 'list'])
-      const containsHash = consoleMessages.some(message => message.includes(hash))
+      const containsHash = consoleMessages.some(message => message.includes(hash.toHex()))
       expect(containsHash).toBe(true)
       const countOfItemsBefore = consoleMessages.length
       expect(countOfItemsBefore).toBeGreaterThanOrEqual(1)
       consoleMessages.length = 0
-      await invokeTestCli(['pinning', 'unpin', hash])
+      await invokeTestCli(['pinning', 'unpin', hash.toHex()])
       expect(consoleMessages.length).toBe(1)
       expect(consoleMessages[0]).toContain('Unpinned successfully')
       consoleMessages.length = 0
       await invokeTestCli(['pinning', 'list'])
-      const containsHashAfterUnpin = consoleMessages.some(message => message.includes(hash))
+      const containsHashAfterUnpin = consoleMessages.some(message => message.includes(hash.toHex()))
       expect(containsHashAfterUnpin).toBe(false)
       const countOfItemsAfter = consoleMessages.length
       expect(countOfItemsAfter).toBeLessThan(countOfItemsBefore)
@@ -80,16 +80,16 @@ describeCommand(
     it.skip('should allow reuploading pinned file', async () => {
       const invocation = await invokeTestCli(['upload', 'README.md', '--pin', ...getStampOption()])
       const upload = invocation.runnable as Upload
-      const { hash } = upload
-      await invokeTestCli(['pinning', 'reupload', hash])
+      const hash = upload.result.getOrThrow()
+      await invokeTestCli(['pinning', 'reupload', hash.toHex()])
       expect(getLastMessage()).toBe('Reuploaded successfully.')
     })
 
     it.skip('should allow reuploading pinned folder', async () => {
       const invocation = await invokeTestCli(['upload', 'test', '--pin', 'false', '--yes', ...getStampOption()])
       const upload = invocation.runnable as Upload
-      const { hash } = upload
-      await invokeTestCli(['pinning', 'reupload', hash])
+      const hash = upload.result.getOrThrow()
+      await invokeTestCli(['pinning', 'reupload', hash.toHex()])
       expect(getLastMessage()).toBe('Reuploaded successfully.')
     })
 

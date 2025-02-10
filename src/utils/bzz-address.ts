@@ -1,8 +1,5 @@
-import { Bee } from '@ethersphere/bee-js'
-import { MantarayFork, MantarayNode, MetadataMapping } from 'mantaray-js'
+import { Bee, MantarayNode } from '@upcoming/bee-js'
 import { CommandLineError } from './error'
-
-const INDEX_DOCUMENT_FORK_PREFIX = '47'
 
 export class BzzAddress {
   public hash: string
@@ -43,6 +40,7 @@ export async function makeBzzAddress(bee: Bee, url: string): Promise<BzzAddress>
   return address
 }
 
+// TODO: what is this function?
 async function resolveFeedManifest(bee: Bee, hash: string): Promise<string | null> {
   const metadata = await getRootSlashMetadata(bee, hash)
 
@@ -57,35 +55,21 @@ async function resolveFeedManifest(bee: Bee, hash: string): Promise<string | nul
     return null
   }
 
-  const reader = bee.makeFeedReader('sequence', topic, owner)
+  const reader = bee.makeFeedReader(topic, owner)
   const response = await reader.download()
 
-  return response.reference
+  return response.payload.toHex()
 }
 
-async function getRootSlashMetadata(bee: Bee, hash: string): Promise<MetadataMapping | null> {
-  const data = await bee.downloadData(hash)
-  const node = new MantarayNode()
-  node.deserialize(data)
+async function getRootSlashMetadata(bee: Bee, hash: string): Promise<Record<string, string> | null> {
+  const node = await MantarayNode.unmarshal(bee, hash)
+  await node.loadRecursively(bee)
 
-  if (!node.forks) {
-    return null
-  }
-  const fork = Reflect.get(node.forks, INDEX_DOCUMENT_FORK_PREFIX) as MantarayFork | undefined
+  const indexNode = node.find('/')
 
-  if (!fork) {
-    return null
-  }
-  const metadataNode = fork.node
-
-  if (!metadataNode.IsWithMetadataType()) {
-    return null
-  }
-  const metadata = metadataNode.getMetadata
-
-  if (!metadata) {
+  if (!indexNode || !indexNode.metadata) {
     return null
   }
 
-  return metadata
+  return indexNode.metadata
 }

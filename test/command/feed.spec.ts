@@ -66,7 +66,8 @@ describeCommand(
       await invokeTestCli(['identity', 'create', 'update-feed-test', '-P', '1234', '-v'])
       const uploadCommand = await invokeTestCli(['upload', 'README.md', ...getStampOption()])
       const upload = uploadCommand.runnable as Upload
-      const { hash } = upload
+      const hash = upload.result.getOrThrow()
+
       consoleMessages.length = 0
       await invokeTestCli([
         'feed',
@@ -78,7 +79,7 @@ describeCommand(
         '-P',
         '1234',
         '-r',
-        hash,
+        hash.toHex(),
         ...getStampOption(),
       ])
       expect(hasMessageContaining('Feed Manifest URL')).toBeTruthy()

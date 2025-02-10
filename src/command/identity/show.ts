@@ -19,7 +19,7 @@ export class Show extends IdentityCommand implements LeafCommand {
   public password!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     const { identity } = await this.getOrPickIdentity(this.identityName)
 
     await this.maybePromptForSensitive()

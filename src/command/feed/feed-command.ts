@@ -1,4 +1,4 @@
-import { Reference } from '@ethersphere/bee-js'
+import { Reference, Topic } from '@upcoming/bee-js'
 import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { exit } from 'process'
@@ -12,8 +12,8 @@ import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
 
 interface FeedInfo {
-  reference: string
-  manifest: string
+  reference: Reference
+  manifest: Reference
 }
 
 export class FeedCommand extends RootCommand {
@@ -35,18 +35,18 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
 
-  protected async updateFeedAndPrint(stamp: string, chunkReference: string): Promise<string> {
+  protected async updateFeedAndPrint(stamp: string, chunkReference: Reference): Promise<Reference> {
     const wallet = await this.getWallet()
-    const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
+    const topic = this.topic ? new Topic(this.topic) : Topic.fromString(this.topicString)
     const { reference, manifest } = await this.writeFeed(stamp, wallet, topic, chunkReference)
 
-    this.console.verbose(createKeyValue('Chunk Reference', chunkReference))
+    this.console.verbose(createKeyValue('Chunk Reference', chunkReference.toHex()))
     this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${chunkReference}/`))
-    this.console.verbose(createKeyValue('Feed Reference', reference))
-    this.console.verbose(createKeyValue('Feed Manifest', manifest))
+    this.console.verbose(createKeyValue('Feed Reference', reference.toHex()))
+    this.console.verbose(createKeyValue('Feed Manifest', manifest.toHex()))
     this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
 
-    this.console.quiet(manifest)
+    this.console.quiet(manifest.toHex())
 
     if (!this.quiet) {
       printStamp(await this.bee.getPostageBatch(stamp), this.console, { shortenBatchId: true })
@@ -76,7 +76,7 @@ export class FeedCommand extends RootCommand {
     return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
   }
 
-  private async writeFeed(stamp: string, wallet: Wallet, topic: string, chunkReference: string): Promise<FeedInfo> {
+  private async writeFeed(stamp: string, wallet: Wallet, topic: Topic, chunkReference: Reference): Promise<FeedInfo> {
     const spinner = createSpinner('Writing feed...')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
@@ -84,16 +84,11 @@ export class FeedCommand extends RootCommand {
     }
 
     try {
-      const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-      const { reference: manifest } = await this.bee.createFeedManifest(
-        stamp,
-        'sequence',
-        topic,
-        wallet.getAddressString(),
-      )
-      const { reference } = await writer.upload(stamp, chunkReference as Reference)
+      const writer = this.bee.makeFeedWriter(topic, wallet.getPrivateKey())
+      const feedManifestResult = await this.bee.createFeedManifest(stamp, topic, wallet.getAddressString())
+      const { reference } = await writer.upload(stamp, chunkReference)
 
-      return { reference, manifest }
+      return { reference, manifest: feedManifestResult }
     } finally {
       spinner.stop()
     }

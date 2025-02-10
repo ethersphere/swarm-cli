@@ -1,4 +1,4 @@
-import { Utils } from '@ethersphere/bee-js'
+import { BatchId, Utils } from '@upcoming/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import { BigNumber } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
@@ -54,7 +54,7 @@ export class Buy extends StampCommand implements LeafCommand {
   public waitUsable!: boolean
 
   // CLASS FIELDS
-  public postageBatchId!: string
+  public postageBatchId!: BatchId
 
   public async run(): Promise<void> {
     super.init()
@@ -68,13 +68,13 @@ export class Buy extends StampCommand implements LeafCommand {
       return
     }
 
-    const estimatedCost = Utils.getStampCostInBzz(this.depth, Number(this.amount))
+    const estimatedCost = Utils.getStampCost(this.depth, BigInt(this.amount))
     const estimatedCapacity = Numbers.convertBytes(Utils.getStampMaximumCapacityBytes(this.depth))
-    const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount), Number(chainState.currentPrice), 5)
+    const estimatedTtl = Utils.getStampTtlSeconds(BigInt(this.amount), Number(chainState.currentPrice), 5)
 
-    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} xBZZ`))
+    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toDecimalString()} xBZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
-    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl)))
+    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(Number(estimatedTtl))))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (this.immutable) {
@@ -105,8 +105,8 @@ export class Buy extends StampCommand implements LeafCommand {
         waitForUsable: this.waitUsable === false ? false : true,
       })
       spinner.stop()
-      this.console.quiet(batchId)
-      this.console.log(createKeyValue('Stamp ID', batchId))
+      this.console.quiet(batchId.toHex())
+      this.console.log(createKeyValue('Stamp ID', batchId.toHex()))
       this.postageBatchId = batchId
     } finally {
       spinner.stop()
