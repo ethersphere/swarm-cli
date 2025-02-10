@@ -13,7 +13,7 @@ export class PssCommand extends RootCommand {
   })
   public topicString!: string
 
-  public async init(): Promise<void> {
+  public init(): void {
     super.init()
 
     this.topic = this.topicString

@@ -52,6 +52,7 @@ export class Sync extends RootCommand implements LeafCommand {
 
     for (const file of files) {
       const existing = map.get(file)
+
       if (existing) {
         const localData = readFileSync(join(this.folder, file))
         const rootChunk = await MerkleTree.root(localData)

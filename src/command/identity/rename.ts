@@ -16,7 +16,7 @@ export class Rename extends IdentityCommand implements LeafCommand {
   @Argument({ key: 'new-name', description: 'New name of the identity', required: true })
   public newName!: string
 
-  public async run(): Promise<void> {
+  public run(): void {
     super.init()
     const identity = this.getIdentityByName(this.identityName)
 
