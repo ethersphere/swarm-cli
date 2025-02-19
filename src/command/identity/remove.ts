@@ -15,7 +15,7 @@ export class Remove extends IdentityCommand implements LeafCommand {
   public identityName!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     const { name } = await this.getOrPickIdentity(this.identityName)
 
     if (!this.yes) {

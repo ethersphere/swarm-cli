@@ -1,6 +1,7 @@
+import { Reference } from '@upcoming/bee-js'
 import { readFileSync, statSync, writeFileSync } from 'fs'
 import { Upload as FeedUpload } from '../../src/command/feed/upload'
-import { ManifestCommand } from '../../src/command/manifest/manifest-command'
+import { RootCommand } from '../../src/command/root-command'
 import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
 import { readdirDeepAsync } from '../../src/utils'
@@ -17,13 +18,14 @@ async function runAndGetManifest(argv: string[]): Promise<string> {
     argv = [...argv, ...getStampOption()]
   }
   const commandBuilder = await invokeTestCli(argv)
-  const command = commandBuilder.runnable as unknown as ManifestCommand
+  const command = commandBuilder.runnable as unknown as RootCommand
 
-  return command.resultHash
+  return command.result.getOrThrow().toHex()
 }
 
 describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining }) => {
-  let srcHash: string
+  let srcHash: Reference
+
   beforeAll(async () => {
     const invocation = await invokeTestCli([
       'upload',
@@ -32,7 +34,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
       'index.txt',
       ...getStampOption(),
     ])
-    srcHash = (invocation.runnable as Upload).hash
+    srcHash = (invocation.runnable as Upload).result.getOrThrow()
   })
 
   it('should add file', async () => {
@@ -339,9 +341,9 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should be able to upload and download folder with default index.html', async () => {
     const invocation = await invokeTestCli(['upload', 'test/testpage', ...getStampOption()])
-    const { hash } = invocation.runnable as Upload
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
-    await invokeTestCli(['manifest', 'download', hash])
+    await invokeTestCli(['manifest', 'download', hash.toHex()])
     expect(consoleMessages[0]).toContain('images/swarm.png')
     expect(consoleMessages[2]).toContain('index.html')
     expect(consoleMessages[4]).toContain('swarm.bzz')

@@ -1,5 +1,5 @@
-import { RedundancyLevel, Tag, Utils } from '@ethersphere/bee-js'
-import { Numbers, System } from 'cafe-utility'
+import { RedundancyLevel, Tag, Utils } from '@upcoming/bee-js'
+import { Numbers, Optional, System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -107,15 +107,11 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public redundancy!: string
 
-  // CLASS FIELDS
-
-  public hash!: string
-
   public stdinData!: Buffer
 
   // eslint-disable-next-line complexity
   public async run(usedFromOtherCommand = false): Promise<void> {
-    await super.init()
+    super.init()
 
     if (this.hasUnsupportedGatewayOptions()) {
       exit(1)
@@ -156,7 +152,7 @@ export class Upload extends RootCommand implements LeafCommand {
     const url = await this.uploadAnyWithSpinner(tag, uploadingFolder)
 
     this.console.dim('Data has been sent to the Bee node successfully!')
-    this.console.log(createKeyValue('Swarm hash', this.hash))
+    this.console.log(createKeyValue('Swarm hash', this.result.getOrThrow().toHex()))
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
 
     if (this.sync && tag) {
@@ -167,7 +163,7 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.log(createKeyValue('URL', url))
 
     if (!usedFromOtherCommand) {
-      this.console.quiet(this.hash)
+      this.console.quiet(this.result.getOrThrow().toHex())
 
       if (!isGateway(this.beeApiUrl) && !this.quiet) {
         printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
@@ -216,9 +212,9 @@ export class Upload extends RootCommand implements LeafCommand {
         deferred: this.deferred,
         redundancyLevel: this.determineRedundancyLevel(),
       })
-      this.hash = reference
+      this.result = Optional.of(reference)
 
-      return `${this.bee.url}/bzz/${this.hash}/`
+      return `${this.bee.url}/bzz/${reference.toHex()}/`
     } else {
       const { reference } = await this.bee.uploadData(this.stamp, this.stdinData, {
         tag: tag?.uid,
@@ -226,9 +222,9 @@ export class Upload extends RootCommand implements LeafCommand {
         encrypt: this.encrypt,
         redundancyLevel: this.determineRedundancyLevel(),
       })
-      this.hash = reference
+      this.result = Optional.of(reference)
 
-      return `${this.bee.url}/bytes/${this.hash}`
+      return `${this.bee.url}/bytes/${reference.toHex()}`
     }
   }
 
@@ -247,9 +243,9 @@ export class Upload extends RootCommand implements LeafCommand {
       deferred: this.deferred,
       redundancyLevel: this.determineRedundancyLevel(),
     })
-    this.hash = reference
+    this.result = Optional.of(reference)
 
-    return `${this.bee.url}/bzz/${this.hash}/`
+    return `${this.bee.url}/bzz/${reference.toHex()}/`
   }
 
   private async uploadSingleFile(tag?: Tag): Promise<string> {
@@ -269,9 +265,9 @@ export class Upload extends RootCommand implements LeafCommand {
       deferred: this.deferred,
       redundancyLevel: this.determineRedundancyLevel(),
     })
-    this.hash = reference
+    this.result = Optional.of(reference)
 
-    return `${this.bee.url}/bzz/${this.hash}/`
+    return `${this.bee.url}/bzz/${reference.toHex()}/`
   }
 
   /**

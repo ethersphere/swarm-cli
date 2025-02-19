@@ -16,11 +16,11 @@ export default async (): Promise<Config.InitialOptions> => {
    * only consists a single queen node as well
    */
   if (!process.env.SKIP_WORKER) {
-    process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11633')
+    process.env.WORKER_PSS_ADDRESS = (await getPssAddress('http://localhost:11633')).toCompressedHex()
   }
 
   if (!process.env.TEST_STAMP) {
-    process.env.TEST_STAMP = await getOrBuyStamp()
+    process.env.TEST_STAMP = (await getOrBuyStamp()).toHex()
   }
 
   return {

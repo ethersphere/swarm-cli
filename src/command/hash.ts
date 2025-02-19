@@ -1,4 +1,4 @@
-import { makeChunkedFile } from '@fairdatasociety/bmt-js'
+import { MerkleTree, Reference } from '@upcoming/bee-js'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand } from 'furious-commander'
 import { RootCommand } from './root-command'
@@ -15,11 +15,8 @@ export class Hash extends RootCommand implements LeafCommand {
   })
   public path!: string
 
-  public run(): void {
+  public async run(): Promise<void> {
     super.init()
-    const rawBinaryFileData = readFileSync(this.path)
-    const chunkedFile = makeChunkedFile(rawBinaryFileData)
-    const rootChunk = chunkedFile.rootChunk()
-    this.console.all(Buffer.from(rootChunk.address()).toString('hex'))
+    this.console.all(new Reference((await MerkleTree.root(readFileSync(this.path))).hash()).toHex())
   }
 }

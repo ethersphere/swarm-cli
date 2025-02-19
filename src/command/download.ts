@@ -1,6 +1,6 @@
+import { MantarayNode } from '@upcoming/bee-js'
 import fs from 'fs'
 import { Aggregation, LeafCommand } from 'furious-commander'
-import { MantarayNode } from 'mantaray-js'
 import { BzzAddress, makeBzzAddress } from '../utils/bzz-address'
 import { Download as ManifestDownload } from './manifest/download'
 import { RootCommand } from './root-command'
@@ -16,7 +16,7 @@ export class Download extends RootCommand implements LeafCommand {
   private address!: BzzAddress
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     this.address = await makeBzzAddress(this.bee, this.manifestDownload.bzzUrl)
 
@@ -33,18 +33,17 @@ export class Download extends RootCommand implements LeafCommand {
     const { name, data } = response
 
     if (this.manifestDownload.stdout) {
-      process.stdout.write(data)
+      process.stdout.write(data.toUint8Array())
     } else {
       const path = this.manifestDownload.destination || name || this.address.hash
-      await fs.promises.writeFile(path, data)
+      await fs.promises.writeFile(path, data.toUint8Array())
     }
   }
 
   private async isManifest(): Promise<boolean> {
     try {
-      const response = await this.bee.downloadData(this.address.hash)
-      const node = new MantarayNode()
-      node.deserialize(response)
+      const node = await MantarayNode.unmarshal(this.bee, this.address.hash)
+      await node.loadRecursively(this.bee)
 
       return true
     } catch {

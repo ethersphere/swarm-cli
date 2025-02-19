@@ -1,10 +1,10 @@
+import { MantarayNode } from '@upcoming/bee-js'
 import { LeafCommand, Option } from 'furious-commander'
-import { MantarayNode } from 'mantaray-js'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
-import { ManifestCommand } from './manifest-command'
+import { RootCommand } from '../root-command'
 
-export class Create extends ManifestCommand implements LeafCommand {
+export class Create extends RootCommand implements LeafCommand {
   public readonly name = 'create'
   public readonly description = 'Create an empty manifest'
 
@@ -12,12 +12,12 @@ export class Create extends ManifestCommand implements LeafCommand {
   public stamp!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)
     }
     const node = new MantarayNode()
-    await this.saveAndPrintNode(node, this.stamp)
+    await node.saveRecursively(this.bee, this.stamp)
   }
 }
