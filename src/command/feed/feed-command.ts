@@ -93,7 +93,7 @@ export class FeedCommand extends RootCommand {
       )
       const { reference } = await writer.upload(stamp, chunkReference as Reference)
 
-      return { reference, manifest }
+      return { reference: reference.toString(), manifest }
     } finally {
       spinner.stop()
     }
