@@ -5,7 +5,7 @@
     "alwaysStrict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2015",
+    "target": "es2020",
     "moduleResolution": "node",
     "typeRoots": ["node_modules/@types"],
     "rootDirs": ["src"],

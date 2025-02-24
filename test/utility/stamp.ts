@@ -8,14 +8,14 @@ export const getOrBuyStamp = async (): Promise<BatchId> => {
 
   if (availableStamps.length > 0) {
     const usedStamp = availableStamps[0].batchID
-    console.log('Using existing stamp: ', usedStamp)
+    console.log('Using existing stamp: ', usedStamp.toHex())
 
     return usedStamp
   }
 
   console.log('Buying new stamp.')
   const newStamp = await bee.createPostageBatch(Numbers.make('2b').toString(), 22, { waitForUsable: true })
-  console.log('Bought stamp: ', newStamp)
+  console.log('Bought stamp: ', newStamp.toHex())
 
   return newStamp
 }
