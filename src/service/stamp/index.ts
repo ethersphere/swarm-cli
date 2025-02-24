@@ -20,11 +20,11 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
   const stamps = ((await bee.getAllPostageBatch()) || []).map(enrichStamp)
 
   const choices = stamps
-    .filter(stamp => stamp.usable || stamp.batchTTL > 0)
+    .filter(stamp => stamp.usable || stamp.duration.toSeconds() > 0)
     .map(
       stamp =>
         `${stamp.batchID} ${Numbers.convertBytes(stamp.remainingCapacity)} remaining, TTL ${Dates.secondsToHumanTime(
-          stamp.batchTTL,
+          stamp.duration.toSeconds(),
         )}`,
     )
 
@@ -43,7 +43,7 @@ export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
   const usage = Utils.getStampUsage(stamp.utilization, stamp.depth, stamp.bucketDepth)
   const usageNormal = Math.ceil(usage * 100)
   const usageText = usageNormal + '%'
-  const capacity = Utils.getStampMaximumCapacityBytes(stamp.depth)
+  const capacity = Utils.getStampEffectiveBytes(stamp.depth)
   const remainingCapacity = capacity * (1 - usage)
 
   return {
@@ -85,11 +85,11 @@ export function printStamp(
   )
 
   if (settings?.showTtl) {
-    const ttl = stamp.batchTTL === -1 ? 'unknown' : Dates.secondsToHumanTime(stamp.batchTTL)
+    const ttl = stamp.duration.toSeconds() === -1 ? 'unknown' : Dates.secondsToHumanTime(stamp.duration.toSeconds())
     const expires =
-      stamp.batchTTL === -1 || stamp.batchTTL > 1e11
+      stamp.duration.toSeconds() === -1 || stamp.duration.toSeconds() > 1e11
         ? 'unknown'
-        : new Date(Date.now() + stamp.batchTTL * 1000).toISOString().slice(0, 10)
+        : new Date(Date.now() + stamp.duration.toSeconds() * 1000).toISOString().slice(0, 10)
     console.log(createKeyValue('TTL', `${ttl} (${expires})`))
   }
 

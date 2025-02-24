@@ -65,7 +65,7 @@ export class List extends StampCommand implements LeafCommand {
 
     const orderedStamps = this.leastUsed
       ? limitedStamps.sort((a, b) => a.usage - b.usage)
-      : limitedStamps.sort((a, b) => b.batchTTL - a.batchTTL)
+      : limitedStamps.sort((a, b) => b.duration.toSeconds() - a.duration.toSeconds())
 
     printDivided(
       orderedStamps,
