@@ -1,4 +1,4 @@
-import { Bee, BeeOptions, Reference } from '@upcoming/bee-js'
+import { Bee, BeeDev, BeeOptions, Reference } from '@upcoming/bee-js'
 import { Optional } from 'cafe-utility'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
 import { printCurlCommand } from '../../curl'
@@ -35,6 +35,9 @@ export class RootCommand {
   @ExternalOption('yes')
   public yes!: boolean
 
+  @ExternalOption('dev')
+  public dev!: boolean
+
   public bee!: Bee
 
   public console!: CommandLog
@@ -67,7 +70,7 @@ export class RootCommand {
     if (this.header.length) {
       beeOptions.headers = parseHeaders(this.header)
     }
-    this.bee = new Bee(this.beeApiUrl, beeOptions)
+    this.bee = this.dev ? new BeeDev(this.beeApiUrl, beeOptions) : new Bee(this.beeApiUrl, beeOptions)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
