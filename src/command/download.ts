@@ -22,6 +22,7 @@ export class Download extends RootCommand implements LeafCommand {
 
     if (await this.isManifest()) {
       this.manifestDownload.address = this.address
+      this.manifestDownload.stdout = false
       await this.manifestDownload.run()
     } else {
       await this.downloadFile()
