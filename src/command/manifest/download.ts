@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import fs from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
+import { exit } from 'process'
 import { directoryExists } from '../../utils'
 import { BzzAddress, makeBzzAddress } from '../../utils/bzz-address'
 import { RootCommand } from '../root-command'
@@ -34,6 +35,11 @@ export class Download extends RootCommand implements LeafCommand {
     await node.loadRecursively(this.bee)
 
     const nodes = node.collect().filter(x => x.fullPathString.startsWith(this.address.path || ''))
+
+    if (nodes.length === 0) {
+      this.console.error('No files found under the given path')
+      exit(1)
+    }
 
     if (this.stdout && nodes.length > 1) {
       this.stdout = false

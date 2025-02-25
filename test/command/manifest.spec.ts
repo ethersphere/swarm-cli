@@ -327,18 +327,12 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
 
   it('should handle error for invalid download path', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/b`])
-    expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR +
-        ' Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
-    )
+    expect(consoleMessages[0]).toContain(FORMATTED_ERROR + ' No files found under the given path')
   })
 
   it('should handle error for invalid list path', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/b`])
-    expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR +
-        ' Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
-    )
+    expect(consoleMessages[0]).toContain(FORMATTED_ERROR + ' No files found under the given path')
   })
 
   it('should be able to upload and download folder with default index.html', async () => {
