@@ -58,7 +58,7 @@ export class Download extends RootCommand implements LeafCommand {
     }
 
     if (!this.quiet && !this.curl) {
-      process.stdout.write(' ' + chalk.green('OK') + '\n')
+      process.stdout.write(node.fullPathString + ' ' + chalk.green('OK') + '\n')
     }
     await fs.promises.writeFile(join(destination, node.fullPathString), data.toUint8Array())
   }
