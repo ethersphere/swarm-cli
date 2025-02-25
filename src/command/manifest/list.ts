@@ -27,6 +27,8 @@ export class List extends RootCommand implements LeafCommand {
     await node.loadRecursively(this.bee)
     const nodes = node.collect()
     for (const node of nodes) {
+      this.console.log(new Reference(node.targetAddress).toHex() + ' ' + node.fullPathString)
+
       if (this.printBzz) {
         this.console.log(chalk.dim(this.beeApiUrl + '/bzz/' + address.hash + '/' + node.fullPathString))
       }
