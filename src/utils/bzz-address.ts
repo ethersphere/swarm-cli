@@ -31,45 +31,18 @@ export class BzzAddress {
 export async function makeBzzAddress(bee: Bee, url: string): Promise<BzzAddress> {
   const address = new BzzAddress(url)
 
-  const feedReference = await resolveFeedManifest(bee, address.hash)
+  try {
+    const manifest = await MantarayNode.unmarshal(bee, address.hash)
+    await manifest.loadRecursively(bee)
 
-  if (feedReference) {
-    address.hash = feedReference
+    const resolvedFeed = await manifest.resolveFeed(bee)
+
+    resolvedFeed.ifPresent(feed => {
+      address.hash = feed.payload.toHex()
+    })
+
+    return address
+  } catch {
+    return address
   }
-
-  return address
-}
-
-// TODO: what is this function?
-async function resolveFeedManifest(bee: Bee, hash: string): Promise<string | null> {
-  const metadata = await getRootSlashMetadata(bee, hash)
-
-  if (!metadata) {
-    return null
-  }
-
-  const owner = metadata['swarm-feed-owner']
-  const topic = metadata['swarm-feed-topic']
-
-  if (!owner || !topic) {
-    return null
-  }
-
-  const reader = bee.makeFeedReader(topic, owner)
-  const response = await reader.download()
-
-  return response.payload.toHex()
-}
-
-async function getRootSlashMetadata(bee: Bee, hash: string): Promise<Record<string, string> | null> {
-  const node = await MantarayNode.unmarshal(bee, hash)
-  await node.loadRecursively(bee)
-
-  const indexNode = node.find('/')
-
-  if (!indexNode || !indexNode.metadata) {
-    return null
-  }
-
-  return indexNode.metadata
 }
