@@ -59,7 +59,7 @@ export function createChequeMockHttpServer(port: number): Server {
   return server
 }
 
-const health = { status: 'ok', version: '0.5.3-acbd0e2' }
+const health = { status: 'ok', version: '2.2.0-b8405074e', apiVersion: '7.3.0' }
 
 const topology = {
   population: 1,
@@ -111,10 +111,7 @@ const wallet = {
   walletAddress: '0xb48b45c9254c98a122bd42d0f674318ba154e071',
 }
 
-const nodeInfo = {
-  beeMode: 'light',
-  gatewayMode: true,
-}
+const nodeInfo = { beeMode: 'light', chequebookEnabled: true, swapEnabled: true }
 
 if (process.argv[2] === 'run') {
   createChequeMockHttpServer(parseInt(process.argv[3], 10))
