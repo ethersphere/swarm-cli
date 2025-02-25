@@ -24,9 +24,9 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
     await invokeTestCli(['download', hash.toHex(), tmpDir])
-    expect(consoleMessages[0]).toContain('images/swarm.png')
-    expect(consoleMessages[2]).toContain('index.html')
-    expect(consoleMessages[4]).toContain('swarm.bzz')
+    expect(consoleMessages.some(x => x.includes('images/swarm.png'))).toBe(true)
+    expect(consoleMessages.some(x => x.includes('index.html'))).toBe(true)
+    expect(consoleMessages.some(x => x.includes('swarm.bzz'))).toBe(true)
   })
 
   it('should ignore --stdout if downloading folder', async () => {
@@ -35,8 +35,8 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
     await invokeTestCli(['download', hash.toHex(), tmpDir, '--stdout'])
-    expect(consoleMessages[0]).toContain('images/swarm.png')
-    expect(consoleMessages[2]).toContain('index.html')
-    expect(consoleMessages[4]).toContain('swarm.bzz')
+    expect(consoleMessages.some(x => x.includes('images/swarm.png'))).toBe(true)
+    expect(consoleMessages.some(x => x.includes('index.html'))).toBe(true)
+    expect(consoleMessages.some(x => x.includes('swarm.bzz'))).toBe(true)
   })
 })

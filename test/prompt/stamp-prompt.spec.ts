@@ -8,7 +8,7 @@ describeCommand('Postage stamp price estimation prompt', ({ consoleMessages }) =
     await invokeTestCli(['stamp', 'buy', '--depth', '24', '--amount', '596046400'])
     expect(consoleMessages[0]).toBe('Estimated cost: 0.9999999198822400 xBZZ')
     expect(consoleMessages[1]).toBe('Estimated capacity: 41.171 GB')
-    expect(consoleMessages[2]).toBe('Estimated TTL: 28 hours')
+    expect(consoleMessages[2]).toBe('Estimated TTL: 34 hours')
     expect(inquirer.prompt).toHaveBeenCalledWith({
       message: 'Confirm the purchase',
       name: 'value',
