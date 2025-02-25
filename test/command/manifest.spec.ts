@@ -240,35 +240,35 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     const command = invocation.runnable as unknown as FeedUpload
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'list', `${command.feedManifest}`])
-    expect(consoleMessages[0]).toContain('/README.md')
+    expect(consoleMessages[0]).toContain('README.md')
   })
 
   it('should list single file when specified partially', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/ind`])
-    expect(consoleMessages[0]).toContain('/index.txt')
+    expect(consoleMessages[0]).toContain('index.txt')
   })
 
   it('should list single file when specified fully', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/index.txt`])
-    expect(consoleMessages[0]).toContain('/index.txt')
+    expect(consoleMessages[0]).toContain('index.txt')
   })
 
   it('should list files in folder when specified partially', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/lev`])
-    expect(consoleMessages[0]).toContain('/level-one/level-two/1.txt')
-    expect(consoleMessages[1]).toContain('/level-one/level-two/2.txt')
+    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
+    expect(consoleMessages[1]).toContain('level-one/level-two/2.txt')
   })
 
   it('should list files in folder when specified fully without trailing slash', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/level-one/level-two`])
-    expect(consoleMessages[0]).toContain('/level-one/level-two/1.txt')
-    expect(consoleMessages[1]).toContain('/level-one/level-two/2.txt')
+    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
+    expect(consoleMessages[1]).toContain('level-one/level-two/2.txt')
   })
 
   it('should list files in folder when specified fully with trailing slash', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/level-one/level-two`])
-    expect(consoleMessages[0]).toContain('/level-one/level-two/1.txt')
-    expect(consoleMessages[1]).toContain('/level-one/level-two/2.txt')
+    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
+    expect(consoleMessages[1]).toContain('level-one/level-two/2.txt')
   })
 
   it('should download single file when specified partially', async () => {
