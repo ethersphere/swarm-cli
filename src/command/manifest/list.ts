@@ -25,7 +25,9 @@ export class List extends RootCommand implements LeafCommand {
     const address = await makeBzzAddress(this.bee, this.bzzUrl)
     const node = await MantarayNode.unmarshal(this.bee, address.hash)
     await node.loadRecursively(this.bee)
-    const nodes = node.collect()
+
+    const nodes = node.collect().filter(x => x.fullPathString.startsWith(address.path || ''))
+
     for (const node of nodes) {
       this.console.log(new Reference(node.targetAddress).toHex() + ' ' + node.fullPathString)
 

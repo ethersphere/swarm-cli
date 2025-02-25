@@ -32,7 +32,8 @@ export class Download extends RootCommand implements LeafCommand {
 
     const node = await MantarayNode.unmarshal(this.bee, this.address.hash)
     await node.loadRecursively(this.bee)
-    const nodes = node.collect()
+
+    const nodes = node.collect().filter(x => x.fullPathString.startsWith(this.address.path || ''))
 
     for (const node of nodes) {
       await this.downloadNode(node, this.address)
