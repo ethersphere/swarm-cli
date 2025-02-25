@@ -74,12 +74,12 @@ const lastCheques = {
       lastreceived: {
         beneficiary: '0x1A66fd26F38819A96CA24404eA50A601Fa1Cb0c3',
         chequebook: '0x7789F00C8cc0Aaa10D2fC50d9c7d74383fD9AA4d',
-        payout: 8944000000000,
+        payout: '8944000000000',
       },
       lastsent: {
         beneficiary: '0xe9dF78C7bd5162F93535657E7405143F2E9Cc260',
         chequebook: '0x4f16B90D43aa1f9fd3c2fe17DACD9b21417A4134',
-        payout: 8293000000000,
+        payout: '8293000000000',
       },
     },
   ],
@@ -88,7 +88,7 @@ const lastCheques = {
 const lastCashoutCheque1 = {
   peer: '1105536d0f270ecaa9e6e4347e687d1a1afbde7b534354dfd7050d66b3c0faad',
   chequebook: '0x7789f00c8cc0aaa10d2fc50d9c7d74383fd9aa4d',
-  uncashedAmount: 8944000000000,
+  uncashedAmount: '8944000000000',
   beneficiary: '0x1a66fd26f38819a96ca24404ea50a601fa1cb0c3',
   transactionHash: '0x11df9811dc8caaa1ff4389503f2493a8c46b30c0a0b5f8aa54adbb965374c0ae',
   result: { recipient: '0x4f16b90d43aa1f9fd3c2fe17dacd9b21417a4134', lastPayout: 0, bounced: false },
