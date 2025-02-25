@@ -23,7 +23,7 @@ async function runAndGetManifest(argv: string[]): Promise<string> {
   return command.result.getOrThrow().toHex()
 }
 
-describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining }) => {
+describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContaining }) => {
   let srcHash: Reference
 
   beforeAll(async () => {
