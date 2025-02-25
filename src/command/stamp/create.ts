@@ -68,7 +68,7 @@ export class Create extends StampCommand implements LeafCommand {
     const chainState = await this.bee.getChainState()
     const minimumAmount = BigInt(chainState.currentPrice) * BigInt(17280)
 
-    const depth = Utils.getDepthForCapacity(capacityInBytes / 1024 ** 3)
+    const depth = Utils.getDepthForSize(capacityInBytes / 1024 ** 3)
     const amount = (BigInt(ttlInMillis) / BigInt(5_000) + BigInt(1)) * BigInt(chainState.currentPrice)
 
     if (minimumAmount > amount) {
@@ -86,13 +86,13 @@ export class Create extends StampCommand implements LeafCommand {
     this.console.log(createKeyValue('Amount (TTL)', amount.toString()))
 
     const estimatedCost = Utils.getStampCost(depth, BigInt(amount))
-    const estimatedCapacity = Numbers.convertBytes(Utils.getStampMaximumCapacityBytes(depth))
-    const estimatedTtl = Utils.getStampTtlSeconds(BigInt(amount), Number(chainState.currentPrice), 5)
+    const estimatedCapacity = Numbers.convertBytes(Utils.getStampEffectiveBytes(depth))
+    const estimatedTtl = Utils.getStampDuration(BigInt(amount), Number(chainState.currentPrice), 5)
 
     this.console.log('')
     this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toDecimalString} xBZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
-    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(Number(estimatedTtl))))
+    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl.toSeconds())))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (!this.quiet && !this.yes) {

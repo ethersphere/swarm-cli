@@ -69,12 +69,12 @@ export class Buy extends StampCommand implements LeafCommand {
     }
 
     const estimatedCost = Utils.getStampCost(this.depth, BigInt(this.amount))
-    const estimatedCapacity = Numbers.convertBytes(Utils.getStampMaximumCapacityBytes(this.depth))
-    const estimatedTtl = Utils.getStampTtlSeconds(BigInt(this.amount), Number(chainState.currentPrice), 5)
+    const estimatedCapacity = Numbers.convertBytes(Utils.getStampEffectiveBytes(this.depth))
+    const estimatedTtl = Utils.getStampDuration(BigInt(this.amount), Number(chainState.currentPrice), 5)
 
     this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toDecimalString()} xBZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
-    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(Number(estimatedTtl))))
+    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl.toSeconds())))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (this.immutable) {

@@ -81,7 +81,7 @@ export class Sync extends RootCommand implements LeafCommand {
     }
 
     const root = await node.saveRecursively(this.bee, this.stamp)
-    this.console.log(root.toHex())
-    this.result = Optional.of(root)
+    this.console.log(root.reference.toHex())
+    this.result = Optional.of(root.reference)
   }
 }

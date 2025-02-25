@@ -34,8 +34,8 @@ export class Remove extends RootCommand implements LeafCommand {
     await node.loadRecursively(this.bee)
     node.removeFork(address.path)
     const root = await node.saveRecursively(this.bee, this.stamp)
-    this.console.log(root.toHex())
-    this.result = Optional.of(root)
+    this.console.log(root.reference.toHex())
+    this.result = Optional.of(root.reference)
   }
 
   protected promptAdditionalFileDelete(mainPath: string, paths: string[]): Promise<boolean> {
