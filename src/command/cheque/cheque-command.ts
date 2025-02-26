@@ -1,17 +1,18 @@
+import { BZZ } from '@upcoming/bee-js'
 import { getFieldOrNull } from '../../utils'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 
 interface Cashable {
   address: string
-  amount: bigint
+  amount: BZZ
 }
 
 export class ChequeCommand extends RootCommand {
   protected async getFilteredCheques(minimum: bigint): Promise<Cashable[]> {
     const cheques = await this.getCashableCheques()
 
-    return cheques.filter(({ amount }) => amount >= minimum)
+    return cheques.filter(({ amount }) => amount.toPLURBigInt() >= minimum)
   }
 
   protected async getCashableCheques(): Promise<Cashable[]> {
@@ -35,18 +36,18 @@ export class ChequeCommand extends RootCommand {
   protected printCheque(cashable: Cashable): void {
     this.console.divider('-')
     this.console.log(createKeyValue('Peer Address', cashable.address))
-    this.console.log(createKeyValue('Cheque Value', cashable.amount + ' PLUR'))
+    this.console.log(createKeyValue('Cheque Value', cashable.amount.toDecimalString() + ' xBZZ'))
     this.console.quiet(cashable.address + ' ' + cashable.amount)
   }
 
-  protected async getUncashedAmount(address: string): Promise<bigint> {
+  protected async getUncashedAmount(address: string): Promise<BZZ> {
     try {
       const lastCashout = await this.bee.getLastCashoutAction(address)
 
-      return BigInt(lastCashout.uncashedAmount)
+      return lastCashout.uncashedAmount
     } catch (error) {
       if (getFieldOrNull(error, 'message') === 'Not Found') {
-        return BigInt(0)
+        return BZZ.fromPLUR('0')
       }
       throw error
     }

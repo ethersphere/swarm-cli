@@ -1,3 +1,4 @@
+import { Topic } from '@upcoming/bee-js'
 import { readFileSync } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
@@ -74,7 +75,7 @@ export class Send extends PssCommand implements LeafCommand {
 
     this.console.log('Sending PSS message on topic ' + this.topic)
 
-    await this.bee.pssSend(this.stamp, this.topic, this.target, this.sendable, this.recipient)
+    await this.bee.pssSend(this.stamp, new Topic(this.topic), this.target, this.sendable, this.recipient)
     this.console.log('Message sent successfully.')
   }
 }

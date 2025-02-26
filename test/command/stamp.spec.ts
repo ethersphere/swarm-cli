@@ -56,7 +56,7 @@ describeCommand(
       const command = execution.runnable as Buy
 
       const id = command.postageBatchId
-      await invokeTestCli(['stamp', 'show', id, '--verbose'])
+      await invokeTestCli(['stamp', 'show', id.toHex(), '--verbose'])
       const pattern = [['Capacity (immutable)']]
       expect(consoleMessages).toMatchLinesInOrder(pattern)
       await System.sleepMillis(11_000)
@@ -90,9 +90,9 @@ describeCommand(
       expect(command.yes).toBe(true)
 
       const id = command.postageBatchId
-      await invokeTestCli(['stamp', 'show', id, '--verbose'])
+      await invokeTestCli(['stamp', 'show', id.toHex(), '--verbose'])
       const pattern = [
-        ['Stamp ID', id],
+        ['Stamp ID', id.toHex()],
         ['Label', 'Alice'],
         ['Usable', 'true'],
       ]
@@ -152,13 +152,13 @@ describeCommand(
       expect(command.yes).toBe(true)
       const { postageBatchId } = command
       consoleMessages.length = 0
-      await invokeTestCli(['stamp', 'dilute', '--stamp', postageBatchId, '--depth', '18'])
+      await invokeTestCli(['stamp', 'dilute', '--stamp', postageBatchId.toHex(), '--depth', '18'])
       expect(hasMessageContaining('This postage stamp already has depth 19. The new value must be higher.')).toBe(true)
       consoleMessages.length = 0
-      await invokeTestCli(['stamp', 'dilute', '--stamp', postageBatchId, '--depth', '19'])
+      await invokeTestCli(['stamp', 'dilute', '--stamp', postageBatchId.toHex(), '--depth', '19'])
       expect(hasMessageContaining('This postage stamp already has depth 19. The new value must be higher.')).toBe(true)
       consoleMessages.length = 0
-      await invokeTestCli(['stamp', 'dilute', '--stamp', postageBatchId, '--depth', '20'])
+      await invokeTestCli(['stamp', 'dilute', '--stamp', postageBatchId.toHex(), '--depth', '20'])
       expect(getNthLastMessage(3)).toContain('Dilute finished')
     })
 
@@ -179,7 +179,7 @@ describeCommand(
       expect(command.yes).toBe(true)
       const { postageBatchId } = command
       consoleMessages.length = 0
-      await invokeTestCli(['stamp', 'topup', '--stamp', postageBatchId, '--amount', '1k'])
+      await invokeTestCli(['stamp', 'topup', '--stamp', postageBatchId.toHex(), '--amount', '1k'])
       expect(getNthLastMessage(3)).toContain('Topup finished')
     })
   },

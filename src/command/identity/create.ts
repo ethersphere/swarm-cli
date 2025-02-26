@@ -30,7 +30,7 @@ export class Create extends IdentityCommand implements LeafCommand {
   public onlyKeypair!: boolean
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (Utils.getSourcemap().name === 'default') {
       this.console.info(`No identity name specified, defaulting to '${this.identityName}'`)

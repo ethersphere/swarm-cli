@@ -1,3 +1,4 @@
+import { Reference } from '@upcoming/bee-js'
 import { Aggregation, LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
@@ -9,7 +10,7 @@ export class Upload extends FeedCommand implements LeafCommand {
 
   public readonly description = 'Upload to a feed'
 
-  public feedManifest?: string
+  public feedManifest?: Reference
 
   @Aggregation(['upload'])
   public fileUpload!: FileUpload
@@ -18,7 +19,7 @@ export class Upload extends FeedCommand implements LeafCommand {
   public stamp!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.stamp) {
       const stamp = await pickStamp(this.bee, this.console)
@@ -31,9 +32,9 @@ export class Upload extends FeedCommand implements LeafCommand {
     this.console.dim('Successfully uploaded to feed.')
   }
 
-  private async runUpload(): Promise<string> {
+  private async runUpload(): Promise<Reference> {
     await this.fileUpload.run(true)
 
-    return this.fileUpload.hash
+    return this.fileUpload.result.getOrThrow()
   }
 }
