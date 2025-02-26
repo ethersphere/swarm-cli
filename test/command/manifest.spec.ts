@@ -5,12 +5,13 @@ import { RootCommand } from '../../src/command/root-command'
 import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
 import { readdirDeepAsync } from '../../src/utils'
-import { toMatchLinesInOrder } from '../custom-matcher'
+import { toMatchLinesInAnyOrder, toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
 expect.extend({
   toMatchLinesInOrder,
+  toMatchLinesInAnyOrder,
 })
 
 async function runAndGetManifest(argv: string[]): Promise<string> {
