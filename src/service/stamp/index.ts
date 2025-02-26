@@ -37,23 +37,6 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
   return hex
 }
 
-export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
-  const usage = Utils.getStampUsage(stamp.utilization, stamp.depth, stamp.bucketDepth)
-  const usageNormal = Math.ceil(usage * 100)
-  const usageText = usageNormal + '%'
-  const capacity = Utils.getStampEffectiveBytes(stamp.depth)
-  const remainingCapacity = capacity * (1 - usage)
-
-  return {
-    ...stamp,
-    usage,
-    usageNormal,
-    usageText,
-    capacity,
-    remainingCapacity,
-  }
-}
-
 interface PrintStampSettings {
   shortenBatchId?: boolean
   showTtl?: boolean

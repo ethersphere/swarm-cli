@@ -179,7 +179,7 @@ const chainstate: ChainState = {
   chainTip: 37439274,
   block: 37439270,
   totalAmount: '153434201871' as NumberString,
-  currentPrice: '27356' as NumberString,
+  currentPrice: 27356,
 }
 
 const wallet: WalletBalance = {
