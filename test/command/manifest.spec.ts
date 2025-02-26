@@ -110,8 +110,7 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
   it('should sync folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(consoleMessages)
-    expect(consoleMessages).toMatchInlineSnapshot([
+    expect(consoleMessages).toMatchLinesInOrder([
       ['stamp.ts', 'NEW'],
       ['index.ts', 'NEW'],
       ['address.ts', 'NEW'],
