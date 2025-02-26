@@ -327,12 +327,12 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
 
   it('should handle error for invalid download path', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/b`])
-    expect(consoleMessages[0]).toContain(FORMATTED_ERROR + ' No files found under the given path')
+    expect(consoleMessages[0]).toContain('No files found under the given path')
   })
 
   it('should handle error for invalid list path', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/b`])
-    expect(consoleMessages[0]).toContain(FORMATTED_ERROR + ' No files found under the given path')
+    expect(consoleMessages[0]).toContain('No files found under the given path')
   })
 
   it('should be able to upload and download folder with default index.html', async () => {

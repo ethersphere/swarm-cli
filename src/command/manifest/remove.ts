@@ -32,7 +32,14 @@ export class Remove extends RootCommand implements LeafCommand {
 
     const node = await MantarayNode.unmarshal(this.bee, address.hash)
     await node.loadRecursively(this.bee)
-    node.removeFork(address.path)
+
+    const nodes = node.collect()
+    for (const n of nodes) {
+      if (n.fullPathString.startsWith(address.path)) {
+        node.removeFork(n.fullPathString)
+      }
+    }
+
     const root = await node.saveRecursively(this.bee, this.stamp)
     this.console.log(root.reference.toHex())
     this.result = Optional.of(root.reference)
