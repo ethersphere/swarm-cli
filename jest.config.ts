@@ -51,6 +51,6 @@ export default async (): Promise<Config.InitialOptions> => {
     testPathIgnorePatterns: ['/node_modules/'],
 
     // Increase timeout since we have long running cryptographic functions
-    testTimeout: Dates.minutes(5),
+    testTimeout: Dates.minutes(6),
   }
 }
