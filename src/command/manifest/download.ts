@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import fs from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
+import { exit } from 'process'
 import { directoryExists } from '../../utils'
 import { BzzAddress, makeBzzAddress } from '../../utils/bzz-address'
 import { RootCommand } from '../root-command'
@@ -32,7 +33,17 @@ export class Download extends RootCommand implements LeafCommand {
 
     const node = await MantarayNode.unmarshal(this.bee, this.address.hash)
     await node.loadRecursively(this.bee)
-    const nodes = node.collect()
+
+    const nodes = node.collect().filter(x => x.fullPathString.startsWith(this.address.path || ''))
+
+    if (nodes.length === 0) {
+      this.console.error('No files found under the given path')
+      exit(1)
+    }
+
+    if (this.stdout && nodes.length > 1) {
+      this.stdout = false
+    }
 
     for (const node of nodes) {
       await this.downloadNode(node, this.address)
@@ -50,6 +61,12 @@ export class Download extends RootCommand implements LeafCommand {
     const parsedForkPath = parse(node.fullPathString)
     const data = await this.bee.downloadData(node.targetAddress)
 
+    if (this.stdout) {
+      process.stdout.write(data.toUtf8())
+
+      return
+    }
+
     const destination = this.destination || address.hash
     const destinationFolder = join(destination, parsedForkPath.dir)
 
@@ -57,7 +74,7 @@ export class Download extends RootCommand implements LeafCommand {
       await fs.promises.mkdir(destinationFolder, { recursive: true })
     }
 
-    if (!this.quiet && !this.curl) {
+    if (!this.stdout && !this.quiet && !this.curl) {
       process.stdout.write(' ' + chalk.green('OK') + '\n')
     }
     await fs.promises.writeFile(join(destination, node.fullPathString), data.toUint8Array())

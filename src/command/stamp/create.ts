@@ -90,9 +90,9 @@ export class Create extends StampCommand implements LeafCommand {
     const estimatedTtl = Utils.getStampDuration(BigInt(amount), Number(chainState.currentPrice), 5)
 
     this.console.log('')
-    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toDecimalString} xBZZ`))
+    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toDecimalString()} xBZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
-    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(Number(estimatedTtl))))
+    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl.toSeconds())))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (!this.quiet && !this.yes) {

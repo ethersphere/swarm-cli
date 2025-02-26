@@ -66,6 +66,54 @@ export function createChequeMockHttpServer(port: number): Server {
   return server
 }
 
+const health = { status: 'ok', version: '2.2.0-b8405074e', apiVersion: '7.3.0' }
+
+const topology = {
+  baseAddr: '5690695034c2150a7feda6969e6223e9565871261080b5e1703a6c47a934fb18',
+  population: 13168,
+  connected: 153,
+  timestamp: '2025-02-25T20:28:57.963845+01:00',
+  nnLowWatermark: 3,
+  depth: 11,
+  reachability: 'Private',
+  networkAvailability: 'Available',
+  bins: {
+    bin_0: { population: 6850, connected: 16, disconnectedPeers: [], connectedPeers: [] },
+    bin_1: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_2: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_3: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_4: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_5: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_6: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_7: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_8: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_9: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_10: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_11: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_12: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_13: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_14: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_15: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_16: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_17: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_18: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_19: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_20: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_21: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_22: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_23: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_24: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_25: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_26: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_27: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_28: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_29: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_30: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+    bin_31: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+  },
+  lightNodes: { population: 0, connected: 0, disconnectedPeers: null, connectedPeers: null },
+}
+
 function convertToJSON(obj: any): any {
   if (Array.isArray(obj)) {
     return obj.map(convertToJSON)
@@ -90,14 +138,6 @@ function convertToJSON(obj: any): any {
     return result
   }
   return obj
-}
-
-const health = { status: 'ok', version: '0.5.3-acbd0e2' }
-
-const topology: Partial<Topology> = {
-  population: 1,
-  connected: 1,
-  depth: 0,
 }
 
 const lastCheques: LastChequesResponse = {

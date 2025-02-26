@@ -1,4 +1,5 @@
 import { MantarayNode } from '@upcoming/bee-js'
+import { Optional } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
@@ -17,7 +18,12 @@ export class Create extends RootCommand implements LeafCommand {
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)
     }
+
     const node = new MantarayNode()
-    await node.saveRecursively(this.bee, this.stamp)
+    const result = await node.saveRecursively(this.bee, this.stamp)
+
+    this.result = Optional.of(result.reference)
+
+    this.console.log(result.reference.toHex())
   }
 }

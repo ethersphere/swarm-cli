@@ -24,19 +24,18 @@ export class Download extends RootCommand implements LeafCommand {
       this.manifestDownload.address = this.address
       await this.manifestDownload.run()
     } else {
-      await this.downloadFile()
+      await this.downloadData()
     }
   }
 
-  private async downloadFile(): Promise<void> {
-    const response = await this.bee.downloadFile(this.address.hash)
-    const { name, data } = response
+  private async downloadData(): Promise<void> {
+    const response = await this.bee.downloadData(this.address.hash)
 
     if (this.manifestDownload.stdout) {
-      process.stdout.write(data.toUint8Array())
+      process.stdout.write(response.toUtf8())
     } else {
-      const path = this.manifestDownload.destination || name || this.address.hash
-      await fs.promises.writeFile(path, data.toUint8Array())
+      const path = this.manifestDownload.destination || this.address.hash
+      await fs.promises.writeFile(path, response.toUint8Array())
     }
   }
 

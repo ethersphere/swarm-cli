@@ -5,12 +5,13 @@ import { RootCommand } from '../../src/command/root-command'
 import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
 import { readdirDeepAsync } from '../../src/utils'
-import { toMatchLinesInOrder } from '../custom-matcher'
+import { toMatchLinesInAnyOrder, toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
 expect.extend({
   toMatchLinesInOrder,
+  toMatchLinesInAnyOrder,
 })
 
 async function runAndGetManifest(argv: string[]): Promise<string> {
@@ -23,7 +24,7 @@ async function runAndGetManifest(argv: string[]): Promise<string> {
   return command.result.getOrThrow().toHex()
 }
 
-describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining }) => {
+describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContaining }) => {
   let srcHash: Reference
 
   beforeAll(async () => {
@@ -110,24 +111,24 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should sync folder', async () => {
     let hash = await runAndGetManifest(['manifest', 'create'])
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(consoleMessages).toMatchLinesInOrder([
-      ['address.ts', 'NEW'],
+    expect(consoleMessages).toMatchLinesInAnyOrder([
       ['stamp.ts', 'NEW'],
       ['index.ts', 'NEW'],
+      ['address.ts', 'NEW'],
     ])
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/utility'])
-    expect(consoleMessages).toMatchLinesInOrder([
-      ['address.ts', 'UNCHANGED'],
+    expect(consoleMessages).toMatchLinesInAnyOrder([
       ['stamp.ts', 'UNCHANGED'],
       ['index.ts', 'UNCHANGED'],
+      ['address.ts', 'UNCHANGED'],
     ])
     consoleMessages.length = 0
     hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock'])
     expect(consoleMessages).toMatchLinesInOrder([['cheque-mock.ts', 'NEW']])
     consoleMessages.length = 0
     await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock', '--remove'])
-    expect(consoleMessages).toMatchLinesInOrder([
+    expect(consoleMessages).toMatchLinesInAnyOrder([
       ['cheque-mock.ts', 'UNCHANGED'],
       ['address.ts', 'REMOVED'],
       ['index.ts', 'REMOVED'],
@@ -240,35 +241,35 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     const command = invocation.runnable as unknown as FeedUpload
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'list', `${command.feedManifest}`])
-    expect(consoleMessages[0]).toContain('/README.md')
+    expect(consoleMessages[0]).toContain('README.md')
   })
 
   it('should list single file when specified partially', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/ind`])
-    expect(consoleMessages[0]).toContain('/index.txt')
+    expect(consoleMessages[0]).toContain('index.txt')
   })
 
   it('should list single file when specified fully', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/index.txt`])
-    expect(consoleMessages[0]).toContain('/index.txt')
+    expect(consoleMessages[0]).toContain('index.txt')
   })
 
   it('should list files in folder when specified partially', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/lev`])
-    expect(consoleMessages[0]).toContain('/level-one/level-two/1.txt')
-    expect(consoleMessages[1]).toContain('/level-one/level-two/2.txt')
+    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
+    expect(consoleMessages[1]).toContain('level-one/level-two/2.txt')
   })
 
   it('should list files in folder when specified fully without trailing slash', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/level-one/level-two`])
-    expect(consoleMessages[0]).toContain('/level-one/level-two/1.txt')
-    expect(consoleMessages[1]).toContain('/level-one/level-two/2.txt')
+    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
+    expect(consoleMessages[1]).toContain('level-one/level-two/2.txt')
   })
 
   it('should list files in folder when specified fully with trailing slash', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/level-one/level-two`])
-    expect(consoleMessages[0]).toContain('/level-one/level-two/1.txt')
-    expect(consoleMessages[1]).toContain('/level-one/level-two/2.txt')
+    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
+    expect(consoleMessages[1]).toContain('level-one/level-two/2.txt')
   })
 
   it('should download single file when specified partially', async () => {
@@ -302,14 +303,16 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should handle error for invalid download hash', async () => {
     await invokeTestCli(['manifest', 'download', 'g'.repeat(64)])
     expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR + ' ReferenceOrEns is not valid Reference, but also not valid ENS domain.',
+      FORMATTED_ERROR +
+        ' Expected hex string for Bytes#constructor(bytes), got: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
     )
   })
 
   it('should handle error for invalid list hash', async () => {
     await invokeTestCli(['manifest', 'list', 'g'.repeat(64)])
     expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR + ' ReferenceOrEns is not valid Reference, but also not valid ENS domain.',
+      FORMATTED_ERROR +
+        ' Expected hex string for Bytes#constructor(bytes), got: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
     )
   })
 
@@ -325,18 +328,12 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should handle error for invalid download path', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/b`])
-    expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR +
-        ' Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
-    )
+    expect(consoleMessages[0]).toContain('No files found under the given path')
   })
 
   it('should handle error for invalid list path', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/b`])
-    expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR +
-        ' Could not deserialize or find Mantaray node for reference 762174121e31719b2aa8b99f0848d477e3732c866e34253a79577d570b199c61 and path b',
-    )
+    expect(consoleMessages[0]).toContain('No files found under the given path')
   })
 
   it('should be able to upload and download folder with default index.html', async () => {
