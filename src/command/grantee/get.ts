@@ -17,6 +17,8 @@ export class Get extends GranteeCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
     const response = await this.bee.getGrantees(this.reference)
-    this.console.log(createKeyValue('Grantee public keys', response.grantees.join('\n')))
+    this.console.log(
+      createKeyValue('Grantee public keys', response.grantees.map(grantee => grantee.toCompressedHex()).join('\n')),
+    )
   }
 }
