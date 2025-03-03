@@ -19,7 +19,6 @@ describeCommand(
 
     beforeAll(() => {
       if (!server) {
-        
         server = createChequeMockHttpServer(1377)
       }
     })
@@ -30,7 +29,7 @@ describeCommand(
 
     it('should print cheques', async () => {
       process.env.BEE_API_URL = 'http://localhost:1377'
-      const t = await invokeTestCli(['cheque', 'list'])
+      await invokeTestCli(['cheque', 'list'])
       expect(getLastMessage()).toContain('Cheque Value:')
       expect(getLastMessage()).toContain('0.0008944000000000 xBZZ')
     })
