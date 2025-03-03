@@ -42,8 +42,9 @@ describeCommand('Test Grantee command', ({ consoleMessages }) => {
     await invokeTestCli(['grantee', 'get', reference])
     const nonAnsiConsoleMessages = consoleMessages.map(stripAnsi)
 
-    const publicKeysString = nonAnsiConsoleMessages.find(msg => msg.startsWith('Grantee public keys: '))
-    const publicKeys = publicKeysString ? publicKeysString.replace('Grantee public keys: ', '').split('\n') : []
+    const publicKeysStringPrefix = 'Grantee public keys: '
+    const publicKeysString = nonAnsiConsoleMessages.find(msg => msg.startsWith(publicKeysStringPrefix))
+    const publicKeys = publicKeysString ? publicKeysString.replace(publicKeysStringPrefix, '').split('\n') : []
 
     expect(publicKeys.length).toBe(grantees.grantees.length)
 
