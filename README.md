@@ -187,6 +187,7 @@ stamp      Buy, list and show postage stamps
 pss        Send, receive, or subscribe to PSS messages
 manifest   Operate on manifests
 utility    Utility commands for managing wallets
+grantee    Create, Get, Patch grantee list
 
 Run 'swarm-cli GROUP --help' to see available commands in a group
 
