@@ -62,7 +62,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@upcoming/bee-js": "^0.13.0",
+    "@upcoming/bee-js": "^0.14.0",
     "cafe-utility": "^27.9.1",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
