@@ -1,5 +1,5 @@
 import { Bee, PostageBatch } from '@upcoming/bee-js'
-import { Dates, Numbers } from 'cafe-utility'
+import { Dates } from 'cafe-utility'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 import { createKeyValue } from '../../utils/text'
@@ -21,7 +21,7 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
     .filter(stamp => stamp.usable || stamp.duration.toSeconds() > 1)
     .map(
       stamp =>
-        `${stamp.batchID} ${Numbers.convertBytes(stamp.remainingSize)} remaining, TTL ${Dates.secondsToHumanTime(
+        `${stamp.batchID} ${stamp.remainingSize.toFormattedString()} remaining, TTL ${Dates.secondsToHumanTime(
           stamp.duration.toSeconds(),
         )}`,
     )
@@ -50,11 +50,11 @@ export function printStamp(stamp: PostageBatch, console: CommandLog, settings?: 
   if (stamp.label) {
     console.log(createKeyValue('Label', stamp.label))
   }
-  console.log(createKeyValue('Usage', Math.round(stamp.usage * 100) + '%'))
+  console.log(createKeyValue('Usage', stamp.usageText))
   console.log(
     createKeyValue(
       stamp.immutableFlag ? 'Capacity (immutable)' : 'Capacity (mutable)',
-      `${Numbers.convertBytes(stamp.remainingSize)} remaining out of ${Numbers.convertBytes(stamp.size)}`,
+      `${stamp.remainingSize.toFormattedString()} remaining out of ${stamp.size.toFormattedString()}`,
     ),
   )
 
@@ -70,5 +70,5 @@ export function printStamp(stamp: PostageBatch, console: CommandLog, settings?: 
   console.verbose(createKeyValue('Usable', stamp.usable))
   console.verbose(createKeyValue('Utilization', stamp.utilization))
   console.verbose(createKeyValue('Block Number', stamp.blockNumber))
-  console.quiet(settings?.printUsageInQuiet ? `${batchId} ${Math.round(stamp.usage * 100) + '%'}` : batchId)
+  console.quiet(settings?.printUsageInQuiet ? `${batchId} ${stamp.usageText}` : batchId)
 }
