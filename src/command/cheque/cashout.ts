@@ -1,3 +1,4 @@
+import { BZZ } from '@upcoming/bee-js'
 import chalk from 'chalk'
 import { LeafCommand, Option } from 'furious-commander'
 import { createKeyValue } from '../../utils/text'
@@ -48,7 +49,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
   public gasPrice!: bigint
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (this.all) {
       await this.cashoutAll()
@@ -69,16 +70,16 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     }
   }
 
-  private async cashoutOne(address: string, amount: bigint): Promise<void> {
+  private async cashoutOne(address: string, amount: BZZ): Promise<void> {
     try {
       this.console.log(chalk.green('Cashing out:'))
       this.printCheque({ address, amount })
       const transaction = await this.bee.cashoutLastCheque(address, {
-        gasLimit: this.gasLimit?.toString(),
-        gasPrice: this.gasPrice?.toString(),
+        gasLimit: this.gasLimit,
+        gasPrice: this.gasPrice,
       })
-      this.console.log(createKeyValue('Tx', transaction))
-      this.console.quiet(transaction)
+      this.console.log(createKeyValue('Tx', transaction.toHex()))
+      this.console.quiet(transaction.toHex())
     } catch (error) {
       this.console.error('Could not cashout ' + address)
       this.console.printBeeError(error, { notFoundMessage: 'No peer found with that address.' })

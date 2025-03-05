@@ -1,3 +1,4 @@
+import { Topic } from '@upcoming/bee-js'
 import { Option } from 'furious-commander'
 import { RootCommand } from '../root-command'
 
@@ -13,9 +14,9 @@ export class PssCommand extends RootCommand {
   })
   public topicString!: string
 
-  public async init(): Promise<void> {
-    await super.init()
+  public init(): void {
+    super.init()
 
-    this.topic = this.topicString
+    this.topic = Topic.fromString(this.topicString).toHex()
   }
 }

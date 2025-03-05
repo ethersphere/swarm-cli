@@ -1,6 +1,5 @@
-import { Utils } from '@ethersphere/bee-js'
+import { BatchId, Size, Utils } from '@upcoming/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
-import { BigNumber } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
@@ -39,7 +38,7 @@ export class Create extends StampCommand implements LeafCommand {
   @Option({ key: 'label', description: 'Label of the postage stamp' })
   public label!: string
 
-  public postageBatchId!: string
+  public postageBatchId!: BatchId
 
   public async run(): Promise<void> {
     super.init()
@@ -67,12 +66,12 @@ export class Create extends StampCommand implements LeafCommand {
 
     ttlInMillis = Dates.make(this.ttl)
     const chainState = await this.bee.getChainState()
-    const minimumAmount = BigNumber.from(chainState.currentPrice).mul(17280)
+    const minimumAmount = BigInt(chainState.currentPrice) * BigInt(17280)
 
-    const depth = Utils.getDepthForCapacity(capacityInBytes / 1024 ** 3)
-    const amount = BigNumber.from(Math.ceil(ttlInMillis / 5_000) + 1).mul(chainState.currentPrice)
+    const depth = Utils.getDepthForSize(Size.fromBytes(capacityInBytes))
+    const amount = (BigInt(ttlInMillis) / BigInt(5_000) + BigInt(1)) * BigInt(chainState.currentPrice)
 
-    if (minimumAmount.gt(amount)) {
+    if (minimumAmount > amount) {
       this.console.error('The minimum amount for the TTL is 1 day')
 
       return
@@ -86,14 +85,14 @@ export class Create extends StampCommand implements LeafCommand {
     this.console.log(createKeyValue('Depth (capacity)', depth))
     this.console.log(createKeyValue('Amount (TTL)', amount.toString()))
 
-    const estimatedCost = Utils.getStampCostInBzz(depth, Number(amount))
-    const estimatedCapacity = Numbers.convertBytes(Utils.getStampMaximumCapacityBytes(depth))
-    const estimatedTtl = Utils.getStampTtlSeconds(Number(amount), Number(chainState.currentPrice), 5)
+    const estimatedCost = Utils.getStampCost(depth, BigInt(amount))
+    const estimatedCapacity = Numbers.convertBytes(Utils.getStampEffectiveBytes(depth))
+    const estimatedTtl = Utils.getStampDuration(BigInt(amount), Number(chainState.currentPrice), 5)
 
     this.console.log('')
-    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} xBZZ`))
+    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toDecimalString()} xBZZ`))
     this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
-    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl)))
+    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl.toSeconds())))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (!this.quiet && !this.yes) {
@@ -117,8 +116,8 @@ export class Create extends StampCommand implements LeafCommand {
         waitForUsable: true,
       })
       spinner.stop()
-      this.console.quiet(batchId)
-      this.console.log(createKeyValue('Stamp ID', batchId))
+      this.console.quiet(batchId.toHex())
+      this.console.log(createKeyValue('Stamp ID', batchId.toHex()))
       this.postageBatchId = batchId
     } finally {
       spinner.stop()

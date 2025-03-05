@@ -1,9 +1,11 @@
+import { MantarayNode } from '@upcoming/bee-js'
+import { Optional } from 'cafe-utility'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
-import { ManifestCommand } from './manifest-command'
+import { RootCommand } from '../root-command'
 
-export class Merge extends ManifestCommand implements LeafCommand {
+export class Merge extends RootCommand implements LeafCommand {
   public readonly name = 'merge'
   public readonly description = 'Merge two manifests'
 
@@ -17,20 +19,23 @@ export class Merge extends ManifestCommand implements LeafCommand {
   public stamp!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)
     }
-    const destinationNode = (await this.initializeNode(this.destination)).node
-    const sourceNode = (await this.initializeNode(this.source)).node
-    const forks = this.findAllValueForks(sourceNode)
-    for (const fork of forks) {
-      if (!fork.node.getEntry) {
-        continue
-      }
-      destinationNode.addFork(this.encodePath(fork.path), fork.node.getEntry)
+    const destinationNode = await MantarayNode.unmarshal(this.bee, this.destination)
+    const sourceNode = await MantarayNode.unmarshal(this.bee, this.source)
+    await sourceNode.loadRecursively(this.bee)
+    await destinationNode.loadRecursively(this.bee)
+
+    const nodes = sourceNode.collect()
+    for (const node of nodes) {
+      destinationNode.addFork(node.fullPathString, node.targetAddress, node.metadata)
     }
-    await this.saveAndPrintNode(destinationNode, this.stamp)
+
+    const root = await destinationNode.saveRecursively(this.bee, this.stamp)
+    this.console.log(root.reference.toHex())
+    this.result = Optional.of(root.reference)
   }
 }

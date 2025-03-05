@@ -1,15 +1,16 @@
+import { MantarayNode } from '@upcoming/bee-js'
+import { Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { readFileSync, statSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { Reference } from 'mantaray-js'
 import { join } from 'path'
 import { pickStamp } from '../../service/stamp'
 import { getFiles } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
 import { stampProperties } from '../../utils/option'
-import { ManifestCommand } from './manifest-command'
+import { RootCommand } from '../root-command'
 
-export class Add extends ManifestCommand implements LeafCommand {
+export class Add extends RootCommand implements LeafCommand {
   public readonly name = 'add'
   public readonly description = 'Add a file or folder to an existing manifest'
 
@@ -26,20 +27,22 @@ export class Add extends ManifestCommand implements LeafCommand {
   public stamp!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)
     }
+
     const address = new BzzAddress(this.bzzUrl)
-    const { node } = await this.initializeNode(address.hash)
+    const node = await MantarayNode.unmarshal(this.bee, address.hash)
+    await node.loadRecursively(this.bee)
     const stat = statSync(this.path)
     const files = await getFiles(this.path)
     for (const file of files) {
       const path = stat.isDirectory() ? join(this.path, file) : this.path
       const { reference } = await this.bee.uploadData(this.stamp, readFileSync(path))
       const remotePath = this.getForkPath(address.path, files, file)
-      node.addFork(this.encodePath(remotePath), Buffer.from(reference, 'hex') as Reference)
+      node.addFork(remotePath, reference)
 
       if (file === remotePath) {
         this.console.log(chalk.dim(file))
@@ -47,7 +50,9 @@ export class Add extends ManifestCommand implements LeafCommand {
         this.console.log(chalk.dim(file + ' -> ' + remotePath))
       }
     }
-    await this.saveAndPrintNode(node, this.stamp)
+    const root = await node.saveRecursively(this.bee, this.stamp)
+    this.console.log(root.reference.toHex())
+    this.result = Optional.of(root.reference)
   }
 
   private getForkPath(prefix: string | null, files: string[], file: string): string {

@@ -1,9 +1,11 @@
+import { MantarayNode, Reference } from '@upcoming/bee-js'
 import chalk from 'chalk'
 import { Argument, LeafCommand, Option } from 'furious-commander'
+import { exit } from 'process'
 import { makeBzzAddress } from '../../utils/bzz-address'
-import { ManifestCommand } from './manifest-command'
+import { RootCommand } from '../root-command'
 
-export class List extends ManifestCommand implements LeafCommand {
+export class List extends RootCommand implements LeafCommand {
   public readonly name = 'list'
 
   public readonly alias = 'ls'
@@ -20,55 +22,37 @@ export class List extends ManifestCommand implements LeafCommand {
   public printBytes!: boolean
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     const address = await makeBzzAddress(this.bee, this.bzzUrl)
-    const forks = await this.loadAllValueForks(address.hash, address.path)
-    for (const fork of forks) {
-      if (!fork.node.getEntry) {
-        continue
+    const node = await MantarayNode.unmarshal(this.bee, address.hash)
+    await node.loadRecursively(this.bee)
+
+    const nodes = node.collect().filter(x => x.fullPathString.startsWith(address.path || ''))
+
+    if (nodes.length === 0) {
+      this.console.error('No files found under the given path')
+      exit(1)
+    }
+
+    for (const node of nodes) {
+      this.console.log(new Reference(node.targetAddress).toHex() + ' ' + node.fullPathString)
+
+      if (this.printBzz) {
+        this.console.log(chalk.dim(this.beeApiUrl + '/bzz/' + address.hash + '/' + node.fullPathString))
       }
 
-      const entryHex = Buffer.from(fork.node.getEntry).toString('hex')
-      const isEmptyEntry = fork.path === '/'
-
-      if (!isEmptyEntry) {
-        this.console.log(entryHex + ' ' + this.formatPath(fork.path))
+      if (this.printBytes) {
+        this.console.log(chalk.dim(this.beeApiUrl + '/bytes/' + new Reference(node.targetAddress).toHex()))
       }
 
-      if (this.verbose && fork.node.getMetadata) {
-        for (const entry of Object.entries(fork.node.getMetadata)) {
-          // skip if metadata has empty value
+      if (this.verbose && node.metadata) {
+        for (const entry of Object.entries(node.metadata)) {
           if (!entry[1]) {
             continue
           }
-          this.console.log(chalk.dim(this.formatMetaKey(entry[0]) + ': ' + entry[1]))
+          this.console.log(chalk.dim(entry[0] + ': ' + entry[1]))
         }
-      }
-
-      if (!isEmptyEntry) {
-        if (this.printBzz) {
-          this.console.log(chalk.dim(this.beeApiUrl + '/bzz/' + address.hash + '/' + fork.path))
-        }
-
-        if (this.printBytes) {
-          this.console.log(chalk.dim(this.beeApiUrl + '/bytes/' + Buffer.from(fork.node.getEntry).toString('hex')))
-        }
-      }
-
-      if (this.printBzz || this.printBytes) {
-        this.console.log('')
       }
     }
-  }
-
-  private formatPath(path: string): string {
-    return path === '/' ? path : '/' + path
-  }
-
-  private formatMetaKey(string: string): string {
-    return string
-      .split(/ |-/i)
-      .map(x => x.slice(0, 1).toUpperCase() + x.slice(1))
-      .join(' ')
   }
 }

@@ -1,5 +1,4 @@
-import { Utils } from '@ethersphere/bee-js'
-import { makeChunk } from '@fairdatasociety/bmt-js'
+import { MerkleTree, Topic } from '@upcoming/bee-js'
 import { Binary } from 'cafe-utility'
 import Wallet from 'ethereumjs-wallet'
 import { LeafCommand, Option } from 'furious-commander'
@@ -30,14 +29,14 @@ export class Print extends FeedCommand implements LeafCommand {
   public list!: boolean
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.address) {
       const wallet = await this.getWallet()
       this.address = wallet.getAddressString()
     }
 
-    const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
+    const topic = this.topic ? new Topic(this.topic) : Topic.fromString(this.topicString)
 
     // construct the feed manifest chunk
     const body = Binary.concatBytes(
@@ -64,7 +63,9 @@ export class Print extends FeedCommand implements LeafCommand {
       new Uint8Array(12).fill(0x0a),
     )
 
-    const manifest = Binary.uint8ArrayToHex(makeChunk(body).address())
+    const root = (await MerkleTree.root(body)).hash()
+
+    const manifest = Binary.uint8ArrayToHex(root)
     this.console.quiet(manifest)
 
     if (this.quiet) {
@@ -77,25 +78,27 @@ export class Print extends FeedCommand implements LeafCommand {
 
     try {
       const addressString = this.address || (await this.getAddressString())
-      const reader = this.bee.makeFeedReader('sequence', topic, addressString)
-      const { reference, feedIndex, feedIndexNext } = await reader.download()
+      const reader = this.bee.makeFeedReader(topic, addressString)
+      const { payload, feedIndex, feedIndexNext } = await reader.download()
+      // TODO: verify this
+      const reference = payload
       spinner.stop()
-      this.console.verbose(createKeyValue('Chunk Reference', reference))
+      this.console.verbose(createKeyValue('Chunk Reference', reference.toHex()))
       this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${reference}/`))
-      this.console.verbose(createKeyValue('Feed Index', feedIndex as string))
-      this.console.verbose(createKeyValue('Next Index', feedIndexNext))
+      this.console.verbose(createKeyValue('Feed Index', feedIndex.toBigInt().toString()))
+      this.console.verbose(createKeyValue('Next Index', feedIndexNext?.toBigInt().toString() ?? 'N/A'))
       this.console.verbose(createKeyValue('Feed Manifest', manifest))
 
       this.console.log(createKeyValue('Topic', `${topic}`))
-      const numberOfUpdates = parseInt(feedIndex as string, 16) + 1
-      this.console.log(createKeyValue('Number of Updates', numberOfUpdates))
+      const numberOfUpdates = feedIndex.toBigInt() + BigInt(1)
+      this.console.log(createKeyValue('Number of Updates', numberOfUpdates.toString(0)))
 
       if (this.list) {
         for (let i = 0; i < numberOfUpdates; i++) {
           const indexBytes = Binary.numberToUint64(BigInt(i), 'BE')
-          const identifier = Utils.keccak256Hash(Binary.hexToUint8Array(topic), indexBytes)
+          const identifier = Binary.keccak256(Binary.concatBytes(topic.toUint8Array(), indexBytes))
           const owner = Binary.hexToUint8Array(this.address)
-          const soc = Binary.uint8ArrayToHex(Utils.keccak256Hash(identifier, owner))
+          const soc = Binary.uint8ArrayToHex(Binary.keccak256(Binary.concatBytes(identifier, owner)))
           const chunk = await this.bee.downloadChunk(soc)
           // span + identifier + signature + span
           const cac = Binary.uint8ArrayToHex(chunk.slice(8 + 32 + 65 + 8, 8 + 32 + 65 + 32 + 8))
