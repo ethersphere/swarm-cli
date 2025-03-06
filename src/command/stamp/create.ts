@@ -1,4 +1,4 @@
-import { BatchId, Utils } from '@upcoming/bee-js'
+import { BatchId, Size, Utils } from '@upcoming/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../../utils/spinner'
@@ -68,7 +68,7 @@ export class Create extends StampCommand implements LeafCommand {
     const chainState = await this.bee.getChainState()
     const minimumAmount = BigInt(chainState.currentPrice) * BigInt(17280)
 
-    const depth = Utils.getDepthForSize(capacityInBytes / 1024 ** 3)
+    const depth = Utils.getDepthForSize(Size.fromBytes(capacityInBytes))
     const amount = (BigInt(ttlInMillis) / BigInt(5_000) + BigInt(1)) * BigInt(chainState.currentPrice)
 
     if (minimumAmount > amount) {
