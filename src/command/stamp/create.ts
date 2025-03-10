@@ -1,4 +1,4 @@
-import { BatchId, Size, Utils } from '@upcoming/bee-js'
+import { BatchId, Duration, Size } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../../utils/spinner'
@@ -43,9 +43,6 @@ export class Create extends StampCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    let capacityInBytes = 0
-    let ttlInMillis = 0
-
     if (!this.capacity) {
       this.console.log('Please provide the total capacity of the postage stamp batch')
       this.console.log('This represents the total size of data that can be uploaded')
@@ -54,7 +51,7 @@ export class Create extends StampCommand implements LeafCommand {
       this.console.log('')
     }
 
-    capacityInBytes = Numbers.makeStorage(this.capacity)
+    const size = Size.fromBytes(Numbers.makeStorage(this.capacity))
 
     if (!this.ttl) {
       this.console.log('Please provide the time-to-live (TTL) of the postage stamps')
@@ -64,35 +61,24 @@ export class Create extends StampCommand implements LeafCommand {
       this.console.log('')
     }
 
-    ttlInMillis = Dates.make(this.ttl)
-    const chainState = await this.bee.getChainState()
-    const minimumAmount = BigInt(chainState.currentPrice) * BigInt(17280)
+    const duration = Duration.fromMilliseconds(Dates.make(this.ttl) + Dates.seconds(5))
 
-    const depth = Utils.getDepthForSize(Size.fromBytes(capacityInBytes))
-    const amount = (BigInt(ttlInMillis) / BigInt(5_000) + BigInt(1)) * BigInt(chainState.currentPrice)
-
-    if (minimumAmount > amount) {
-      this.console.error('The minimum amount for the TTL is 1 day')
+    if (duration.toDays() < 1) {
+      this.console.error('The minimum TTL is 1 day')
 
       return
     }
 
     this.console.log('You have provided the following parameters:')
-    this.console.log(createKeyValue('Capacity', Numbers.convertBytes(capacityInBytes)))
-    this.console.log(createKeyValue('TTL', Dates.secondsToHumanTime(ttlInMillis / 1000)))
-    this.console.log('')
-    this.console.log(`Your parameters are now converted to Swarm's internal parameters:`)
-    this.console.log(createKeyValue('Depth (capacity)', depth))
-    this.console.log(createKeyValue('Amount (TTL)', amount.toString()))
+    this.console.log(createKeyValue('Capacity', size.toFormattedString()))
+    this.console.log(createKeyValue('TTL', Dates.secondsToHumanTime(duration.toSeconds())))
 
-    const estimatedCost = Utils.getStampCost(depth, BigInt(amount))
-    const estimatedCapacity = Numbers.convertBytes(Utils.getStampEffectiveBytes(depth))
-    const estimatedTtl = Utils.getStampDuration(BigInt(amount), Number(chainState.currentPrice), 5)
+    const estimatedCost = await this.bee.getStorageCost(size, duration)
+    const { bzzBalance } = await this.bee.getWalletBalance()
 
     this.console.log('')
-    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toDecimalString()} xBZZ`))
-    this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
-    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl.toSeconds())))
+    this.console.log(createKeyValue('Cost', `${estimatedCost.toDecimalString()} xBZZ`))
+    this.console.log(createKeyValue('Available', `${bzzBalance.toDecimalString()} xBZZ`))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (!this.quiet && !this.yes) {
@@ -110,7 +96,7 @@ export class Create extends StampCommand implements LeafCommand {
     }
 
     try {
-      const batchId = await this.bee.createPostageBatch(amount.toString(), depth, {
+      const batchId = await this.bee.buyStorage(size, duration, {
         label: this.label,
         immutableFlag: this.immutable,
         waitForUsable: true,

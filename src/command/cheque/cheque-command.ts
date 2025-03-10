@@ -1,4 +1,4 @@
-import { BZZ } from '@upcoming/bee-js'
+import { BZZ } from '@ethersphere/bee-js'
 import { getFieldOrNull } from '../../utils'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'

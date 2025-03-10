@@ -1,4 +1,4 @@
-import { RedundancyLevel, Tag, Utils } from '@upcoming/bee-js'
+import { RedundancyLevel, Tag, Utils } from '@ethersphere/bee-js'
 import { Numbers, Optional, System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'

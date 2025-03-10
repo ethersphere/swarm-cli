@@ -1,4 +1,4 @@
-import { MerkleTree, Topic } from '@upcoming/bee-js'
+import { MerkleTree, Topic } from '@ethersphere/bee-js'
 import { Binary } from 'cafe-utility'
 import Wallet from 'ethereumjs-wallet'
 import { LeafCommand, Option } from 'furious-commander'
