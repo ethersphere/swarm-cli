@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
+import { readFileSync } from 'node:fs'
 
 function makeTmpDir(): string {
   return mkdtempSync(join(tmpdir(), 'swarm-cli-testrun-'))
@@ -11,11 +12,14 @@ function makeTmpDir(): string {
 
 describeCommand('Test Download command', ({ consoleMessages }) => {
   it('should download and print to stdout', async () => {
-    const invocation = await invokeTestCli(['upload', 'test/message.txt', ...getStampOption()])
+    const file = 'message.txt'
+    const invocation = await invokeTestCli(['upload', 'test/' + file, ...getStampOption()])
     const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
     await invokeTestCli(['download', hash.toHex(), '--stdout'])
-    expect(consoleMessages[0]).toContain('Hello Swarm!')
+    expect(consoleMessages[0]).toContain('OK')
+    const fileContent = readFileSync(join(hash.toHex(), file), 'utf-8')
+    expect(fileContent).toContain('Hello Swarm!')
   })
 
   it('should fall back to manifest download', async () => {
