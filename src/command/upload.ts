@@ -171,6 +171,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (this.act) {
       this.console.log(createKeyValue('Swarm history address', this.historyAddress.getOrThrow().toHex()))
     }
+
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
 
     if (this.sync && tag) {
