@@ -2,9 +2,7 @@ import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 import * as fs from 'fs'
 import * as path from 'path'
-
-const stripAnsi = (str: string) =>
-  str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '')
+import { stripAnsi } from '../utility'
 
 function extractReferences(consoleMessages: string[]): [string, string] {
   const nonAnsiConsoleMessages = consoleMessages.map(stripAnsi)

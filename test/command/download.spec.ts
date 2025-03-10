@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
-import { readFileSync } from 'node:fs'
+import { Addresses } from '../../src/command/addresses'
 
 function makeTmpDir(): string {
   return mkdtempSync(join(tmpdir(), 'swarm-cli-testrun-'))
@@ -17,9 +17,7 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
     await invokeTestCli(['download', hash.toHex(), '--stdout'])
-    expect(consoleMessages[0]).toContain('OK')
-    const fileContent = readFileSync(join(hash.toHex(), file), 'utf-8')
-    expect(fileContent).toContain('Hello Swarm!')
+    expect(consoleMessages[0]).toContain('Hello Swarm!')
   })
 
   it('should fall back to manifest download', async () => {
@@ -42,5 +40,29 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     expect(consoleMessages.some(x => x.includes('images/swarm.png'))).toBe(true)
     expect(consoleMessages.some(x => x.includes('index.html'))).toBe(true)
     expect(consoleMessages.some(x => x.includes('swarm.bzz'))).toBe(true)
+  })
+
+  it('should download with act', async () => {
+    const commandBuilder = await invokeTestCli(['upload', 'test/message.txt', '--act', ...getStampOption()])
+    const uploadCommand = commandBuilder.runnable as Upload
+    const ref = uploadCommand.result.getOrThrow().toHex()
+    const hist = uploadCommand.historyAddress.getOrThrow().toHex()
+    consoleMessages.length = 0
+    const commandAddress = await invokeTestCli(['addresses'])
+    const address = commandAddress.runnable as Addresses
+    const actPublisher = address.nodeAddresses.publicKey.toHex()
+    consoleMessages.length = 0
+    await invokeTestCli([
+      'download',
+      ref,
+      'message.txt',
+      '--act',
+      '--act-history-address',
+      hist,
+      '--act-publisher',
+      actPublisher,
+      '--stdout',
+    ])
+    expect(consoleMessages[0]).toContain('Hello Swarm!')
   })
 })

@@ -39,15 +39,19 @@ export class Download extends RootCommand implements LeafCommand {
   }
 
   private async downloadData(): Promise<void> {
-    const downloadOptions = this.manifestDownload.act
-      ? {
-          actPublisher: this.manifestDownload.actPublisher,
-          actHistoryAddress: this.manifestDownload.actHistoryAddress,
-          actTimestamp: this.manifestDownload.actTimestamp,
-        }
-      : undefined
+    let resp
 
-    const response = await this.bee.downloadData(this.address.hash, downloadOptions)
+    if (this.manifestDownload.act) {
+      const fileData = await this.bee.downloadFile(this.address.hash, this.manifestDownload.destination, {
+        actPublisher: this.manifestDownload.actPublisher,
+        actHistoryAddress: this.manifestDownload.actHistoryAddress,
+        actTimestamp: this.manifestDownload.actTimestamp,
+      })
+      resp = fileData.data
+    } else {
+      resp = await this.bee.downloadData(this.address.hash, undefined)
+    }
+    const response = resp
 
     if (this.manifestDownload.stdout) {
       process.stdout.write(response.toUtf8())
