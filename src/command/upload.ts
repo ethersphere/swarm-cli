@@ -1,4 +1,4 @@
-import { RedundancyLevel, Tag, Utils } from '@upcoming/bee-js'
+import { RedundancyLevel, Tag, Utils, Reference } from '@upcoming/bee-js'
 import { Numbers, Optional, System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
@@ -44,6 +44,18 @@ export class Upload extends RootCommand implements LeafCommand {
 
   @Option({ key: 'deferred', type: 'boolean', description: 'Do not wait for network sync', default: true })
   public deferred!: boolean
+
+  @Option({
+    key: 'act',
+    type: 'boolean',
+    description: 'Upload with ACT',
+    default: false,
+    required: { when: 'act-history-address' },
+  })
+  public act!: boolean
+
+  @Option({ key: 'act-history-address', type: 'string', description: 'ACT history address' })
+  public optHistoryAddress!: string
 
   @Option({
     key: 'sync',
@@ -109,6 +121,8 @@ export class Upload extends RootCommand implements LeafCommand {
 
   public stdinData!: Buffer
 
+  public historyAddress: Optional<Reference> = Optional.empty()
+
   // eslint-disable-next-line complexity
   public async run(usedFromOtherCommand = false): Promise<void> {
     super.init()
@@ -153,6 +167,10 @@ export class Upload extends RootCommand implements LeafCommand {
 
     this.console.dim('Data has been sent to the Bee node successfully!')
     this.console.log(createKeyValue('Swarm hash', this.result.getOrThrow().toHex()))
+
+    if (this.act) {
+      this.console.log(createKeyValue('Swarm history address', this.historyAddress.getOrThrow().toHex()))
+    }
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
 
     if (this.sync && tag) {
@@ -201,28 +219,56 @@ export class Upload extends RootCommand implements LeafCommand {
     }
   }
 
+  private actHeaders(): Record<string, string> {
+    return this.act && this.optHistoryAddress ? { 'swarm-act-history-address': this.optHistoryAddress } : {}
+  }
+
   private async uploadStdin(tag?: Tag): Promise<string> {
     if (this.fileName) {
       const contentType = this.contentType || getMime(this.fileName) || undefined
-      const { reference } = await this.bee.uploadFile(this.stamp, this.stdinData, this.fileName, {
-        tag: tag && tag.uid,
-        pin: this.pin,
-        encrypt: this.encrypt,
-        contentType,
-        deferred: this.deferred,
-        redundancyLevel: this.determineRedundancyLevel(),
-      })
+      const { reference, historyAddress } = await this.bee.uploadFile(
+        this.stamp,
+        this.stdinData,
+        this.fileName,
+        {
+          tag: tag && tag.uid,
+          pin: this.pin,
+          encrypt: this.encrypt,
+          contentType,
+          deferred: this.deferred,
+          redundancyLevel: this.determineRedundancyLevel(),
+          act: this.act,
+        },
+        {
+          headers: this.actHeaders(),
+        },
+      )
       this.result = Optional.of(reference)
+
+      if (this.act) {
+        this.historyAddress = historyAddress
+      }
 
       return `${this.bee.url}/bzz/${reference.toHex()}/`
     } else {
-      const { reference } = await this.bee.uploadData(this.stamp, this.stdinData, {
-        tag: tag?.uid,
-        deferred: this.deferred,
-        encrypt: this.encrypt,
-        redundancyLevel: this.determineRedundancyLevel(),
-      })
+      const { reference, historyAddress } = await this.bee.uploadData(
+        this.stamp,
+        this.stdinData,
+        {
+          tag: tag?.uid,
+          deferred: this.deferred,
+          encrypt: this.encrypt,
+          redundancyLevel: this.determineRedundancyLevel(),
+        },
+        {
+          headers: this.actHeaders(),
+        },
+      )
       this.result = Optional.of(reference)
+
+      if (this.act) {
+        this.historyAddress = historyAddress
+      }
 
       return `${this.bee.url}/bytes/${reference.toHex()}`
     }
@@ -234,16 +280,28 @@ export class Upload extends RootCommand implements LeafCommand {
       folder: true,
       type: 'buffer',
     })
-    const { reference } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, {
-      indexDocument: this.indexDocument,
-      errorDocument: this.errorDocument,
-      tag: tag && tag.uid,
-      pin: this.pin,
-      encrypt: this.encrypt,
-      deferred: this.deferred,
-      redundancyLevel: this.determineRedundancyLevel(),
-    })
+    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(
+      this.stamp,
+      this.path,
+      {
+        indexDocument: this.indexDocument,
+        errorDocument: this.errorDocument,
+        tag: tag && tag.uid,
+        pin: this.pin,
+        encrypt: this.encrypt,
+        deferred: this.deferred,
+        redundancyLevel: this.determineRedundancyLevel(),
+        act: this.act,
+      },
+      {
+        headers: this.actHeaders(),
+      },
+    )
     this.result = Optional.of(reference)
+
+    if (this.act) {
+      this.historyAddress = historyAddress
+    }
 
     return `${this.bee.url}/bzz/${reference.toHex()}/`
   }
@@ -257,15 +315,28 @@ export class Upload extends RootCommand implements LeafCommand {
     })
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
-    const { reference } = await this.bee.uploadFile(this.stamp, readable, this.determineFileName(parsedPath.base), {
-      tag: tag && tag.uid,
-      pin: this.pin,
-      encrypt: this.encrypt,
-      contentType,
-      deferred: this.deferred,
-      redundancyLevel: this.determineRedundancyLevel(),
-    })
+    const { reference, historyAddress } = await this.bee.uploadFile(
+      this.stamp,
+      readable,
+      this.determineFileName(parsedPath.base),
+      {
+        tag: tag && tag.uid,
+        pin: this.pin,
+        encrypt: this.encrypt,
+        contentType,
+        deferred: this.deferred,
+        redundancyLevel: this.determineRedundancyLevel(),
+        act: this.act,
+      },
+      {
+        headers: this.actHeaders(),
+      },
+    )
     this.result = Optional.of(reference)
+
+    if (this.act) {
+      this.historyAddress = historyAddress
+    }
 
     return `${this.bee.url}/bzz/${reference.toHex()}/`
   }
@@ -371,6 +442,13 @@ export class Upload extends RootCommand implements LeafCommand {
   private hasUnsupportedGatewayOptions(): boolean {
     if (!isGateway(this.beeApiUrl)) {
       return false
+    }
+
+    if (this.act) {
+      this.console.error('You are trying to upload to the gateway which does not support ACT.')
+      this.console.error('Please try again without the --act option.')
+
+      return true
     }
 
     if (this.pin) {

@@ -11,7 +11,8 @@ function makeTmpDir(): string {
 
 describeCommand('Test Download command', ({ consoleMessages }) => {
   it('should download and print to stdout', async () => {
-    const invocation = await invokeTestCli(['upload', 'test/message.txt', ...getStampOption()])
+    const file = 'message.txt'
+    const invocation = await invokeTestCli(['upload', 'test/' + file, ...getStampOption()])
     const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
     await invokeTestCli(['download', hash.toHex(), '--stdout'])

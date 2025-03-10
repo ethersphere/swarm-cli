@@ -14,9 +14,19 @@ export class Download extends RootCommand implements LeafCommand {
   public manifestDownload!: ManifestDownload
 
   private address!: BzzAddress
+  private actReqHeaders: Record<string, string> = {}
 
   public async run(): Promise<void> {
     super.init()
+
+    if (this.manifestDownload.act) {
+      this.actReqHeaders = {
+        'Swarm-Act': 'true',
+        'Swarm-Act-Timestamp': this.manifestDownload.actTimestamp,
+        'Swarm-Act-History-Address': this.manifestDownload.actHistoryAddress,
+        'Swarm-Act-Publisher': this.manifestDownload.actPublisher,
+      }
+    }
 
     this.address = await makeBzzAddress(this.bee, this.manifestDownload.bzzUrl)
 
@@ -29,7 +39,15 @@ export class Download extends RootCommand implements LeafCommand {
   }
 
   private async downloadData(): Promise<void> {
-    const response = await this.bee.downloadData(this.address.hash)
+    const downloadOptions = this.manifestDownload.act
+      ? {
+          actPublisher: this.manifestDownload.actPublisher,
+          actHistoryAddress: this.manifestDownload.actHistoryAddress,
+          actTimestamp: this.manifestDownload.actTimestamp,
+        }
+      : undefined
+
+    const response = await this.bee.downloadData(this.address.hash, downloadOptions)
 
     if (this.manifestDownload.stdout) {
       process.stdout.write(response.toUtf8())
