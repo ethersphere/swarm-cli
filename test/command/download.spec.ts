@@ -17,9 +17,7 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
     await invokeTestCli(['download', hash.toHex(), '--stdout'])
-    expect(consoleMessages[0]).toContain('OK')
-    const fileContent = readFileSync(join(hash.toHex(), file), 'utf-8')
-    expect(fileContent).toContain('Hello Swarm!')
+    expect(consoleMessages[0]).toContain('Hello Swarm!')
   })
 
   it('should fall back to manifest download', async () => {
