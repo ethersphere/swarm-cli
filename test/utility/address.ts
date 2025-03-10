@@ -1,4 +1,4 @@
-import { PublicKey } from '@upcoming/bee-js'
+import { PublicKey } from '@ethersphere/bee-js'
 import { invokeTestCli } from '.'
 import { Addresses } from '../../src/command/addresses'
 

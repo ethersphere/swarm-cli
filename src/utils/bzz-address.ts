@@ -1,4 +1,4 @@
-import { Bee, MantarayNode } from '@upcoming/bee-js'
+import { Bee, MantarayNode } from '@ethersphere/bee-js'
 import { CommandLineError } from './error'
 
 export class BzzAddress {

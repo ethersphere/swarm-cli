@@ -1,4 +1,4 @@
-import { MerkleTree, Reference } from '@upcoming/bee-js'
+import { MerkleTree, Reference } from '@ethersphere/bee-js'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand } from 'furious-commander'
 import { RootCommand } from './root-command'

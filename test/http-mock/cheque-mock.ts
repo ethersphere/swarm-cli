@@ -1,19 +1,19 @@
-import { createServer, Server } from 'http'
 import {
-  Topology,
-  LastChequesResponse,
-  EthAddress,
-  BZZ,
-  LastCashoutActionResponse,
-  ChequebookBalanceResponse,
-  ChainState,
-  NumberString,
-  WalletBalance,
-  DAI,
-  NodeInfo,
   BeeModes,
+  BZZ,
+  ChainState,
+  ChequebookBalanceResponse,
+  DAI,
+  EthAddress,
   Health,
-} from '@upcoming/bee-js'
+  LastCashoutActionResponse,
+  LastChequesResponse,
+  NodeInfo,
+  NumberString,
+  Topology,
+  WalletBalance,
+} from '@ethersphere/bee-js'
+import { createServer, Server } from 'http'
 
 /**
  * Starts a mock HTTP server with predefined cheque responses.

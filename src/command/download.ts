@@ -1,4 +1,4 @@
-import { MantarayNode } from '@upcoming/bee-js'
+import { MantarayNode } from '@ethersphere/bee-js'
 import fs from 'fs'
 import { Aggregation, LeafCommand } from 'furious-commander'
 import { BzzAddress, makeBzzAddress } from '../utils/bzz-address'

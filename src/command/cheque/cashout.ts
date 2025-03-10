@@ -1,4 +1,4 @@
-import { BZZ } from '@upcoming/bee-js'
+import { BZZ } from '@ethersphere/bee-js'
 import chalk from 'chalk'
 import { LeafCommand, Option } from 'furious-commander'
 import { createKeyValue } from '../../utils/text'
