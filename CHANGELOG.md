@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.23.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.22.0...v2.23.0) (2025-03-10)
+
+
+### Features
+
+* add stamp extend command ([#567](https://www.github.com/ethersphere/swarm-cli/issues/567)) ([5dba920](https://www.github.com/ethersphere/swarm-cli/commit/5dba920c23b5e38949c282df93d833619bb8a164))
+* update get-bee to fetch bee 2.4.0 ([#560](https://www.github.com/ethersphere/swarm-cli/issues/560)) ([7ac4839](https://www.github.com/ethersphere/swarm-cli/commit/7ac483931d7a3913aff864caa25cd9d49c1c37cb))
+
 ## [2.22.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.21.0...v2.22.0) (2024-12-09)
 
 
