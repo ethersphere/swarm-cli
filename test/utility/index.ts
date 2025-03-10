@@ -4,6 +4,9 @@ import { join } from 'path'
 import { optionParameters, rootCommandClasses } from '../../src/config'
 import { errorHandler } from '../../src/utils/error'
 
+export const stripAnsi = (str: string) =>
+  str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '')
+
 export async function invokeTestCli(argv: string[]): ReturnType<typeof cli> {
   const commandBuilder = await cli({
     rootCommandClasses,
