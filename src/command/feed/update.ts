@@ -1,3 +1,4 @@
+import { Reference } from '@upcoming/bee-js'
 import { LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
@@ -15,13 +16,13 @@ export class Update extends FeedCommand implements LeafCommand {
   public reference!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)
     }
 
-    await this.updateFeedAndPrint(this.stamp, this.reference)
+    await this.updateFeedAndPrint(this.stamp, new Reference(this.reference))
     this.console.dim('Successfully updated feed.')
   }
 }

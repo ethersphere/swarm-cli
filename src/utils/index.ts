@@ -1,4 +1,3 @@
-import { Reference } from '@ethersphere/bee-js'
 import { promises, statSync } from 'fs'
 import { join } from 'path'
 import { CommandLog } from '../command/root-command/command-log'
@@ -102,10 +101,6 @@ export function hasField(some: unknown, key: string): boolean {
 
 export function getFieldOrNull<T>(some: unknown, key: string): T | null {
   return typeof some === 'object' && some !== null ? Reflect.get(some, key) : null
-}
-
-export function referenceToHex(reference: Reference | Uint8Array): string {
-  return Buffer.from(reference).toString('hex')
 }
 
 export function readStdin(commandLog: CommandLog): Promise<Buffer> {

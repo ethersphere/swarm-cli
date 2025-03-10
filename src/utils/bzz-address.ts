@@ -1,8 +1,5 @@
-import { Bee } from '@ethersphere/bee-js'
-import { MantarayFork, MantarayNode, MetadataMapping } from 'mantaray-js'
+import { Bee, MantarayNode } from '@upcoming/bee-js'
 import { CommandLineError } from './error'
-
-const INDEX_DOCUMENT_FORK_PREFIX = '47'
 
 export class BzzAddress {
   public hash: string
@@ -34,58 +31,18 @@ export class BzzAddress {
 export async function makeBzzAddress(bee: Bee, url: string): Promise<BzzAddress> {
   const address = new BzzAddress(url)
 
-  const feedReference = await resolveFeedManifest(bee, address.hash)
+  try {
+    const manifest = await MantarayNode.unmarshal(bee, address.hash)
+    await manifest.loadRecursively(bee)
 
-  if (feedReference) {
-    address.hash = feedReference
+    const resolvedFeed = await manifest.resolveFeed(bee)
+
+    resolvedFeed.ifPresent(feed => {
+      address.hash = feed.payload.toHex()
+    })
+
+    return address
+  } catch {
+    return address
   }
-
-  return address
-}
-
-async function resolveFeedManifest(bee: Bee, hash: string): Promise<string | null> {
-  const metadata = await getRootSlashMetadata(bee, hash)
-
-  if (!metadata) {
-    return null
-  }
-
-  const owner = metadata['swarm-feed-owner']
-  const topic = metadata['swarm-feed-topic']
-
-  if (!owner || !topic) {
-    return null
-  }
-
-  const reader = bee.makeFeedReader('sequence', topic, owner)
-  const response = await reader.download()
-
-  return response.reference
-}
-
-async function getRootSlashMetadata(bee: Bee, hash: string): Promise<MetadataMapping | null> {
-  const data = await bee.downloadData(hash)
-  const node = new MantarayNode()
-  node.deserialize(data)
-
-  if (!node.forks) {
-    return null
-  }
-  const fork = Reflect.get(node.forks, INDEX_DOCUMENT_FORK_PREFIX) as MantarayFork | undefined
-
-  if (!fork) {
-    return null
-  }
-  const metadataNode = fork.node
-
-  if (!metadataNode.IsWithMetadataType()) {
-    return null
-  }
-  const metadata = metadataNode.getMetadata
-
-  if (!metadata) {
-    return null
-  }
-
-  return metadata
 }

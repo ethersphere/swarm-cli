@@ -1,4 +1,6 @@
-import { Argument, LeafCommand } from 'furious-commander'
+import { Argument, LeafCommand, Option } from 'furious-commander'
+import { pickStamp } from '../../service/stamp'
+import { stampProperties } from '../../utils/option'
 import { PinningCommand } from './pinning-command'
 
 export class Reupload extends PinningCommand implements LeafCommand {
@@ -17,12 +19,19 @@ export class Reupload extends PinningCommand implements LeafCommand {
   })
   public address!: string
 
+  @Option(stampProperties)
+  public stamp!: string
+
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
+
+    if (!this.stamp) {
+      this.stamp = await pickStamp(this.bee, this.console)
+    }
 
     this.console.log('Reuploading ' + this.address + '...')
     try {
-      await this.bee.reuploadPinnedData(this.address)
+      await this.bee.reuploadPinnedData(this.stamp, this.address)
       this.console.log('Reuploaded successfully.')
     } catch (error) {
       this.console.printBeeError(error, { notFoundMessage: 'No locally pinned content found with that address.' })

@@ -1,4 +1,4 @@
-import { BeeError } from '@ethersphere/bee-js'
+import { BeeError, Topic } from '@upcoming/bee-js'
 import { createWriteStream } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
 import { PssCommand } from './pss-command'
@@ -22,13 +22,13 @@ export class Subscribe extends PssCommand implements LeafCommand {
 
     const stream = this.outFile ? createWriteStream(this.outFile) : null
 
-    this.bee.pssSubscribe(this.topic, {
+    this.bee.pssSubscribe(new Topic(this.topic), {
       onMessage: data => {
         if (stream) {
           stream.write(data)
         } else {
-          this.console.log(data.text())
-          this.console.quiet(data.text())
+          this.console.log(data.toUtf8())
+          this.console.quiet(data.toUtf8())
         }
       },
       onError: (error: BeeError) => {

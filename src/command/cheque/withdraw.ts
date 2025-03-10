@@ -19,10 +19,10 @@ export class Withdraw extends ChequeCommand implements LeafCommand {
   public amount!: bigint
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     const response = await this.bee.withdrawTokens(this.amount.toString())
-    this.console.log(createKeyValue('Tx', response))
-    this.console.quiet(response)
+    this.console.log(createKeyValue('Tx', response.toHex()))
+    this.console.quiet(response.toHex())
   }
 }

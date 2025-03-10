@@ -21,7 +21,7 @@ export class Export extends IdentityCommand implements LeafCommand {
   public outFile!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     const { identity } = await this.getOrPickIdentity(this.identityName)
 
     if (identity.identityType === IdentityType.v3) {
