@@ -20,7 +20,7 @@ jobs:
         run: npm install --global @vercel/ncc
 
       - name: Install pkg
-        run: npm install --global pkg
+        run: npm install -g @yao-pkg/pkg
 
       - name: Create bin/
         run: mkdir bin
