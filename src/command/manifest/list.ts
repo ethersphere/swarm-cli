@@ -1,4 +1,4 @@
-import { MantarayNode, Reference } from '@upcoming/bee-js'
+import { MantarayNode, Reference } from '@ethersphere/bee-js'
 import chalk from 'chalk'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'

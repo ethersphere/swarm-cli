@@ -1,4 +1,4 @@
-import { RedundancyLevel, Tag, Utils, Reference } from '@upcoming/bee-js'
+import { RedundancyLevel, Tag, Utils, Reference } from '@ethersphere/bee-js'
 import { Numbers, Optional, System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
@@ -219,30 +219,19 @@ export class Upload extends RootCommand implements LeafCommand {
     }
   }
 
-  private actHeaders(): Record<string, string> {
-    return this.act && this.optHistoryAddress ? { 'swarm-act-history-address': this.optHistoryAddress } : {}
-  }
-
   private async uploadStdin(tag?: Tag): Promise<string> {
     if (this.fileName) {
       const contentType = this.contentType || getMime(this.fileName) || undefined
-      const { reference, historyAddress } = await this.bee.uploadFile(
-        this.stamp,
-        this.stdinData,
-        this.fileName,
-        {
-          tag: tag && tag.uid,
-          pin: this.pin,
-          encrypt: this.encrypt,
-          contentType,
-          deferred: this.deferred,
-          redundancyLevel: this.determineRedundancyLevel(),
-          act: this.act,
-        },
-        {
-          headers: this.actHeaders(),
-        },
-      )
+      const { reference, historyAddress } = await this.bee.uploadFile(this.stamp, this.stdinData, this.fileName, {
+        tag: tag && tag.uid,
+        pin: this.pin,
+        encrypt: this.encrypt,
+        contentType,
+        deferred: this.deferred,
+        redundancyLevel: this.determineRedundancyLevel(),
+        act: this.act,
+        actHistoryAddress: this.optHistoryAddress,
+      })
       this.result = Optional.of(reference)
 
       if (this.act) {
@@ -251,19 +240,14 @@ export class Upload extends RootCommand implements LeafCommand {
 
       return `${this.bee.url}/bzz/${reference.toHex()}/`
     } else {
-      const { reference, historyAddress } = await this.bee.uploadData(
-        this.stamp,
-        this.stdinData,
-        {
-          tag: tag?.uid,
-          deferred: this.deferred,
-          encrypt: this.encrypt,
-          redundancyLevel: this.determineRedundancyLevel(),
-        },
-        {
-          headers: this.actHeaders(),
-        },
-      )
+      const { reference, historyAddress } = await this.bee.uploadData(this.stamp, this.stdinData, {
+        tag: tag?.uid,
+        deferred: this.deferred,
+        encrypt: this.encrypt,
+        redundancyLevel: this.determineRedundancyLevel(),
+        act: this.act,
+        actHistoryAddress: this.optHistoryAddress,
+      })
       this.result = Optional.of(reference)
 
       if (this.act) {
@@ -280,23 +264,17 @@ export class Upload extends RootCommand implements LeafCommand {
       folder: true,
       type: 'buffer',
     })
-    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(
-      this.stamp,
-      this.path,
-      {
-        indexDocument: this.indexDocument,
-        errorDocument: this.errorDocument,
-        tag: tag && tag.uid,
-        pin: this.pin,
-        encrypt: this.encrypt,
-        deferred: this.deferred,
-        redundancyLevel: this.determineRedundancyLevel(),
-        act: this.act,
-      },
-      {
-        headers: this.actHeaders(),
-      },
-    )
+    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, {
+      indexDocument: this.indexDocument,
+      errorDocument: this.errorDocument,
+      tag: tag && tag.uid,
+      pin: this.pin,
+      encrypt: this.encrypt,
+      deferred: this.deferred,
+      redundancyLevel: this.determineRedundancyLevel(),
+      act: this.act,
+      actHistoryAddress: this.optHistoryAddress,
+    })
     this.result = Optional.of(reference)
 
     if (this.act) {
@@ -327,9 +305,7 @@ export class Upload extends RootCommand implements LeafCommand {
         deferred: this.deferred,
         redundancyLevel: this.determineRedundancyLevel(),
         act: this.act,
-      },
-      {
-        headers: this.actHeaders(),
+        actHistoryAddress: this.optHistoryAddress,
       },
     )
     this.result = Optional.of(reference)

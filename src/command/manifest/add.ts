@@ -1,4 +1,4 @@
-import { MantarayNode } from '@upcoming/bee-js'
+import { MantarayNode } from '@ethersphere/bee-js'
 import { Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { readFileSync, statSync } from 'fs'

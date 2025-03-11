@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { BatchId, Bee } from '@upcoming/bee-js'
+import { BatchId, Bee } from '@ethersphere/bee-js'
 import { Numbers } from 'cafe-utility'
 
 export const getOrBuyStamp = async (): Promise<BatchId> => {

@@ -1,4 +1,4 @@
-import { MantarayNode, MerkleTree } from '@upcoming/bee-js'
+import { MantarayNode, MerkleTree } from '@ethersphere/bee-js'
 import { Binary, Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { readFileSync } from 'fs'

@@ -1,4 +1,4 @@
-import { ChequebookAddressResponse, NodeAddresses } from '@upcoming/bee-js'
+import { ChequebookAddressResponse, NodeAddresses } from '@ethersphere/bee-js'
 import { Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'

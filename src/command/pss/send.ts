@@ -1,4 +1,4 @@
-import { Topic } from '@upcoming/bee-js'
+import { Topic } from '@ethersphere/bee-js'
 import { readFileSync } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'

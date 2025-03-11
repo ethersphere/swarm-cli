@@ -1,4 +1,4 @@
-import { BeeRequest } from '@upcoming/bee-js'
+import { BeeRequest } from '@ethersphere/bee-js'
 import chalk from 'chalk'
 import { printer } from './printer'
 

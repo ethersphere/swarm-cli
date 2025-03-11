@@ -1,4 +1,4 @@
-import { Reference, Topic } from '@upcoming/bee-js'
+import { Reference, Topic } from '@ethersphere/bee-js'
 import Wallet from 'ethereumjs-wallet'
 import { Option } from 'furious-commander'
 import { exit } from 'process'

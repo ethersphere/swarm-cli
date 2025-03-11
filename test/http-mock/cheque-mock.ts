@@ -13,7 +13,7 @@ import {
   NodeInfo,
   BeeModes,
   Health,
-} from '@upcoming/bee-js'
+} from '@ethersphere/bee-js'
 
 /**
  * Starts a mock HTTP server with predefined cheque responses.

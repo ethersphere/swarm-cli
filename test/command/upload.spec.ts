@@ -46,7 +46,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should upload file with act and history', async () => {
     const commandBuilder = await invokeTestCli(['upload', 'README.md', '--act', ...getStampOption()])
     const uploadCommand = commandBuilder.runnable as Upload
-    const ref = uploadCommand.result.getOrThrow()
+    const ref = uploadCommand.result.getOrThrow().toHex()
     const hist = uploadCommand.historyAddress.getOrThrow().toHex()
 
     // Upload with the same history address
@@ -62,8 +62,8 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(uploadCommandWithHistory.result.getOrThrow()).toHaveLength(32)
     expect(uploadCommandWithHistory.historyAddress.getOrThrow()).toHaveLength(32)
 
-    const ref2 = uploadCommandWithHistory.result.getOrThrow()
-    expect(ref).not.toBe(ref2) // Different reference
+    const ref2 = uploadCommandWithHistory.result.getOrThrow().toHex()
+    expect(ref).toBe(ref2) // Same reference
     const hist2 = uploadCommandWithHistory.historyAddress.getOrThrow().toHex()
     expect(hist).toBe(hist2) // Same history address
   })

@@ -1,4 +1,4 @@
-import { PostageBatch } from '@upcoming/bee-js'
+import { PostageBatch } from '@ethersphere/bee-js'
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { printStamp } from '../../service/stamp'

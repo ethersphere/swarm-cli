@@ -1,4 +1,4 @@
-import { BatchId, Size, Utils } from '@upcoming/bee-js'
+import { BatchId, Size, Utils } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../../utils/spinner'
