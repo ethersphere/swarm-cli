@@ -1,8 +1,8 @@
 import { existsSync, unlinkSync, writeFileSync } from 'fs'
+import { LeafCommand } from 'furious-commander'
 import type { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
-import { LeafCommand } from 'furious-commander'
 
 function actUpload(command: { runnable?: LeafCommand | undefined }): [string, string] {
   const uploadCommand = command.runnable as Upload
@@ -139,6 +139,13 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should succeed with --sync and --encrypt', async () => {
     await invokeTestCli(['upload', 'README.md', '--sync', '--encrypt', '-v', ...getStampOption()])
+    expect(consoleMessages).toBe([])
+    expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
+  })
+
+  it('should succeed with --sync, --encrypt and --curl', async () => {
+    await invokeTestCli(['upload', 'README.md', '--sync', '--encrypt', '--curl', '-v', ...getStampOption()])
+    expect(consoleMessages).toBe([])
     expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
 
