@@ -2,6 +2,15 @@ import { existsSync, unlinkSync, writeFileSync } from 'fs'
 import type { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
+import { LeafCommand } from 'furious-commander'
+
+function actUpload(command: { runnable?: LeafCommand | undefined }): [string, string] {
+  const uploadCommand = command.runnable as Upload
+  const ref = uploadCommand.result.getOrThrow().toHex()
+  const his = uploadCommand.historyAddress.getOrThrow().toHex()
+
+  return [ref, his]
+}
 
 describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining }) => {
   if (existsSync('test/data/8mb.bin')) {
@@ -38,34 +47,46 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should upload file with act', async () => {
     const commandBuilder = await invokeTestCli(['upload', 'README.md', '--act', ...getStampOption()])
-    const uploadCommand = commandBuilder.runnable as Upload
-    expect(uploadCommand.result.getOrThrow()).toHaveLength(32)
-    expect(uploadCommand.historyAddress.getOrThrow()).toHaveLength(32)
+    const [ref, his] = actUpload(commandBuilder)
+    expect(ref).toHaveLength(64)
+    expect(his).toHaveLength(64)
   })
 
   it('should upload file with act and history', async () => {
-    const commandBuilder = await invokeTestCli(['upload', 'README.md', '--act', ...getStampOption()])
-    const uploadCommand = commandBuilder.runnable as Upload
-    const ref = uploadCommand.result.getOrThrow().toHex()
-    const hist = uploadCommand.historyAddress.getOrThrow().toHex()
+    const commandBuilder1 = await invokeTestCli(['upload', 'README.md', '--act', ...getStampOption()])
+    const [ref1, his1] = actUpload(commandBuilder1)
+    expect(ref1).toHaveLength(64)
+    expect(his1).toHaveLength(64)
 
-    // Upload with the same history address
-    const commandBuilderWithHistory = await invokeTestCli([
+    // Upload same file with the same history address
+    const commandBuilder2 = await invokeTestCli([
       'upload',
       'README.md',
       '--act',
       '--act-history-address',
-      hist,
+      his1,
       ...getStampOption(),
     ])
-    const uploadCommandWithHistory = commandBuilderWithHistory.runnable as Upload
-    expect(uploadCommandWithHistory.result.getOrThrow()).toHaveLength(32)
-    expect(uploadCommandWithHistory.historyAddress.getOrThrow()).toHaveLength(32)
+    const [ref2, his2] = actUpload(commandBuilder2)
+    expect(ref2).toHaveLength(64)
+    expect(his2).toHaveLength(64)
+    expect(ref1).toBe(ref2) // Same reference
+    expect(his1).toBe(his2) // Same history address
 
-    const ref2 = uploadCommandWithHistory.result.getOrThrow().toHex()
-    expect(ref).toBe(ref2) // Same reference
-    const hist2 = uploadCommandWithHistory.historyAddress.getOrThrow().toHex()
-    expect(hist).toBe(hist2) // Same history address
+    // Upload another file with the same history address
+    const commandBuilder3 = await invokeTestCli([
+      'upload',
+      'test/message.txt',
+      '--act',
+      '--act-history-address',
+      his1,
+      ...getStampOption(),
+    ])
+    const [ref3, his3] = actUpload(commandBuilder3)
+    expect(ref3).toHaveLength(64)
+    expect(his3).toHaveLength(64)
+    expect(ref1).not.toBe(ref3) // Not same reference
+    expect(his1).toBe(his3) // Same history address
   })
 
   it('should upload folder and encrypt', async () => {
