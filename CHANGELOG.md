@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.24.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.23.0...v2.24.0) (2025-03-12)
+
+
+### Features
+
+* add act commands ([#569](https://www.github.com/ethersphere/swarm-cli/issues/569)) ([fd879bc](https://www.github.com/ethersphere/swarm-cli/commit/fd879bc33ca271e6e78750a9cba6461441c71d1a))
+
 ## [2.23.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.22.0...v2.23.0) (2025-03-10)
 
 
