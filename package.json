@@ -62,8 +62,8 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@ethersphere/bee-js": "^9.0.1",
-    "cafe-utility": "^27.14.2",
+    "@ethersphere/bee-js": "^9.0.2",
+    "cafe-utility": "^27.14.0",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
     "ethereumjs-wallet": "^1.0.2",

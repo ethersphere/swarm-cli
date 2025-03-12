@@ -1,0 +1,9 @@
+{
+    "add": [
+        "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e7"
+    ],
+    "revoke": [
+        "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e9",
+        "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12ee"
+    ]
+}

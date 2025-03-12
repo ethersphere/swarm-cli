@@ -18,7 +18,9 @@ describeCommand(
     let server: Server
 
     beforeAll(() => {
-      server = createChequeMockHttpServer(1377)
+      if (!server) {
+        server = createChequeMockHttpServer(1377)
+      }
     })
 
     afterAll(() => {

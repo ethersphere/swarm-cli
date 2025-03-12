@@ -8,7 +8,7 @@ export const getOrBuyStamp = async (): Promise<BatchId> => {
 
   if (availableStamps.length > 0) {
     const usedStamp = availableStamps[0].batchID
-    console.log('Using existing stamp: ', usedStamp)
+    console.log('Using existing stamp: ', usedStamp.toHex())
 
     return usedStamp
   }
