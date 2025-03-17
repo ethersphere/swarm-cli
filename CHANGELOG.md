@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.25.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.24.0...v2.25.0) (2025-03-17)
+
+
+### Features
+
+* upgrade bee-js to 9.0.3 ([#575](https://www.github.com/ethersphere/swarm-cli/issues/575)) ([4116d36](https://www.github.com/ethersphere/swarm-cli/commit/4116d368f3b3b2a880ba219c9787befc9ddb6585))
+
+
+### Bug Fixes
+
+* act download ([#576](https://www.github.com/ethersphere/swarm-cli/issues/576)) ([a904fe2](https://www.github.com/ethersphere/swarm-cli/commit/a904fe2e0f80838ee3a77b5f23fabc83b9146f90))
+
 ## [2.24.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.23.0...v2.24.0) (2025-03-12)
 
 
