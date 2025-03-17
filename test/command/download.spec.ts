@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
+import { Addresses } from '../../src/command/addresses'
 
 function makeTmpDir(): string {
   return mkdtempSync(join(tmpdir(), 'swarm-cli-testrun-'))
@@ -16,6 +17,28 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
     await invokeTestCli(['download', hash.toHex(), '--stdout'])
+    expect(consoleMessages[0]).toContain('Hello Swarm!')
+  })
+
+  it('should download with act and print to stdout', async () => {
+    const addressesInvocation = await invokeTestCli(['addresses'])
+    const addressesCommand = addressesInvocation.runnable as Addresses
+    const uploadInvocation = await invokeTestCli(['upload', 'test/message.txt', '--act', ...getStampOption()])
+    const uploadCommand = uploadInvocation.runnable as Upload
+    const ref = uploadCommand.result.getOrThrow().toHex()
+    const history = uploadCommand.historyAddress.getOrThrow().toHex()
+    const publicKey = addressesCommand.nodeAddresses.publicKey.toHex()
+    consoleMessages.length = 0
+    await invokeTestCli([
+      'download',
+      ref,
+      '--act',
+      '--act-history-address',
+      history,
+      '--act-publisher',
+      publicKey,
+      '--stdout',
+    ])
     expect(consoleMessages[0]).toContain('Hello Swarm!')
   })
 
