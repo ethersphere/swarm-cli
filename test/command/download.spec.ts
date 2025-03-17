@@ -27,7 +27,7 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     const uploadCommand = uploadInvocation.runnable as Upload
     const ref = uploadCommand.result.getOrThrow().toHex()
     const history = uploadCommand.historyAddress.getOrThrow().toHex()
-    const publicKey = addressesCommand.nodeAddresses.publicKey.toCompressedHex()
+    const publicKey = addressesCommand.nodeAddresses.publicKey.toHex()
     consoleMessages.length = 0
     await invokeTestCli([
       'download',
