@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.26.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.25.0...v2.26.0) (2025-03-25)
+
+
+### Features
+
+* add cid command ([#579](https://www.github.com/ethersphere/swarm-cli/issues/579)) ([738ae88](https://www.github.com/ethersphere/swarm-cli/commit/738ae8882fd49be44623701f046233a1b8ad27b0))
+
 ## [2.25.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.24.0...v2.25.0) (2025-03-17)
 
 
