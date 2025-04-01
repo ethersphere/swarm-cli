@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.26.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.26.0...v2.26.1) (2025-04-01)
+
+
+### Bug Fixes
+
+* apply axios vulnerability fix ([#581](https://www.github.com/ethersphere/swarm-cli/issues/581)) ([57068fa](https://www.github.com/ethersphere/swarm-cli/commit/57068fa56a3e1a5fa3ba8f36e4cc49e02ecf6aca))
+
 ## [2.26.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.25.0...v2.26.0) (2025-03-25)
 
 
