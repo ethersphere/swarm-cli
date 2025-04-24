@@ -15,7 +15,7 @@ export class Cid extends RootCommand implements LeafCommand {
   })
   public value!: string
 
-  public async run(): Promise<void> {
+  public run(): void {
     super.init()
 
     const reference = new Reference(this.value)
