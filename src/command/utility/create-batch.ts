@@ -71,7 +71,7 @@ export class CreateBatch extends RootCommand implements LeafCommand {
       maxFeePerGas: Numbers.make('2gwei'),
       maxPriorityFeePerGas: Numbers.make('1gwei'),
     })
-    console.log(`Waiting 3 blocks on approval tx ${approve.hash}`)
+    this.console.log(`Waiting 3 blocks on approval tx ${approve.hash}`)
     await approve.wait(3)
 
     this.console.log(`Creating postage batch for ${wallet.address} with depth ${this.depth} and amount ${this.amount}`)
