@@ -1,17 +1,9 @@
 import { BigNumber as BN, Contract, providers, Wallet } from 'ethers'
-import { BZZ_TOKEN_ADDRESS, bzzABI } from './bzz-abi'
+import { ABI, Contracts } from './contracts'
 
 const NETWORK_ID = 100
 
-async function getNetworkChainId(url: string): Promise<number> {
-  const provider = new providers.JsonRpcProvider(url, NETWORK_ID)
-  await provider.ready
-  const network = await provider.getNetwork()
-
-  return network.chainId
-}
-
-async function eth_getBalance(address: string, provider: providers.JsonRpcProvider): Promise<string> {
+export async function eth_getBalance(address: string, provider: providers.JsonRpcProvider): Promise<string> {
   if (!address.startsWith('0x')) {
     address = `0x${address}`
   }
@@ -20,21 +12,15 @@ async function eth_getBalance(address: string, provider: providers.JsonRpcProvid
   return balance.toString()
 }
 
-async function eth_getBlockByNumber(provider: providers.JsonRpcProvider): Promise<string> {
-  const blockNumber = await provider.getBlockNumber()
-
-  return blockNumber.toString()
-}
-
-async function eth_getBalanceERC20(
+export async function eth_getBalanceERC20(
   address: string,
   provider: providers.JsonRpcProvider,
-  tokenAddress = BZZ_TOKEN_ADDRESS,
+  tokenAddress = Contracts.bzz,
 ): Promise<string> {
   if (!address.startsWith('0x')) {
     address = `0x${address}`
   }
-  const contract = new Contract(tokenAddress, bzzABI, provider)
+  const contract = new Contract(tokenAddress, ABI.bzz, provider)
   const balance = await contract.balanceOf(address)
 
   return balance.toString()
@@ -90,28 +76,17 @@ export async function sendBzzTransaction(
 ): Promise<TransferResponse> {
   const signer = await makeReadySigner(privateKey, jsonRpcProvider)
   const gasPrice = await signer.getGasPrice()
-  const bzz = new Contract(BZZ_TOKEN_ADDRESS, bzzABI, signer)
+  const bzz = new Contract(Contracts.bzz, ABI.bzz, signer)
   const transaction = await bzz.transfer(to, value, { gasPrice })
   const receipt = await transaction.wait(1)
 
   return { transaction, receipt }
 }
 
-async function makeReadySigner(privateKey: string, jsonRpcProvider: string) {
+export async function makeReadySigner(privateKey: string, jsonRpcProvider: string) {
   const provider = new providers.JsonRpcProvider(jsonRpcProvider, NETWORK_ID)
   await provider.ready
   const signer = new Wallet(privateKey, provider)
 
   return signer
-}
-
-export const Rpc = {
-  getNetworkChainId,
-  sendNativeTransaction,
-  sendBzzTransaction,
-  _eth_getBalance: eth_getBalance,
-  _eth_getBalanceERC20: eth_getBalanceERC20,
-  eth_getBalance,
-  eth_getBalanceERC20,
-  eth_getBlockByNumber,
 }

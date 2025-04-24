@@ -4,6 +4,7 @@ import { GroupCommand } from 'furious-commander'
 import { fileExists } from '../../utils'
 import { CommandLog } from '../root-command/command-log'
 import { Cid } from './cid'
+import { CreateBatch } from './create-batch'
 import { GetBee } from './get-bee'
 import { Lock } from './lock'
 import { Redeem } from './redeem'
@@ -14,7 +15,7 @@ export class Utility implements GroupCommand {
 
   public readonly description = 'Utility commands related to Swarm and wallets'
 
-  public subCommandClasses = [Cid, Lock, Unlock, GetBee, Redeem]
+  public subCommandClasses = [Cid, Lock, Unlock, GetBee, Redeem, CreateBatch]
 }
 
 export async function createWallet(pathOrPrivateKey: string, console: CommandLog): Promise<Wallet> {
