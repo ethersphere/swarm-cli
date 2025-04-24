@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.26.1...v2.27.0) (2025-04-24)
+
+
+### Features
+
+* add command to create external batch ([#584](https://www.github.com/ethersphere/swarm-cli/issues/584)) ([649b03c](https://www.github.com/ethersphere/swarm-cli/commit/649b03c8c7dd0ac09d597457d46a93a8177312ae))
+
 ### [2.26.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.26.0...v2.26.1) (2025-04-01)
 
 
