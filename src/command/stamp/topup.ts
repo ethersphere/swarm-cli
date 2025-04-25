@@ -1,13 +1,10 @@
 import { LeafCommand, Option } from 'furious-commander'
-import { Utils } from '@ethersphere/bee-js'
-import { BigNumber, providers, ethers } from 'ethers'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
 import { createSpinner } from '../../utils/spinner'
-import { NETWORK_ID } from '../../utils/contracts'
-import { eth_getBalance } from '../../utils/rpc'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
+import { calculateAndDisplayCosts, checkBzzBalance, checkXdaiBalance } from '../../utils/bzz-transaction-utils'
 
 export class Topup extends StampCommand implements LeafCommand {
   public readonly name = 'topup'
@@ -43,47 +40,43 @@ export class Topup extends StampCommand implements LeafCommand {
     const blocksPerDay = 17280n // ~5 seconds per block
     const additionalDaysNumber = Number(this.amount) / Number(currentPrice * blocksPerDay)
 
-    // Calculate cost in BZZ
-    const bzzCost = Utils.getStampCost(stamp.depth, this.amount)
-
     // Get wallet address
     const { ethereum } = await this.bee.getNodeAddresses()
     const walletAddress = ethereum.toHex()
-    const provider = new providers.JsonRpcProvider('https://xdai.fairdatasociety.org', NETWORK_ID)
+    
+    this.console.log(`Topping up stamp ${this.stamp} of depth ${stamp.depth} with ${this.amount} PLUR.\n`)
 
-    // Use a fixed gas estimate instead of dynamic calculation to avoid errors
-    const gasPrice = await provider.getGasPrice()
-    const gasLimit = BigNumber.from(100000) // Typical gas limit for token operations
-    const estimatedGasCost = gasPrice.mul(gasLimit)
+    // Calculate costs
+    const { bzzCost, estimatedGasCost } = await calculateAndDisplayCosts(
+      stamp.depth,
+      this.amount,
+      bzzBalance.toPLURBigInt(),
+      this.console
+    )
 
-    // Display cost information to the user
-    this.console.log(`Topping up stamp ${this.stamp} with ${this.amount} PLUR (depth: ${stamp.depth})`)
     this.console.log(`Current price: ${currentPrice.toString()} PLUR per block`)
     this.console.log(`Estimated TTL extension: ~${additionalDaysNumber.toFixed(2)} days`)
-    this.console.log(`Stamp cost: ${bzzCost.toDecimalString()} BZZ`)
-    this.console.log(`Gas cost: ~${ethers.utils.formatEther(estimatedGasCost)} xDAI`)
 
-    // We already have the wallet address from above
-
-    // Check if wallet has enough BZZ funds before proceeding
-    if (bzzBalance.toPLURBigInt() < bzzCost.toPLURBigInt()) {
-      this.console.error(`\nWallet address: 0x${walletAddress} has insufficient BZZ funds.`)
-      this.console.error(`Required:  ${bzzCost.toDecimalString()} BZZ`)
-      this.console.error(`Available: ${bzzBalance.toDecimalString()} BZZ`)
+    // Check BZZ balance
+    const hasSufficientBzz = await checkBzzBalance(
+      walletAddress,
+      bzzCost.toPLURBigInt(),
+      bzzBalance.toPLURBigInt(),
+      this.console
+    )
+    
+    if (!hasSufficientBzz) {
       process.exit(1)
     }
 
-    // Check if wallet has enough gas (xDAI) to pay for transaction fees
-    const xDAI = await eth_getBalance(walletAddress, provider)
-    const xDAIValue = BigNumber.from(xDAI)
-
-    if (xDAIValue.lt(estimatedGasCost)) {
-      this.console.error(`\nWallet address: 0x${walletAddress} has insufficient xDAI funds for gas fees.`)
-      this.console.error(
-        `Required: ~${ethers.utils.formatEther(estimatedGasCost)} xDAI, Available: ${ethers.utils.formatEther(
-          xDAIValue,
-        )} xDAI`,
-      )
+    // Check xDAI balance
+    const hasSufficientXdai = await checkXdaiBalance(
+      walletAddress,
+      estimatedGasCost,
+      this.console,
+    )
+    
+    if (!hasSufficientXdai) {
       process.exit(1)
     }
 
