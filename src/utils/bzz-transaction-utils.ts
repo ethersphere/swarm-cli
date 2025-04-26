@@ -91,7 +91,7 @@ export async function calculateAndDisplayCosts(
   const estimatedGasCost = gasPrice.mul(gasLimit)
   
   console.log(`Operation will cost ${bzzCost.toDecimalString()} BZZ and ~${ethersUtils.formatEther(estimatedGasCost)} xDAI`)
-  console.log(`Your current balance is ${ethersUtils.formatUnits(bzzBalance, 18)} BZZ`)
+  console.log(`Your current balance is ${ethersUtils.formatUnits(bzzBalance, 16)} BZZ`)
   
   return { bzzCost, estimatedGasCost, provider }
 }
