@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.28.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.27.0...v2.28.0) (2025-05-07)
+
+
+### Features
+
+* update to new batch effective utilization table ([#588](https://www.github.com/ethersphere/swarm-cli/issues/588)) ([152a451](https://www.github.com/ethersphere/swarm-cli/commit/152a4519dfd7a84fa0ca946d8c48d795348f5d00))
+
 ## [2.27.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.26.1...v2.27.0) (2025-04-24)
 
 
