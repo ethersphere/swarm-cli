@@ -37,7 +37,7 @@ jobs:
           CI: true
 
       - name: Types check
-        run: npm run types:check
+        run: npm run check
 
       - name: Build nodejs code
         run: npm run build
