@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.28.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.28.0...v2.28.1) (2025-06-02)
+
+
+### Bug Fixes
+
+* change order of status checks so chainsync comes earlier ([#602](https://www.github.com/ethersphere/swarm-cli/issues/602)) ([2e3b1dc](https://www.github.com/ethersphere/swarm-cli/commit/2e3b1dc1c5f6fa7c7e608bf65677d0708b9336e4))
+
 ## [2.28.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.27.0...v2.28.0) (2025-05-07)
 
 
