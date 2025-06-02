@@ -28,6 +28,18 @@ export class Status extends RootCommand implements LeafCommand {
     const nodeInfo = await this.bee.getNodeInfo()
     this.console.all(createKeyValue('Mode', nodeInfo.beeMode))
 
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
+      this.console.all('')
+      this.console.all(chalk.bold('Chainsync'))
+      const { block, chainTip } = await this.bee.getChainState()
+      this.console.all(
+        createKeyValue(
+          'Block',
+          `${block.toLocaleString()} / ${chainTip.toLocaleString()} (Δ ${(chainTip - block).toLocaleString()})`,
+        ),
+      )
+    }
+
     if (nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Topology'))
@@ -43,15 +55,6 @@ export class Status extends RootCommand implements LeafCommand {
       const { bzzBalance, nativeTokenBalance } = await this.bee.getWalletBalance()
       this.console.all(createKeyValue('xBZZ', bzzBalance.toDecimalString()))
       this.console.all(createKeyValue('xDAI', nativeTokenBalance.toDecimalString()))
-      this.console.all('')
-      this.console.all(chalk.bold('Chainsync'))
-      const { block, chainTip } = await this.bee.getChainState()
-      this.console.all(
-        createKeyValue(
-          'Block',
-          `${block.toLocaleString()} / ${chainTip.toLocaleString()} (Δ ${(chainTip - block).toLocaleString()})`,
-        ),
-      )
     }
 
     if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
