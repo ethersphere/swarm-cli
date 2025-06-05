@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.29.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.28.1...v2.29.0) (2025-06-02)
+
+
+### Features
+
+* print current path for upload and timeout ([#605](https://www.github.com/ethersphere/swarm-cli/issues/605)) ([cee6b9d](https://www.github.com/ethersphere/swarm-cli/commit/cee6b9d8db725e66c677a613fb90b6f7bcb1e5a9))
+
+
+### Bug Fixes
+
+* handle epipe on stdout and stderr silently ([#607](https://www.github.com/ethersphere/swarm-cli/issues/607)) ([56f6ae3](https://www.github.com/ethersphere/swarm-cli/commit/56f6ae38ba2671fe97e7482a824d54f4646b03de))
+
 ### [2.28.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.28.0...v2.28.1) (2025-06-02)
 
 
