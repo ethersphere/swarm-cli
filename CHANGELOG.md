@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.30.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.29.0...v2.30.0) (2025-06-14)
+
+
+### Features
+
+* use wrapped feed ([#608](https://www.github.com/ethersphere/swarm-cli/issues/608)) ([04a40e9](https://www.github.com/ethersphere/swarm-cli/commit/04a40e924f97e134cc085da86a30d9ff65c76e4f))
+
 ## [2.29.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.28.1...v2.29.0) (2025-06-02)
 
 
