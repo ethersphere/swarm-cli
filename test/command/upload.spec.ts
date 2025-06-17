@@ -138,13 +138,17 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   })
 
   it('should succeed with --sync and --encrypt', async () => {
+    await invokeTestCli(['status'])
     await invokeTestCli(['upload', 'README.md', '--sync', '--encrypt', '-v', ...getStampOption()])
+    await invokeTestCli(['status'])
     expect(consoleMessages).toBe([])
     expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
 
   it('should succeed with --sync, --encrypt and --curl', async () => {
+    await invokeTestCli(['status'])
     await invokeTestCli(['upload', 'README.md', '--sync', '--encrypt', '--curl', '-v', ...getStampOption()])
+    await invokeTestCli(['status'])
     expect(consoleMessages).toBe([])
     expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
   })
