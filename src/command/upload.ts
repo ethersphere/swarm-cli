@@ -1,4 +1,4 @@
-import { RedundancyLevel, Tag, Utils, Reference } from '@ethersphere/bee-js'
+import { RedundancyLevel, Reference, Tag, Utils } from '@ethersphere/bee-js'
 import { Numbers, Optional, System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
@@ -190,7 +190,7 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadAnyWithSpinner(tag: Tag | undefined, isFolder: boolean): Promise<string> {
-    const spinner = createSpinner('Uploading data...')
+    const spinner = createSpinner(this.path ? `Uploading ${this.path}...` : 'Uploading data from stdin...')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
@@ -363,7 +363,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (synced) {
       this.console.dim('Data has been synced on Swarm network')
     } else {
-      this.console.error('Data syncing timeout.')
+      this.console.error(this.path ? `'Data syncing timeout for ${this.path}'` : 'Data syncing timeout')
       exit(1)
     }
   }

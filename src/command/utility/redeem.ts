@@ -1,8 +1,14 @@
 import { Dates, System } from 'cafe-utility'
 import { BigNumber, providers, Wallet } from 'ethers'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { NETWORK_ID } from '../../utils/bzz-abi'
-import { estimateNativeTransferTransactionCost, Rpc } from '../../utils/rpc'
+import { NETWORK_ID } from '../../utils/contracts'
+import {
+  estimateNativeTransferTransactionCost,
+  eth_getBalance,
+  eth_getBalanceERC20,
+  sendBzzTransaction,
+  sendNativeTransaction,
+} from '../../utils/rpc'
 import { RootCommand } from '../root-command'
 
 export class Redeem extends RootCommand implements LeafCommand {
@@ -21,7 +27,7 @@ export class Redeem extends RootCommand implements LeafCommand {
   @Option({
     key: 'json-rpc-url',
     type: 'string',
-    description: 'Ethereum JSON-RPC URL',
+    description: 'Gnosis JSON-RPC URL',
     default: 'https://xdai.fairdatasociety.org',
   })
   public jsonRpcUrl!: string
@@ -48,10 +54,10 @@ export class Redeem extends RootCommand implements LeafCommand {
     this.console.log('Creating wallet...')
     const wallet = new Wallet(this.wallet, provider)
     this.console.log('Fetching xBZZ balance...')
-    const xBZZ = await Rpc._eth_getBalanceERC20(wallet.address, provider)
+    const xBZZ = await eth_getBalanceERC20(wallet.address, provider)
     this.console.log(`xBZZ balance: ${xBZZ}`)
     this.console.log('Fetching xDAI balance...')
-    let xDAI = await Rpc.eth_getBalance(wallet.address, provider)
+    let xDAI = await eth_getBalance(wallet.address, provider)
     this.console.log(`xDAI balance: ${xDAI}`)
 
     if (!this.quiet && !this.yes) {
@@ -66,11 +72,11 @@ export class Redeem extends RootCommand implements LeafCommand {
 
     if (xBZZ !== '0') {
       this.console.log('Transferring xBZZ to Bee wallet...')
-      await Rpc.sendBzzTransaction(this.wallet, this.target, xBZZ, this.jsonRpcUrl)
+      await sendBzzTransaction(this.wallet, this.target, xBZZ, this.jsonRpcUrl)
 
       for (let i = 0; i < 10; i++) {
         this.console.log(`Refreshing xDAI balance #${i + 1}...`)
-        xDAI = await Rpc.eth_getBalance(wallet.address, provider)
+        xDAI = await eth_getBalance(wallet.address, provider)
 
         if (xDAI !== firstKnownxDAI) {
           this.console.log(`xDAI balance: ${xDAI}`)
@@ -90,7 +96,7 @@ export class Redeem extends RootCommand implements LeafCommand {
 
     if (xDAIValue.gt(totalCost)) {
       this.console.log('Transferring xDAI to Bee wallet...')
-      await Rpc.sendNativeTransaction(
+      await sendNativeTransaction(
         this.wallet,
         this.target,
         xDAIValue.sub(totalCost).toString(),

@@ -1,5 +1,78 @@
 # Changelog
 
+## [2.30.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.29.0...v2.30.0) (2025-06-14)
+
+
+### Features
+
+* use wrapped feed ([#608](https://www.github.com/ethersphere/swarm-cli/issues/608)) ([04a40e9](https://www.github.com/ethersphere/swarm-cli/commit/04a40e924f97e134cc085da86a30d9ff65c76e4f))
+
+## [2.29.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.28.1...v2.29.0) (2025-06-02)
+
+
+### Features
+
+* print current path for upload and timeout ([#605](https://www.github.com/ethersphere/swarm-cli/issues/605)) ([cee6b9d](https://www.github.com/ethersphere/swarm-cli/commit/cee6b9d8db725e66c677a613fb90b6f7bcb1e5a9))
+
+
+### Bug Fixes
+
+* handle epipe on stdout and stderr silently ([#607](https://www.github.com/ethersphere/swarm-cli/issues/607)) ([56f6ae3](https://www.github.com/ethersphere/swarm-cli/commit/56f6ae38ba2671fe97e7482a824d54f4646b03de))
+
+### [2.28.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.28.0...v2.28.1) (2025-06-02)
+
+
+### Bug Fixes
+
+* change order of status checks so chainsync comes earlier ([#602](https://www.github.com/ethersphere/swarm-cli/issues/602)) ([2e3b1dc](https://www.github.com/ethersphere/swarm-cli/commit/2e3b1dc1c5f6fa7c7e608bf65677d0708b9336e4))
+
+## [2.28.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.27.0...v2.28.0) (2025-05-07)
+
+
+### Features
+
+* update to new batch effective utilization table ([#588](https://www.github.com/ethersphere/swarm-cli/issues/588)) ([152a451](https://www.github.com/ethersphere/swarm-cli/commit/152a4519dfd7a84fa0ca946d8c48d795348f5d00))
+
+## [2.27.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.26.1...v2.27.0) (2025-04-24)
+
+
+### Features
+
+* add command to create external batch ([#584](https://www.github.com/ethersphere/swarm-cli/issues/584)) ([649b03c](https://www.github.com/ethersphere/swarm-cli/commit/649b03c8c7dd0ac09d597457d46a93a8177312ae))
+
+### [2.26.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.26.0...v2.26.1) (2025-04-01)
+
+
+### Bug Fixes
+
+* apply axios vulnerability fix ([#581](https://www.github.com/ethersphere/swarm-cli/issues/581)) ([57068fa](https://www.github.com/ethersphere/swarm-cli/commit/57068fa56a3e1a5fa3ba8f36e4cc49e02ecf6aca))
+
+## [2.26.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.25.0...v2.26.0) (2025-03-25)
+
+
+### Features
+
+* add cid command ([#579](https://www.github.com/ethersphere/swarm-cli/issues/579)) ([738ae88](https://www.github.com/ethersphere/swarm-cli/commit/738ae8882fd49be44623701f046233a1b8ad27b0))
+
+## [2.25.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.24.0...v2.25.0) (2025-03-17)
+
+
+### Features
+
+* upgrade bee-js to 9.0.3 ([#575](https://www.github.com/ethersphere/swarm-cli/issues/575)) ([4116d36](https://www.github.com/ethersphere/swarm-cli/commit/4116d368f3b3b2a880ba219c9787befc9ddb6585))
+
+
+### Bug Fixes
+
+* act download ([#576](https://www.github.com/ethersphere/swarm-cli/issues/576)) ([a904fe2](https://www.github.com/ethersphere/swarm-cli/commit/a904fe2e0f80838ee3a77b5f23fabc83b9146f90))
+
+## [2.24.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.23.0...v2.24.0) (2025-03-12)
+
+
+### Features
+
+* add act commands ([#569](https://www.github.com/ethersphere/swarm-cli/issues/569)) ([fd879bc](https://www.github.com/ethersphere/swarm-cli/commit/fd879bc33ca271e6e78750a9cba6461441c71d1a))
+
 ## [2.23.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.22.0...v2.23.0) (2025-03-10)
 
 
