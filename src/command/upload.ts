@@ -76,7 +76,7 @@ export class Upload extends RootCommand implements LeafCommand {
     key: 'sync-polling-time',
     description: 'Waiting time in ms between sync pollings',
     type: 'number',
-    default: 500,
+    default: 1000,
   })
   public syncPollingTime!: number
 
@@ -84,7 +84,7 @@ export class Upload extends RootCommand implements LeafCommand {
     key: 'sync-polling-trials',
     description: 'After the given trials the sync polling will stop',
     type: 'number',
-    default: 15,
+    default: 60,
   })
   public syncPollingTrials!: number
 
@@ -365,8 +365,8 @@ export class Upload extends RootCommand implements LeafCommand {
     } else {
       this.console.error(
         this.path
-          ? `Data syncing timeout for ${this.path} (${syncProgress} / ${tag.split}})`
-          : `Data syncing timeout (${syncProgress} / ${tag.split}})`,
+          ? `Data syncing timeout for ${this.path} (${syncProgress} / ${tag.split})`
+          : `Data syncing timeout (${syncProgress} / ${tag.split})`,
       )
       exit(1)
     }
