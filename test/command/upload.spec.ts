@@ -1,8 +1,8 @@
 import { existsSync, unlinkSync, writeFileSync } from 'fs'
+import { LeafCommand } from 'furious-commander'
 import type { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
-import { LeafCommand } from 'furious-commander'
 
 function actUpload(command: { runnable?: LeafCommand | undefined }): [string, string] {
   const uploadCommand = command.runnable as Upload

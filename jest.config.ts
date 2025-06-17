@@ -2,8 +2,9 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/en/configuration.html
  */
+import { Bee } from '@ethersphere/bee-js'
 import type { Config } from '@jest/types'
-import { Dates } from 'cafe-utility'
+import { Dates, System } from 'cafe-utility'
 import { getPssAddress } from './test/utility/address'
 import { getOrBuyStamp } from './test/utility/stamp'
 
@@ -19,6 +20,15 @@ export default async (): Promise<Config.InitialOptions> => {
 
   if (!process.env.TEST_STAMP) {
     process.env.TEST_STAMP = (await getOrBuyStamp()).toHex()
+  }
+
+  const bee = new Bee('http://localhost:1633')
+  while (1) {
+    const topology = await bee.getTopology()
+    if (topology.depth < 31) {
+      break
+    }
+    await System.sleepMillis(Dates.seconds(15))
   }
 
   return {
