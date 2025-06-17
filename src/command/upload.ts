@@ -363,7 +363,11 @@ export class Upload extends RootCommand implements LeafCommand {
     if (synced) {
       this.console.dim('Data has been synced on Swarm network')
     } else {
-      this.console.error(this.path ? `'Data syncing timeout for ${this.path}'` : 'Data syncing timeout')
+      this.console.error(
+        this.path
+          ? `Data syncing timeout for ${this.path} (${syncProgress} / ${tag.split}})`
+          : `Data syncing timeout (${syncProgress} / ${tag.split}})`,
+      )
       exit(1)
     }
   }
