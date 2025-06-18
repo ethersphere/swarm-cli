@@ -108,7 +108,7 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.all(chalk.bold('Redistribution'))
       const redistributionState = await this.bee.getRedistributionState()
       const currentRound = redistributionState.round
-      this.console.all(createKeyValue('Reward', redistributionState.reward.toDecimalString()))
+      this.console.all(createKeyValue('Reward', redistributionState.reward.toDecimalString() + ' xBZZ'))
       this.console.all(createKeyValue('Has sufficient funds', redistributionState.hasSufficientFunds))
       this.console.all(createKeyValue('Fully synced', redistributionState.isFullySynced))
       this.console.all(createKeyValue('Frozen', redistributionState.isFrozen))
