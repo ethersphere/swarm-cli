@@ -73,17 +73,70 @@ export class Status extends RootCommand implements LeafCommand {
     }
 
     if (nodeInfo.beeMode === BeeModes.FULL) {
+      const reserveStatus = await this.bee.getStatus()
+      this.console.all('')
+      this.console.all(chalk.bold('Reserve'))
+      this.console.all(
+        createKeyValue(
+          'Pullsync rate',
+          reserveStatus.pullsyncRate.toFixed(2) +
+            ' chunks/s (' +
+            ((reserveStatus.pullsyncRate * 4096) / 1024 / 1024).toFixed(2) +
+            ' MB/s)',
+        ),
+      )
+      this.console.all(
+        createKeyValue(
+          'Reserve size',
+          reserveStatus.reserveSize.toLocaleString() +
+            ' chunks (' +
+            ((reserveStatus.reserveSize * 4096) / 1024 / 1024 / 1024).toFixed(2) +
+            ' GB)',
+        ),
+      )
+
+      this.console.all(
+        createKeyValue(
+          'Reserve size within radius',
+          reserveStatus.reserveSizeWithinRadius.toLocaleString() +
+            ' chunks (' +
+            ((reserveStatus.reserveSizeWithinRadius * 4096) / 1024 / 1024 / 1024).toFixed(2) +
+            ' GB)',
+        ),
+      )
       this.console.all('')
       this.console.all(chalk.bold('Redistribution'))
       const redistributionState = await this.bee.getRedistributionState()
-      this.console.all(createKeyValue('Reward', redistributionState.reward.toDecimalString()))
+      const currentRound = redistributionState.round
+      this.console.all(createKeyValue('Reward', redistributionState.reward.toDecimalString() + ' xBZZ'))
       this.console.all(createKeyValue('Has sufficient funds', redistributionState.hasSufficientFunds))
       this.console.all(createKeyValue('Fully synced', redistributionState.isFullySynced))
       this.console.all(createKeyValue('Frozen', redistributionState.isFrozen))
-      this.console.all(createKeyValue('Last selected round', redistributionState.lastSelectedRound))
-      this.console.all(createKeyValue('Last played round', redistributionState.lastPlayedRound))
-      this.console.all(createKeyValue('Last won round', redistributionState.lastWonRound))
-      this.console.all(createKeyValue('Minimum gas funds', redistributionState.minimumGasFunds.toDecimalString()))
+      this.console.all(createKeyValue('Current round', redistributionState.round))
+      this.console.all(
+        createKeyValue(
+          'Last selected round',
+          redistributionState.lastSelectedRound + ' (Δ ' + (currentRound - redistributionState.lastSelectedRound) + ')',
+        ),
+      )
+      this.console.all(
+        createKeyValue(
+          'Last played round',
+          redistributionState.lastPlayedRound + ' (Δ ' + (currentRound - redistributionState.lastPlayedRound) + ')',
+        ),
+      )
+      this.console.all(
+        createKeyValue(
+          'Last won round',
+          redistributionState.lastWonRound + ' (Δ ' + (currentRound - redistributionState.lastWonRound) + ')',
+        ),
+      )
+      this.console.all(
+        createKeyValue('Last sampling duration', redistributionState.lastSampleDurationSeconds + ' seconds'),
+      )
+      this.console.all(
+        createKeyValue('Minimum gas funds', redistributionState.minimumGasFunds.toDecimalString() + ' xDAI'),
+      )
     }
   }
 }
