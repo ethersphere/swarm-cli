@@ -1,4 +1,4 @@
-import Wallet from 'ethereumjs-wallet'
+import { Wallet } from '@ethereumjs/wallet'
 import { readFile } from 'fs/promises'
 import { GroupCommand } from 'furious-commander'
 import { fileExists } from '../../utils'
