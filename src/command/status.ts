@@ -76,18 +76,32 @@ export class Status extends RootCommand implements LeafCommand {
       const reserveStatus = await this.bee.getStatus()
       this.console.all('')
       this.console.all(chalk.bold('Reserve'))
-      this.console.all(createKeyValue('Pullsync rate', reserveStatus.pullsyncRate.toFixed(2) + ' chunks/s'))
       this.console.all(
-        createKeyValue('Pullsync rate', ((reserveStatus.pullsyncRate * 4096) / 1024 / 1024).toFixed(2) + ' MB/s'),
-      )
-      this.console.all(createKeyValue('Reserve size', reserveStatus.reserveSize.toLocaleString() + ' chunks'))
-      this.console.all(
-        createKeyValue('Reserve size', ((reserveStatus.reserveSize * 4096) / 1024 / 1024 / 1024).toFixed() + ' GB'),
+        createKeyValue(
+          'Pullsync rate',
+          reserveStatus.pullsyncRate.toFixed(2) +
+            ' chunks/s (' +
+            ((reserveStatus.pullsyncRate * 4096) / 1024 / 1024).toFixed(2) +
+            ' MB/s)',
+        ),
       )
       this.console.all(
         createKeyValue(
+          'Reserve size',
+          reserveStatus.reserveSize.toLocaleString() +
+            ' chunks (' +
+            ((reserveStatus.reserveSize * 4096) / 1024 / 1024 / 1024).toFixed() +
+            ' GB)',
+        ),
+      )
+
+      this.console.all(
+        createKeyValue(
           'Reserve size within radius',
-          reserveStatus.reserveSizeWithinRadius.toLocaleString() + ' chunks',
+          reserveStatus.reserveSizeWithinRadius.toLocaleString() +
+            ' chunks (' +
+            ((reserveStatus.reserveSizeWithinRadius * 4096) / 1024 / 1024 / 1024).toFixed() +
+            ' GB)',
         ),
       )
       this.console.all('')
