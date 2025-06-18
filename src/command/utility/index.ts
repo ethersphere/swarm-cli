@@ -7,6 +7,7 @@ import { Cid } from './cid'
 import { CreateBatch } from './create-batch'
 import { GetBee } from './get-bee'
 import { Lock } from './lock'
+import { Rchash } from './rchash'
 import { Redeem } from './redeem'
 import { Unlock } from './unlock'
 
@@ -15,7 +16,7 @@ export class Utility implements GroupCommand {
 
   public readonly description = 'Utility commands related to Swarm and wallets'
 
-  public subCommandClasses = [Cid, Lock, Unlock, GetBee, Redeem, CreateBatch]
+  public subCommandClasses = [Cid, Lock, Unlock, GetBee, Redeem, CreateBatch, Rchash]
 }
 
 export async function createWallet(pathOrPrivateKey: string, console: CommandLog): Promise<Wallet> {
