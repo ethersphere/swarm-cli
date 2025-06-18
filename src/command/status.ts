@@ -132,6 +132,9 @@ export class Status extends RootCommand implements LeafCommand {
         ),
       )
       this.console.all(
+        createKeyValue('Last sampling duration', redistributionState.lastSampleDurationSeconds + ' seconds'),
+      )
+      this.console.all(
         createKeyValue('Minimum gas funds', redistributionState.minimumGasFunds.toDecimalString() + ' xDAI'),
       )
     }
