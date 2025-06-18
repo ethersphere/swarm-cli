@@ -107,13 +107,30 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.all('')
       this.console.all(chalk.bold('Redistribution'))
       const redistributionState = await this.bee.getRedistributionState()
+      const currentRound = redistributionState.round
       this.console.all(createKeyValue('Reward', redistributionState.reward.toDecimalString()))
       this.console.all(createKeyValue('Has sufficient funds', redistributionState.hasSufficientFunds))
       this.console.all(createKeyValue('Fully synced', redistributionState.isFullySynced))
       this.console.all(createKeyValue('Frozen', redistributionState.isFrozen))
-      this.console.all(createKeyValue('Last selected round', redistributionState.lastSelectedRound))
-      this.console.all(createKeyValue('Last played round', redistributionState.lastPlayedRound))
-      this.console.all(createKeyValue('Last won round', redistributionState.lastWonRound))
+      this.console.all(createKeyValue('Current round', redistributionState.round))
+      this.console.all(
+        createKeyValue(
+          'Last selected round',
+          redistributionState.lastSelectedRound + ' (Δ ' + (currentRound - redistributionState.lastSelectedRound) + ')',
+        ),
+      )
+      this.console.all(
+        createKeyValue(
+          'Last played round',
+          redistributionState.lastPlayedRound + ' (Δ ' + (currentRound - redistributionState.lastPlayedRound) + ')',
+        ),
+      )
+      this.console.all(
+        createKeyValue(
+          'Last won round',
+          redistributionState.lastWonRound + ' (Δ ' + (currentRound - redistributionState.lastWonRound) + ')',
+        ),
+      )
       this.console.all(createKeyValue('Minimum gas funds', redistributionState.minimumGasFunds.toDecimalString()))
     }
   }
