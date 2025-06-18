@@ -2,6 +2,7 @@ import { BatchId, Utils } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import { BigNumber } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
+import { isChainStateReady } from '../../utils/chainsync'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
@@ -58,6 +59,14 @@ export class Buy extends StampCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
+
+    if (!(await isChainStateReady(this.bee))) {
+      this.console.error('Synchronization with the blockchain is not yet complete.')
+      this.console.error('Please wait until the Bee is fully synced before buying a postage stamp.')
+      this.console.error('You can check the synchronization status with the "status" command.')
+
+      return
+    }
 
     const chainState = await this.bee.getChainState()
     const minimumAmount = BigNumber.from(chainState.currentPrice).mul(17280)
