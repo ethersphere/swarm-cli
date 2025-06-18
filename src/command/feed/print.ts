@@ -1,6 +1,6 @@
+import { Wallet } from '@ethereumjs/wallet'
 import { MerkleTree, Topic } from '@ethersphere/bee-js'
 import { Binary } from 'cafe-utility'
-import Wallet from 'ethereumjs-wallet'
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'

@@ -1,4 +1,4 @@
-import Wallet from 'ethereumjs-wallet'
+import { Wallet } from '@ethereumjs/wallet'
 import { CommandConfig } from '../../command/root-command/command-config'
 import { CommandLog } from '../../command/root-command/command-log'
 import { CommandLineError } from '../../utils/error'

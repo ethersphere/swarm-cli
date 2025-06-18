@@ -1,5 +1,5 @@
+import { Wallet } from '@ethereumjs/wallet'
 import { randomBytes } from 'crypto'
-import Wallet from 'ethereumjs-wallet'
 import { Argument, LeafCommand, Option, Utils } from 'furious-commander'
 import { getPrintableIdentityType } from '../../service/identity'
 import { Identity, IdentityType } from '../../service/identity/types'

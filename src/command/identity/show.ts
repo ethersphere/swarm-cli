@@ -1,4 +1,4 @@
-import Wallet from 'ethereumjs-wallet'
+import { Wallet } from '@ethereumjs/wallet'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'

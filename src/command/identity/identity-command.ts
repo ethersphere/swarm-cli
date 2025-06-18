@@ -1,4 +1,4 @@
-import Wallet from 'ethereumjs-wallet'
+import { Wallet } from '@ethereumjs/wallet'
 import { getPrintableIdentityType } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { CommandLineError } from '../../utils/error'
