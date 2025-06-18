@@ -90,7 +90,7 @@ export class Status extends RootCommand implements LeafCommand {
           'Reserve size',
           reserveStatus.reserveSize.toLocaleString() +
             ' chunks (' +
-            ((reserveStatus.reserveSize * 4096) / 1024 / 1024 / 1024).toFixed() +
+            ((reserveStatus.reserveSize * 4096) / 1024 / 1024 / 1024).toFixed(2) +
             ' GB)',
         ),
       )
@@ -100,7 +100,7 @@ export class Status extends RootCommand implements LeafCommand {
           'Reserve size within radius',
           reserveStatus.reserveSizeWithinRadius.toLocaleString() +
             ' chunks (' +
-            ((reserveStatus.reserveSizeWithinRadius * 4096) / 1024 / 1024 / 1024).toFixed() +
+            ((reserveStatus.reserveSizeWithinRadius * 4096) / 1024 / 1024 / 1024).toFixed(2) +
             ' GB)',
         ),
       )
