@@ -131,7 +131,9 @@ export class Status extends RootCommand implements LeafCommand {
           redistributionState.lastWonRound + ' (Δ ' + (currentRound - redistributionState.lastWonRound) + ')',
         ),
       )
-      this.console.all(createKeyValue('Minimum gas funds', redistributionState.minimumGasFunds.toDecimalString()))
+      this.console.all(
+        createKeyValue('Minimum gas funds', redistributionState.minimumGasFunds.toDecimalString() + ' xDAI'),
+      )
     }
   }
 }
