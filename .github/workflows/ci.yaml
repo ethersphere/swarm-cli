@@ -34,6 +34,9 @@ jobs:
       - name: Install npm deps
         run: npm ci && npm install -g @fairdatasociety/fdp-play
 
+      - name: Run bee-dev
+        run: npx bee-dev &
+
       - name: Start fdp-play environment
         run: npm run bee
 
