@@ -84,7 +84,7 @@ export class Stake extends RootCommand implements LeafCommand {
     }
 
     try {
-      await this.bee.depositStake(amount.toString())
+      await this.bee.depositStake(amount)
       spinner.stop()
 
       this.console.log(
