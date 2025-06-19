@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.31.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.30.0...v2.31.0) (2025-06-19)
+
+
+### Features
+
+* add rchash command ([#613](https://www.github.com/ethersphere/swarm-cli/issues/613)) ([07b7b7e](https://www.github.com/ethersphere/swarm-cli/commit/07b7b7ed1067a7ff675317b62a273ee07321dcf9))
+* add reserve information to status ([#610](https://www.github.com/ethersphere/swarm-cli/issues/610)) ([e844dac](https://www.github.com/ethersphere/swarm-cli/commit/e844dac58c05d3ba4c4d1a2e5d8c6ce30a939034))
+* allow specifying bzz as staking unit ([#615](https://www.github.com/ethersphere/swarm-cli/issues/615)) ([59b50a1](https://www.github.com/ethersphere/swarm-cli/commit/59b50a13049d610b441c53ebdc6406faba890593))
+* check chainsync status before creating batch ([#614](https://www.github.com/ethersphere/swarm-cli/issues/614)) ([5b2f467](https://www.github.com/ethersphere/swarm-cli/commit/5b2f467776a44b3eded33d5f52c47e794b5f8b34))
+
+
+### Bug Fixes
+
+* update package for ethereumjs wallet ([#611](https://www.github.com/ethersphere/swarm-cli/issues/611)) ([429fa8c](https://www.github.com/ethersphere/swarm-cli/commit/429fa8c4e08abf6fb75ae3195f3119c0d0e0ee59))
+
 ## [2.30.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.29.0...v2.30.0) (2025-06-14)
 
 
