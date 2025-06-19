@@ -1,17 +1,24 @@
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
+import { getBeeDevOption } from '../utility/stamp'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 describeCommand('Test Stake command', ({ consoleMessages }) => {
-  it.skip('should print stake balance', async () => {
-    await invokeTestCli(['stake'])
-    expect(consoleMessages[0]).toContain('Staked xBZZ')
-  })
-
-  it.skip('should print balance in quiet mode', async () => {
-    await invokeTestCli(['stake', '--quiet'])
-
-    const initialStake = parseFloat(consoleMessages[0].split(' ')[1])
-    await invokeTestCli(['stake', '--quiet', '--deposit', '100_000T'])
-    const afterDepositStake = parseFloat(consoleMessages[1].split(' ')[1])
-    expect(afterDepositStake).toBeGreaterThan(initialStake)
+  test('should stake with bzz, plur, and print stake', async () => {
+    await invokeTestCli(['stake', ...getBeeDevOption()])
+    await invokeTestCli(['stake', '--deposit-bzz', '10', '--yes', ...getBeeDevOption()])
+    await invokeTestCli(['stake', '--deposit', '10', '--yes', ...getBeeDevOption()])
+    await invokeTestCli(['stake', ...getBeeDevOption()])
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['Staked xBZZ', '0.0000000000000000'],
+      ['Successfully staked!'],
+      ['Staked xBZZ', '10.0000000000000000'],
+      ['Successfully staked!'],
+      ['Staked xBZZ', '10.0000000000000010'],
+      ['Staked xBZZ', '10.0000000000000010'],
+    ])
   })
 })

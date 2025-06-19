@@ -21,3 +21,5 @@ export const getOrBuyStamp = async (): Promise<BatchId> => {
 }
 
 export const getStampOption = (): string[] => ['--stamp', process.env.TEST_STAMP || '']
+
+export const getBeeDevOption = (): string[] => ['--bee-api-url', 'http://localhost:16337']
