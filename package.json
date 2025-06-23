@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@ethereumjs/wallet": "^2.0.4",
-    "@upcoming/bee-js": "^9.4.1",
+    "@upcoming/bee-js": "^9.4.2",
     "cafe-utility": "^27.14.0",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
