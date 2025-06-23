@@ -1,4 +1,4 @@
-import { Reference } from '@ethersphere/bee-js'
+import { Reference } from '@upcoming/bee-js'
 import { Argument, LeafCommand } from 'furious-commander'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'

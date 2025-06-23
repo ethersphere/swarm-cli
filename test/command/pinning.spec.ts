@@ -1,4 +1,4 @@
-import { Reference } from '@ethersphere/bee-js'
+import { Reference } from '@upcoming/bee-js'
 import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'

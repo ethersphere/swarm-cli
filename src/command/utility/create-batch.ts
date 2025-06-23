@@ -1,4 +1,4 @@
-import { Utils } from '@ethersphere/bee-js'
+import { Utils } from '@upcoming/bee-js'
 import { Numbers, Strings } from 'cafe-utility'
 import { Contract, Event, Wallet } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'

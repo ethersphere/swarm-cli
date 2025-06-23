@@ -2,8 +2,8 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/en/configuration.html
  */
-import { Bee } from '@ethersphere/bee-js'
 import type { Config } from '@jest/types'
+import { Bee } from '@upcoming/bee-js'
 import { Dates, System } from 'cafe-utility'
 import { getPssAddress } from './test/utility/address'
 import { getOrBuyStamp } from './test/utility/stamp'

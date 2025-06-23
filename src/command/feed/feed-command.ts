@@ -1,5 +1,5 @@
 import { Wallet } from '@ethereumjs/wallet'
-import { Reference, Topic } from '@ethersphere/bee-js'
+import { Reference, Topic } from '@upcoming/bee-js'
 import { Option } from 'furious-commander'
 import { exit } from 'process'
 import { getWalletFromIdentity, pickIdentity } from '../../service/identity'

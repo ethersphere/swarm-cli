@@ -1,4 +1,4 @@
-import { Reference } from '@ethersphere/bee-js'
+import { Reference } from '@upcoming/bee-js'
 import { readFileSync, statSync, writeFileSync } from 'fs'
 import { Upload as FeedUpload } from '../../src/command/feed/upload'
 import { RootCommand } from '../../src/command/root-command'

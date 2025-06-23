@@ -1,4 +1,4 @@
-import { BZZ } from '@ethersphere/bee-js'
+import { BZZ } from '@upcoming/bee-js'
 import { LeafCommand, Option } from 'furious-commander'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue } from '../utils/text'

@@ -1,4 +1,4 @@
-import { Bee } from '@ethersphere/bee-js'
+import { Bee } from '@upcoming/bee-js'
 
 const THRESHOLD = 10_000
 

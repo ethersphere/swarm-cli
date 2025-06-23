@@ -1,4 +1,4 @@
-import { Topic } from '@ethersphere/bee-js'
+import { Topic } from '@upcoming/bee-js'
 import { Option } from 'furious-commander'
 import { RootCommand } from '../root-command'
 

@@ -12,7 +12,7 @@ import {
   NumberString,
   Topology,
   WalletBalance,
-} from '@ethersphere/bee-js'
+} from '@upcoming/bee-js'
 import { createServer, Server } from 'http'
 
 /**

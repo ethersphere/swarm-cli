@@ -1,4 +1,4 @@
-import { Duration, Size } from '@ethersphere/bee-js'
+import { Duration, Size } from '@upcoming/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import { LeafCommand } from 'furious-commander'
 import { exit } from 'process'

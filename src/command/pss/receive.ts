@@ -1,4 +1,4 @@
-import { Topic } from '@ethersphere/bee-js'
+import { Topic } from '@upcoming/bee-js'
 import { createWriteStream } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
 import { getFieldOrNull } from '../../utils'

@@ -1,4 +1,4 @@
-import { BatchId, Duration, Size } from '@ethersphere/bee-js'
+import { BatchId, Duration, Size } from '@upcoming/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
 import { isChainStateReady } from '../../utils/chainsync'

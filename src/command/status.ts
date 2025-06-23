@@ -1,4 +1,4 @@
-import { BeeModes } from '@ethersphere/bee-js'
+import { BeeModes } from '@upcoming/bee-js'
 import chalk from 'chalk'
 import { LeafCommand } from 'furious-commander'
 import { exit } from 'process'
