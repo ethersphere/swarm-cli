@@ -12,7 +12,7 @@ export class Unpin extends PinningCommand implements LeafCommand {
   public address!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     try {
       await this.bee.unpin(this.address)

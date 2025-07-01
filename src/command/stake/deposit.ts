@@ -1,29 +1,30 @@
 import { BZZ } from '@ethersphere/bee-js'
 import { LeafCommand, Option } from 'furious-commander'
-import { createSpinner } from '../utils/spinner'
-import { createKeyValue } from '../utils/text'
-import { RootCommand } from './root-command'
-import { VerbosityLevel } from './root-command/command-log'
+import { createSpinner } from '../../utils/spinner'
+import { RootCommand } from '../root-command'
+import { VerbosityLevel } from '../root-command/command-log'
 
 const MIN_DEPOSIT = BZZ.fromDecimalString('10')
 
-export class Stake extends RootCommand implements LeafCommand {
-  public readonly name = 'stake'
+export class Deposit extends RootCommand implements LeafCommand {
+  public readonly name = 'deposit'
 
-  public readonly description = `Manages nodes stake`
+  public readonly description = 'Stake xBZZ for the storage incentives'
 
   @Option({
-    key: 'deposit',
+    key: 'plur',
     description: "Amount of PLUR to add to the node's stake",
     type: 'bigint',
     minimum: BigInt(1),
+    conflicts: 'bzz',
   })
   public amountPlur!: bigint | undefined
 
   @Option({
-    key: 'deposit-bzz',
+    key: 'bzz',
     description: "Amount of BZZ to add to the node's stake",
     type: 'string',
+    conflicts: 'plur',
   })
   public amountBzz!: string | undefined
 
@@ -36,10 +37,10 @@ export class Stake extends RootCommand implements LeafCommand {
       await this.deposit(BZZ.fromDecimalString(this.amountBzz))
     }
 
-    const stake = await this.bee.getStake()
-
-    this.console.log(createKeyValue('Staked xBZZ', stake.toDecimalString()))
-    this.console.quiet(stake.toDecimalString())
+    this.console.log('Stake deposited successfully!')
+    this.console.log('Run `swarm-cli stake status` to check your stake status.')
+    this.console.log('')
+    this.console.log('Do note it may take a few minutes for the stake to be reflected in the node status.')
   }
 
   private async deposit(amount: BZZ): Promise<void> {
@@ -86,10 +87,6 @@ export class Stake extends RootCommand implements LeafCommand {
     try {
       await this.bee.depositStake(amount)
       spinner.stop()
-
-      this.console.log(
-        'Successfully staked! It may take a few minutes for the stake to be reflected in the node status.',
-      )
     } catch (e) {
       spinner.stop()
       throw e
