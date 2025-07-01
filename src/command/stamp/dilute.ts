@@ -25,7 +25,7 @@ export class Dilute extends StampCommand implements LeafCommand {
   public stamp!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)

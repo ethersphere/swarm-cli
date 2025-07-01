@@ -10,7 +10,7 @@ export class List extends PinningCommand implements LeafCommand {
   public readonly description = 'List pinned root hashes'
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     this.console.info('Getting pinned root hashes...')
 
     const pins = await this.bee.getAllPins()

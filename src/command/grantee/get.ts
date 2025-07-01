@@ -1,6 +1,6 @@
 import { Argument, LeafCommand } from 'furious-commander'
-import { GranteeCommand } from './grantee-command'
 import { createKeyValue } from '../../utils/text'
+import { GranteeCommand } from './grantee-command'
 
 export class Get extends GranteeCommand implements LeafCommand {
   public readonly name = 'get'
@@ -15,7 +15,7 @@ export class Get extends GranteeCommand implements LeafCommand {
   public reference!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     const response = await this.bee.getGrantees(this.reference)
     this.console.log(
       createKeyValue('Grantee public keys', response.grantees.map(grantee => grantee.toCompressedHex()).join('\n')),

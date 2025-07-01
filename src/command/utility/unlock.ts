@@ -16,7 +16,7 @@ export class Unlock extends RootCommand implements LeafCommand {
   public walletSource!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     const wallet = await createWallet(this.walletSource, this.console)
 
     if (!this.yes) {

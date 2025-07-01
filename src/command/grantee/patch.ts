@@ -1,8 +1,8 @@
+import fs from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { GranteeCommand } from './grantee-command'
 import { stampProperties } from '../../utils/option'
 import { createKeyValue } from '../../utils/text'
-import fs from 'fs'
+import { GranteeCommand } from './grantee-command'
 
 export class Patch extends GranteeCommand implements LeafCommand {
   public readonly name = 'patch'
@@ -43,7 +43,7 @@ export class Patch extends GranteeCommand implements LeafCommand {
   public history!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     this.actReqHeaders = {
       'Swarm-Act': 'true',
       'Swarm-Act-Timestamp': Date.now().toString(),

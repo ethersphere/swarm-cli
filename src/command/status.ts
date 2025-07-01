@@ -65,14 +65,14 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.all(createKeyValue('Total xBZZ', totalBalance.toDecimalString()))
     }
 
-    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
+    if (nodeInfo.beeMode === BeeModes.FULL) {
       this.console.all('')
       this.console.all(chalk.bold('Staking'))
       const stake = await this.bee.getStake()
+      const surplusStake = await this.bee.getWithdrawableStake()
       this.console.all(createKeyValue('Staked xBZZ', stake.toDecimalString()))
-    }
+      this.console.all(createKeyValue('Withdrawable staked xBZZ', surplusStake.toDecimalString()))
 
-    if (nodeInfo.beeMode === BeeModes.FULL) {
       const reserveStatus = await this.bee.getStatus()
       this.console.all('')
       this.console.all(chalk.bold('Reserve'))

@@ -43,7 +43,7 @@ export class List extends StampCommand implements LeafCommand {
   public minUsage!: number
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     this.console.verbose(`Listing postage stamps...`)
 
     const stamps = (await this.bee.getAllPostageBatch()) || []

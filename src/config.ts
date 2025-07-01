@@ -4,6 +4,7 @@ import { Addresses } from './command/addresses'
 import { Cheque } from './command/cheque'
 import { Download } from './command/download'
 import { Feed } from './command/feed'
+import { Grantee } from './command/grantee'
 import { Hash } from './command/hash'
 import { Identity } from './command/identity'
 import { Manifest } from './command/manifest'
@@ -14,7 +15,6 @@ import { Stamp } from './command/stamp'
 import { Status } from './command/status'
 import { Upload } from './command/upload'
 import { Utility } from './command/utility'
-import { Grantee } from './command/grantee'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',

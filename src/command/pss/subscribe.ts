@@ -16,7 +16,7 @@ export class Subscribe extends PssCommand implements LeafCommand {
   public outFile!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     this.console.log('Subscribing for PSS messages on topic ' + this.topic)
 
