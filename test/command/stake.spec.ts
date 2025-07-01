@@ -14,9 +14,8 @@ describeCommand('Test Stake command', ({ consoleMessages }) => {
     await invokeTestCli(['stake', 'status', ...getBeeDevOption()])
     expect(consoleMessages).toMatchLinesInOrder([
       ['Staked xBZZ', '0.0000000000000000'],
-      ['Successfully staked!'],
-      ['Successfully staked!'],
-      ['Staked xBZZ', '10.0000000000000010'],
+      ['Stake deposited successfully!'],
+      ['Stake deposited successfully!'],
       ['Staked xBZZ', '10.0000000000000010'],
     ])
   })
