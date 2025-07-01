@@ -13,8 +13,10 @@ export class Withdraw extends RootCommand implements LeafCommand {
     super.init()
 
     const surplusStake = await this.bee.getWithdrawableStake()
+
     if (surplusStake.eq(BZZ.fromDecimalString('0'))) {
       this.console.log('There is no surplus stake to withdraw.')
+
       return
     }
 
@@ -29,6 +31,7 @@ export class Withdraw extends RootCommand implements LeafCommand {
     }
 
     const spinner = createSpinner('Withdrawing surplus stake')
+
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
     }

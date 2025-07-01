@@ -57,8 +57,10 @@ export class Recover extends RootCommand implements LeafCommand {
     const contract = new Contract(address, abi, signer)
 
     const isPaused = await contract.paused()
+
     if (!isPaused) {
       this.console.error('The contract is not paused. No need to recover xBZZ.')
+
       return
     }
 
