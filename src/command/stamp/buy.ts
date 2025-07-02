@@ -1,7 +1,9 @@
 import { BatchId, Utils } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
+import chalk from 'chalk'
 import { BigNumber } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
+import { exit } from 'process'
 import { isChainStateReady } from '../../utils/chainsync'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
@@ -78,6 +80,20 @@ export class Buy extends StampCommand implements LeafCommand {
     }
 
     const estimatedCost = Utils.getStampCost(this.depth, BigInt(this.amount))
+    const { bzzBalance } = await this.bee.getWalletBalance()
+
+    if (estimatedCost.gt(bzzBalance)) {
+      this.console.error('You do not have enough BZZ to create this postage stamp.')
+      this.console.error(`Estimated cost: ${estimatedCost.toDecimalString()} xBZZ`)
+      this.console.error(`Available balance: ${bzzBalance.toDecimalString()} xBZZ`)
+
+      this.console.log('')
+      this.console.log('Visit the following link to learn how to fund your Bee node:')
+      this.console.log(chalk.blue('https://docs.ethswarm.org/docs/bee/installation/fund-your-node/'))
+
+      exit(1)
+    }
+
     const estimatedCapacity = Numbers.convertBytes(Utils.getStampEffectiveBytes(this.depth))
     const estimatedTtl = Utils.getStampDuration(BigInt(this.amount), Number(chainState.currentPrice), 5)
 
