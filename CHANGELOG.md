@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.32.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.31.0...v2.32.0) (2025-07-02)
+
+
+### Features
+
+* add stake command group ([#623](https://www.github.com/ethersphere/swarm-cli/issues/623)) ([4cf0441](https://www.github.com/ethersphere/swarm-cli/commit/4cf0441209bb6875f2020df6cc65a993f5e9e440))
+* add wallet command group ([#624](https://www.github.com/ethersphere/swarm-cli/issues/624)) ([8ef81af](https://www.github.com/ethersphere/swarm-cli/commit/8ef81af8889c490a1b82e7b95397edea7bd33b4a))
+* handle out of balance during postage batch creation ([#625](https://www.github.com/ethersphere/swarm-cli/issues/625)) ([d258040](https://www.github.com/ethersphere/swarm-cli/commit/d258040dde2b0bffc65dc377ac3a4f7fa9aaf4ad))
+* upgrade to bee-js v9.4.1 ([#619](https://www.github.com/ethersphere/swarm-cli/issues/619)) ([08bf706](https://www.github.com/ethersphere/swarm-cli/commit/08bf706082f363f52fdf71919b6a6c032065944f))
+* upgrade to bee-js v9.5.0 ([#621](https://www.github.com/ethersphere/swarm-cli/issues/621)) ([2b612d5](https://www.github.com/ethersphere/swarm-cli/commit/2b612d5bb63818b510463e2ad79af81f2288e685))
+
 ## [2.31.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.30.0...v2.31.0) (2025-06-19)
 
 
