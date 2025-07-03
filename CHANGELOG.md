@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.33.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.32.0...v2.33.0) (2025-07-03)
+
+
+### Features
+
+* improve gateway checks ([#627](https://www.github.com/ethersphere/swarm-cli/issues/627)) ([213507e](https://www.github.com/ethersphere/swarm-cli/commit/213507e138ff4c924b7388a677ec1b07f96c53fc))
+
 ## [2.32.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.31.0...v2.32.0) (2025-07-02)
 
 
