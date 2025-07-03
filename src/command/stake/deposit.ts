@@ -1,5 +1,6 @@
 import { BZZ } from '@ethersphere/bee-js'
 import { LeafCommand, Option } from 'furious-commander'
+import { exit } from 'process'
 import { createSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
@@ -12,21 +13,23 @@ export class Deposit extends RootCommand implements LeafCommand {
   public readonly description = 'Stake xBZZ for the storage incentives'
 
   @Option({
+    key: 'bzz',
+    description: "Amount of BZZ to add to the node's stake",
+    type: 'string',
+    conflicts: 'plur',
+    required: true,
+  })
+  public amountBzz!: string | undefined
+
+  @Option({
     key: 'plur',
     description: "Amount of PLUR to add to the node's stake",
     type: 'bigint',
     minimum: BigInt(1),
     conflicts: 'bzz',
+    required: true,
   })
   public amountPlur!: bigint | undefined
-
-  @Option({
-    key: 'bzz',
-    description: "Amount of BZZ to add to the node's stake",
-    type: 'string',
-    conflicts: 'plur',
-  })
-  public amountBzz!: string | undefined
 
   public async run(): Promise<void> {
     super.init()
@@ -75,7 +78,7 @@ export class Deposit extends RootCommand implements LeafCommand {
     }
 
     if (!this.yes && !this.quiet) {
-      return
+      exit(1)
     }
 
     const spinner = createSpinner('Depositing stake')
