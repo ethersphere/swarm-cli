@@ -11,7 +11,7 @@ export class ReuploadAll extends PinningCommand implements LeafCommand {
   public stamp!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     const chunks = await this.bee.getAllPins()
 

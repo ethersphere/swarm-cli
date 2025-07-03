@@ -7,7 +7,7 @@ import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
 import { pickStamp, printStamp } from '../service/stamp'
-import { fileExists, isGateway, readStdin } from '../utils'
+import { fileExists, readStdin } from '../utils'
 import { CommandLineError } from '../utils/error'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
@@ -127,7 +127,7 @@ export class Upload extends RootCommand implements LeafCommand {
   public async run(usedFromOtherCommand = false): Promise<void> {
     super.init()
 
-    if (this.hasUnsupportedGatewayOptions()) {
+    if (await this.hasUnsupportedGatewayOptions()) {
       exit(1)
     }
 
@@ -145,7 +145,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (!this.stamp) {
-      if (isGateway(this.beeApiUrl)) {
+      if (await this.bee.isGateway()) {
         this.stamp = '0'.repeat(64)
       } else {
         this.stamp = await pickStamp(this.bee, this.console)
@@ -183,7 +183,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!usedFromOtherCommand) {
       this.console.quiet(this.result.getOrThrow().toHex())
 
-      if (!isGateway(this.beeApiUrl) && !this.quiet) {
+      if (!(await this.bee.isGateway()) && !this.quiet) {
         printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
       }
     }
@@ -419,8 +419,8 @@ export class Upload extends RootCommand implements LeafCommand {
     return size
   }
 
-  private hasUnsupportedGatewayOptions(): boolean {
-    if (!isGateway(this.beeApiUrl)) {
+  private async hasUnsupportedGatewayOptions(): Promise<boolean> {
+    if (!(await this.bee.isGateway())) {
       return false
     }
 

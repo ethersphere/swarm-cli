@@ -29,10 +29,6 @@ export function directoryExists(path: string): boolean {
   }
 }
 
-export function isGateway(url: string): boolean {
-  return url.includes('gateway.ethswarm.org')
-}
-
 export function getByteSize(data: string | Uint8Array): number {
   if (data instanceof Uint8Array) {
     return data.byteLength
