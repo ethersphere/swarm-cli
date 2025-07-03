@@ -23,7 +23,7 @@ export class Reupload extends PinningCommand implements LeafCommand {
   public stamp!: string
 
   public async run(): Promise<void> {
-    super.init()
+    await super.init()
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)
