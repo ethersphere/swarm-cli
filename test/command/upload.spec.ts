@@ -100,7 +100,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
       'upload',
       'README.md',
       '--bee-api-url',
-      'https://gateway.ethswarm.org',
+      'https://api.gateway.ethswarm.org',
       '--encrypt',
       ...getStampOption(),
     ])
@@ -112,7 +112,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
       'upload',
       'README.md',
       '--bee-api-url',
-      'https://gateway.ethswarm.org',
+      'https://api.gateway.ethswarm.org',
       '--pin',
       ...getStampOption(),
     ])
@@ -125,7 +125,7 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
       'README.md',
       '--sync',
       '--bee-api-url',
-      'https://gateway.ethswarm.org',
+      'https://api.gateway.ethswarm.org',
       '--encrypt',
       ...getStampOption(),
     ])
