@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.33.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.33.0...v2.33.1) (2025-07-04)
+
+
+### Bug Fixes
+
+* do not check postage batch for gateway feed upload ([#629](https://www.github.com/ethersphere/swarm-cli/issues/629)) ([626300a](https://www.github.com/ethersphere/swarm-cli/commit/626300a0410134386babb31bb5a782eab6489939))
+
 ## [2.33.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.32.0...v2.33.0) (2025-07-03)
 
 
