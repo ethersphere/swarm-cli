@@ -48,7 +48,7 @@ export class FeedCommand extends RootCommand {
 
     this.console.quiet(manifest.toHex())
 
-    if (!this.quiet) {
+    if (!this.quiet && !(await this.bee.isGateway())) {
       printStamp(await this.bee.getPostageBatch(stamp), this.console, { shortenBatchId: true })
     }
 
