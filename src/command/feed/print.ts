@@ -91,20 +91,18 @@ export class Print extends FeedCommand implements LeafCommand {
 
       this.console.log(createKeyValue('Topic', `${topic}`))
       const numberOfUpdates = feedIndex.toBigInt() + BigInt(1)
-      this.console.log(createKeyValue('Number of Updates', numberOfUpdates.toString(0)))
+      this.console.log(createKeyValue('Number of Updates', numberOfUpdates.toString()))
 
       if (this.list) {
         for (let i = 0; i < numberOfUpdates; i++) {
-          const indexBytes = Binary.numberToUint64(BigInt(i), 'BE')
-          const identifier = Binary.keccak256(Binary.concatBytes(topic.toUint8Array(), indexBytes))
           const owner = Binary.hexToUint8Array(this.address)
-          const soc = Binary.uint8ArrayToHex(Binary.keccak256(Binary.concatBytes(identifier, owner)))
-          const chunk = await this.bee.downloadChunk(soc)
-          // span + identifier + signature + span
-          const cac = Binary.uint8ArrayToHex(chunk.slice(8 + 32 + 65 + 8, 8 + 32 + 65 + 32 + 8))
+          const reader = this.bee.makeFeedReader(topic, owner)
+          const socPayload = await reader.downloadPayload({ index: i })
+          const merkleTree = await MerkleTree.root(socPayload.payload.toUint8Array())
+          const cacAddress = Binary.uint8ArrayToHex(merkleTree.hash())
           this.console.log('')
-          this.console.log(createKeyValue(`Update ${i}`, cac))
-          this.console.log(`${this.bee.url}/bzz/${cac}/`)
+          this.console.log(createKeyValue(`Update ${i}`, cacAddress))
+          this.console.log(`${this.bee.url}/bzz/${cacAddress}/`)
         }
       } else {
         this.console.log('Run with --list to see all updates')
