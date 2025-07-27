@@ -30,6 +30,7 @@ export class Download extends RootCommand implements LeafCommand {
 
   private async downloadData(): Promise<void> {
     let response: Bytes
+    let nameOverride: string | undefined
 
     if (this.manifestDownload.act) {
       const responseAct = await this.bee.downloadFile(this.address.hash, this.manifestDownload.destination, {
@@ -39,13 +40,19 @@ export class Download extends RootCommand implements LeafCommand {
       })
       response = responseAct.data
     } else {
-      response = await this.bee.downloadData(this.address.hash, undefined)
+      if (this.address.hash.length === 128) {
+        const fileData = await this.bee.downloadFile(this.address.hash, undefined)
+        nameOverride = fileData.name
+        response = fileData.data
+      } else {
+        response = await this.bee.downloadData(this.address.hash, undefined)
+      }
     }
 
     if (this.manifestDownload.stdout) {
       process.stdout.write(response.toUtf8())
     } else {
-      const path = this.manifestDownload.destination || this.address.hash
+      const path = this.manifestDownload.destination || nameOverride || this.address.hash
       await fs.promises.writeFile(path, response.toUint8Array())
     }
   }
