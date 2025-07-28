@@ -30,7 +30,7 @@ export class GetBee extends RootCommand implements LeafCommand {
     if (!archString || !platformString) {
       throw Error(`Unsupported system: arch=${process.arch} platform=${process.platform}`)
     }
-    const url = `https://github.com/ethersphere/bee/releases/download/v2.4.0/bee-${platformString}-${archString}${suffixString}`
+    const url = `https://github.com/ethersphere/bee/releases/download/v2.6.0/bee-${platformString}-${archString}${suffixString}`
     this.console.info(`Downloading Bee from ${url}`)
     await fetch(url)
       .then(x => x.arrayBuffer())
