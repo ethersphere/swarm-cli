@@ -1,5 +1,4 @@
 import { toMatchLinesInOrder } from '../custom-matcher'
-import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 import { describeCommand, invokeTestCli } from '../utility'
 
 expect.extend({
@@ -7,16 +6,6 @@ expect.extend({
 })
 
 describeCommand('Test Monetary units', ({ consoleMessages }) => {
-  let server: ReturnType<typeof createChequeMockHttpServer>
-
-  beforeAll(() => {
-    server = createChequeMockHttpServer(1378)
-  })
-
-  afterAll(() => {
-    server.close()
-  })
-
   const containsAllSubstrings = (string: string, substrings: string[]): boolean => {
     return substrings.every(substring => string.includes(substring))
   }
@@ -58,24 +47,24 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
   })
 
   it('should show units after running: cheque list', async () => {
-    await invokeTestCli(['cheque', 'list', '--bee-api-url', 'http://localhost:1378'])
+    await invokeTestCli(['cheque', 'list', '--bee-api-url', 'http://localhost:16337'])
     expectSubstringsPrinted('Cheque Value', 'xBZZ')
   })
 
   it('should show units after running: cheque cashout', async () => {
-    await invokeTestCli(['cheque', 'cashout', '--all', '--bee-api-url', 'http://localhost:1378'])
+    await invokeTestCli(['cheque', 'cashout', '--all', '--bee-api-url', 'http://localhost:16337'])
     expectSubstringsPrinted('Cheque Value', 'xBZZ')
   })
 
   it('should show units after running: balance', async () => {
-    await invokeTestCli(['status', '--bee-api-url', 'http://localhost:1378'])
+    await invokeTestCli(['status', '--bee-api-url', 'http://localhost:16337'])
     const pattern = [
       ['Wallet'],
-      ['xBZZ', '0.3904'],
-      ['xDAI', '0.0961'],
+      ['xBZZ', '10.0000000000000000'],
+      ['xDAI', '5.000000000000000000'],
       ['Chequebook'],
-      ['Available xBZZ', '10.001856'],
-      ['Total xBZZ', '10.002685'],
+      ['Available xBZZ', '0.0000000001000000'],
+      ['Total xBZZ', '0.0000000001000000'],
     ]
     expect(consoleMessages).toMatchLinesInOrder(pattern)
   })

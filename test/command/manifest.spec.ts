@@ -124,12 +124,12 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
       ['address.ts', 'UNCHANGED'],
     ])
     consoleMessages.length = 0
-    hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock'])
-    expect(consoleMessages).toMatchLinesInOrder([['cheque-mock.ts', 'NEW']])
+    hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/testpage/images'])
+    expect(consoleMessages).toMatchLinesInOrder([['swarm.png', 'NEW']])
     consoleMessages.length = 0
-    await runAndGetManifest(['manifest', 'sync', hash, 'test/http-mock', '--remove'])
+    await runAndGetManifest(['manifest', 'sync', hash, 'test/testpage/images', '--remove'])
     expect(consoleMessages).toMatchLinesInAnyOrder([
-      ['cheque-mock.ts', 'UNCHANGED'],
+      ['swarm.png', 'UNCHANGED'],
       ['address.ts', 'REMOVED'],
       ['index.ts', 'REMOVED'],
       ['stamp.ts', 'REMOVED'],
