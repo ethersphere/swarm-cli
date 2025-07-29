@@ -124,10 +124,10 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
       ['address.ts', 'UNCHANGED'],
     ])
     consoleMessages.length = 0
-    hash = await runAndGetManifest(['manifest', 'sync', hash, 'testpage/images'])
+    hash = await runAndGetManifest(['manifest', 'sync', hash, 'test/testpage/images'])
     expect(consoleMessages).toMatchLinesInOrder([['swarm.png', 'NEW']])
     consoleMessages.length = 0
-    await runAndGetManifest(['manifest', 'sync', hash, 'testpage/images', '--remove'])
+    await runAndGetManifest(['manifest', 'sync', hash, 'test/testpage/images', '--remove'])
     expect(consoleMessages).toMatchLinesInAnyOrder([
       ['swarm.png', 'UNCHANGED'],
       ['address.ts', 'REMOVED'],
