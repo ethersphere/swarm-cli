@@ -1,5 +1,4 @@
 import { toMatchLinesInOrder } from '../custom-matcher'
-import { createChequeMockHttpServer } from '../http-mock/cheque-mock'
 import { describeCommand, invokeTestCli } from '../utility'
 
 expect.extend({
@@ -7,16 +6,6 @@ expect.extend({
 })
 
 describeCommand('Test Status command', ({ consoleMessages }) => {
-  let server: ReturnType<typeof createChequeMockHttpServer>
-
-  beforeAll(() => {
-    server = createChequeMockHttpServer(1333)
-  })
-
-  afterAll(() => {
-    server.close()
-  })
-
   it('should print when api is unavailable', async () => {
     await invokeTestCli(['status', '--bee-api-url', 'http://localhost:14999'])
     await invokeTestCli(['status'])
