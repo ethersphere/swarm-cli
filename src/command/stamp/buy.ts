@@ -82,7 +82,7 @@ export class Buy extends StampCommand implements LeafCommand {
     const estimatedCost = Utils.getStampCost(this.depth, BigInt(this.amount))
     const { bzzBalance } = await this.bee.getWalletBalance()
 
-    if (estimatedCost.gt(bzzBalance)) {
+    if (!this.dev && estimatedCost.gt(bzzBalance)) {
       this.console.error('You do not have enough BZZ to create this postage stamp.')
       this.console.error(`Estimated cost: ${estimatedCost.toDecimalString()} xBZZ`)
       this.console.error(`Available balance: ${bzzBalance.toDecimalString()} xBZZ`)
