@@ -1,10 +1,11 @@
-import { mkdtempSync } from 'node:fs'
+import { Binary } from 'cafe-utility'
+import { existsSync, mkdtempSync, readdirSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { Addresses } from '../../src/command/addresses'
 import { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
-import { Addresses } from '../../src/command/addresses'
 
 function makeTmpDir(): string {
   return mkdtempSync(join(tmpdir(), 'swarm-cli-testrun-'))
@@ -62,5 +63,31 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
     expect(consoleMessages.some(x => x.includes('images/swarm.png'))).toBe(true)
     expect(consoleMessages.some(x => x.includes('index.html'))).toBe(true)
     expect(consoleMessages.some(x => x.includes('swarm.bzz'))).toBe(true)
+  })
+
+  it('should download an encrypted file', async () => {
+    const invocation = await invokeTestCli(['upload', 'docs/upload.gif', '--encrypt', ...getStampOption()])
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
+    expect(hash.toHex()).toHaveLength(128)
+    expect(existsSync('upload.gif')).toBe(false)
+    await invokeTestCli(['download', hash.toHex()])
+    expect(existsSync('upload.gif')).toBe(true)
+    const data1 = readFileSync('upload.gif')
+    const data2 = readFileSync('docs/upload.gif')
+    expect(Binary.equals(data1, data2)).toBe(true)
+  })
+
+  it('should download an encrypted folder', async () => {
+    const invocation = await invokeTestCli(['upload', 'docs', '--encrypt', ...getStampOption()])
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
+    expect(hash.toHex()).toHaveLength(128)
+    await invokeTestCli(['download', hash.toHex()])
+    expect(existsSync(hash.toHex())).toBe(true)
+    const content = readdirSync(hash.toHex())
+    expect(content.length).toBe(4)
+    expect(content.includes('upload.gif')).toBe(true)
+    expect(content.includes('stamp-buy.gif')).toBe(true)
+    expect(content.includes('identity-create.gif')).toBe(true)
+    expect(content.includes('feed-upload.gif')).toBe(true)
   })
 })
