@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.34.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.33.0...v2.34.0) (2025-07-30)
+
+
+### Features
+
+* bump get-bee to download bee v2.6.0 ([#637](https://www.github.com/ethersphere/swarm-cli/issues/637)) ([20aaa69](https://www.github.com/ethersphere/swarm-cli/commit/20aaa697a282a13807cd9b4a01b1eaa09a7f4867))
+
+
+### Bug Fixes
+
+* allow buying stamps in dev mode ([#640](https://www.github.com/ethersphere/swarm-cli/issues/640)) ([8639497](https://www.github.com/ethersphere/swarm-cli/commit/8639497f9c5b77039f92d86f61e939cfa7ed0171))
+* decrypt encrypted file during download ([#636](https://www.github.com/ethersphere/swarm-cli/issues/636)) ([78f38fa](https://www.github.com/ethersphere/swarm-cli/commit/78f38fa236023e0eb255e28c8279715168236896))
+* do not check postage batch for gateway feed upload ([#629](https://www.github.com/ethersphere/swarm-cli/issues/629)) ([626300a](https://www.github.com/ethersphere/swarm-cli/commit/626300a0410134386babb31bb5a782eab6489939))
+* use wrapped feeds in download command ([#633](https://www.github.com/ethersphere/swarm-cli/issues/633)) ([a82a598](https://www.github.com/ethersphere/swarm-cli/commit/a82a5989073840fbdc8aa72de8061efdf62fe2b0))
+* use wrapped feeds in feed print command ([#632](https://www.github.com/ethersphere/swarm-cli/issues/632)) ([f6e988b](https://www.github.com/ethersphere/swarm-cli/commit/f6e988b7156f8558ae661be49c23e3904cb49ebb))
+
 ## [2.33.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.32.0...v2.33.0) (2025-07-03)
 
 
