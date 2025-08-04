@@ -23,13 +23,10 @@ export default async (): Promise<Config.InitialOptions> => {
   }
 
   const bee = new Bee('http://localhost:1633')
-  while (1) {
-    const topology = await bee.getTopology()
-    if (topology.depth < 31) {
-      break
-    }
-    await System.sleepMillis(Dates.seconds(15))
-  }
+  await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
+    attempts: 30,
+    waitMillis: Dates.seconds(1),
+  })
 
   return {
     // Indicates whether the coverage information should be collected while executing the test
