@@ -22,11 +22,19 @@ export default async (): Promise<Config.InitialOptions> => {
     process.env.TEST_STAMP = (await getOrBuyStamp()).toHex()
   }
 
-  const bee = new Bee('http://localhost:1633')
-  await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
-    attempts: 30,
-    waitMillis: Dates.seconds(1),
-  })
+  for (let i = 0; i < 5; i++) {
+    const port = 1633 + i * 10000
+    const bee = new Bee(`http://localhost:${port}`)
+    const startedAt = Date.now()
+    console.log('Waiting for Bee node to warm up on port', port)
+    await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
+      attempts: 60,
+      waitMillis: Dates.seconds(1),
+      requiredConsecutivePasses: 3,
+    })
+    const elapsed = Date.now() - startedAt
+    console.log(`Bee node on port ${port} warmed up in ${elapsed} milliseconds`)
+  }
 
   return {
     // Indicates whether the coverage information should be collected while executing the test
