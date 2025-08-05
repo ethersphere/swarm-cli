@@ -28,7 +28,7 @@ export default async (): Promise<Config.InitialOptions> => {
     const startedAt = Date.now()
     console.log('Waiting for Bee node to warm up on port', port)
     await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
-      attempts: 60,
+      attempts: 300,
       waitMillis: Dates.seconds(1),
       requiredConsecutivePasses: 3,
     })
