@@ -1,8 +1,13 @@
 import { existsSync, unlinkSync, writeFileSync } from 'fs'
 import { LeafCommand } from 'furious-commander'
 import type { Upload } from '../../src/command/upload'
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 function actUpload(command: { runnable?: LeafCommand | undefined }): [string, string] {
   const uploadCommand = command.runnable as Upload
@@ -139,7 +144,12 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should succeed with --sync and --encrypt', async () => {
     await invokeTestCli(['upload', 'README.md', '--sync', '--encrypt', '-v', ...getStampOption()])
-    expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['Data has been sent to the Bee node successfully!'],
+      ['Waiting for file chunks to be synced on Swarm network...'],
+      ['Data has been synced on Swarm network'],
+      ['Uploading was successful!'],
+    ])
   })
 
   it('should not print double trailing slashes', async () => {
