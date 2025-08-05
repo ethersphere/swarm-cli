@@ -84,7 +84,7 @@ export class Upload extends RootCommand implements LeafCommand {
     key: 'sync-polling-trials',
     description: 'After the given trials the sync polling will stop',
     type: 'number',
-    default: 60,
+    default: 120,
   })
   public syncPollingTrials!: number
 
