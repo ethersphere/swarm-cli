@@ -5,6 +5,13 @@ import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
+const SUCCESSFUL_SYNC_PATTERN = [
+  ['Data has been sent to the Bee node successfully!'],
+  ['Waiting for file chunks to be synced on Swarm network...'],
+  ['Data has been synced on Swarm network'],
+  ['Uploading was successful!'],
+]
+
 expect.extend({
   toMatchLinesInOrder,
 })
@@ -137,24 +144,24 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     expect(hasMessageContaining('does not support syncing')).toBeTruthy()
   })
 
-  it('should succeed with --sync', async () => {
+  it('should succeed with --sync <1MB', async () => {
     await invokeTestCli(['upload', 'README.md', '--sync', '-v', ...getStampOption()])
-    expect(consoleMessages).toMatchLinesInOrder([
-      ['Data has been sent to the Bee node successfully!'],
-      ['Waiting for file chunks to be synced on Swarm network...'],
-      ['Data has been synced on Swarm network'],
-      ['Uploading was successful!'],
-    ])
+    expect(consoleMessages).toMatchLinesInOrder(SUCCESSFUL_SYNC_PATTERN)
   })
 
-  it('should succeed with --sync and --encrypt', async () => {
+  it('should succeed with --sync >1MB', async () => {
+    await invokeTestCli(['upload', 'docs/stamp-buy.gif', '--sync', '-v', ...getStampOption()])
+    expect(consoleMessages).toMatchLinesInOrder(SUCCESSFUL_SYNC_PATTERN)
+  })
+
+  it('should succeed with --sync and --encrypt <1MB', async () => {
     await invokeTestCli(['upload', 'README.md', '--sync', '--encrypt', '-v', ...getStampOption()])
-    expect(consoleMessages).toMatchLinesInOrder([
-      ['Data has been sent to the Bee node successfully!'],
-      ['Waiting for file chunks to be synced on Swarm network...'],
-      ['Data has been synced on Swarm network'],
-      ['Uploading was successful!'],
-    ])
+    expect(consoleMessages).toMatchLinesInOrder(SUCCESSFUL_SYNC_PATTERN)
+  })
+
+  it('should succeed with --sync and --encrypt >1MB', async () => {
+    await invokeTestCli(['upload', 'docs/stamp-buy.gif', '--sync', '--encrypt', '-v', ...getStampOption()])
+    expect(consoleMessages).toMatchLinesInOrder(SUCCESSFUL_SYNC_PATTERN)
   })
 
   it('should not print double trailing slashes', async () => {
