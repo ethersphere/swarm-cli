@@ -139,7 +139,12 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
 
   it('should succeed with --sync', async () => {
     await invokeTestCli(['upload', 'README.md', '--sync', '-v', ...getStampOption()])
-    expect(hasMessageContaining('Uploading was successful!')).toBeTruthy()
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['Data has been sent to the Bee node successfully!'],
+      ['Waiting for file chunks to be synced on Swarm network...'],
+      ['Data has been synced on Swarm network'],
+      ['Uploading was successful!'],
+    ])
   })
 
   it('should succeed with --sync and --encrypt', async () => {
