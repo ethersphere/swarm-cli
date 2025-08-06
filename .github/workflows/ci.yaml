@@ -31,14 +31,23 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install npm deps
-        run: npm ci && npm install -g @fairdatasociety/fdp-play
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install fdp-play
+        run: npm install --global @fairdatasociety/fdp-play
+
+      - name: Install swarm-cli
+        run: npm install --global @ethersphere/swarm-cli
 
       - name: Run bee-dev
         run: npx bee-dev --port 16337 &
 
       - name: Start fdp-play environment
         run: npm run bee
+
+      - name: Deposit to chequebook
+        run: swarm-cli cheque deposit 1000000000000000
 
       - name: Tests
         run: npm run test
