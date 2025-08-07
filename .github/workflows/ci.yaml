@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        bee-version: ['d0aa8b9-commit']
 
     steps:
       - name: Checkout
@@ -26,19 +26,37 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.x
 
-      - name: Install npm deps
-        run: npm ci && npm install -g @fairdatasociety/fdp-play
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install fdp-play
+        run: npm install --global @fairdatasociety/fdp-play
+
+      - name: Install swarm-cli
+        run: npm install --global @ethersphere/swarm-cli
 
       - name: Run bee-dev
         run: npx bee-dev --port 16337 &
 
       - name: Start fdp-play environment
-        run: npm run bee
+        run: fdp-play start --detach --fresh --bee-version ${{ matrix.bee-version }}
+
+      - name: Deposit to chequebook
+        run: |
+          swarm-cli cheque deposit 100000000000000000
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:11633
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:21633
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:31633
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:41633
+
+      - name: Print swarm-cli status
+        continue-on-error: true
+        run: swarm-cli status
 
       - name: Tests
         run: npm run test

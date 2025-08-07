@@ -31,7 +31,7 @@
     "start": "ts-node src/index.ts",
     "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
-    "bee": "npx @fairdatasociety/fdp-play@3.3.0 start --detach --fresh"
+    "bee": "npx @fairdatasociety/fdp-play@3.3.0 start --detach --fresh --bee-version 2.6.0"
   },
   "engines": {
     "node": ">=14.0.0",
@@ -63,8 +63,8 @@
   },
   "dependencies": {
     "@ethereumjs/wallet": "^2.0.4",
-    "@ethersphere/bee-js": "^9.6.1",
-    "cafe-utility": "^27.14.0",
+    "@ethersphere/bee-js": "^9.7.0",
+    "cafe-utility": "^31.0.0",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
     "ethers": "^5.7.2",

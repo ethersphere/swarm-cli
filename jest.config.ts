@@ -2,7 +2,7 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/en/configuration.html
  */
-import { Bee } from '@ethersphere/bee-js'
+import { Bee, BZZ } from '@ethersphere/bee-js'
 import type { Config } from '@jest/types'
 import { Dates, System } from 'cafe-utility'
 import { getPssAddress } from './test/utility/address'
@@ -22,13 +22,40 @@ export default async (): Promise<Config.InitialOptions> => {
     process.env.TEST_STAMP = (await getOrBuyStamp()).toHex()
   }
 
-  const bee = new Bee('http://localhost:1633')
-  while (1) {
-    const topology = await bee.getTopology()
-    if (topology.depth < 31) {
-      break
+  for (let i = 0; i < 5; i++) {
+    const port = 1633 + i * 10000
+    const bee = new Bee(`http://localhost:${port}`)
+
+    const startedAt = Date.now()
+    console.log('Waiting for Bee node to warm up on port', port)
+    const { version } = await bee.getHealth()
+    if (version.includes('2.5') || version.startsWith('2.4')) {
+      await System.waitFor(async () => (await bee.getTopology()).depth < 31, {
+        attempts: 300,
+        waitMillis: Dates.seconds(1),
+        requiredConsecutivePasses: 3,
+      })
+    } else {
+      await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
+        attempts: 300,
+        waitMillis: Dates.seconds(1),
+        requiredConsecutivePasses: 3,
+      })
     }
-    await System.sleepMillis(Dates.seconds(15))
+    const elapsed = Date.now() - startedAt
+    console.log(`Bee node on port ${port} warmed up in ${elapsed} milliseconds`)
+  }
+
+  for (let i = 0; i < 5; i++) {
+    const port = 1633 + i * 10000
+    const bee = new Bee(`http://localhost:${port}`)
+
+    console.log('Asserting chequebook balance on port', port)
+    const chequebookBalance = await bee.getChequebookBalance()
+    if (!chequebookBalance.totalBalance.eq(BZZ.fromDecimalString('10'))) {
+      throw Error('Chequebook total balance is not 10 xBZZ: ' + chequebookBalance.totalBalance.toDecimalString())
+    }
+    console.log(`Chequebook balance on port ${port} is 10 xBZZ`)
   }
 
   return {
