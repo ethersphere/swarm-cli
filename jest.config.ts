@@ -2,7 +2,7 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/en/configuration.html
  */
-import { Bee } from '@ethersphere/bee-js'
+import { Bee, BZZ } from '@ethersphere/bee-js'
 import type { Config } from '@jest/types'
 import { Dates, System } from 'cafe-utility'
 import { getPssAddress } from './test/utility/address'
@@ -44,6 +44,18 @@ export default async (): Promise<Config.InitialOptions> => {
     }
     const elapsed = Date.now() - startedAt
     console.log(`Bee node on port ${port} warmed up in ${elapsed} milliseconds`)
+  }
+
+  for (let i = 0; i < 5; i++) {
+    const port = 1633 + i * 10000
+    const bee = new Bee(`http://localhost:${port}`)
+
+    console.log('Asserting chequebook balance on port', port)
+    const chequebookBalance = await bee.getChequebookBalance()
+    if (!chequebookBalance.totalBalance.eq(BZZ.fromDecimalString('10'))) {
+      throw Error('Chequebook balance is not 10 xBZZ')
+    }
+    console.log(`Chequebook balance on port ${port} is 10 xBZZ`)
   }
 
   return {
