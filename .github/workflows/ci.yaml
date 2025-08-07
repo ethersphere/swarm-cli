@@ -50,5 +50,9 @@ jobs:
       - name: Deposit to chequebook
         run: swarm-cli cheque deposit 1000000000000000
 
+      - name: Print swarm-cli status
+        continue-on-error: true
+        run: swarm-cli status
+
       - name: Tests
         run: npm run test
