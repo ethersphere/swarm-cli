@@ -18,7 +18,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [20.x, 22.x]
+        bee-version: ['2.5.0', '2.6.0']
 
     steps:
       - name: Checkout
@@ -44,7 +45,7 @@ jobs:
         run: npx bee-dev --port 16337 &
 
       - name: Start fdp-play environment
-        run: npm run bee
+        run: fdp-play start --detach --fresh --bee-version ${{ matrix.bee-version }}
 
       - name: Deposit to chequebook
         run: swarm-cli cheque deposit 1000000000000000

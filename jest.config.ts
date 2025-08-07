@@ -25,13 +25,23 @@ export default async (): Promise<Config.InitialOptions> => {
   for (let i = 0; i < 5; i++) {
     const port = 1633 + i * 10000
     const bee = new Bee(`http://localhost:${port}`)
+
     const startedAt = Date.now()
     console.log('Waiting for Bee node to warm up on port', port)
-    await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
-      attempts: 300,
-      waitMillis: Dates.seconds(1),
-      requiredConsecutivePasses: 3,
-    })
+    const { version } = await bee.getHealth()
+    if (version.startsWith('2.5')) {
+      await System.waitFor(async () => (await bee.getTopology()).depth < 31, {
+        attempts: 300,
+        waitMillis: Dates.seconds(1),
+        requiredConsecutivePasses: 3,
+      })
+    } else {
+      await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
+        attempts: 300,
+        waitMillis: Dates.seconds(1),
+        requiredConsecutivePasses: 3,
+      })
+    }
     const elapsed = Date.now() - startedAt
     console.log(`Bee node on port ${port} warmed up in ${elapsed} milliseconds`)
   }
