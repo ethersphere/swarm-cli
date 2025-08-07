@@ -29,7 +29,7 @@ export default async (): Promise<Config.InitialOptions> => {
     const startedAt = Date.now()
     console.log('Waiting for Bee node to warm up on port', port)
     const { version } = await bee.getHealth()
-    if (version.startsWith('2.5')) {
+    if (version.includes('2.5') || version.startsWith('2.4')) {
       await System.waitFor(async () => (await bee.getTopology()).depth < 31, {
         attempts: 300,
         waitMillis: Dates.seconds(1),
