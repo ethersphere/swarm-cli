@@ -53,7 +53,7 @@ export default async (): Promise<Config.InitialOptions> => {
     console.log('Asserting chequebook balance on port', port)
     const chequebookBalance = await bee.getChequebookBalance()
     if (!chequebookBalance.totalBalance.eq(BZZ.fromDecimalString('10'))) {
-      throw Error('Chequebook balance is not 10 xBZZ')
+      throw Error('Chequebook total balance is not 10 xBZZ: ' + chequebookBalance.totalBalance.toDecimalString())
     }
     console.log(`Chequebook balance on port ${port} is 10 xBZZ`)
   }
