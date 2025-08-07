@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        bee-version: ['2.4.0', '2.5.0', '2.6.0']
+        bee-version: ['d0aa8b9-commit']
 
     steps:
       - name: Checkout
