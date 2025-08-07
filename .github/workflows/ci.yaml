@@ -48,11 +48,11 @@ jobs:
 
       - name: Deposit to chequebook
         run: |
-          swarm-cli cheque deposit 10000000000000000
-          swarm-cli cheque deposit 10000000000000000 --bee-api-url http://localhost:11633
-          swarm-cli cheque deposit 10000000000000000 --bee-api-url http://localhost:21633
-          swarm-cli cheque deposit 10000000000000000 --bee-api-url http://localhost:31633
-          swarm-cli cheque deposit 10000000000000000 --bee-api-url http://localhost:41633
+          swarm-cli cheque deposit 100000000000000000
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:11633
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:21633
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:31633
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:41633
 
       - name: Print swarm-cli status
         continue-on-error: true
