@@ -359,7 +359,7 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     ])
     const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
-    await invokeTestCli(['manifest', 'list', hash.toHex()])
+    await invokeTestCli(['manifest', 'list', hash.toHex(), '--verbose'])
     expect(consoleMessages).toMatchLinesInOrder([
       ['Root (/) metadata'],
       ['website-index-document: index.txt'],
