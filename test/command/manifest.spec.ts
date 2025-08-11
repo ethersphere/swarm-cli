@@ -141,7 +141,8 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'list', `bzz://${hash}/command/pss/send.ts`])
-    expect(consoleMessages).toHaveLength(1)
+    expect(consoleMessages).toMatchLinesInAnyOrder([['Nodes'], ['command/pss/send.ts']])
+    expect(consoleMessages).toHaveLength(3)
   })
 
   it('should list folder', async () => {
@@ -149,7 +150,15 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'list', `bzz://${hash}/command/pss`])
-    expect(consoleMessages).toHaveLength(5)
+    expect(consoleMessages).toMatchLinesInAnyOrder([
+      ['Nodes'],
+      ['command/pss/index.ts'],
+      ['command/pss/pss-command.ts'],
+      ['command/pss/receive.ts'],
+      ['command/pss/send.ts'],
+      ['command/pss/subscribe.ts'],
+    ])
+    expect(consoleMessages).toHaveLength(11)
   })
 
   it('should download single file', async () => {
@@ -241,63 +250,57 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     const command = invocation.runnable as unknown as FeedUpload
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'list', `${command.feedManifest}`])
-    expect(consoleMessages[0]).toContain('README.md')
+    expect(consoleMessages).toMatchLinesInOrder([['README.md']])
   })
 
   it('should list single file when specified partially', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/ind`])
-    expect(consoleMessages[0]).toContain('index.txt')
+    expect(consoleMessages).toMatchLinesInOrder([['index.txt']])
   })
 
   it('should list single file when specified fully', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/index.txt`])
-    expect(consoleMessages[0]).toContain('index.txt')
+    expect(consoleMessages).toMatchLinesInOrder([['index.txt']])
   })
 
   it('should list files in folder when specified partially', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/lev`])
-    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
-    expect(consoleMessages[1]).toContain('level-one/level-two/2.txt')
+    expect(consoleMessages).toMatchLinesInOrder([['level-one/level-two/1.txt'], ['level-one/level-two/2.txt']])
   })
 
   it('should list files in folder when specified fully without trailing slash', async () => {
     await invokeTestCli(['manifest', 'list', `${srcHash}/level-one/level-two`])
-    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
-    expect(consoleMessages[1]).toContain('level-one/level-two/2.txt')
+    expect(consoleMessages).toMatchLinesInOrder([['level-one/level-two/1.txt'], ['level-one/level-two/2.txt']])
   })
 
   it('should list files in folder when specified fully with trailing slash', async () => {
-    await invokeTestCli(['manifest', 'list', `${srcHash}/level-one/level-two`])
-    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
-    expect(consoleMessages[1]).toContain('level-one/level-two/2.txt')
+    await invokeTestCli(['manifest', 'list', `${srcHash}/level-one/level-two/`])
+    expect(consoleMessages).toMatchLinesInOrder([['level-one/level-two/1.txt'], ['level-one/level-two/2.txt']])
   })
 
   it('should download single file when specified partially', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/in`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain('index.txt')
+    expect(consoleMessages).toMatchLinesInOrder([['index.txt']])
   })
 
   it('should download single file when specified fully', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/index.txt`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain('index.txt')
+    expect(consoleMessages).toMatchLinesInOrder([['index.txt']])
   })
 
   it('should download files in folder when specified partially', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/level-one/l`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
-    expect(consoleMessages[2]).toContain('level-one/level-two/2.txt')
+    expect(consoleMessages).toMatchLinesInOrder([['level-one/level-two/1.txt'], ['level-one/level-two/2.txt']])
   })
 
   it('should download files in folder when specified fully without trailing slash', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/level-one/level-two`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
-    expect(consoleMessages[2]).toContain('level-one/level-two/2.txt')
+    expect(consoleMessages).toMatchLinesInOrder([['level-one/level-two/1.txt'], ['level-one/level-two/2.txt']])
   })
 
   it('should download files in folder when specified fully with trailing slash', async () => {
     await invokeTestCli(['manifest', 'download', `${srcHash}/level-one/level-two/`, 'test/data/6'])
-    expect(consoleMessages[0]).toContain('level-one/level-two/1.txt')
-    expect(consoleMessages[2]).toContain('level-one/level-two/2.txt')
+    expect(consoleMessages).toMatchLinesInOrder([['level-one/level-two/1.txt'], ['level-one/level-two/2.txt']])
   })
 
   it('should handle error for invalid download hash', async () => {
@@ -341,8 +344,27 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'download', hash.toHex()])
-    expect(consoleMessages[0]).toContain('images/swarm.png')
-    expect(consoleMessages[2]).toContain('index.html')
-    expect(consoleMessages[4]).toContain('swarm.bzz')
+    expect(consoleMessages).toMatchLinesInOrder([['images/swarm.png'], ['index.html'], ['swarm.bzz']])
+  })
+
+  it('should show root manifest metadata', async () => {
+    const invocation = await invokeTestCli([
+      'upload',
+      'docs',
+      ...getStampOption(),
+      '--index-document',
+      'index.txt',
+      '--error-document',
+      'error.txt',
+    ])
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
+    consoleMessages.length = 0
+    await invokeTestCli(['manifest', 'list', hash.toHex(), '--verbose'])
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['Root (/) metadata'],
+      ['website-error-document: error.txt'],
+      ['website-index-document: index.txt'],
+      ['Nodes'],
+    ])
   })
 })
