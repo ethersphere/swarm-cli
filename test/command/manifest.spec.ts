@@ -362,8 +362,8 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     await invokeTestCli(['manifest', 'list', hash.toHex(), '--verbose'])
     expect(consoleMessages).toMatchLinesInOrder([
       ['Root (/) metadata'],
-      ['website-index-document: index.txt'],
       ['website-error-document: error.txt'],
+      ['website-index-document: index.txt'],
       ['Nodes'],
     ])
   })
