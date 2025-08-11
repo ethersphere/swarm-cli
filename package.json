@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@ethereumjs/wallet": "^2.0.4",
-    "@ethersphere/bee-js": "^9.7.1",
+    "@ethersphere/bee-js": "^9.8.1",
     "cafe-utility": "^31.0.0",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
