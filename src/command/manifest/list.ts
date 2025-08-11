@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { makeBzzAddress } from '../../utils/bzz-address'
+import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 
 export class List extends RootCommand implements LeafCommand {
@@ -34,6 +35,22 @@ export class List extends RootCommand implements LeafCommand {
       exit(1)
     }
 
+    if (this.verbose) {
+      this.console.log(chalk.green.bold('Root (/) metadata'))
+      node
+        .getRootMetadata()
+        .ifPresent(metadata => {
+          for (const entry of Object.entries(metadata)) {
+            this.console.log(createKeyValue(entry[0], entry[1]))
+          }
+        })
+        .ifAbsent(() => {
+          this.console.log(chalk.dim('No metadata found'))
+        })
+      this.console.log('')
+    }
+
+    this.console.log(chalk.green.bold('Nodes'))
     for (const node of nodes) {
       this.console.log(new Reference(node.targetAddress).toHex() + ' ' + node.fullPathString)
 
@@ -53,6 +70,7 @@ export class List extends RootCommand implements LeafCommand {
           this.console.log(chalk.dim(entry[0] + ': ' + entry[1]))
         }
       }
+      this.console.log('')
     }
   }
 }
