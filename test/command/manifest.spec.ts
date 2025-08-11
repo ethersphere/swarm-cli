@@ -141,7 +141,8 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'list', `bzz://${hash}/command/pss/send.ts`])
-    expect(consoleMessages).toHaveLength(1)
+    expect(consoleMessages).toMatchLinesInAnyOrder([['Nodes'], ['command/pss/send.ts']])
+    expect(consoleMessages).toHaveLength(3)
   })
 
   it('should list folder', async () => {
@@ -149,7 +150,15 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     hash = await runAndGetManifest(['manifest', 'add', hash, 'src'])
     consoleMessages.length = 0
     await invokeTestCli(['manifest', 'list', `bzz://${hash}/command/pss`])
-    expect(consoleMessages).toHaveLength(5)
+    expect(consoleMessages).toMatchLinesInAnyOrder([
+      ['Nodes'],
+      ['command/pss/index.ts'],
+      ['command/pss/pss-command.ts'],
+      ['command/pss/receive.ts'],
+      ['command/pss/send.ts'],
+      ['command/pss/subscribe.ts'],
+    ])
+    expect(consoleMessages).toHaveLength(11)
   })
 
   it('should download single file', async () => {
