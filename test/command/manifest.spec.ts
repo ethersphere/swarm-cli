@@ -337,4 +337,25 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     await invokeTestCli(['manifest', 'download', hash.toHex()])
     expect(consoleMessages).toMatchLinesInOrder([['images/swarm.png'], ['index.html'], ['swarm.bzz']])
   })
+
+  it('should show root manifest metadata', async () => {
+    const invocation = await invokeTestCli([
+      'upload',
+      'docs',
+      ...getStampOption(),
+      '--index-document',
+      'index.txt',
+      '--error-document',
+      'error.txt',
+    ])
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
+    consoleMessages.length = 0
+    await invokeTestCli(['manifest', 'list', hash.toHex()])
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['Root (/) metadata'],
+      ['website-index-document: index.txt'],
+      ['website-error-document: error.txt'],
+      ['Nodes'],
+    ])
+  })
 })
