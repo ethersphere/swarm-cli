@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.34.0...v2.35.0) (2025-08-11)
+
+
+### Features
+
+* display manifest root metadata ([#643](https://www.github.com/ethersphere/swarm-cli/issues/643)) ([f52bbc9](https://www.github.com/ethersphere/swarm-cli/commit/f52bbc971c9fc3e30d555916de4374fc0b3be569))
+
 ## [2.34.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.33.0...v2.34.0) (2025-07-30)
 
 
