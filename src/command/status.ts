@@ -31,13 +31,14 @@ export class Status extends RootCommand implements LeafCommand {
     if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Chainsync'))
-      const { block, chainTip } = await this.bee.getChainState()
+      const { block, chainTip, currentPrice } = await this.bee.getChainState()
       this.console.all(
         createKeyValue(
           'Block',
           `${block.toLocaleString()} / ${chainTip.toLocaleString()} (Δ ${(chainTip - block).toLocaleString()})`,
         ),
       )
+      this.console.all(createKeyValue('Storage Price', currentPrice.toLocaleString() + ' PLUR / chunk / block'))
     }
 
     if (nodeInfo.beeMode !== BeeModes.DEV) {
