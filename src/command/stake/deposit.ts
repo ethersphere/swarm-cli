@@ -31,6 +31,14 @@ export class Deposit extends RootCommand implements LeafCommand {
   })
   public amountPlur!: bigint | undefined
 
+  @Option({
+    key: 'gas-price',
+    description: 'Gas price of the transaction in wei',
+    type: 'bigint',
+    minimum: 0,
+  })
+  public gasPrice!: bigint
+
   public async run(): Promise<void> {
     super.init()
 
@@ -88,7 +96,7 @@ export class Deposit extends RootCommand implements LeafCommand {
     }
 
     try {
-      await this.bee.depositStake(amount)
+      await this.bee.depositStake(amount, { gasPrice: this.gasPrice })
       spinner.stop()
     } catch (e) {
       spinner.stop()
