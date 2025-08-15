@@ -59,16 +59,10 @@ export default async (): Promise<Config.InitialOptions> => {
   }
 
   return {
-    // Indicates whether the coverage information should be collected while executing the test
-    // collectCoverage: false,
-
-    // The directory where Jest should output its coverage files
+    collectCoverage: true,
     coverageDirectory: 'coverage',
-
-    // An array of regexp pattern strings used to skip coverage collection
-    coveragePathIgnorePatterns: ['/node_modules/'],
-
-    // An array of directory names to be searched recursively up from the requiring module's location
+    coverageReporters: ['lcov', 'json-summary'],
+    collectCoverageFrom: ['src/**/*.ts'],
     moduleDirectories: ['node_modules'],
 
     // Run tests from one or more projects
