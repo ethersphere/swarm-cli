@@ -25,7 +25,7 @@ describeCommand('Status command and swap', ({ consoleMessages }) => {
       ['Wallet balance not available'],
       ['This is normal if chequebook is disabled in the node configuration.'],
       ['Chequebook'],
-      ['Wallet balance not available'],
+      ['Chequebook balance not available'],
       ['This is normal if chequebook is disabled in the node configuration.'],
     ])
   })
