@@ -43,6 +43,9 @@ jobs:
       - name: Run bee-dev
         run: npx bee-dev --port 16337 &
 
+      - name: Run bee-dev
+        run: npx bee-dev --port 16338 --no-swap &
+
       - name: Start fdp-play environment
         run: fdp-play start --detach --fresh --bee-version ${{ matrix.bee-version }}
 

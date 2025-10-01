@@ -43,7 +43,7 @@ export class Addresses extends RootCommand implements LeafCommand {
       this.console.log('')
       this.console.log(chalk.bold('Chequebook Address'))
       this.console.divider()
-      this.console.log(chequebookAddress.chequebookAddress)
+      this.console.log(chequebookAddress.chequebookAddress.toHex())
     })
 
     this.console.quiet('Ethereum ' + this.nodeAddresses.ethereum)

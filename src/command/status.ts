@@ -59,7 +59,7 @@ export class Status extends RootCommand implements LeafCommand {
         this.console.all(createKeyValue('xDAI', nativeTokenBalance.toDecimalString()))
       } catch {
         this.console.all(chalk.yellow('Wallet balance not available'))
-        this.console.all('This is normal if swap is disabled in the node configuration.')
+        this.console.all('This is normal if chequebook is disabled in the node configuration.')
       }
     }
 
@@ -72,7 +72,7 @@ export class Status extends RootCommand implements LeafCommand {
         this.console.all(createKeyValue('Total xBZZ', totalBalance.toDecimalString()))
       } catch {
         this.console.all(chalk.yellow('Chequebook balance not available'))
-        this.console.all('This is normal if swap is disabled in the node configuration.')
+        this.console.all('This is normal if chequebook is disabled in the node configuration.')
       }
     }
 

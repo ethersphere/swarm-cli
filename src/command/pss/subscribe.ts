@@ -34,6 +34,9 @@ export class Subscribe extends PssCommand implements LeafCommand {
       onError: (error: BeeError) => {
         this.console.error(error.message)
       },
+      onClose: () => {
+        this.console.log('Subscription closed')
+      },
     })
   }
 }
