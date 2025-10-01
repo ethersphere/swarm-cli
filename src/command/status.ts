@@ -53,17 +53,27 @@ export class Status extends RootCommand implements LeafCommand {
     if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Wallet'))
-      const { bzzBalance, nativeTokenBalance } = await this.bee.getWalletBalance()
-      this.console.all(createKeyValue('xBZZ', bzzBalance.toDecimalString()))
-      this.console.all(createKeyValue('xDAI', nativeTokenBalance.toDecimalString()))
+      try {
+        const { bzzBalance, nativeTokenBalance } = await this.bee.getWalletBalance()
+        this.console.all(createKeyValue('xBZZ', bzzBalance.toDecimalString()))
+        this.console.all(createKeyValue('xDAI', nativeTokenBalance.toDecimalString()))
+      } catch {
+        this.console.all(chalk.yellow('Wallet balance not available'))
+        this.console.all('This is normal if chequebook is disabled in the node configuration.')
+      }
     }
 
     if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
       this.console.all('')
       this.console.all(chalk.bold('Chequebook'))
-      const { totalBalance, availableBalance } = await this.bee.getChequebookBalance()
-      this.console.all(createKeyValue('Available xBZZ', availableBalance.toDecimalString()))
-      this.console.all(createKeyValue('Total xBZZ', totalBalance.toDecimalString()))
+      try {
+        const { totalBalance, availableBalance } = await this.bee.getChequebookBalance()
+        this.console.all(createKeyValue('Available xBZZ', availableBalance.toDecimalString()))
+        this.console.all(createKeyValue('Total xBZZ', totalBalance.toDecimalString()))
+      } catch {
+        this.console.all(chalk.yellow('Chequebook balance not available'))
+        this.console.all('This is normal if chequebook is disabled in the node configuration.')
+      }
     }
 
     if (nodeInfo.beeMode === BeeModes.FULL) {
