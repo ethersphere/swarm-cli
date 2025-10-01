@@ -19,7 +19,7 @@ describeCommand('Status command and swap', ({ consoleMessages }) => {
   })
 
   it('should handle missing wallet and chequebook balance', async () => {
-    await invokeTestCli(['status', '--bee-api-url', 'http://localhost:16337'])
+    await invokeTestCli(['status', '--bee-api-url', 'http://localhost:16338'])
     expect(consoleMessages).toMatchLinesInOrder([
       ['Wallet'],
       ['Wallet balance not available'],
