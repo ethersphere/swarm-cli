@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.36.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.35.0...v2.36.0) (2025-10-01)
+
+
+### Features
+
+* add price to status ([#648](https://www.github.com/ethersphere/swarm-cli/issues/648)) ([6665c94](https://www.github.com/ethersphere/swarm-cli/commit/6665c94edbcc661c0f31a18a419f334625745961))
+
+
+### Bug Fixes
+
+* do not error out in status when swap is disabled ([#655](https://www.github.com/ethersphere/swarm-cli/issues/655)) ([c05e8fb](https://www.github.com/ethersphere/swarm-cli/commit/c05e8fbe6c93a7ec4cdaa90ca438435c6872bfd7))
+
 ## [2.35.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.34.0...v2.35.0) (2025-08-11)
 
 
