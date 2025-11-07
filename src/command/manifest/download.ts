@@ -1,6 +1,6 @@
 import { MantarayNode } from '@ethersphere/bee-js'
 import chalk from 'chalk'
-import fs from 'fs'
+import { mkdir, writeFile } from 'fs/promises'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { exit } from 'process'
@@ -73,9 +73,9 @@ export class Download extends RootCommand implements LeafCommand {
       }
     }
     const parsedForkPath = parse(node.fullPathString)
-    const data = await this.bee.downloadData(node.targetAddress)
 
     if (this.stdout) {
+      const data = await this.bee.downloadData(node.targetAddress)
       process.stdout.write(data.toUtf8())
 
       return
@@ -85,12 +85,14 @@ export class Download extends RootCommand implements LeafCommand {
     const destinationFolder = join(destination, parsedForkPath.dir)
 
     if (!directoryExists(destinationFolder)) {
-      await fs.promises.mkdir(destinationFolder, { recursive: true })
+      await mkdir(destinationFolder, { recursive: true })
     }
+
+    const readStream = await this.bee.downloadReadableData(node.targetAddress)
+    await writeFile(join(destination, node.fullPathString), readStream)
 
     if (!this.stdout && !this.quiet && !this.curl) {
       process.stdout.write(' ' + chalk.green('OK') + '\n')
     }
-    await fs.promises.writeFile(join(destination, node.fullPathString), data.toUint8Array())
   }
 }
