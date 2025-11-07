@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.36.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.36.0...v2.36.1) (2025-11-07)
+
+
+### Bug Fixes
+
+* stream manifest download ([#657](https://www.github.com/ethersphere/swarm-cli/issues/657)) ([0fa9b06](https://www.github.com/ethersphere/swarm-cli/commit/0fa9b060112a3937539f0a934657e7ab74227f26))
+
 ## [2.36.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.35.0...v2.36.0) (2025-10-01)
 
 
