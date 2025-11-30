@@ -48,6 +48,9 @@ jobs:
           cd fdp-play/orchestrator
           npm run build:env -- --build-base-bee --bee-repository=Cafe137/inbee4.git
 
+      - name: Clean up fdp-play
+        run: rm -rf fdp-play
+
       - name: Run bee-dev
         run: bee-dev --port 16337 &
 
