@@ -38,8 +38,9 @@ jobs:
         run: |
           git clone https://github.com/fairDataSociety/fdp-play
           cd fdp-play && npm install
-          cd ui && npm install
-          cd ../../ && npm run build:env -- --build-base-bee --bee-repository=Cafe137/inbee4.git
+          cd orchestrator && npm install
+          cd .. && npm run build:env -- --build-base-bee --bee-repository=Cafe137/inbee4.git
+          cd ..
 
       - name: Install swarm-cli
         run: npm install --global @ethersphere/swarm-cli
