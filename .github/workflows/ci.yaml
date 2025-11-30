@@ -55,7 +55,7 @@ jobs:
         run: bee-dev --port 16338 --no-swap &
 
       - name: Start fdp-play environment
-        run: fdp-play start --blockchain-image ethereum/client-go:release-1.13 --bee-version HEAD-commit
+        run: fdp-play start --detach --blockchain-image ethereum/client-go:release-1.13 --bee-version HEAD-commit
 
       - name: Deposit to chequebook
         run: |
