@@ -34,13 +34,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Prepare fdp-play images
+      - name: Clone fdp-play
+        run: git clone https://github.com/fairDataSociety/fdp-play
+
+      - name: Install fdp-play dependencies
         run: |
-          git clone https://github.com/fairDataSociety/fdp-play
           cd fdp-play && npm install
           cd orchestrator && npm install
-          cd .. && npm run build:env -- --build-base-bee --bee-repository=Cafe137/inbee4.git
-          cd ..
+
+      - name: Build fdp-play images
+        run: npm run build:env -- --build-base-bee --bee-repository=Cafe137/inbee4.git
 
       - name: Install swarm-cli
         run: npm install --global @ethersphere/swarm-cli
