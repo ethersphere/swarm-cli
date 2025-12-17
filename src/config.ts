@@ -10,6 +10,7 @@ import { Identity } from './command/identity'
 import { Manifest } from './command/manifest'
 import { Pinning } from './command/pinning'
 import { Pss } from './command/pss'
+import { Quickstart } from './command/quickstart'
 import { Stake } from './command/stake'
 import { Stamp } from './command/stamp'
 import { Status } from './command/status'
@@ -131,4 +132,5 @@ export const rootCommandClasses = [
   Wallet,
   Utility,
   Grantee,
+  Quickstart,
 ]

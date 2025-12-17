@@ -3,7 +3,7 @@ import { execSync } from 'child_process'
 import { existsSync, writeFileSync } from 'fs'
 import { LeafCommand } from 'furious-commander'
 import fetch from 'node-fetch'
-import { RootCommand } from '../root-command'
+import { RootCommand } from './root-command'
 
 const archTable = {
   arm64: 'arm64',
@@ -16,8 +16,8 @@ const platformTable = {
   linux: 'linux',
 }
 
-export class GetBee extends RootCommand implements LeafCommand {
-  public readonly name = 'get-bee'
+export class Quickstart extends RootCommand implements LeafCommand {
+  public readonly name = 'quickstart'
 
   public readonly description = 'Downloads the Bee binary for the current platform'
 
