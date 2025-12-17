@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.37.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.36.1...v2.37.0) (2025-12-17)
+
+
+### Features
+
+* rename utility get-bee command to quickstart ([#660](https://www.github.com/ethersphere/swarm-cli/issues/660)) ([e7b9343](https://www.github.com/ethersphere/swarm-cli/commit/e7b9343a5b19c87935eb606f52f19b6f684b6993))
+
 ### [2.36.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.36.0...v2.36.1) (2025-11-07)
 
 
