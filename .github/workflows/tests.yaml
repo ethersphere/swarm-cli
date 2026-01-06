@@ -1,0 +1,62 @@
+name: Tests (Bee stable)
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - '**'
+
+env:
+  BEE_API_URL: 'http://localhost:1633'
+  BEE_PEER_API_URL: 'http://localhost:11633'
+
+jobs:
+  tests-bee-stable:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+
+      - name: Install local dependencies
+        run: npm ci
+
+      - name: Install global dependencies
+        run: npm install --global bee-dev @fairdatasociety/fdp-play @ethersphere/swarm-cli npxie
+
+      - name: Run bee-dev
+        run: bee-dev --port 16337 &
+
+      - name: Run bee-dev with --no-swap
+        run: bee-dev --port 16338 --no-swap &
+
+      - name: Start fdp-play environment
+        run: fdp-play start --detach --fresh --bee-version d0aa8b9-commit
+
+      - name: Deposit to chequebook
+        run: |
+          swarm-cli cheque deposit 100000000000000000
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:11633
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:21633
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:31633
+          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:41633
+
+      - name: Print swarm-cli status
+        continue-on-error: true
+        run: swarm-cli status
+
+      - name: Tests
+        run: npm run test
+
+      - name: Compare coverage
+        if: github.ref != 'refs/heads/master'
+        run:
+          npxie coverage-comparison "${{ github.repository }}" "master" "${{ github.head_ref }}"
+          "test/coverage/coverage-summary.json" "${{ github.event.pull_request.number }}" "${{ secrets.GITHUB_TOKEN }}"
