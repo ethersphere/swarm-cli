@@ -1,10 +1,10 @@
-import { Utils } from '@ethersphere/bee-js'
 import { Numbers, Strings } from 'cafe-utility'
-import { Contract, Event, Wallet } from 'ethers'
+import { BigNumber, Contract, Event, Wallet } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
 import { ABI, Contracts } from '../../utils/contracts'
 import { makeReadySigner } from '../../utils/rpc'
 import { RootCommand } from '../root-command'
+import { calculateAndDisplayCosts, checkBzzBalance, checkXdaiBalance, checkAndApproveAllowance } from '../../utils/bzz-transaction-utils'
 
 export class CreateBatch extends RootCommand implements LeafCommand {
   public readonly name = 'create-batch'
@@ -49,6 +49,45 @@ export class CreateBatch extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
+    const wallet = new Wallet(this.privateKey)
+    const signer = await makeReadySigner(wallet.privateKey, this.jsonRpcUrl)
+
+    // Get BZZ balance
+    const bzzContract = new Contract(Contracts.bzz, ABI.bzz, signer)
+    const balance = await bzzContract.balanceOf(wallet.address)
+    const bzzBalance = BigNumber.from(balance)
+    
+    // Calculate costs
+    const { bzzCost, estimatedGasCost } = await calculateAndDisplayCosts(
+      this.depth,
+      this.amount,
+      bzzBalance.toBigInt(),
+      this.console
+    )
+
+    // Check BZZ balance
+    const hasSufficientBzz = await checkBzzBalance(
+      wallet.address,
+      bzzCost.toPLURBigInt(),
+      bzzBalance.toBigInt(),
+      this.console
+    )
+    
+    if (!hasSufficientBzz) {
+      process.exit(1)
+    }
+
+    // Check xDAI balance
+    const hasSufficientXdai = await checkXdaiBalance(
+      wallet.address,
+      estimatedGasCost,
+      this.console
+    )
+    
+    if (!hasSufficientXdai) {
+      process.exit(1)
+    }
+
     if (!this.yes) {
       this.yes = await this.console.confirm(
         'This command creates an external batch for advanced usage. Do you want to continue?',
@@ -59,20 +98,18 @@ export class CreateBatch extends RootCommand implements LeafCommand {
       return
     }
 
-    const wallet = new Wallet(this.privateKey)
-    const cost = Utils.getStampCost(this.depth, this.amount)
-    const signer = await makeReadySigner(wallet.privateKey, this.jsonRpcUrl)
-
-    this.console.log(`Approving spending of ${cost.toDecimalString()} BZZ to ${wallet.address}`)
-    const tokenProxyContract = new Contract(Contracts.bzz, ABI.tokenProxy, signer)
-    const approve = await tokenProxyContract.approve(Contracts.postageStamp, cost.toPLURBigInt().toString(), {
-      gasLimit: 130_000,
-      type: 2,
-      maxFeePerGas: Numbers.make('2gwei'),
-      maxPriorityFeePerGas: Numbers.make('1gwei'),
-    })
-    this.console.log(`Waiting 3 blocks on approval tx ${approve.hash}`)
-    await approve.wait(3)
+    // Check and approve allowance if needed
+    const requiredAmount = bzzCost.toPLURBigInt().toString()
+    const approved = await checkAndApproveAllowance(
+      this.privateKey,
+      requiredAmount,
+      this.console
+    )
+    
+    if (!approved) {
+      this.console.error('Failed to approve BZZ spending')
+      process.exit(1)
+    }
 
     this.console.log(`Creating postage batch for ${wallet.address} with depth ${this.depth} and amount ${this.amount}`)
     const postageStampContract = new Contract(Contracts.postageStamp, ABI.postageStamp, signer)
