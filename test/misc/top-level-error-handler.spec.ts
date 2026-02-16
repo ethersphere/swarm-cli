@@ -102,4 +102,18 @@ describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
       'There may be additional information in the Bee logs.',
     ])
   })
+
+  it('should handle API errors with responseBody', async () => {
+    jest.spyOn(Utils, 'getSourcemap').mockImplementation(() => {
+      const error: any = new Error('Request failed')
+      error.responseBody = { message: 'out of funds', code: 400 }
+      throw error
+    })
+    await invokeTestCli(['status'])
+    expectErrorsToDeepEqual(consoleMessages, [
+      FORMATTED_ERROR + ' out of funds (HTTP 400)',
+      '',
+      'There may be additional information in the Bee logs.',
+    ])
+  })
 })
