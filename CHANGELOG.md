@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.38.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.37.0...v2.38.0) (2026-02-17)
+
+
+### Features
+
+* update bee-js minor version to 10.2.x ([#664](https://www.github.com/ethersphere/swarm-cli/issues/664)) ([507c15a](https://www.github.com/ethersphere/swarm-cli/commit/507c15a742c34a0a510ff7000922fc4ed74f1e0a))
+
+
+### Bug Fixes
+
+* improve error handling to display API error messages with status… ([#670](https://www.github.com/ethersphere/swarm-cli/issues/670)) ([6fc0503](https://www.github.com/ethersphere/swarm-cli/commit/6fc05034a6296b7664b911e307705a7c7a51d347))
+
 ## [2.37.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.36.1...v2.37.0) (2025-12-17)
 
 
