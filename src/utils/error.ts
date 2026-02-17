@@ -37,7 +37,14 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
     process.exitCode = 1
   }
   // grab error.message, or error if it is a string
-  const message: string | null = typeof error === 'string' ? error : error?.response?.data?.message || error?.message
+  let message: string | null
+  const responseBody = error?.responseBody
+
+  if (responseBody?.code && responseBody?.message) {
+    message = `${responseBody.message} (HTTP ${responseBody.code})`
+  } else {
+    message = typeof error === 'string' ? error : error?.response?.data?.message || error?.message
+  }
   const type: string | null = getFieldOrNull(error, 'type')
 
   // write custom message for 500
