@@ -16,6 +16,7 @@ the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 - [Table of Contents](#table-of-contents)
 - [Demo](#demo)
   - [Purchasing a Postage Stamp](#purchasing-a-postage-stamp)
+  - [Creating a Postage Stamp (Interactive)](#creating-a-postage-stamp-interactive)
   - [Uploading a File](#uploading-a-file)
   - [Creating an Identity](#creating-an-identity)
   - [Uploading to a Feed](#uploading-to-a-feed)
@@ -60,6 +61,34 @@ the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 ## Purchasing a Postage Stamp
 
 ![Swarm CLI Stamp Buy Command](./docs/stamp-buy.gif)
+
+## Creating a Postage Stamp (Interactive)
+
+The `stamp create` command walks you through purchasing a postage stamp by prompting for just two values: how much data you want to store and how long it should persist.
+
+```
+swarm-cli stamp create
+```
+
+You will be prompted for:
+
+1. **Capacity** — the total size of data the batch can store (e.g. `1GB`, `500MB`, `10GB`)
+2. **TTL** — how long the stamps should remain valid (e.g. `1d`, `1w`, `1month`, `6months`)
+
+After entering both values, `swarm-cli` displays a confirmation summary:
+
+```
+You have provided the following parameters:
+Capacity: 10.737 GB
+TTL: 4 weeks
+Cost: 10.4367906627780608 xBZZ
+Available: 10000.0000000000000000 xBZZ
+Type: Immutable
+? Confirm the purchase Yes
+Stamp ID: 690ec71e2312cf7cfa1b0d32a34fc20c8c249a8ea6f557cee035354135cefaef
+```
+
+Review the cost, confirm, and the command returns your new Stamp ID. You can then use this ID with the `--stamp` option in any upload or feed command.
 
 ## Uploading a File
 
