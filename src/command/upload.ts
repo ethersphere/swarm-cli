@@ -15,6 +15,7 @@ import { createSpinner } from '../utils/spinner'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
+import { saveHistory } from '../service/history'
 
 export class Upload extends RootCommand implements LeafCommand {
   public readonly name = 'upload'
@@ -166,7 +167,8 @@ export class Upload extends RootCommand implements LeafCommand {
     const url = await this.uploadAnyWithSpinner(tag, uploadingFolder)
 
     this.console.dim('Data has been sent to the Bee node successfully!')
-    this.console.log(createKeyValue('Swarm hash', this.result.getOrThrow().toHex()))
+    const swarmHash = this.result.getOrThrow().toHex()
+    this.console.log(createKeyValue('Swarm hash', swarmHash))
 
     if (this.act) {
       this.console.log(createKeyValue('Swarm history address', this.historyAddress.getOrThrow().toHex()))
@@ -179,6 +181,13 @@ export class Upload extends RootCommand implements LeafCommand {
 
     this.console.dim('Uploading was successful!')
     this.console.log(createKeyValue('URL', url))
+    saveHistory({
+      timestamp: Date.now(),
+      reference: swarmHash,
+      stamp: this.stamp,
+      path: this.path,
+      uploadType: this.path ? 'file' : 'stdin',
+    })
 
     if (!usedFromOtherCommand) {
       this.console.quiet(this.result.getOrThrow().toHex())

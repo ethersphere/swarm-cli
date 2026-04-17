@@ -67,6 +67,7 @@
     "cafe-utility": "^33.3.1",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
+    "cli-table3": "^0.6.5",
     "ethers": "^5.7.2",
     "furious-commander": "^1.7.1",
     "inquirer": "^8.2.5",
