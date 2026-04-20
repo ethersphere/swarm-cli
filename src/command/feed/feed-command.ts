@@ -73,7 +73,11 @@ export class FeedCommand extends RootCommand {
       this.console.error('The provided identity does not exist. Please select one that exists.')
     }
 
-    return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
+    if (!identities[this.identity]) {
+      this.identity = await pickIdentity(this.commandConfig, this.console)
+    }
+
+    return identities[this.identity]
   }
 
   private async writeFeed(stamp: string, wallet: Wallet, topic: Topic, chunkReference: Reference): Promise<FeedInfo> {

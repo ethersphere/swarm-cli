@@ -3,10 +3,11 @@ import { homedir } from 'os'
 import { join } from 'path'
 import { History } from './types/history'
 import { exit } from 'process'
+import { CommandLog } from '../../command/root-command/command-log'
 
 const historyFilePath = join(homedir(), '.swarm-upload-history.json')
 
-export function getHistory(): History[] {
+export function getHistory(console: CommandLog): History[] {
   if (!existsSync(historyFilePath)) {
     return []
   }
@@ -22,8 +23,9 @@ export function getHistory(): History[] {
   }
 }
 
-export function saveHistory(historyEntry: History) {
-  const history = getHistory()
+export function saveHistory(historyEntry: History, console: CommandLog) {
+  const history = getHistory(console)
+  historyEntry.index = history.length + 1
   history.push(historyEntry)
   writeFileSync(historyFilePath, JSON.stringify(history))
 }

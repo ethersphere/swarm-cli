@@ -181,13 +181,19 @@ export class Upload extends RootCommand implements LeafCommand {
 
     this.console.dim('Uploading was successful!')
     this.console.log(createKeyValue('URL', url))
-    saveHistory({
-      timestamp: Date.now(),
-      reference: swarmHash,
-      stamp: this.stamp,
-      path: this.path,
-      uploadType: this.path ? 'file' : 'stdin',
-    })
+
+    if (!usedFromOtherCommand) {
+      saveHistory(
+        {
+          timestamp: Date.now(),
+          reference: swarmHash,
+          stamp: this.stamp,
+          path: this.path,
+          uploadType: this.path ? 'file' : 'stdin',
+        },
+        this.console,
+      )
+    }
 
     if (!usedFromOtherCommand) {
       this.console.quiet(this.result.getOrThrow().toHex())

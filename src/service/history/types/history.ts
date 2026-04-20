@@ -1,4 +1,5 @@
 export type History = {
+  index: number
   timestamp: number
   reference: string
   stamp: string

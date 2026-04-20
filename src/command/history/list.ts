@@ -2,6 +2,7 @@ import { HistoryCommand } from './history-command'
 import { getHistory } from '../../service/history'
 import Table from 'cli-table3'
 import { LeafCommand } from 'furious-commander'
+import { ellipsis } from '../../utils/text'
 
 export class List extends HistoryCommand implements LeafCommand {
   public readonly name = 'list'
@@ -11,23 +12,23 @@ export class List extends HistoryCommand implements LeafCommand {
   public run() {
     super.init()
     const table = new Table({
-      head: ['Timestamp', 'Reference', 'Postage stamp batch ID', 'File path', 'Upload type'],
+      head: ['Index', 'Timestamp', 'Reference', 'Postage stamp batch ID', 'File path', 'Upload type'],
+      style: {
+        head: ['green', 'bold'],
+      },
       wordWrap: true,
     })
-    const history = getHistory()
+    const history = getHistory(this.console)
     table.push(
       ...history.map(h => [
+        h.index,
         new Date(h.timestamp).toLocaleString(),
-        this.ellipsis(h.reference),
-        this.ellipsis(h.stamp),
+        h.reference.slice(0, 12),
+        ellipsis(h.stamp, 6, -6),
         h.path,
         h.uploadType,
       ]),
     )
     this.console.log(table.toString())
-  }
-
-  private ellipsis(value: string): string {
-    return `${value.slice(0, 6)}...${value.slice(-6)}`
   }
 }

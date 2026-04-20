@@ -4,6 +4,7 @@ import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
 import { Upload as FileUpload } from '../upload'
 import { FeedCommand } from './feed-command'
+import { saveHistory } from '../../service/history'
 
 export class Upload extends FeedCommand implements LeafCommand {
   public readonly name = 'upload'
@@ -34,6 +35,18 @@ export class Upload extends FeedCommand implements LeafCommand {
 
     const reference = await this.runUpload()
     this.feedManifest = await this.updateFeedAndPrint(this.stamp, reference)
+    saveHistory(
+      {
+        timestamp: Date.now(),
+        reference: reference.toHex(),
+        stamp: this.stamp,
+        path: this.fileUpload.path,
+        uploadType: 'folder',
+        feedIdentity: this.identity,
+        feedAddress: this.feedManifest.toHex(),
+      },
+      this.console,
+    )
     this.console.dim('Successfully uploaded to feed.')
   }
 
