@@ -43,6 +43,6 @@ export class History {
   }
 
   public getHistoryFilePath(): string {
-    return process.env.SWARM_CLI_HISTORY_FILE_PATH ?? join(this.configFolderPath, 'upload-history.json')
+    return join(this.configFolderPath, 'upload-history.json')
   }
 }
