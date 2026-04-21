@@ -1,8 +1,8 @@
 import { HistoryCommand } from './history-command'
-import { getHistory } from '../../service/history'
 import { Argument, LeafCommand } from 'furious-commander'
 import { createKeyValue } from '../../utils/text'
 import { exit } from 'process'
+import { History } from '../../service/history'
 
 export class Show extends HistoryCommand implements LeafCommand {
   public readonly name = 'show'
@@ -13,14 +13,14 @@ export class Show extends HistoryCommand implements LeafCommand {
     key: 'index',
     description: 'Index of the history item',
     required: true,
-    autocompletePath: true,
+    type: 'number',
   })
-  public index!: string
+  public index!: number
 
   public run() {
     super.init()
-    const history = getHistory(this.console)
-    const historyItem = history.find(item => item.index === parseInt(this.index))
+    const history = new History(this.configFolder, this.console)
+    const historyItem = history.getItemByIndex(this.index)
 
     if (historyItem === undefined) {
       this.console.error(`Cound not find history item with index '${this.index}'`)

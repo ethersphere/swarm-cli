@@ -8,6 +8,8 @@ import { HistoryItem } from '../../service/history/types/historyItem'
 export class List extends HistoryCommand implements LeafCommand {
   public readonly name = 'list'
 
+  public readonly alias = 'ls'
+
   public readonly description = 'Get upload history list'
 
   public run() {

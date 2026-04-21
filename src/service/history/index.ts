@@ -13,9 +13,6 @@ export class History {
     this.console = console
   }
 
-  public getHistoryFilePath(): string {
-    return process.env.SWARM_CLI_HISTORY_FILE_PATH ?? join(this.configFolderPath, 'upload-history.json')
-  }
   public getItems(): HistoryItem[] {
     const historyFilePath = this.getHistoryFilePath()
 
@@ -34,10 +31,18 @@ export class History {
     }
   }
 
+  public getItemByIndex(index: number): HistoryItem | undefined {
+    return this.getItems().find((item: HistoryItem) => item.index === index)
+  }
+
   public addItem(item: HistoryItem) {
     const history = this.getItems()
     item.index = history.length + 1
     history.push(item)
     writeFileSync(this.getHistoryFilePath(), JSON.stringify(history))
+  }
+
+  public getHistoryFilePath(): string {
+    return process.env.SWARM_CLI_HISTORY_FILE_PATH ?? join(this.configFolderPath, 'upload-history.json')
   }
 }
