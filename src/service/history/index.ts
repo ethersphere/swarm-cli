@@ -1,31 +1,43 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { homedir } from 'os'
 import { join } from 'path'
-import { History } from './types/history'
+import { HistoryItem } from './types/historyItem'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 
-const historyFilePath = join(homedir(), '.swarm-upload-history.json')
+export class History {
+  public configFolderPath: string
+  private console: CommandLog
 
-export function getHistory(console: CommandLog): History[] {
-  if (!existsSync(historyFilePath)) {
-    return []
+  constructor(configFolderPath: string, console: CommandLog) {
+    this.configFolderPath = configFolderPath
+    this.console = console
   }
-  const historyData = readFileSync(historyFilePath)
-  try {
-    const historyList = JSON.parse(historyData.toString()) as History[]
 
-    return historyList
-  } catch (err) {
-    console.error(`There has been an error parsing history JSON from path: '${historyFilePath}'`)
-
-    exit(1)
+  public getHistoryFilePath(): string {
+    return process.env.SWARM_CLI_HISTORY_FILE_PATH ?? join(this.configFolderPath, 'upload-history.json')
   }
-}
+  public getItems(): HistoryItem[] {
+    const historyFilePath = this.getHistoryFilePath()
 
-export function saveHistory(historyEntry: History, console: CommandLog) {
-  const history = getHistory(console)
-  historyEntry.index = history.length + 1
-  history.push(historyEntry)
-  writeFileSync(historyFilePath, JSON.stringify(history))
+    if (!existsSync(historyFilePath)) {
+      return []
+    }
+    const historyData = readFileSync(historyFilePath)
+    try {
+      const historyList = JSON.parse(historyData.toString()) as HistoryItem[]
+
+      return historyList
+    } catch (err) {
+      this.console.error(`There has been an error parsing history JSON from path: '${historyFilePath}'`)
+
+      exit(1)
+    }
+  }
+
+  public addItem(item: HistoryItem) {
+    const history = this.getItems()
+    item.index = history.length + 1
+    history.push(item)
+    writeFileSync(this.getHistoryFilePath(), JSON.stringify(history))
+  }
 }

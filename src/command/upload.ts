@@ -15,7 +15,7 @@ import { createSpinner } from '../utils/spinner'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
-import { saveHistory } from '../service/history'
+import { History } from '../service/history'
 
 export class Upload extends RootCommand implements LeafCommand {
   public readonly name = 'upload'
@@ -182,17 +182,16 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(createKeyValue('URL', url))
 
+    const history = new History(this.configFolder, this.console)
+
     if (!usedFromOtherCommand) {
-      saveHistory(
-        {
-          timestamp: Date.now(),
-          reference: swarmHash,
-          stamp: this.stamp,
-          path: this.path,
-          uploadType: this.path ? 'file' : 'stdin',
-        },
-        this.console,
-      )
+      history.addItem({
+        timestamp: Date.now(),
+        reference: swarmHash,
+        stamp: this.stamp,
+        path: this.path,
+        uploadType: this.path ? 'file' : 'stdin',
+      })
     }
 
     if (!usedFromOtherCommand) {

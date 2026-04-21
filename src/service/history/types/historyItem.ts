@@ -1,4 +1,4 @@
-export type History = {
+export type HistoryItem = {
   index?: number
   timestamp: number
   reference: string

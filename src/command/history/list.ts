@@ -1,8 +1,9 @@
 import { HistoryCommand } from './history-command'
-import { getHistory } from '../../service/history'
+import { History } from '../../service/history'
 import Table from 'cli-table3'
 import { LeafCommand } from 'furious-commander'
 import { ellipsis } from '../../utils/text'
+import { HistoryItem } from '../../service/history/types/historyItem'
 
 export class List extends HistoryCommand implements LeafCommand {
   public readonly name = 'list'
@@ -18,16 +19,19 @@ export class List extends HistoryCommand implements LeafCommand {
       },
       wordWrap: true,
     })
-    const history = getHistory(this.console)
+
+    const history = new History(this.configFolder, this.console)
     table.push(
-      ...history.map(h => [
-        h.index,
-        new Date(h.timestamp).toLocaleString(),
-        h.reference.slice(0, 12),
-        ellipsis(h.stamp, 6, -6),
-        h.path,
-        h.uploadType,
-      ]),
+      ...history
+        .getItems()
+        .map((h: HistoryItem) => [
+          h.index,
+          new Date(h.timestamp).toLocaleString(),
+          h.reference.slice(0, 12),
+          ellipsis(h.stamp, 6, -6),
+          h.path,
+          h.uploadType,
+        ]),
     )
     this.console.log(table.toString())
   }

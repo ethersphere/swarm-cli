@@ -72,6 +72,8 @@ export function describeCommand(
 
     jest.spyOn(global.console, 'warn')
 
+    process.env.SWARM_CLI_HISTORY_FILE_PATH = './tmp/.swarm-upload-history.json'
+
     //if own config is needed
     if (configFileName) {
       const fileName = `${configFileName}.json`
