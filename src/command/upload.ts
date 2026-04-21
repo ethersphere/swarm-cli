@@ -190,7 +190,7 @@ export class Upload extends RootCommand implements LeafCommand {
         reference: swarmHash,
         stamp: this.stamp,
         path: this.path,
-        uploadType: this.path ? 'file' : 'stdin',
+        uploadType: this.uploadType(),
       })
     }
 
@@ -524,6 +524,19 @@ export class Upload extends RootCommand implements LeafCommand {
         return RedundancyLevel.PARANOID
       default:
         throw new CommandLineError(`Invalid redundancy level: ${this.redundancy}`)
+    }
+  }
+
+  public uploadType(): 'stdin' | 'folder' | 'file' {
+    if (this.stdin) {
+      return 'stdin'
+    }
+    const stats = FS.lstatSync(this.path)
+
+    if (stats.isDirectory()) {
+      return 'folder'
+    } else {
+      return 'file'
     }
   }
 }

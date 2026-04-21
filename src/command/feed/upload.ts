@@ -41,7 +41,7 @@ export class Upload extends FeedCommand implements LeafCommand {
       reference: reference.toHex(),
       stamp: this.stamp,
       path: this.fileUpload.path,
-      uploadType: 'folder',
+      uploadType: this.fileUpload.uploadType(),
       feedIdentity: this.identity,
       feedAddress: this.feedManifest.toHex(),
     })
