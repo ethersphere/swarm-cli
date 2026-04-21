@@ -35,7 +35,7 @@ export class Upload extends FeedCommand implements LeafCommand {
 
     const reference = await this.runUpload()
     this.feedManifest = await this.updateFeedAndPrint(this.stamp, reference)
-    const history = new History(this.configFolder, this.console)
+    const history = new History(this.commandConfig.configFolderPath, this.console)
     history.addItem({
       timestamp: Date.now(),
       reference: reference.toHex(),
