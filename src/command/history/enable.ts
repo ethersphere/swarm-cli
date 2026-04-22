@@ -1,6 +1,7 @@
 import { LeafCommand } from 'furious-commander'
 import { HistoryCommand } from './history-command'
 import { warningText } from '../../utils/text'
+import { writeFileSync } from 'fs'
 
 export class Enable extends HistoryCommand implements LeafCommand {
   public readonly name = 'enable'
@@ -16,6 +17,7 @@ export class Enable extends HistoryCommand implements LeafCommand {
       return
     }
     this.commandConfig.enableHistory()
+    writeFileSync(this.commandConfig.getHistoryFilePath(), JSON.stringify([]))
     this.console.log('Upload history tracking enabled')
   }
 }

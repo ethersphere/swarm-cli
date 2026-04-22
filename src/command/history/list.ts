@@ -30,7 +30,7 @@ export class List extends HistoryCommand implements LeafCommand {
       wordWrap: true,
     })
 
-    const history = new History(this.commandConfig.configFolderPath, this.console)
+    const history = new History(this.commandConfig, this.console)
     table.push(
       ...history
         .getItems()

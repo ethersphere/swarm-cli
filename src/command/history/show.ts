@@ -27,7 +27,7 @@ export class Show extends HistoryCommand implements LeafCommand {
 
       return
     }
-    const history = new History(this.commandConfig.configFolderPath, this.console)
+    const history = new History(this.commandConfig, this.console)
     const historyItem = history.getItemByIndex(this.index)
 
     if (historyItem === undefined) {

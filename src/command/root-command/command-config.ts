@@ -54,6 +54,10 @@ export class CommandConfig {
     return true
   }
 
+  public getHistoryFilePath(): string {
+    return join(this.configFolderPath, 'upload-history.json')
+  }
+
   public enableHistory(): void {
     this.config.historyEnabled = true
     this.saveConfig()
@@ -61,7 +65,10 @@ export class CommandConfig {
 
   public disableHistory(): void {
     this.config.historyEnabled = false
-    unlinkSync(join(this.configFolderPath, 'upload-history.json'))
+
+    if (existsSync(this.getHistoryFilePath())) {
+      unlinkSync(this.getHistoryFilePath())
+    }
     this.saveConfig()
   }
 
