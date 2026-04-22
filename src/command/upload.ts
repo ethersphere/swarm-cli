@@ -182,9 +182,8 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(createKeyValue('URL', url))
 
-    const history = new History(this.commandConfig.configFolderPath, this.console)
-
-    if (!usedFromOtherCommand) {
+    if (this.commandConfig.config.historyEnabled && !usedFromOtherCommand) {
+      const history = new History(this.commandConfig.configFolderPath, this.console)
       history.addItem({
         timestamp: Date.now(),
         reference: swarmHash,

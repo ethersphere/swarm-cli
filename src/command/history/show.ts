@@ -1,6 +1,6 @@
 import { HistoryCommand } from './history-command'
 import { Argument, LeafCommand } from 'furious-commander'
-import { createKeyValue } from '../../utils/text'
+import { createKeyValue, warningText } from '../../utils/text'
 import { exit } from 'process'
 import { History } from '../../service/history'
 
@@ -19,6 +19,14 @@ export class Show extends HistoryCommand implements LeafCommand {
 
   public run() {
     super.init()
+
+    if (!this.commandConfig.config.historyEnabled) {
+      this.console.log(
+        warningText('Upload history tracking is not enabled. Use "swarm-cli history enable" command to enable it.'),
+      )
+
+      return
+    }
     const history = new History(this.commandConfig.configFolderPath, this.console)
     const historyItem = history.getItemByIndex(this.index)
 

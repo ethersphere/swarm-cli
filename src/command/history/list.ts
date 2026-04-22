@@ -2,7 +2,7 @@ import { HistoryCommand } from './history-command'
 import { History } from '../../service/history'
 import Table from 'cli-table3'
 import { LeafCommand } from 'furious-commander'
-import { ellipsis } from '../../utils/text'
+import { ellipsis, warningText } from '../../utils/text'
 import { HistoryItem } from '../../service/history/types/history-item'
 
 export class List extends HistoryCommand implements LeafCommand {
@@ -14,6 +14,14 @@ export class List extends HistoryCommand implements LeafCommand {
 
   public run() {
     super.init()
+
+    if (!this.commandConfig.config.historyEnabled) {
+      this.console.log(
+        warningText('Upload history tracking is not enabled. Use "swarm-cli history enable" command to enable it.'),
+      )
+
+      return
+    }
     const table = new Table({
       head: ['Index', 'Timestamp', 'Reference', 'Postage stamp batch ID', 'File path', 'Upload type'],
       style: {
