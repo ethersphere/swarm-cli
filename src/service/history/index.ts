@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { HistoryItem } from './types/historyItem'
+import { HistoryItem } from './types/history-item'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
 

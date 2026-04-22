@@ -3,7 +3,7 @@ import { History } from '../../service/history'
 import Table from 'cli-table3'
 import { LeafCommand } from 'furious-commander'
 import { ellipsis } from '../../utils/text'
-import { HistoryItem } from '../../service/history/types/historyItem'
+import { HistoryItem } from '../../service/history/types/history-item'
 
 export class List extends HistoryCommand implements LeafCommand {
   public readonly name = 'list'
