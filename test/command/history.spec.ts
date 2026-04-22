@@ -5,16 +5,19 @@ import { randomUUID } from 'crypto'
 describeCommand('Test History command', ({ consoleMessages }) => {
   describe('list', () => {
     it('should have table header row', async () => {
+      await invokeTestCli(['history', 'enable'])
       await invokeTestCli(['history', 'list'])
-      expect(consoleMessages[0]).toContain('Timestamp')
-      expect(consoleMessages[0]).toContain('Reference')
-      expect(consoleMessages[0]).toContain('Postage stamp batch ID')
-      expect(consoleMessages[0]).toContain('File path')
-      expect(consoleMessages[0]).toContain('Upload type')
+      expect(consoleMessages[1]).toContain('Timestamp')
+      expect(consoleMessages[1]).toContain('Reference')
+      expect(consoleMessages[1]).toContain('Postage stamp batch ID')
+      expect(consoleMessages[1]).toContain('File path')
+      expect(consoleMessages[1]).toContain('Upload type')
+      await invokeTestCli(['history', 'disable', '--yes'])
     })
 
     it('should list history items', async () => {
       const uploadFolderPath = `${__dirname}/../testpage/images/swarm.png`
+      await invokeTestCli(['history', 'enable'])
       await invokeTestCli(['upload', uploadFolderPath, ...getStampOption()])
       await invokeTestCli(['history', 'list'])
 
@@ -23,6 +26,17 @@ describeCommand('Test History command', ({ consoleMessages }) => {
       expect(tableString).toContain('b4b1557e29c2')
       expect(tableString).toContain('testpage/images/swarm.png')
       expect(tableString).toContain('file')
+      await invokeTestCli(['history', 'disable', '--yes'])
+    })
+
+    describe('list without history enabled', () => {
+      it('should show warning message if history tracking is not enabled', async () => {
+        await invokeTestCli(['history', 'disable', '--yes'])
+        await invokeTestCli(['history', 'list'])
+        expect(consoleMessages[0]).toContain(
+          'Upload history tracking is not enabled. Use "swarm-cli history enable" command to enable it.',
+        )
+      })
     })
   })
 
@@ -30,6 +44,7 @@ describeCommand('Test History command', ({ consoleMessages }) => {
     it('should show all detail for a certain history item', async () => {
       const identityName = randomUUID()
       await invokeTestCli(['identity', 'create', identityName, '--password', 'test'])
+      await invokeTestCli(['history', 'enable'])
       await invokeTestCli([
         'feed',
         'upload',
@@ -45,12 +60,27 @@ describeCommand('Test History command', ({ consoleMessages }) => {
       ])
       await invokeTestCli(['history', 'show', '1'])
 
-      expect(consoleMessages[7]).toContain('c86177d67756e097b')
-      expect(consoleMessages[8]).toMatch(/[a-f0-9]{64}/g)
-      expect(consoleMessages[9]).toContain('folder')
-      expect(consoleMessages[10]).toContain('testpage/images')
-      expect(consoleMessages[11]).toMatch(/[a-f0-9]{64}/g)
-      expect(consoleMessages[12]).toContain(identityName)
+      expect(consoleMessages[8]).toContain('c86177d67756e097b')
+      expect(consoleMessages[9]).toMatch(/[a-f0-9]{64}/g)
+      expect(consoleMessages[10]).toContain('folder')
+      expect(consoleMessages[11]).toContain('testpage/images')
+      expect(consoleMessages[12]).toMatch(/[a-f0-9]{64}/g)
+      expect(consoleMessages[13]).toContain(identityName)
+      await invokeTestCli(['history', 'disable', '--yes'])
+    })
+  })
+
+  describe('enable', () => {
+    it('should enable history tracking', async () => {
+      await invokeTestCli(['history', 'enable'])
+      expect(consoleMessages[0]).toContain('Upload history tracking enabled')
+    })
+
+    it('should not enable history tracking if it is already enabled', async () => {
+      await invokeTestCli(['history', 'enable'])
+      await invokeTestCli(['history', 'enable'])
+      expect(consoleMessages[1]).toContain('Upload history tracking is already enabled')
+      await invokeTestCli(['history', 'disable', '--yes'])
     })
   })
 })
