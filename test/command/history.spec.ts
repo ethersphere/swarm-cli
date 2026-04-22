@@ -1,10 +1,8 @@
-import { existsSync, mkdirSync, unlinkSync } from 'fs'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 import { randomUUID } from 'crypto'
-import { join } from 'path'
 
-describeCommand('Test History command', ({ consoleMessages, configFolderPath }) => {
+describeCommand('Test History command', ({ consoleMessages }) => {
   describe('list', () => {
     it('should have table header row', async () => {
       await invokeTestCli(['history', 'list'])
@@ -16,14 +14,14 @@ describeCommand('Test History command', ({ consoleMessages, configFolderPath }) 
     })
 
     it('should list history items', async () => {
-      const uploadFolderPath = `${__dirname}/../testpage`
+      const uploadFolderPath = `${__dirname}/../testpage/images/swarm.png`
       await invokeTestCli(['upload', uploadFolderPath, ...getStampOption()])
       await invokeTestCli(['history', 'list'])
 
       const tableString = consoleMessages[consoleMessages.length - 1]
       expect(tableString).toContain(' 1     ')
-      expect(tableString).toContain('ebf7f8633bd9')
-      expect(tableString).toContain('testpage')
+      expect(tableString).toContain('b4b1557e29c2')
+      expect(tableString).toContain('testpage/images/swarm.png')
       expect(tableString).toContain('file')
     })
   })
