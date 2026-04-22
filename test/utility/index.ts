@@ -89,6 +89,14 @@ export function describeCommand(
       consoleMessages.length = 0
     })
 
+    afterEach(() => {
+      const historyFilePath = join(configFolderPath, 'upload-history.json')
+
+      if (existsSync(historyFilePath)) {
+        unlinkSync(historyFilePath)
+      }
+    })
+
     func({ consoleMessages, getNthLastMessage, getLastMessage, hasMessageContaining, configFolderPath })
   })
 }

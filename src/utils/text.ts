@@ -25,6 +25,10 @@ export function createKeyValue(key: string, value: string | number | boolean, pa
   return `${chalk.green.bold(key + ':').padEnd(padLength ? padLength + 1 : 0)} ${String(value)}`
 }
 
+export function ellipsis(value: string, startIndex: number, endIndex?: number | null) {
+  return `${value.slice(0, startIndex)}...${endIndex ? value.slice(endIndex) : ''}`
+}
+
 export function printDivided<T>(
   items: T[],
   printFn: (item: T, console: CommandLog) => void,
