@@ -1,3 +1,4 @@
+import chalk from 'chalk'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 import { randomUUID } from 'crypto'
@@ -80,6 +81,34 @@ describeCommand('Test History command', ({ consoleMessages }) => {
       await invokeTestCli(['history', 'enable'])
       await invokeTestCli(['history', 'enable'])
       expect(consoleMessages[1]).toContain('Upload history tracking is already enabled')
+      await invokeTestCli(['history', 'disable', '--yes'])
+    })
+  })
+
+  describe('disable', () => {
+    it('should disable history tracking', async () => {
+      await invokeTestCli(['history', 'enable'])
+      await invokeTestCli(['history', 'disable', '--yes'])
+      expect(consoleMessages[1]).toContain('Upload history file deleted and upload history tracking disabled')
+    })
+
+    it('should not disable history tracking if it is already disabled', async () => {
+      await invokeTestCli(['history', 'disable', '--yes'])
+      await invokeTestCli(['history', 'disable', '--yes'])
+      expect(consoleMessages[1]).toContain(
+        'Upload history tracking is not enabled. Use "swarm-cli history enable" command to enable it.',
+      )
+    })
+  })
+
+  describe('status', () => {
+    it('should show history tracking status', async () => {
+      await invokeTestCli(['history', 'status'])
+      expect(consoleMessages[0]).toEqual(chalk.green.bold('Upload history tracking status:'))
+      expect(consoleMessages[1]).toContain('inactive')
+      await invokeTestCli(['history', 'enable'])
+      await invokeTestCli(['history', 'status'])
+      expect(consoleMessages[4]).toContain('active')
       await invokeTestCli(['history', 'disable', '--yes'])
     })
   })
