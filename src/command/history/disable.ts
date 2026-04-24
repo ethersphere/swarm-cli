@@ -1,6 +1,7 @@
 import { LeafCommand } from 'furious-commander'
 import { HistoryCommand } from './history-command'
 import { warningText } from '../../utils/text'
+import { existsSync, unlinkSync } from 'fs'
 
 export class Disable extends HistoryCommand implements LeafCommand {
   public readonly name = 'disable'
@@ -20,13 +21,18 @@ export class Disable extends HistoryCommand implements LeafCommand {
 
     if (!this.quiet && !this.yes) {
       this.yes = await this.console.confirm(
-        'Are you sure you want to disable upload history tracking? This will delete the upload history file and all upload history data will be lost.',
+        'Do you want to delete the upload history file? This action cannot be undone.',
       )
     }
 
-    if (!this.yes) return
+    if (this.yes && existsSync(this.commandConfig.getHistoryFilePath())) {
+      process.stdout.write('Deleting upload history file... ')
+      unlinkSync(this.commandConfig.getHistoryFilePath())
+      this.console.log('Upload history file deleted')
+    }
 
-    this.commandConfig.disableHistory()
-    this.console.log('Upload history file deleted and upload history tracking disabled')
+    this.commandConfig.setHistoryEnabled(false)
+
+    this.console.log('Upload history tracking disabled')
   }
 }

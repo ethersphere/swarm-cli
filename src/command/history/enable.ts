@@ -16,7 +16,7 @@ export class Enable extends HistoryCommand implements LeafCommand {
 
       return
     }
-    this.commandConfig.enableHistory()
+    this.commandConfig.setHistoryEnabled(true)
     writeFileSync(this.commandConfig.getHistoryFilePath(), JSON.stringify([]))
     this.console.log('Upload history tracking enabled')
   }
