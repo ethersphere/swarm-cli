@@ -26,7 +26,6 @@ export class Disable extends HistoryCommand implements LeafCommand {
     }
 
     if (this.yes && existsSync(this.commandConfig.getHistoryFilePath())) {
-      process.stdout.write('Deleting upload history file... ')
       unlinkSync(this.commandConfig.getHistoryFilePath())
       this.console.log('Upload history file deleted')
     }
