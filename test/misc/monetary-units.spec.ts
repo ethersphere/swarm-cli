@@ -38,12 +38,12 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
 
   it('should show units in help: cheque withdraw', async () => {
     await invokeTestCli(['cheque', 'withdraw', '--help'])
-    expectSubstringsPrinted('amount', 'in PLUR')
+    expectSubstringsPrinted('amount', 'Amount of tokens to withdraw')
   })
 
   it('should show units in help: cheque deposit', async () => {
     await invokeTestCli(['cheque', 'deposit', '--help'])
-    expectSubstringsPrinted('amount', 'in PLUR')
+    expectSubstringsPrinted('amount', 'Amount of tokens to deposit')
   })
 
   it('should show units after running: cheque list', async () => {

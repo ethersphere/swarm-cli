@@ -23,8 +23,7 @@ export class Deposit extends ChequeCommand implements LeafCommand {
   @Option({
     key: 'unit',
     type: 'string',
-    description: 'Unit of the amount',
-    required: true,
+    description: `Unit of the amount; choices: ${VALID_UNITS.join(', ')}`,
     default: 'bzz',
   })
   public unit!: string

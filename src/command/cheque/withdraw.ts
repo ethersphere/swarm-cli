@@ -14,7 +14,7 @@ export class Withdraw extends ChequeCommand implements LeafCommand {
   @Argument({
     key: 'amount',
     type: 'bigint',
-    description: 'Amount of tokens to withdraw in PLUR',
+    description: 'Amount of tokens to withdraw',
     required: true,
     minimum: BigInt(1),
   })
@@ -23,8 +23,7 @@ export class Withdraw extends ChequeCommand implements LeafCommand {
   @Option({
     key: 'unit',
     type: 'string',
-    description: 'Unit of the amount',
-    required: true,
+    description: `Unit of the amount; choices: ${VALID_UNITS.join(', ')}`,
     default: 'bzz',
   })
   public unit!: string
