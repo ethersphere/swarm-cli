@@ -3,6 +3,11 @@ import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 import { randomUUID } from 'crypto'
 
+async function uploadTestFile() {
+  const uploadFilePath = `${__dirname}/../testpage/images/swarm.png`
+  await invokeTestCli(['upload', uploadFilePath, ...getStampOption()])
+}
+
 describeCommand('Test History command', ({ consoleMessages }) => {
   describe('list', () => {
     it('should have table header row', async () => {
@@ -17,9 +22,8 @@ describeCommand('Test History command', ({ consoleMessages }) => {
     })
 
     it('should list history items', async () => {
-      const uploadFolderPath = `${__dirname}/../testpage/images/swarm.png`
       await invokeTestCli(['history', 'enable'])
-      await invokeTestCli(['upload', uploadFolderPath, ...getStampOption()])
+      await uploadTestFile()
       await invokeTestCli(['history', 'list'])
 
       const tableString = consoleMessages[consoleMessages.length - 1]
@@ -112,8 +116,11 @@ describeCommand('Test History command', ({ consoleMessages }) => {
       expect(consoleMessages[0]).toEqual(chalk.green.bold('Upload history tracking status:'))
       expect(consoleMessages[1]).toContain('inactive')
       await invokeTestCli(['history', 'enable'])
+      await uploadTestFile()
       await invokeTestCli(['history', 'status'])
-      expect(consoleMessages[4]).toContain('active')
+      expect(consoleMessages[9]).toContain('active')
+      expect(consoleMessages[10]).toContain('/test/testconfig/upload-history.json')
+      expect(consoleMessages[11]).toEqual('Number of history entries: 1')
       await invokeTestCli(['history', 'disable', '--yes'])
     })
   })

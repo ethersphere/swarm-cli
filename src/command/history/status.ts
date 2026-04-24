@@ -2,6 +2,7 @@ import { LeafCommand } from 'furious-commander'
 import { HistoryCommand } from './history-command'
 import chalk from 'chalk'
 import { existsSync, statSync } from 'fs'
+import { History } from '../../service/history'
 
 export class Status extends HistoryCommand implements LeafCommand {
   public readonly name = 'status'
@@ -19,12 +20,9 @@ export class Status extends HistoryCommand implements LeafCommand {
 
     if (this.commandConfig.config.historyEnabled) {
       this.console.log(`History file path: ${this.commandConfig.getHistoryFilePath()}`)
-      let size = 0
 
-      if (existsSync(this.commandConfig.getHistoryFilePath())) {
-        size = statSync(this.commandConfig.getHistoryFilePath()).size
-      }
-      this.console.log(`History file size: ${size} bytes`)
+      const history = new History(this.commandConfig, this.console)
+      this.console.log(`Number of history entries: ${history.getItems().length}`)
     }
   }
 }
