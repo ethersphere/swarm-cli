@@ -37,7 +37,7 @@ describeCommand('Test History command', ({ consoleMessages }) => {
     it('should show warning message if history tracking is not enabled', async () => {
       await invokeTestCli(['history', 'disable', '--yes'])
       await invokeTestCli(['history', 'list'])
-      expect(consoleMessages[0]).toContain(
+      expect(consoleMessages[1]).toContain(
         'Upload history tracking is not enabled. Use "swarm-cli history enable" command to enable it.',
       )
     })
@@ -104,9 +104,7 @@ describeCommand('Test History command', ({ consoleMessages }) => {
 
     it('should not disable history tracking if it is already disabled', async () => {
       await invokeTestCli(['history', 'disable', '--yes'])
-      expect(consoleMessages[0]).toContain(
-        'Upload history tracking is not enabled. Use "swarm-cli history enable" command to enable it.',
-      )
+      expect(consoleMessages[0]).toContain('Upload history tracking is already disabled and no history file exists')
     })
   })
 

@@ -11,27 +11,26 @@ export class Disable extends HistoryCommand implements LeafCommand {
   public async run() {
     super.init()
 
-    if (!this.commandConfig.config.historyEnabled) {
-      this.console.log(
-        warningText('Upload history tracking is not enabled. Use "swarm-cli history enable" command to enable it.'),
-      )
+    const historyFileExists = existsSync(this.commandConfig.getHistoryFilePath())
+
+    if (!this.commandConfig.config.historyEnabled && !historyFileExists) {
+      this.console.log(warningText('Upload history tracking is already disabled and no history file exists'))
 
       return
     }
 
-    if (!this.quiet && !this.yes) {
+    if (!this.quiet && !this.yes && historyFileExists) {
       this.yes = await this.console.confirm(
         'Do you want to delete the upload history file? This action cannot be undone.',
       )
     }
 
-    if (this.yes && existsSync(this.commandConfig.getHistoryFilePath())) {
+    if (this.yes && historyFileExists) {
       unlinkSync(this.commandConfig.getHistoryFilePath())
       this.console.log('Upload history file deleted')
     }
 
     this.commandConfig.setHistoryEnabled(false)
-
     this.console.log('Upload history tracking disabled')
   }
 }
