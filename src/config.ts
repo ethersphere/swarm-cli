@@ -102,7 +102,7 @@ export const dev: IOption<boolean> = {
   default: false,
 }
 
-export const optionParameters: IOption<unknown>[] = [
+export const optionParameters: IOption<any>[] = [
   beeApiUrl,
   configFolder,
   configFile,
