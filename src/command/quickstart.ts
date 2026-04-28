@@ -56,12 +56,12 @@ export class Quickstart extends RootCommand implements LeafCommand {
     writeFileSync(
       'bee.yaml',
       `api-addr: 127.0.0.1:1633
-blockchain-rpc-endpoint: "https://ethereum-rpc.publicnode.com"
+blockchain-rpc-endpoint: "https://xdai.fairdatasociety.org"
 cors-allowed-origins: ["*"]
 data-dir: "${process.cwd()}/data-dir"
 full-node: false
 mainnet: true
-resolver-options: ["https://cloudflare-eth.com"]
+resolver-options: ["https://ethereum-rpc.publicnode.com"]
 storage-incentives-enable: false
 swap-enable: ${type === 'light' ? 'true' : 'false'}
 password: "${Strings.randomAlphanumeric(20)}"`,
