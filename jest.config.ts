@@ -55,7 +55,7 @@ export default async (): Promise<Config.InitialOptions> => {
   }
 
   return {
-    collectCoverage: true,
+    collectCoverage: process.env.SKIP_COVERAGE !== 'true',
     coverageDirectory: 'coverage',
     coverageReporters: ['lcov', 'json-summary'],
     collectCoverageFrom: ['src/**/*.ts'],
