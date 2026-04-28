@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { homedir, platform } from 'os'
 import { join } from 'path'
 import { exit } from 'process'
@@ -20,6 +20,7 @@ export interface Config {
   beeApiUrl: string
 
   identities: { [name: string]: Identity }
+  historyEnabled?: boolean
 }
 
 export class CommandConfig {
@@ -36,6 +37,7 @@ export class CommandConfig {
     this.config = {
       beeApiUrl: beeApiUrl.default || '',
       identities: {},
+      historyEnabled: true,
     }
     this.configFolderPath = this.getConfigFolderPath(appName, configFolder)
     this.configFilePath = join(this.configFolderPath, configFile)
@@ -50,6 +52,15 @@ export class CommandConfig {
     this.saveConfig()
 
     return true
+  }
+
+  public getHistoryFilePath(): string {
+    return join(this.configFolderPath, 'upload-history.json')
+  }
+
+  public setHistoryEnabled(enabled: boolean): void {
+    this.config.historyEnabled = enabled
+    this.saveConfig()
   }
 
   public removeIdentity(name: string): void {

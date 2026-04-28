@@ -1,20 +1,20 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
 import { HistoryItem } from './types/history-item'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
+import { CommandConfig } from '../../command/root-command/command-config'
 
 export class History {
-  public configFolderPath: string
+  private commandConfig: CommandConfig
   private console: CommandLog
 
-  constructor(configFolderPath: string, console: CommandLog) {
-    this.configFolderPath = configFolderPath
+  constructor(commandConfig: CommandConfig, console: CommandLog) {
+    this.commandConfig = commandConfig
     this.console = console
   }
 
   public getItems(): HistoryItem[] {
-    const historyFilePath = this.getHistoryFilePath()
+    const historyFilePath = this.commandConfig.getHistoryFilePath()
 
     if (!existsSync(historyFilePath)) {
       return []
@@ -39,10 +39,6 @@ export class History {
     const history = this.getItems()
     item.index = history.length + 1
     history.push(item)
-    writeFileSync(this.getHistoryFilePath(), JSON.stringify(history))
-  }
-
-  public getHistoryFilePath(): string {
-    return join(this.configFolderPath, 'upload-history.json')
+    writeFileSync(this.commandConfig.getHistoryFilePath(), JSON.stringify(history))
   }
 }
