@@ -8,8 +8,6 @@ interface Cashable {
   amount: BZZ
 }
 
-export const VALID_UNITS = ['bzz', 'plur']
-
 export class ChequeCommand extends RootCommand {
   protected async getFilteredCheques(minimum: bigint): Promise<Cashable[]> {
     const cheques = await this.getCashableCheques()

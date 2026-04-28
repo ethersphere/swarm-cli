@@ -1,8 +1,8 @@
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { createKeyValue, errorText } from '../../utils/text'
-import { ChequeCommand, VALID_UNITS } from './cheque-command'
-import { exit } from 'process'
 import { BZZ } from '@ethersphere/bee-js'
+// import { Context } from 'madlad'
+import { createKeyValue } from '../../utils/text'
+import { ChequeCommand } from './cheque-command'
 
 export class Withdraw extends ChequeCommand implements LeafCommand {
   public readonly name = 'withdraw'
@@ -13,17 +13,39 @@ export class Withdraw extends ChequeCommand implements LeafCommand {
 
   @Argument({
     key: 'amount',
-    type: 'bigint',
+    type: 'string',
     description: 'Amount of tokens to withdraw',
     required: true,
-    minimum: BigInt(1),
+    // validate: (value: string, context: Context): string[] => {
+    //   if (context.options.unit === 'bzz') {
+    //     const amount = parseFloat(value)
+    //
+    //     if (isNaN(amount) || amount <= 0) {
+    //       return [`Invalid amount '${value}'. Amount must be a positive number.`]
+    //     }
+    //   } else {
+    //     try {
+    //       const amount = BigInt(value)
+    //
+    //       if (amount <= BigInt(0)) {
+    //         return [`Invalid amount '${value}'. Amount must be a positive integer.`]
+    //       }
+    //     } catch (e) {
+    //       return [`Invalid amount '${value}'. Amount must be a positive integer.`]
+    //     }
+    //   }
+    //
+    //   return []
+    // },
   })
-  public amount!: bigint
+  public amount!: string
 
   @Option({
     key: 'unit',
+    // type: 'enum',
     type: 'string',
-    description: `Unit of the amount; choices: ${VALID_UNITS.join(', ')}`,
+    description: 'Unit of the amount',
+    // enum: ['bzz', 'plur'],
     default: 'bzz',
   })
   public unit!: string
@@ -31,19 +53,10 @@ export class Withdraw extends ChequeCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    this.validateUnit()
-    const amountInPlur =
-      this.unit === 'bzz' ? BZZ.fromDecimalString(this.amount.toString()).toPLURBigInt() : this.amount
+    const amountBZZ = this.unit === 'bzz' ? BZZ.fromDecimalString(this.amount) : BZZ.fromPLUR(this.amount)
 
-    const response = await this.bee.withdrawTokens(amountInPlur.toString())
+    const response = await this.bee.withdrawBZZFromChequebook(amountBZZ)
     this.console.log(createKeyValue('Tx', response.toHex()))
     this.console.quiet(response.toHex())
-  }
-
-  private validateUnit() {
-    if (!VALID_UNITS.includes(this.unit)) {
-      this.console.error(errorText(`Invalid unit '${this.unit}'. Valid units are: ${VALID_UNITS.join(', ')}`))
-      exit(1)
-    }
   }
 }
