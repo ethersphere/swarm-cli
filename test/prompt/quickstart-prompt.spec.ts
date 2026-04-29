@@ -36,4 +36,11 @@ describeCommand('Test Quickstart command', () => {
     expect(yaml).toContain('swap-enable: false')
     expect(yaml).toContain('password:')
   })
+
+  it('should download the bee binary', async () => {
+    mockFetchSuccess()
+    jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: 'ultra-light' })
+    await invokeTestCli(['quickstart'])
+    expect(mockedFetch).toHaveBeenCalledTimes(1)
+  })
 })
