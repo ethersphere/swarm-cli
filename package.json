@@ -26,6 +26,7 @@
     "prepare": "npm run build",
     "build": "rimraf dist && tsc",
     "test": "jest --config=jest.config.ts",
+    "test.e2e": "jest --config=jest-e2e.config.ts",
     "test:coverage": "jest --config=jest.config.ts --coverage",
     "check": "tsc --project tsconfig.test.json",
     "start": "ts-node src/index.ts",
