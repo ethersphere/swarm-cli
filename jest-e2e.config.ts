@@ -4,14 +4,11 @@
  */
 import type { Config } from '@jest/types'
 import { Dates } from 'cafe-utility'
-import { CommandLog, VerbosityLevel } from './src/command/root-command/command-log'
 
-export default async (): Promise<Config.InitialOptions> => {
-  const console = new CommandLog(VerbosityLevel.Normal)
-  console.log('Running e2e tests')
-
+export default (): Config.InitialOptions => {
   return {
     collectCoverage: false,
+    forceExit: true,
 
     // Run tests from one or more projects
     projects: [
