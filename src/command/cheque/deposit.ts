@@ -52,9 +52,9 @@ export class Deposit extends ChequeCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const amountInPlur = this.unit === 'bzz' ? BZZ.fromDecimalString(this.amount) : BZZ.fromPLUR(this.amount)
+    const amountBzz = this.unit === 'bzz' ? BZZ.fromDecimalString(this.amount) : BZZ.fromPLUR(this.amount)
 
-    const response = await this.bee.depositBZZToChequebook(amountInPlur)
+    const response = await this.bee.depositBZZToChequebook(amountBzz)
     this.console.log(createKeyValue('Tx', response.toHex()))
     this.console.quiet(response.toHex())
   }

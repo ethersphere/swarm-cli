@@ -52,9 +52,10 @@ export class Withdraw extends ChequeCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const amountBZZ = this.unit === 'bzz' ? BZZ.fromDecimalString(this.amount) : BZZ.fromPLUR(this.amount)
+    const amountBzz = this.unit === 'bzz' ? BZZ.fromDecimalString(this.amount) : BZZ.fromPLUR(this.amount)
 
-    const response = await this.bee.withdrawBZZFromChequebook(amountBZZ)
+    process.stderr.write(JSON.stringify(amountBzz) + '\n')
+    const response = await this.bee.withdrawBZZFromChequebook(amountBzz)
     this.console.log(createKeyValue('Tx', response.toHex()))
     this.console.quiet(response.toHex())
   }
