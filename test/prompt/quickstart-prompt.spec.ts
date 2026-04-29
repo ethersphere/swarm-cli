@@ -24,6 +24,7 @@ describeCommand('Test Quickstart command', () => {
 
     await invokeTestCli(['quickstart'])
     expect(existsSync('bee.yaml')).toBe(true)
+    expect(mockedFetch).toHaveBeenCalledTimes(1)
     const yaml = readFileSync('bee.yaml', 'utf8')
     expect(yaml).toContain('api-addr: 127.0.0.1:1633')
     expect(yaml).toContain('blockchain-rpc-endpoint: "https://xdai.fairdatasociety.org"')
@@ -35,12 +36,5 @@ describeCommand('Test Quickstart command', () => {
     expect(yaml).toContain('storage-incentives-enable: false')
     expect(yaml).toContain('swap-enable: false')
     expect(yaml).toContain('password:')
-  })
-
-  it('should download the bee binary', async () => {
-    mockFetchSuccess()
-    jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: 'ultra-light' })
-    await invokeTestCli(['quickstart'])
-    expect(mockedFetch).toHaveBeenCalledTimes(1)
   })
 })
