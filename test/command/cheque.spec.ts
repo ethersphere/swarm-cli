@@ -95,7 +95,7 @@ describeCommand(
     it('should raise error when withdrawing zero', async () => {
       await runCommandAndExpectError(
         ['cheque', 'withdraw', '0'],
-        "Invalid amount '-1'. Amount must be a positive number.",
+        "Invalid amount '0'. Amount must be a positive number.",
         consoleMessages,
       )
     })
@@ -103,7 +103,7 @@ describeCommand(
     it('should raise error when depositing zero', async () => {
       await runCommandAndExpectError(
         ['cheque', 'deposit', '0'],
-        "Invalid amount '-1'. Amount must be a positive number.",
+        "Invalid amount '0'. Amount must be a positive number.",
         consoleMessages,
       )
     })
