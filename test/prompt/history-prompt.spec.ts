@@ -20,7 +20,7 @@ describeCommand(
       await invokeTestCli(['history', 'disable'])
 
       expect(hasMessageContaining('Upload history tracking disabled')).toBe(true)
-      expect(existsSync(`${configFolderPath}/upload-history.json`)).toEqual(true)
+      expect(existsSync(`${configFolderPath}/history-prompt-upload-history.json`)).toEqual(true)
       expect(inquirer.prompt).toHaveBeenCalledWith({
         message: 'Do you want to delete the upload history file? This action cannot be undone.',
         name: 'value',
@@ -43,4 +43,5 @@ describeCommand(
       })
     })
   },
+  { configFileName: 'history-prompt' },
 )
