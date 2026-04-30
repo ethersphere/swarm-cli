@@ -43,4 +43,5 @@ describeCommand(
       })
     })
   },
+  { configFileName: 'history-prompt' },
 )

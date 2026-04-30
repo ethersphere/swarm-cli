@@ -122,4 +122,4 @@ describeCommand('Test History command', ({ consoleMessages }) => {
       await invokeTestCli(['history', 'disable', '--yes'])
     })
   })
-})
+}, { configFileName: 'history' })
