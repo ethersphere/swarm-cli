@@ -72,7 +72,10 @@ export function describeCommand(
 
     jest.spyOn(global.console, 'warn')
 
-    const historyFilePath = join(configFolderPath, configFileName ? `${configFileName}-upload-history.json` : 'upload-history.json')
+    const historyFilePath = join(
+      configFolderPath,
+      configFileName ? `${configFileName}-upload-history.json` : 'upload-history.json',
+    )
     process.env.SWARM_CLI_HISTORY_FILE_PATH = historyFilePath
 
     //if own config is needed
