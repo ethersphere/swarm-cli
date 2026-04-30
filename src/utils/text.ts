@@ -17,6 +17,10 @@ export function warningText(string: string): string {
   return chalk.yellow(string)
 }
 
+export function errorText(string: string): string {
+  return chalk.red(string)
+}
+
 export function deletePreviousLine(): void {
   process.stdout.write('\r' + goUpOneRow() + deleteWholeRow())
 }
