@@ -75,7 +75,7 @@ export default async (): Promise<Config.InitialOptions> => {
     rootDir: 'test',
 
     // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-    testPathIgnorePatterns: ['/node_modules/'],
+    testPathIgnorePatterns: ['/node_modules/', '/test/e2e/'],
 
     // Increase timeout since we have long running cryptographic functions
     testTimeout: Dates.minutes(6),
