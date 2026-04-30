@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.38.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.37.0...v2.38.0) (2026-04-30)
+
+
+### Features
+
+* add upload history enable, disable and status commands ([#683](https://www.github.com/ethersphere/swarm-cli/issues/683)) ([dd9a74b](https://www.github.com/ethersphere/swarm-cli/commit/dd9a74b6977d426a659e0ab65f89d0ff189d7673))
+* implement upload history ([#679](https://www.github.com/ethersphere/swarm-cli/issues/679)) ([d72a1de](https://www.github.com/ethersphere/swarm-cli/commit/d72a1de7eef880b90e26c11aae87916bd75c084c))
+* update bee-js minor version to 10.2.x ([#664](https://www.github.com/ethersphere/swarm-cli/issues/664)) ([507c15a](https://www.github.com/ethersphere/swarm-cli/commit/507c15a742c34a0a510ff7000922fc4ed74f1e0a))
+
+
+### Bug Fixes
+
+* improve error handling to display API error messages with status… ([#670](https://www.github.com/ethersphere/swarm-cli/issues/670)) ([6fc0503](https://www.github.com/ethersphere/swarm-cli/commit/6fc05034a6296b7664b911e307705a7c7a51d347))
+
 ## [2.37.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.36.1...v2.37.0) (2025-12-17)
 
 
