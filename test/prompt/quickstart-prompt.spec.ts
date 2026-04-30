@@ -24,6 +24,7 @@ describeCommand('Test Quickstart command', () => {
 
     await invokeTestCli(['quickstart'])
     expect(existsSync('bee.yaml')).toBe(true)
+    expect(mockedFetch).toHaveBeenCalledTimes(1)
     const yaml = readFileSync('bee.yaml', 'utf8')
     expect(yaml).toContain('api-addr: 127.0.0.1:1633')
     expect(yaml).toContain('blockchain-rpc-endpoint: "https://xdai.fairdatasociety.org"')
