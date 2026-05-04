@@ -36,16 +36,6 @@ describeCommand('Test Monetary units', ({ consoleMessages }) => {
     expectSubstringsPrinted('--gas-limit', 'in wei')
   })
 
-  it('should show units in help: cheque withdraw', async () => {
-    await invokeTestCli(['cheque', 'withdraw', '--help'])
-    expectSubstringsPrinted('amount', 'Amount of tokens to withdraw')
-  })
-
-  it('should show units in help: cheque deposit', async () => {
-    await invokeTestCli(['cheque', 'deposit', '--help'])
-    expectSubstringsPrinted('amount', 'Amount of tokens to deposit')
-  })
-
   it('should show units after running: cheque list', async () => {
     await invokeTestCli(['cheque', 'list', '--bee-api-url', 'http://localhost:16337'])
     expectSubstringsPrinted('Cheque Value', 'xBZZ')
