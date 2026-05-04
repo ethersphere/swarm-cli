@@ -1,9 +1,10 @@
 import { BZZ } from '@ethersphere/bee-js'
-import { LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { createSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
+import { Context } from 'vm'
 
 const MIN_DEPOSIT = BZZ.fromDecimalString('10')
 
@@ -12,33 +13,49 @@ export class Deposit extends RootCommand implements LeafCommand {
 
   public readonly description = 'Stake xBZZ for the storage incentives'
 
-  @Option({
-    key: 'bzz',
-    description: "Amount of BZZ to add to the node's stake",
-    type: 'string',
-    conflicts: 'plur',
+  @Argument({
+    key: 'amount',
+    description: 'Amount of tokens to deposit',
+    type: 'decimal-string',
     required: true,
+    validate: (value: unknown, context: Context): string[] => {
+      if (context.options.unit === 'bzz') {
+        const amount = parseFloat(value as string)
+
+        if (isNaN(amount) || amount <= 0) {
+          return [`Invalid amount '${value}'. Amount must be a positive number.`]
+        }
+      } else {
+        try {
+          const amount = BigInt(value as string)
+
+          if (amount <= BigInt(0)) {
+            return [`Invalid amount '${value}'. Amount must be a positive integer.`]
+          }
+        } catch (e) {
+          return [`Invalid amount '${value}'. Amount must be a positive integer.`]
+        }
+      }
+
+      return []
+    },
   })
-  public amountBzz!: string | undefined
+  public amount!: string
 
   @Option({
-    key: 'plur',
-    description: "Amount of PLUR to add to the node's stake",
-    type: 'bigint',
-    minimum: BigInt(1),
-    conflicts: 'bzz',
-    required: true,
+    key: 'unit',
+    type: 'enum',
+    description: 'Unit of the amount',
+    enum: ['bzz', 'plur'],
+    default: 'bzz',
   })
-  public amountPlur!: bigint | undefined
+  public unit!: string
 
   public async run(): Promise<void> {
     super.init()
 
-    if (this.amountPlur) {
-      await this.deposit(BZZ.fromPLUR(this.amountPlur))
-    } else if (this.amountBzz) {
-      await this.deposit(BZZ.fromDecimalString(this.amountBzz))
-    }
+    const amountBzz = this.unit === 'bzz' ? BZZ.fromDecimalString(this.amount) : BZZ.fromPLUR(this.amount)
+    await this.deposit(amountBzz)
 
     this.console.log('Stake deposited successfully!')
     this.console.log('Run `swarm-cli stake status` to check your stake status.')
