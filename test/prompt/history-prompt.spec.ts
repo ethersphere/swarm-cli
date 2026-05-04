@@ -11,7 +11,7 @@ async function uploadTestFile() {
 
 describeCommand(
   'Using History Disable Command with Prompts',
-  ({ consoleMessages, configFolderPath, getLastMessage }) => {
+  ({ configFolderPath, getLastMessage, hasMessageContaining }) => {
     it('history disables asks whether the file should be deleted', async () => {
       await invokeTestCli(['history', 'enable'])
       await uploadTestFile()
@@ -19,8 +19,8 @@ describeCommand(
       jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
       await invokeTestCli(['history', 'disable'])
 
-      expect(consoleMessages[6]).toEqual('Upload history tracking disabled')
-      expect(existsSync(`${configFolderPath}/upload-history.json`)).toEqual(true)
+      expect(hasMessageContaining('Upload history tracking disabled')).toBe(true)
+      expect(existsSync(`${configFolderPath}/history-prompt-upload-history.json`)).toEqual(true)
       expect(inquirer.prompt).toHaveBeenCalledWith({
         message: 'Do you want to delete the upload history file? This action cannot be undone.',
         name: 'value',
@@ -43,4 +43,5 @@ describeCommand(
       })
     })
   },
+  { configFileName: 'history-prompt' },
 )

@@ -55,7 +55,7 @@ export class CommandConfig {
   }
 
   public getHistoryFilePath(): string {
-    return join(this.configFolderPath, 'upload-history.json')
+    return process.env.SWARM_CLI_HISTORY_FILE_PATH || join(this.configFolderPath, 'upload-history.json')
   }
 
   public setHistoryEnabled(enabled: boolean): void {
