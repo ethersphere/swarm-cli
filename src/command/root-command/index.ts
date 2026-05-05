@@ -6,6 +6,7 @@ import { parseHeaders } from '../../utils'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CONFIG_OPTIONS, CommandConfig } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
+import { checkForUpdates } from '../../service/version_checker'
 
 export class RootCommand {
   @ExternalOption('bee-api-url')
@@ -56,6 +57,8 @@ export class RootCommand {
   protected init(): void {
     this.commandConfig = new CommandConfig(this.appName, this.console, this.configFile, this.configFolder)
     this.sourcemap = Utils.getSourcemap()
+
+    checkForUpdates()
 
     CONFIG_OPTIONS.forEach((option: ConfigOption) => {
       this.maybeSetFromConfig(option)
