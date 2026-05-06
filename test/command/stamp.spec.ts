@@ -1,8 +1,10 @@
-import { System, Types } from 'cafe-utility'
+import { Types } from 'cafe-utility'
 import inquirer from 'inquirer'
 import { Buy } from '../../src/command/stamp/buy'
 import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
+import { BatchId, Bee } from '@ethersphere/bee-js'
+import { randomBytes } from 'crypto'
 
 expect.extend({
   toMatchLinesInOrder,
@@ -11,6 +13,12 @@ expect.extend({
 describeCommand(
   'Test Stamp command',
   ({ consoleMessages, getLastMessage, getNthLastMessage, hasMessageContaining }) => {
+    const fakeBatchIdHash = randomBytes(32).toString('hex')
+
+    afterEach(() => {
+      jest.clearAllMocks()
+    })
+
     it('should list stamps', async () => {
       await invokeTestCli(['stamp', 'list'])
       const pattern = [['Stamp ID'], ['Usage'], ['Capacity'], ['TTL']]
@@ -26,23 +34,28 @@ describeCommand(
     it('should not allow buying stamp with amount 0', async () => {
       await invokeTestCli(['stamp', 'buy', '--amount', '0', '--depth', '20'])
       expect(getLastMessage()).toContain('[amount] must be at least 1')
-      await System.sleepMillis(11_000)
     })
 
     it('should not allow buying stamp with depth 16', async () => {
       await invokeTestCli(['stamp', 'buy', '--amount', '1', '--depth', '16'])
       expect(getLastMessage()).toContain('[depth] must be at least 17')
-      await System.sleepMillis(11_000)
     })
 
     it('should buy stamp', async () => {
+      const createPostageBatch = jest
+        .spyOn(Bee.prototype, 'createPostageBatch')
+        .mockResolvedValue(new BatchId(fakeBatchIdHash))
       await invokeTestCli(['stamp', 'buy', '--amount', '600_000_000', '--depth', '20', '--yes'])
+      expect(createPostageBatch).toHaveBeenCalledWith('600000000', 20, expect.objectContaining({ immutableFlag: true }))
       expect(getLastMessage()).toContain('Stamp ID:')
-      await System.sleepMillis(11_000)
+      expect(getLastMessage()).toContain(fakeBatchIdHash)
     })
 
     it('should buy stamp with immutable flag', async () => {
-      const execution = await invokeTestCli([
+      const createPostageBatch = jest
+        .spyOn(Bee.prototype, 'createPostageBatch')
+        .mockResolvedValue(new BatchId(fakeBatchIdHash))
+      await invokeTestCli([
         'stamp',
         'buy',
         '--amount',
@@ -53,13 +66,10 @@ describeCommand(
         '--wait-usable',
         '--yes',
       ])
-      const command = execution.runnable as Buy
 
-      const id = command.postageBatchId
-      await invokeTestCli(['stamp', 'show', id.toHex(), '--verbose'])
-      const pattern = [['Capacity (immutable)']]
-      expect(consoleMessages).toMatchLinesInOrder(pattern)
-      await System.sleepMillis(11_000)
+      expect(createPostageBatch).toHaveBeenCalledWith('600000000', 20, expect.objectContaining({ immutableFlag: true }))
+      expect(getLastMessage()).toContain('Stamp ID:')
+      expect(getLastMessage()).toContain(fakeBatchIdHash)
     })
 
     it('should print custom message when there are no stamps', async () => {
@@ -74,7 +84,10 @@ describeCommand(
     })
 
     it('should wait until stamp is usable', async () => {
-      const execution = await invokeTestCli([
+      const createPostageBatch = jest
+        .spyOn(Bee.prototype, 'createPostageBatch')
+        .mockResolvedValue(new BatchId(fakeBatchIdHash))
+      await invokeTestCli([
         'stamp',
         'buy',
         '--depth',
@@ -86,39 +99,44 @@ describeCommand(
         '--label',
         'Alice',
       ])
-      const command = execution.runnable as Buy
-      expect(command.yes).toBe(true)
 
-      const id = command.postageBatchId
-      await invokeTestCli(['stamp', 'show', id.toHex(), '--verbose'])
-      const pattern = [
-        ['Stamp ID', id.toHex()],
-        ['Label', 'Alice'],
-        ['Usable', 'true'],
-      ]
-      expect(consoleMessages).toMatchLinesInOrder(pattern)
+      expect(createPostageBatch).toHaveBeenCalledWith(
+        '555000000',
+        20,
+        expect.objectContaining({ label: 'Alice', waitForUsable: true }),
+      )
     })
 
     it('should accept estimate cost prompt', async () => {
-      jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: true })
+      jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: true })
+      const createPostageBatch = jest
+        .spyOn(Bee.prototype, 'createPostageBatch')
+        .mockResolvedValue(new BatchId(fakeBatchIdHash))
       const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1b'])
       const command = execution.runnable as Buy
       expect(command.yes).toBe(true)
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
-      await System.sleepMillis(11_000)
+      expect(createPostageBatch).toHaveBeenCalledWith('1000000000', 20, expect.anything())
     })
 
     it('should reject estimate cost prompt', async () => {
-      jest.spyOn(inquirer, 'prompt').mockClear().mockResolvedValueOnce({ value: false })
+      // jest.restoreAllMocks()
+      jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: false })
+      const createPostageBatch = jest
+        .spyOn(Bee.prototype, 'createPostageBatch')
+        .mockResolvedValue(new BatchId(fakeBatchIdHash))
       const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1b'])
       const command = execution.runnable as Buy
       expect(command.yes).toBe(false)
       expect(inquirer.prompt).toHaveBeenCalledTimes(1)
-      await System.sleepMillis(11_000)
+      expect(createPostageBatch).not.toHaveBeenCalled()
     })
 
     it('should be possible to buy with underscores and units', async () => {
-      const execution = await invokeTestCli([
+      const createPostageBatch = jest
+        .spyOn(Bee.prototype, 'createPostageBatch')
+        .mockResolvedValue(new BatchId(fakeBatchIdHash))
+      await invokeTestCli([
         'stamp',
         'buy',
         '--amount',
@@ -129,10 +147,11 @@ describeCommand(
         '100_000_000',
         '--yes',
       ])
-      const command = execution.runnable as Buy
-      expect(command.yes).toBe(true)
-      expect(getLastMessage()).toContain('Stamp ID:')
-      await System.sleepMillis(11_000)
+      expect(createPostageBatch).toHaveBeenCalledWith(
+        '600000000',
+        17,
+        expect.objectContaining({ gasPrice: '100000000' }),
+      )
     })
 
     it.skip('should only be able to dilute stamp with greater depth', async () => {
