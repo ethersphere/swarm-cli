@@ -4,7 +4,7 @@ import { exit } from 'process'
 import { createSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
-import { Context } from 'vm'
+import { validateTokenAmount } from '../../utils/validate'
 
 const MIN_DEPOSIT = BZZ.fromDecimalString('10')
 
@@ -18,27 +18,7 @@ export class Deposit extends RootCommand implements LeafCommand {
     description: 'Amount of tokens to deposit',
     type: 'decimal-string',
     required: true,
-    validate: (value: unknown, context: Context): string[] => {
-      if (context.options.unit === 'bzz') {
-        const amount = parseFloat(value as string)
-
-        if (isNaN(amount) || amount <= 0) {
-          return [`Invalid amount '${value}'. Amount must be a positive number.`]
-        }
-      } else {
-        try {
-          const amount = BigInt(value as string)
-
-          if (amount <= BigInt(0)) {
-            return [`Invalid amount '${value}'. Amount must be a positive integer.`]
-          }
-        } catch (e) {
-          return [`Invalid amount '${value}'. Amount must be a positive integer.`]
-        }
-      }
-
-      return []
-    },
+    validate: validateTokenAmount,
   })
   public amount!: string
 
