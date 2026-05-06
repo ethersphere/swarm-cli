@@ -1,10 +1,15 @@
 import PackageJson from '../../package.json'
 import { CommandLog, VerbosityLevel } from '../command/root-command/command-log'
 import { warningText } from '../utils/text'
+import fetch from 'node-fetch'
 
 const LATEST_RELEASE_URL = 'https://api.github.com/repos/ethersphere/swarm-cli/releases/latest'
 
 export async function checkForUpdates() {
+  if (process.env.SKIP_VERSION_CHECK === 'true') {
+    return
+  }
+
   const console = new CommandLog(VerbosityLevel.Normal)
   await fetch(LATEST_RELEASE_URL)
     .then(res => res.json())

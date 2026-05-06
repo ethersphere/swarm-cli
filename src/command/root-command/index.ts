@@ -58,7 +58,9 @@ export class RootCommand {
     this.commandConfig = new CommandConfig(this.appName, this.console, this.configFile, this.configFolder)
     this.sourcemap = Utils.getSourcemap()
 
-    checkForUpdates()
+    if (!this.quiet) {
+      checkForUpdates()
+    }
 
     CONFIG_OPTIONS.forEach((option: ConfigOption) => {
       this.maybeSetFromConfig(option)
