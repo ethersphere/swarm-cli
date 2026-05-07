@@ -17,6 +17,8 @@ export default async (): Promise<Config.InitialOptions> => {
    */
   const console = new CommandLog(VerbosityLevel.Normal)
 
+  process.env.SKIP_VERSION_CHECK = 'true'
+
   if (!process.env.SKIP_WORKER) {
     process.env.WORKER_PSS_ADDRESS = (await getPssAddress('http://localhost:11633')).toCompressedHex()
   }
