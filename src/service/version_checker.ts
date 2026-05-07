@@ -22,8 +22,6 @@ export async function checkForUpdates(config: CommandConfig) {
     const response = await fetch(LATEST_RELEASE_URL)
 
     if (!response.ok) {
-      process.stderr.write(`Failed to fetch latest release info: ${response.status} ${response.statusText}\n`)
-
       return
     }
 
@@ -33,7 +31,6 @@ export async function checkForUpdates(config: CommandConfig) {
       latestVersion,
       expiresAt: Date.now() + Dates.days(1),
     }
-    process.stderr.write(JSON.stringify(versionCheckData) + '\n')
 
     if (latestVersion !== PackageJson.version) {
       writeFileSync(filePath, JSON.stringify(versionCheckData))
