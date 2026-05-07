@@ -46,7 +46,7 @@ export class List extends StampCommand implements LeafCommand {
     super.init()
     this.console.verbose(`Listing postage stamps...`)
 
-    const stamps = (await this.bee.getAllPostageBatch()) || []
+    const stamps = (await this.bee.getPostageBatches()) || []
 
     if (stamps.length === 0) {
       this.console.error('You do not have any stamps.')
