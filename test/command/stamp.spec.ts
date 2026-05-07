@@ -19,6 +19,38 @@ describeCommand(
       jest.clearAllMocks()
     })
 
+    describe('e2e', () => {
+      it('should buy stamp with right capacity and properties', async () => {
+        const execution = await invokeTestCli([
+          'stamp',
+          'buy',
+          '--depth',
+          '20',
+          '--amount',
+          '555m',
+          '--label',
+          'Alice',
+          '--gas-price',
+          '100_000_000',
+          '--wait-usable',
+          '--yes',
+        ])
+        const command = execution.runnable as Buy
+        expect(command.yes).toBe(true)
+
+        const id = command.postageBatchId
+        await invokeTestCli(['stamp', 'show', id.toHex(), '--verbose'])
+        const pattern = [
+          ['Type', 'Immutable'],
+          ['Stamp ID', id.toHex()],
+          ['Label', 'Alice'],
+          ['Depth', '20'],
+          ['Usable', 'true'],
+        ]
+        expect(consoleMessages).toMatchLinesInOrder(pattern)
+      })
+    })
+
     it('should list stamps', async () => {
       await invokeTestCli(['stamp', 'list'])
       const pattern = [['Stamp ID'], ['Usage'], ['Capacity'], ['TTL']]
@@ -120,7 +152,6 @@ describeCommand(
     })
 
     it('should reject estimate cost prompt', async () => {
-      // jest.restoreAllMocks()
       jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: false })
       const createPostageBatch = jest
         .spyOn(Bee.prototype, 'createPostageBatch')
