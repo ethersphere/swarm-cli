@@ -1,27 +1,67 @@
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import PackageJson from '../../package.json'
-import { CommandLog, VerbosityLevel } from '../command/root-command/command-log'
-import { warningText } from '../utils/text'
+import { CommandConfig } from '../command/root-command/command-config'
 import fetch from 'node-fetch'
+import { Dates } from 'cafe-utility'
 
 const LATEST_RELEASE_URL = 'https://api.github.com/repos/ethersphere/swarm-cli/releases/latest'
 
-export async function checkForUpdates() {
+type VersionCheckData = {
+  latestVersion: string
+  expiresAt: number
+}
+
+export async function checkForUpdates(config: CommandConfig) {
   if (process.env.SKIP_VERSION_CHECK === 'true') {
     return
   }
 
-  const console = new CommandLog(VerbosityLevel.Normal)
-  await fetch(LATEST_RELEASE_URL)
-    .then(res => res.json())
-    .then((data: { tag_name: string }) => {
-      const latestVersion = data.tag_name.replace(/^v/, '')
+  const filePath = config.getVersionCheckFilePath()
 
-      if (latestVersion !== PackageJson.version) {
-        console.log(
-          warningText(
-            `A new version of swarm-cli is available: ${latestVersion}. You are using version ${PackageJson.version}. Please update to the latest version.`,
-          ),
-        )
-      }
-    })
+  try {
+    const response = await fetch(LATEST_RELEASE_URL)
+
+    if (!response.ok) {
+      process.stderr.write(`Failed to fetch latest release info: ${response.status} ${response.statusText}\n`)
+
+      return
+    }
+
+    const data = (await response.json()) as { tag_name: string }
+    const latestVersion = data.tag_name.replace(/^v/, '')
+    const versionCheckData = {
+      latestVersion,
+      expiresAt: Date.now() + Dates.days(1),
+    }
+    process.stderr.write(JSON.stringify(versionCheckData) + '\n')
+
+    if (latestVersion !== PackageJson.version) {
+      writeFileSync(filePath, JSON.stringify(versionCheckData))
+    }
+  } catch {
+    return
+  }
+}
+
+export function getLatestVersionCheck(config: CommandConfig): VersionCheckData | null {
+  const filePath = config.getVersionCheckFilePath()
+
+  if (!existsSync(filePath)) {
+    return null
+  }
+
+  try {
+    const data = JSON.parse(readFileSync(filePath).toString()) as VersionCheckData
+
+    if (Date.now() > data.expiresAt) {
+      return null
+    }
+
+    return {
+      latestVersion: data.latestVersion,
+      expiresAt: data.expiresAt,
+    }
+  } catch {
+    return null
+  }
 }

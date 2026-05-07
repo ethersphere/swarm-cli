@@ -6,7 +6,9 @@ import { parseHeaders } from '../../utils'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CONFIG_OPTIONS, CommandConfig } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
-import { checkForUpdates } from '../../service/version_checker'
+import { checkForUpdates, getLatestVersionCheck } from '../../service/version_checker'
+import PackageJson from '../../../package.json'
+import { warningText } from '../../utils/text'
 
 export class RootCommand {
   @ExternalOption('bee-api-url')
@@ -58,10 +60,6 @@ export class RootCommand {
     this.commandConfig = new CommandConfig(this.appName, this.console, this.configFile, this.configFolder)
     this.sourcemap = Utils.getSourcemap()
 
-    if (!this.quiet) {
-      checkForUpdates()
-    }
-
     CONFIG_OPTIONS.forEach((option: ConfigOption) => {
       this.maybeSetFromConfig(option)
     })
@@ -84,6 +82,20 @@ export class RootCommand {
       this.verbosity = VerbosityLevel.Verbose
     }
     this.console = new CommandLog(this.verbosity)
+
+    if (!this.quiet) {
+      const latestVersionCheck = getLatestVersionCheck(this.commandConfig)
+
+      if (latestVersionCheck === null) {
+        checkForUpdates(this.commandConfig)
+      } else if (latestVersionCheck.latestVersion !== PackageJson.version) {
+        this.console.log(
+          warningText(
+            `A new version of swarm-cli is available: ${latestVersionCheck.latestVersion}. You are using version ${PackageJson.version}. Please update to get the latest features and fixes.`,
+          ),
+        )
+      }
+    }
   }
 
   private maybeSetFromConfig(option: ConfigOption): void {

@@ -77,6 +77,7 @@ export function describeCommand(
       configFileName ? `${configFileName}-upload-history.json` : 'upload-history.json',
     )
     process.env.SWARM_CLI_HISTORY_FILE_PATH = historyFilePath
+    process.env.SWARM_CLI_VERSION_CHECK_FILE_PATH = join(configFolderPath, 'version-check.json')
 
     //if own config is needed
     if (configFileName) {
