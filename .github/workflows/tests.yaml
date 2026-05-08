@@ -56,6 +56,7 @@ jobs:
         run: npm run test
 
       - name: Upload coverage
+        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-master
@@ -64,6 +65,8 @@ jobs:
       - name: Get master run ID
         if: github.ref != 'refs/heads/master'
         id: get-run-id
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           RUN_ID=$(gh run list --branch master --workflow tests.yaml --limit 1 --json databaseId --jq '.[0].databaseId')
           echo "run-id=$RUN_ID" >> $GITHUB_OUTPUT
