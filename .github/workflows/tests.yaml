@@ -29,7 +29,15 @@ jobs:
         run: npm ci
 
       - name: Install global dependencies
-        run: npm install --global bee-dev @fairdatasociety/fdp-play @ethersphere/swarm-cli https://github.com/slapec93/npxie
+        run: npm install --global bee-dev @fairdatasociety/fdp-play @ethersphere/swarm-cli
+
+      - name: Install npxie
+        run: |
+          git clone https://github.com/slapec93/npxie.git
+          cd npxie
+          npm run build
+          npm install -g .
+          cd ..
 
       - name: Run bee-dev
         run: bee-dev --port 16337 &
