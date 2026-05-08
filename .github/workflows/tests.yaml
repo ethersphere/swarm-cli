@@ -93,6 +93,5 @@ jobs:
 
       - name: Compare coverage
         if: github.ref != 'refs/heads/master' && steps.download-coverage.outcome == 'success'
-        run:
-          npxie coverage-comparison "${{ github.repository }}" "./coverage-master/coverage-summary.json" \
-          "test/coverage/coverage-summary.json" "${{ github.event.pull_request.number }}" "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          npxie coverage-comparison "${{ github.repository }}" "./coverage-master/coverage-summary.json" "test/coverage/coverage-summary.json" "${{ github.event.pull_request.number }}" "${{ secrets.GITHUB_TOKEN }}"
