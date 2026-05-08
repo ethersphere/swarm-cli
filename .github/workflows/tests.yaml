@@ -56,7 +56,7 @@ jobs:
         run: npm run test
 
       - name: Upload coverage
-        if: github.ref == 'refs/heads/master'
+        # if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-master
