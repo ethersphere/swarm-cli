@@ -65,6 +65,7 @@ jobs:
       - name: Get master run ID
         if: github.ref != 'refs/heads/master'
         id: get-run-id
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -73,6 +74,8 @@ jobs:
 
       - name: Download master coverage
         if: github.ref != 'refs/heads/master'
+        id: download-coverage
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: coverage-master
@@ -81,7 +84,7 @@ jobs:
           path: coverage-master
 
       - name: Compare coverage
-        if: github.ref != 'refs/heads/master'
+        if: github.ref != 'refs/heads/master' && steps.download-coverage.outcome == 'success'
         run:
           npxie coverage-comparison "${{ github.repository }}" "./coverage-master/coverage-summary.json" \
           "test/coverage/coverage-summary.json" "${{ github.event.pull_request.number }}" "${{ secrets.GITHUB_TOKEN }}"
