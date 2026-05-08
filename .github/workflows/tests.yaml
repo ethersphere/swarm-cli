@@ -29,7 +29,7 @@ jobs:
         run: npm ci
 
       - name: Install global dependencies
-        run: npm install --global bee-dev @fairdatasociety/fdp-play @ethersphere/swarm-cli npxie
+        run: npm install --global bee-dev @fairdatasociety/fdp-play @ethersphere/swarm-cli https://github.com/slapec93/npxie
 
       - name: Run bee-dev
         run: bee-dev --port 16337 &
@@ -78,9 +78,10 @@ jobs:
           name: coverage-master
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ steps.get-run-id.outputs.run-id }}
+          path: coverage-master
 
       - name: Compare coverage
         if: github.ref != 'refs/heads/master'
         run:
-          npxie coverage-comparison "${{ github.repository }}" "master" "${{ github.head_ref }}"
+          npxie coverage-comparison "${{ github.repository }}" "./coverage-master/coverage-summary.json" \
           "test/coverage/coverage-summary.json" "${{ github.event.pull_request.number }}" "${{ secrets.GITHUB_TOKEN }}"
