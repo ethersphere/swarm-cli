@@ -56,7 +56,7 @@ jobs:
         run: npm run test
 
       - name: Upload coverage
-        # if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-master
@@ -70,7 +70,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           RUN_ID=$(gh run list --branch master --workflow tests.yaml --limit 1 --json databaseId --jq '.[0].databaseId')
-          echo "run-id=$RUN_ID" >> $GITHUB_OUTPUT
+          echo "run-id=25547283635" >> $GITHUB_OUTPUT
 
       - name: Download master coverage
         if: github.ref != 'refs/heads/master'
