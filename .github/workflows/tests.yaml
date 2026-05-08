@@ -55,6 +55,27 @@ jobs:
       - name: Tests
         run: npm run test
 
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-master
+          path: test/coverage/coverage-summary.json
+
+      - name: Get master run ID
+        if: github.ref != 'refs/heads/master'
+        id: get-run-id
+        run: |
+          RUN_ID=$(gh run list --branch master --workflow tests.yaml --limit 1 --json databaseId --jq '.[0].databaseId')
+          echo "run-id=$RUN_ID" >> $GITHUB_OUTPUT
+
+      - name: Download master coverage
+        if: github.ref != 'refs/heads/master'
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-master
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ steps.get-run-id.outputs.run-id }}
+
       - name: Compare coverage
         if: github.ref != 'refs/heads/master'
         run:
