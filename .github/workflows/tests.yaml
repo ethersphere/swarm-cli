@@ -61,7 +61,7 @@ jobs:
         run: swarm-cli status
 
       - name: Tests
-        run: npm run test
+        run: npm run test:coverage
 
       - name: Upload coverage
         if: github.ref == 'refs/heads/master'
