@@ -1,8 +1,8 @@
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { BZZ } from '@ethersphere/bee-js'
-import { Context } from 'madlad'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
+import { validateTokenAmount } from '../../utils/validate'
 
 export class Deposit extends ChequeCommand implements LeafCommand {
   public readonly name = 'deposit'
@@ -16,27 +16,7 @@ export class Deposit extends ChequeCommand implements LeafCommand {
     description: 'Amount of tokens to deposit',
     type: 'decimal-string',
     required: true,
-    validate: (value: unknown, context: Context): string[] => {
-      if (context.options.unit === 'bzz') {
-        const amount = parseFloat(value as string)
-
-        if (isNaN(amount) || amount <= 0) {
-          return [`Invalid amount '${value}'. Amount must be a positive number.`]
-        }
-      } else {
-        try {
-          const amount = BigInt(value as string)
-
-          if (amount <= BigInt(0)) {
-            return [`Invalid amount '${value}'. Amount must be a positive integer.`]
-          }
-        } catch (e) {
-          return [`Invalid amount '${value}'. Amount must be a positive integer.`]
-        }
-      }
-
-      return []
-    },
+    validate: validateTokenAmount,
   })
   public amount!: string
 
