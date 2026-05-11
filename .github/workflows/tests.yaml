@@ -38,7 +38,7 @@ jobs:
         run: bee-dev --port 16338 --no-swap &
 
       - name: Start etherhive environment
-        run: etherhive start --tag 2.6.0
+        run: etherhive start --tag v2.6.0
 
       - name: Deposit to chequebook
         run: |
