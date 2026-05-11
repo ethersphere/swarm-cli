@@ -58,6 +58,10 @@ export class CommandConfig {
     return process.env.SWARM_CLI_HISTORY_FILE_PATH || join(this.configFolderPath, 'upload-history.json')
   }
 
+  public getVersionCheckFilePath(): string {
+    return process.env.SWARM_CLI_VERSION_CHECK_FILE_PATH || join(this.configFolderPath, 'version-check.json')
+  }
+
   public setHistoryEnabled(enabled: boolean): void {
     this.config.historyEnabled = enabled
     this.saveConfig()
