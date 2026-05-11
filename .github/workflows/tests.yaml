@@ -29,15 +29,7 @@ jobs:
         run: npm ci
 
       - name: Install global dependencies
-        run: npm install --global bee-dev @fairdatasociety/fdp-play @ethersphere/swarm-cli
-
-      - name: Install npxie
-        run: |
-          git clone https://github.com/slapec93/npxie.git
-          cd npxie
-          npm run build
-          npm install -g .
-          cd ..
+        run: npm install --global bee-dev @fairdatasociety/fdp-play @ethersphere/swarm-cli npxie
 
       - name: Run bee-dev
         run: bee-dev --port 16337 &
@@ -78,7 +70,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           RUN_ID=$(gh run list --branch master --workflow tests.yaml --limit 1 --json databaseId --jq '.[0].databaseId')
-          echo "run-id=25547283635" >> $GITHUB_OUTPUT
+          echo "run-id=$RUN_ID" >> $GITHUB_OUTPUT
 
       - name: Download master coverage
         if: github.ref != 'refs/heads/master'
