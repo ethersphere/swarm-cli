@@ -29,7 +29,7 @@ jobs:
         run: npm ci
 
       - name: Install global dependencies
-        run: npm install --global bee-dev @fairdatasociety/fdp-play @ethersphere/swarm-cli npxie
+        run: npm install --global bee-dev etherhive @ethersphere/swarm-cli npxie
 
       - name: Run bee-dev
         run: bee-dev --port 16337 &
@@ -37,8 +37,8 @@ jobs:
       - name: Run bee-dev with --no-swap
         run: bee-dev --port 16338 --no-swap &
 
-      - name: Start fdp-play environment
-        run: fdp-play start --detach --fresh --bee-version d0aa8b9-commit
+      - name: Start etherhive environment
+        run: etherhive start --tag latest
 
       - name: Deposit to chequebook
         run: |
@@ -60,3 +60,6 @@ jobs:
         run:
           npxie coverage-comparison "${{ github.repository }}" "master" "${{ github.head_ref }}"
           "test/coverage/coverage-summary.json" "${{ github.event.pull_request.number }}" "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Teardown
+        run: etherhive stop
