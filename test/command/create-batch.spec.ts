@@ -7,6 +7,7 @@ expect.extend({
 
 describeCommand('Test `utility create-batch` command', ({ consoleMessages }) => {
   it('should create batch', async () => {
+    process.env.SWARM_CLI_NETWORK_ID = '4020'
     await invokeTestCli([
       'utility',
       'create-batch',

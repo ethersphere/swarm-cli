@@ -1,7 +1,7 @@
 import { Contract, JsonRpcProvider, TransactionReceipt, TransactionResponse, Wallet } from 'ethers'
 import { ABI, Contracts } from './contracts'
 
-const NETWORK_ID = 100
+const NETWORK_ID = process.env.SWARM_CLI_NETWORK_ID ?? 100
 
 export async function eth_getBalance(address: string, provider: JsonRpcProvider): Promise<string> {
   if (!address.startsWith('0x')) {
