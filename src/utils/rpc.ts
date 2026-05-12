@@ -40,9 +40,9 @@ export async function estimateNativeTransferTransactionCost(
   privateKey: string,
   jsonRpcProvider: string,
 ): Promise<TransferCost> {
-  const signer = await makeReadySigner(privateKey, jsonRpcProvider)
+  const { provider } = await makeReadySigner(privateKey, jsonRpcProvider)
   const gasLimit = 21000n
-  const gasPrice = (await signer.provider!.getFeeData()).gasPrice!
+  const gasPrice = (await provider.getFeeData()).gasPrice!
 
   return { gasPrice, totalCost: gasPrice * gasLimit }
 }
@@ -54,8 +54,8 @@ export async function sendNativeTransaction(
   jsonRpcProvider: string,
   externalGasPrice?: bigint,
 ): Promise<TransferResponse> {
-  const signer = await makeReadySigner(privateKey, jsonRpcProvider)
-  const gasPrice = externalGasPrice ?? (await signer.provider!.getFeeData()).gasPrice!
+  const { signer, provider } = await makeReadySigner(privateKey, jsonRpcProvider)
+  const gasPrice = externalGasPrice ?? (await provider.getFeeData()).gasPrice!
   const transaction = await signer.sendTransaction({
     to,
     value: BigInt(value),
@@ -74,8 +74,8 @@ export async function sendBzzTransaction(
   value: string,
   jsonRpcProvider: string,
 ): Promise<TransferResponse> {
-  const signer = await makeReadySigner(privateKey, jsonRpcProvider)
-  const gasPrice = (await signer.provider!.getFeeData()).gasPrice!
+  const { signer, provider } = await makeReadySigner(privateKey, jsonRpcProvider)
+  const gasPrice = (await provider.getFeeData()).gasPrice!
   const bzz = new Contract(Contracts.bzz, ABI.bzz, signer)
   const transaction = await bzz.transfer(to, value, { gasPrice })
   const receipt = (await transaction.wait(1))!
@@ -88,5 +88,5 @@ export async function makeReadySigner(privateKey: string, jsonRpcProvider: strin
   await provider.getNetwork()
   const signer = new Wallet(privateKey, provider)
 
-  return signer
+  return { signer, provider }
 }

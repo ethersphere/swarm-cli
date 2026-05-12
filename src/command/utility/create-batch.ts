@@ -61,7 +61,7 @@ export class CreateBatch extends RootCommand implements LeafCommand {
 
     const wallet = new Wallet(this.privateKey)
     const cost = Utils.getStampCost(this.depth, this.amount)
-    const signer = await makeReadySigner(wallet.privateKey, this.jsonRpcUrl)
+    const { signer } = await makeReadySigner(wallet.privateKey, this.jsonRpcUrl)
 
     this.console.log(`Approving spending of ${cost.toDecimalString()} BZZ to ${wallet.address}`)
     const tokenProxyContract = new Contract(Contracts.bzz, ABI.tokenProxy, signer)
