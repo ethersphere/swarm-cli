@@ -1,6 +1,6 @@
 import { Utils } from '@ethersphere/bee-js'
 import { Numbers, Strings } from 'cafe-utility'
-import { Contract, Event, Wallet } from 'ethers'
+import { Contract, ContractTransactionReceipt, Wallet } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
 import { ABI, Contracts } from '../../utils/contracts'
 import { makeReadySigner } from '../../utils/rpc'
@@ -91,9 +91,9 @@ export class CreateBatch extends RootCommand implements LeafCommand {
       },
     )
     this.console.log(`Waiting 3 blocks on create batch tx ${createBatch.hash}`)
-    const receipt = await createBatch.wait(3)
+    const receipt = (await createBatch.wait(3)) as ContractTransactionReceipt
 
-    const batchId = receipt.events.find((x: Event) => x.address === Contracts.postageStamp).topics[1]
+    const batchId = receipt.logs.find(x => x.address === Contracts.postageStamp)!.topics[1]
     this.console.log(`Batch created with ID ${batchId}`)
   }
 }

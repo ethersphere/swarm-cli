@@ -1,7 +1,6 @@
 import { BatchId, Utils } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import chalk from 'chalk'
-import { BigNumber } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { isChainStateReady } from '../../utils/chainsync'
@@ -71,10 +70,10 @@ export class Buy extends StampCommand implements LeafCommand {
     }
 
     const chainState = await this.bee.getChainState()
-    const minimumAmount = BigNumber.from(chainState.currentPrice).mul(17280)
+    const minimumAmount = BigInt(chainState.currentPrice) * 17280n
 
-    if (minimumAmount.gte(BigNumber.from(this.amount))) {
-      this.console.error('The amount is too low. The minimum amount is', minimumAmount.add(1).toString())
+    if (minimumAmount >= this.amount) {
+      this.console.error('The amount is too low. The minimum amount is', (minimumAmount + 1n).toString())
 
       return
     }

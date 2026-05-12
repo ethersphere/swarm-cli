@@ -1,5 +1,5 @@
 import { Dates, System } from 'cafe-utility'
-import { BigNumber, providers, Wallet } from 'ethers'
+import { JsonRpcProvider, Wallet } from 'ethers'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { NETWORK_ID } from '../../utils/contracts'
 import {
@@ -50,7 +50,7 @@ export class Redeem extends RootCommand implements LeafCommand {
     }
 
     this.console.log(`Target wallet address: ${this.target}`)
-    const provider = new providers.JsonRpcProvider(this.jsonRpcUrl, NETWORK_ID)
+    const provider = new JsonRpcProvider(this.jsonRpcUrl, NETWORK_ID)
     this.console.log('Creating wallet...')
     const wallet = new Wallet(this.wallet, provider)
     this.console.log('Fetching xBZZ balance...')
@@ -92,14 +92,14 @@ export class Redeem extends RootCommand implements LeafCommand {
       }
     }
     const { gasPrice, totalCost } = await estimateNativeTransferTransactionCost(this.wallet, this.jsonRpcUrl)
-    const xDAIValue = BigNumber.from(xDAI)
+    const xDAIValue = BigInt(xDAI)
 
-    if (xDAIValue.gt(totalCost)) {
+    if (xDAIValue > totalCost) {
       this.console.log('Transferring xDAI to Bee wallet...')
       await sendNativeTransaction(
         this.wallet,
         this.target,
-        xDAIValue.sub(totalCost).toString(),
+        (xDAIValue - totalCost).toString(),
         this.jsonRpcUrl,
         gasPrice,
       )
