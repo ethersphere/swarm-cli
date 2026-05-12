@@ -1,7 +1,7 @@
 import { Dates, System } from 'cafe-utility'
 import { JsonRpcProvider, Wallet } from 'ethers'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { NETWORK_ID } from '../../utils/contracts'
+import { getNetworkId } from '../../utils/contracts'
 import {
   estimateNativeTransferTransactionCost,
   eth_getBalance,
@@ -50,7 +50,7 @@ export class Redeem extends RootCommand implements LeafCommand {
     }
 
     this.console.log(`Target wallet address: ${this.target}`)
-    const provider = new JsonRpcProvider(this.jsonRpcUrl, NETWORK_ID)
+    const provider = new JsonRpcProvider(this.jsonRpcUrl, getNetworkId())
     this.console.log('Creating wallet...')
     const wallet = new Wallet(this.wallet, provider)
     this.console.log('Fetching xBZZ balance...')

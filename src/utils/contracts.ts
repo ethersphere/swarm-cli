@@ -1,4 +1,6 @@
-export const NETWORK_ID = process.env.SWARM_CLI_NETWORK_ID ?? 100
+export function getNetworkId(): number {
+  return process.env.SWARM_CLI_NETWORK_ID ? Number(process.env.SWARM_CLI_NETWORK_ID) : 100
+}
 
 export const Contracts = {
   bzz: '0xdBF3Ea6F5beE45c02255B2c26a16F300502F68da',

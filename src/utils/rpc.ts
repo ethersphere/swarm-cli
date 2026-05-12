@@ -1,5 +1,5 @@
 import { Contract, JsonRpcProvider, TransactionReceipt, TransactionResponse, Wallet } from 'ethers'
-import { ABI, Contracts, NETWORK_ID } from './contracts'
+import { ABI, Contracts, getNetworkId } from './contracts'
 
 export async function eth_getBalance(address: string, provider: JsonRpcProvider): Promise<string> {
   if (!address.startsWith('0x')) {
@@ -82,7 +82,7 @@ export async function sendBzzTransaction(
 }
 
 export async function makeReadySigner(privateKey: string, jsonRpcProvider: string) {
-  const provider = new JsonRpcProvider(jsonRpcProvider, NETWORK_ID)
+  const provider = new JsonRpcProvider(jsonRpcProvider, getNetworkId())
   await provider.getNetwork()
   const signer = new Wallet(privateKey, provider)
 
