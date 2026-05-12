@@ -93,7 +93,11 @@ export class CreateBatch extends RootCommand implements LeafCommand {
     this.console.log(`Waiting 3 blocks on create batch tx ${createBatch.hash}`)
     const receipt = (await createBatch.wait(3)) as ContractTransactionReceipt
 
-    const batchId = receipt.logs.find(x => x.address === Contracts.postageStamp)!.topics[1]
+    const batchLog = receipt.logs.find(x => x.address === Contracts.postageStamp)
+    if (!batchLog || batchLog.topics.length < 2) {
+      throw new Error(`Could not find postage stamp log in receipt. Logs: ${JSON.stringify(receipt.logs)}`)
+    }
+    const batchId = batchLog.topics[1]
     this.console.log(`Batch created with ID ${batchId}`)
   }
 }
