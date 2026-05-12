@@ -3,8 +3,12 @@ export function getNetworkId(): number {
 }
 
 export const Contracts = {
-  bzz: '0xdBF3Ea6F5beE45c02255B2c26a16F300502F68da',
-  postageStamp: '0x45a1502382541Cd610CC9068e88727426b696293',
+  get bzz() {
+    return process.env.SWARM_CLI_BZZ_ADDRESS ?? '0xdBF3Ea6F5beE45c02255B2c26a16F300502F68da'
+  },
+  get postageStamp() {
+    return process.env.SWARM_CLI_POSTAGE_STAMP_ADDRESS ?? '0x45a1502382541Cd610CC9068e88727426b696293'
+  },
 }
 
 export const ABI = {

@@ -94,6 +94,7 @@ export class CreateBatch extends RootCommand implements LeafCommand {
     const receipt = (await createBatch.wait(3)) as ContractTransactionReceipt
 
     const batchLog = receipt.logs.find(x => x.address === Contracts.postageStamp)
+
     if (!batchLog || batchLog.topics.length < 2) {
       throw new Error(`Could not find postage stamp log in receipt. Logs: ${JSON.stringify(receipt.logs)}`)
     }
