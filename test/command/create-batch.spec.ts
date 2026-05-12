@@ -1,5 +1,9 @@
-import { Strings } from 'cafe-utility'
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 describeCommand('Test `utility create-batch` command', ({ consoleMessages }) => {
   it('should create batch', async () => {
@@ -16,14 +20,12 @@ describeCommand('Test `utility create-batch` command', ({ consoleMessages }) => 
       'http:s://localhost:8545',
       '--yes',
     ])
-    expect(
-      Strings.linesMatchInOrder(consoleMessages, [
-        ['Approving spending of', 'BZZ to'],
-        ['Waiting 3 blocks on approval tx'],
-        ['Creating postage batch for', 'with depth 17 and amount 100000000000'],
-        ['Waiting 3 blocks on create batch tx'],
-        ['Batch created with ID'],
-      ]),
-    ).toBe(true)
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['Approving spending of', 'BZZ to'],
+      ['Waiting 3 blocks on approval tx'],
+      ['Creating postage batch for', 'with depth 17 and amount 100000000000'],
+      ['Waiting 3 blocks on create batch tx'],
+      ['Batch created with ID'],
+    ])
   })
 })
