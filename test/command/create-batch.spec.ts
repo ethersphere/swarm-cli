@@ -17,7 +17,7 @@ describeCommand('Test `utility create-batch` command', ({ consoleMessages }) => 
       '--amount',
       '10B',
       '--json-rpc-url',
-      'https://localhost:9545',
+      'http://localhost:9545',
       '--yes',
     ])
     expect(consoleMessages).toMatchLinesInOrder([
