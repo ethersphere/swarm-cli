@@ -14,7 +14,7 @@ describeCommand('Test `utility create-batch` command', ({ consoleMessages }) => 
       'utility',
       'create-batch',
       '--private-key',
-      '0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d',
+      '0x566058308ad5fa3888173c741a1fb902c9f1f19559b11fc2738dfc53637ce4e9',
       '--depth',
       '17',
       '--amount',

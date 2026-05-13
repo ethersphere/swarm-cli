@@ -76,15 +76,7 @@ export class CreateBatch extends RootCommand implements LeafCommand {
 
     this.console.log(`Creating postage batch for ${wallet.address} with depth ${this.depth} and amount ${this.amount}`)
     const postageStampContract = new Contract(Contracts.postageStamp, ABI.postageStamp, signer)
-    const createBatchArgs = [
-      signer.address,
-      this.amount,
-      this.depth,
-      16,
-      `0x${Strings.randomHex(64)}`,
-      false,
-    ]
-    await postageStampContract.createBatch.staticCall(...createBatchArgs)
+    const createBatchArgs = [signer.address, this.amount, this.depth, 16, `0x${Strings.randomHex(64)}`, false]
     const createBatch = await postageStampContract.createBatch(...createBatchArgs, {
       gasLimit: 1_000_000,
       type: 2,
