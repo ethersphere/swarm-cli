@@ -26,7 +26,7 @@ describeCommand('Test `utility create-batch` command', ({ consoleMessages }) => 
     expect(consoleMessages).toMatchLinesInOrder([
       ['Approving spending of', 'BZZ to'],
       ['Waiting 3 blocks on approval tx'],
-      ['Creating postage batch for', 'with depth 17 and amount 100000000000'],
+      ['Creating postage batch for', 'with depth 17 and amount 10000000000'],
       ['Waiting 3 blocks on create batch tx'],
       ['Batch created with ID'],
     ])
