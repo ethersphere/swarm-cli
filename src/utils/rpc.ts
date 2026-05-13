@@ -40,7 +40,11 @@ export async function estimateNativeTransferTransactionCost(
 ): Promise<TransferCost> {
   const { provider } = await makeReadySigner(privateKey, jsonRpcProvider)
   const gasLimit = 21000n
-  const gasPrice = (await provider.getFeeData()).gasPrice!
+  const { gasPrice } = await provider.getFeeData()
+
+  if (gasPrice === null) {
+    throw new Error('Unable to determine gas price from provider')
+  }
 
   return { gasPrice, totalCost: gasPrice * gasLimit }
 }
@@ -56,15 +60,24 @@ export async function sendNativeTransaction(
     to = `0x${to}`
   }
   const { signer, provider } = await makeReadySigner(privateKey, jsonRpcProvider)
-  const gasPrice = externalGasPrice ?? (await provider.getFeeData()).gasPrice!
+  const resolvedGasPrice = externalGasPrice ?? (await provider.getFeeData()).gasPrice
+
+  if (resolvedGasPrice === null || resolvedGasPrice === undefined) {
+    throw new Error('Unable to determine gas price from provider')
+  }
+
   const transaction = await signer.sendTransaction({
     to,
     value: BigInt(value),
-    gasPrice,
+    gasPrice: resolvedGasPrice,
     gasLimit: 21000n,
     type: 0,
   })
-  const receipt = (await transaction.wait(1))!
+  const receipt = await transaction.wait(1)
+
+  if (receipt === null) {
+    throw new Error('Transaction was not included in a block')
+  }
 
   return { transaction, receipt }
 }
@@ -79,10 +92,19 @@ export async function sendBzzTransaction(
     to = `0x${to}`
   }
   const { signer, provider } = await makeReadySigner(privateKey, jsonRpcProvider)
-  const gasPrice = (await provider.getFeeData()).gasPrice!
+  const { gasPrice } = await provider.getFeeData()
+
+  if (gasPrice === null) {
+    throw new Error('Unable to determine gas price from provider')
+  }
+
   const bzz = new Contract(Contracts.bzz, ABI.bzz, signer)
   const transaction = await bzz.transfer(to, value, { gasPrice })
-  const receipt = (await transaction.wait(1))!
+  const receipt = await transaction.wait(1)
+
+  if (receipt === null) {
+    throw new Error('Transaction was not included in a block')
+  }
 
   return { transaction, receipt }
 }
