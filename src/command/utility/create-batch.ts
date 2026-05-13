@@ -1,6 +1,6 @@
 import { Utils } from '@ethersphere/bee-js'
 import { Numbers, Strings } from 'cafe-utility'
-import { Contract, Event, Wallet } from 'ethers'
+import { Contract, ContractTransactionReceipt, Wallet } from 'ethers'
 import { LeafCommand, Option } from 'furious-commander'
 import { ABI, Contracts } from '../../utils/contracts'
 import { makeReadySigner } from '../../utils/rpc'
@@ -61,7 +61,7 @@ export class CreateBatch extends RootCommand implements LeafCommand {
 
     const wallet = new Wallet(this.privateKey)
     const cost = Utils.getStampCost(this.depth, this.amount)
-    const signer = await makeReadySigner(wallet.privateKey, this.jsonRpcUrl)
+    const { signer } = await makeReadySigner(wallet.privateKey, this.jsonRpcUrl)
 
     this.console.log(`Approving spending of ${cost.toDecimalString()} BZZ to ${wallet.address}`)
     const tokenProxyContract = new Contract(Contracts.bzz, ABI.tokenProxy, signer)
@@ -76,24 +76,22 @@ export class CreateBatch extends RootCommand implements LeafCommand {
 
     this.console.log(`Creating postage batch for ${wallet.address} with depth ${this.depth} and amount ${this.amount}`)
     const postageStampContract = new Contract(Contracts.postageStamp, ABI.postageStamp, signer)
-    const createBatch = await postageStampContract.createBatch(
-      signer.address,
-      this.amount,
-      this.depth,
-      16,
-      `0x${Strings.randomHex(64)}`,
-      false,
-      {
-        gasLimit: 1_000_000,
-        type: 2,
-        maxFeePerGas: Numbers.make('3gwei'),
-        maxPriorityFeePerGas: Numbers.make('2gwei'),
-      },
-    )
+    const createBatchArgs = [signer.address, this.amount, this.depth, 16, `0x${Strings.randomHex(64)}`, false]
+    const createBatch = await postageStampContract.createBatch(...createBatchArgs, {
+      gasLimit: 1_000_000,
+      type: 2,
+      maxFeePerGas: Numbers.make('3gwei'),
+      maxPriorityFeePerGas: Numbers.make('2gwei'),
+    })
     this.console.log(`Waiting 3 blocks on create batch tx ${createBatch.hash}`)
-    const receipt = await createBatch.wait(3)
+    const receipt = (await createBatch.wait(3)) as ContractTransactionReceipt
 
-    const batchId = receipt.events.find((x: Event) => x.address === Contracts.postageStamp).topics[1]
+    const batchLog = receipt.logs.find(x => x.address === Contracts.postageStamp)
+
+    if (!batchLog || batchLog.topics.length < 2) {
+      throw new Error(`Could not find postage stamp log in receipt. Logs: ${JSON.stringify(receipt.logs)}`)
+    }
+    const batchId = batchLog.topics[1]
     this.console.log(`Batch created with ID ${batchId}`)
   }
 }
