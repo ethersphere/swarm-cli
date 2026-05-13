@@ -52,6 +52,9 @@ export async function sendNativeTransaction(
   jsonRpcProvider: string,
   externalGasPrice?: bigint,
 ): Promise<TransferResponse> {
+  if (!to.startsWith('0x')) {
+    to = `0x${to}`
+  }
   const { signer, provider } = await makeReadySigner(privateKey, jsonRpcProvider)
   const gasPrice = externalGasPrice ?? (await provider.getFeeData()).gasPrice!
   const transaction = await signer.sendTransaction({
@@ -72,6 +75,9 @@ export async function sendBzzTransaction(
   value: string,
   jsonRpcProvider: string,
 ): Promise<TransferResponse> {
+  if (!to.startsWith('0x')) {
+    to = `0x${to}`
+  }
   const { signer, provider } = await makeReadySigner(privateKey, jsonRpcProvider)
   const gasPrice = (await provider.getFeeData()).gasPrice!
   const bzz = new Contract(Contracts.bzz, ABI.bzz, signer)
