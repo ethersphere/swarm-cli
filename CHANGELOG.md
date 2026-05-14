@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.1.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.0.0...v3.1.0) (2026-05-13)
+
+
+### Features
+
+* show time data at stamp expiration ([#710](https://www.github.com/ethersphere/swarm-cli/issues/710)) ([9c32f68](https://www.github.com/ethersphere/swarm-cli/commit/9c32f68af57ebb49b39aff189e6c4730c88e6df4))
+* show warning when new swarm-cli version is available ([#708](https://www.github.com/ethersphere/swarm-cli/issues/708)) ([b3bf9bc](https://www.github.com/ethersphere/swarm-cli/commit/b3bf9bc64b6fb933308d529441209f4663a49226))
+* use amount argument and unit option for stake deposit ([#707](https://www.github.com/ethersphere/swarm-cli/issues/707)) ([d6a25cd](https://www.github.com/ethersphere/swarm-cli/commit/d6a25cd8b4d2729daedadd2432482403fd025e28))
+
 ## [3.0.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.37.0...v3.0.0) (2026-05-04)
 
 
