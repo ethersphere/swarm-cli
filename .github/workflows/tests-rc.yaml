@@ -29,7 +29,7 @@ jobs:
         run: npm ci
 
       - name: Install global dependencies
-        run: npm install --global bee-dev etherhive @ethersphere/swarm-cli npxie
+        run: npm install --global bee-dev etherhive@1.1.0 @ethersphere/swarm-cli npxie
 
       - name: Run bee-dev
         run: bee-dev --port 16337 &
