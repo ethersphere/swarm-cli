@@ -3,6 +3,7 @@ import { Numbers, Optional, System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
+import QRCode from 'qrcode'
 import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
@@ -16,6 +17,7 @@ import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 import { History } from '../service/history'
+import chalk from 'chalk'
 
 export class Upload extends RootCommand implements LeafCommand {
   public readonly name = 'upload'
@@ -120,6 +122,14 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public redundancy!: string
 
+  @Option({
+    key: 'qr',
+    description: 'Output QR code with the URL to the uploaded content',
+    type: 'boolean',
+    default: false,
+  })
+  public qr!: boolean
+
   public stdinData!: Buffer
 
   public historyAddress: Optional<Reference> = Optional.empty()
@@ -199,6 +209,11 @@ export class Upload extends RootCommand implements LeafCommand {
       if (!(await this.bee.isGateway()) && !this.quiet) {
         printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
       }
+    }
+
+    if (this.qr) {
+      this.console.log(chalk.green.bold('QR code:\n'))
+      this.console.log(await QRCode.toString(url, { type: 'terminal', small: true }))
     }
   }
 
