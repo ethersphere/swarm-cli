@@ -18,6 +18,7 @@ import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 import { History } from '../service/history'
 import chalk from 'chalk'
+import { printQRCodeWithLabel } from '../utils/qr'
 
 export class Upload extends RootCommand implements LeafCommand {
   public readonly name = 'upload'
@@ -212,8 +213,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (this.qr) {
-      this.console.log(chalk.green.bold('QR code:\n'))
-      this.console.log(await QRCode.toString(url, { type: 'terminal', small: true }))
+      printQRCodeWithLabel(url, 'QR for URL', this.console)
     }
   }
 
