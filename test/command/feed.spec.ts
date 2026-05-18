@@ -1,10 +1,12 @@
+import { randomUUID } from 'crypto'
 import { Upload } from '../../src/command/upload'
-import { toMatchLinesInOrder } from '../custom-matcher'
+import { toBeQRCode, toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
-import { getStampOption } from '../utility/stamp'
+import { getOrBuyStamp, getStampOption } from '../utility/stamp'
 
 expect.extend({
   toMatchLinesInOrder,
+  toBeQRCode,
 })
 
 describeCommand(
@@ -84,6 +86,32 @@ describeCommand(
       ])
       expect(hasMessageContaining('Feed Manifest URL')).toBeTruthy()
       expect(hasMessageContaining('/bzz/')).toBeTruthy()
+    })
+
+    describe('when --qr flag provided', () => {
+      it('should print QR code to the console', async () => {
+        const stampBatchId = await getOrBuyStamp()
+        // create identity
+        const identityName = randomUUID()
+        await invokeTestCli(['identity', 'create', identityName, '--password', 'test'])
+        // upload
+        await invokeTestCli([
+          'feed',
+          'upload',
+          '--identity',
+          identityName,
+          '--password',
+          'test',
+          '--stamp',
+          stampBatchId.toHex(),
+          '--qr',
+          `${__dirname}/../testpage/images/swarm.png`,
+        ])
+        expect(hasMessageContaining('QR for URL:')).toBeTruthy()
+        expect(consoleMessages[10]).toBeQRCode()
+        expect(hasMessageContaining('QR for Manifest URL:')).toBeTruthy()
+        expect(consoleMessages[13]).toBeQRCode()
+      })
     })
 
     it.skip('should increment number of updates for sequence feeds', async () => {

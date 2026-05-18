@@ -6,6 +6,7 @@ declare global {
     interface Matchers<R> {
       toMatchLinesInOrder(expected: string[][]): CustomMatcherResult
       toMatchLinesInAnyOrder(expected: string[][]): CustomMatcherResult
+      toBeQRCode(): CustomMatcherResult
     }
   }
 }
@@ -35,5 +36,14 @@ export function toMatchLinesInAnyOrder(received: string[], pattern: string[][]) 
   return {
     pass: true,
     message: () => '',
+  }
+}
+
+export function toBeQRCode(received: string) {
+  const pass = /[▀▄█]/.test(received)
+
+  return {
+    pass,
+    message: () => `expected ${JSON.stringify(received)} ${pass ? 'not ' : ''}to be a QR code`,
   }
 }
