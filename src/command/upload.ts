@@ -8,6 +8,12 @@ import { exit } from 'process'
 import { setCurlStore } from '../curl'
 import { pickStamp, printStamp } from '../service/stamp'
 import { fileExists, readStdin } from '../utils'
+import {
+  ChunkedUploadProgress,
+  uploadChunkedData,
+  uploadChunkedFile,
+  uploadChunkedFolder,
+} from '../utils/chunked-upload'
 import { CommandLineError } from '../utils/error'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
@@ -120,6 +126,21 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public redundancy!: string
 
+  @Option({
+    key: 'chunked',
+    type: 'boolean',
+    description: 'Upload chunk-by-chunk with per-chunk retry for resilience',
+  })
+  public chunked!: boolean
+
+  @Option({
+    key: 'chunked-retries',
+    type: 'number',
+    default: 3,
+    description: 'Max retries per chunk when --chunked is set',
+  })
+  public chunkedRetries!: number
+
   public stdinData!: Buffer
 
   public historyAddress: Optional<Reference> = Optional.empty()
@@ -131,6 +152,8 @@ export class Upload extends RootCommand implements LeafCommand {
     if (await this.hasUnsupportedGatewayOptions()) {
       exit(1)
     }
+
+    this.assertChunkedCompatibility()
 
     await this.maybePrintSyncWarning()
 
@@ -203,6 +226,10 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async uploadAnyWithSpinner(tag: Tag | undefined, isFolder: boolean): Promise<string> {
+    if (this.chunked) {
+      return this.uploadAnyChunked(isFolder)
+    }
+
     const spinner = createSpinner(this.path ? `Uploading ${this.path}...` : 'Uploading data from stdin...')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
@@ -229,6 +256,94 @@ export class Upload extends RootCommand implements LeafCommand {
       } else {
         return this.uploadSingleFile(tag)
       }
+    }
+  }
+
+  private async uploadAnyChunked(isFolder: boolean): Promise<string> {
+    const progressBar =
+      this.verbosity !== VerbosityLevel.Quiet && !this.curl
+        ? new SingleBar({ clearOnComplete: true }, Presets.rect)
+        : null
+
+    progressBar?.start(1, 0)
+
+    const onProgress = ({ total, processed }: ChunkedUploadProgress) => {
+      if (!progressBar) {
+        return
+      }
+      progressBar.setTotal(Math.max(total, processed, 1))
+      progressBar.update(processed)
+    }
+
+    const onRetry = (attempt: number, error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error)
+      this.console.verbose(`Chunk upload failed (attempt ${attempt}): ${message}. Retrying...`)
+    }
+
+    const commonOptions = {
+      pin: this.pin,
+      deferred: this.deferred,
+      maxRetries: this.chunkedRetries,
+      onProgress,
+      onRetry,
+    }
+
+    try {
+      if (this.stdin) {
+        const reference = await uploadChunkedData(this.bee, this.stamp, this.stdinData, commonOptions)
+        this.result = Optional.of(reference)
+
+        return `${this.bee.url}/bytes/${reference.toHex()}`
+      }
+
+      if (isFolder) {
+        const reference = await uploadChunkedFolder(this.bee, this.stamp, this.path, {
+          ...commonOptions,
+          indexDocument: this.indexDocument,
+          errorDocument: this.errorDocument,
+        })
+        this.result = Optional.of(reference)
+
+        return `${this.bee.url}/bzz/${reference.toHex()}/`
+      }
+
+      const parsedPath = parse(this.path)
+      const name = this.determineFileName(parsedPath.base)
+      const contentType = this.contentType || getMime(this.path) || undefined
+      const reference = await uploadChunkedFile(this.bee, this.stamp, this.path, name, contentType, commonOptions)
+      this.result = Optional.of(reference)
+
+      return name ? `${this.bee.url}/bzz/${reference.toHex()}/` : `${this.bee.url}/bytes/${reference.toHex()}`
+    } finally {
+      progressBar?.stop()
+    }
+  }
+
+  private assertChunkedCompatibility(): void {
+    if (!this.chunked) {
+      return
+    }
+
+    const conflicts: string[] = []
+
+    if (this.encrypt) {
+      conflicts.push('--encrypt')
+    }
+
+    if (this.act) {
+      conflicts.push('--act')
+    }
+
+    if (this.redundancy) {
+      conflicts.push('--redundancy')
+    }
+
+    if (this.sync) {
+      conflicts.push('--sync')
+    }
+
+    if (conflicts.length) {
+      throw new CommandLineError(`--chunked cannot be combined with: ${conflicts.join(', ')}`)
     }
   }
 

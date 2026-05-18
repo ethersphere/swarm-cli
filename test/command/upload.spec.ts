@@ -174,4 +174,43 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
     await invokeTestCli(['upload', 'test/message.txt', ...getStampOption()])
     expect(consoleMessages[0]).toContain('Swarm hash')
   })
+
+  it('should upload file with --chunked', async () => {
+    const commandBuilder = await invokeTestCli(['upload', 'README.md', '--chunked', ...getStampOption()])
+    const uploadCommand = commandBuilder.runnable as Upload
+    expect(uploadCommand.result.getOrThrow().toHex()).toHaveLength(64)
+  })
+
+  it('should upload file with --chunked and --drop-name', async () => {
+    const commandBuilder = await invokeTestCli(['upload', 'README.md', '--chunked', '--drop-name', ...getStampOption()])
+    const uploadCommand = commandBuilder.runnable as Upload
+    expect(uploadCommand.result.getOrThrow().toHex()).toHaveLength(64)
+    expect(hasMessageContaining('/bytes/')).toBeTruthy()
+  })
+
+  it('should upload folder with --chunked', async () => {
+    const commandBuilder = await invokeTestCli(['upload', 'test/testpage', '--chunked', ...getStampOption()])
+    const uploadCommand = commandBuilder.runnable as Upload
+    expect(uploadCommand.result.getOrThrow().toHex()).toHaveLength(64)
+  })
+
+  it('should reject --chunked with --encrypt', async () => {
+    await invokeTestCli(['upload', 'README.md', '--chunked', '--encrypt', ...getStampOption()])
+    expect(hasMessageContaining('--chunked cannot be combined with: --encrypt')).toBeTruthy()
+  })
+
+  it('should reject --chunked with --act', async () => {
+    await invokeTestCli(['upload', 'README.md', '--chunked', '--act', ...getStampOption()])
+    expect(hasMessageContaining('--chunked cannot be combined with: --act')).toBeTruthy()
+  })
+
+  it('should reject --chunked with --sync', async () => {
+    await invokeTestCli(['upload', 'README.md', '--chunked', '--sync', ...getStampOption()])
+    expect(hasMessageContaining('--chunked cannot be combined with: --sync')).toBeTruthy()
+  })
+
+  it('should reject --chunked with --redundancy', async () => {
+    await invokeTestCli(['upload', 'README.md', '--chunked', '--redundancy', 'MEDIUM', ...getStampOption()])
+    expect(hasMessageContaining('--chunked cannot be combined with: --redundancy')).toBeTruthy()
+  })
 })
