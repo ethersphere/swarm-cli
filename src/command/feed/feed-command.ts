@@ -1,8 +1,6 @@
 import { Wallet } from '@ethereumjs/wallet'
 import { Reference, Topic } from '@ethersphere/bee-js'
 import { Option } from 'furious-commander'
-import chalk from 'chalk'
-import QRCode from 'qrcode'
 import { exit } from 'process'
 import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
