@@ -1,10 +1,10 @@
 import { Reference } from '@ethersphere/bee-js'
 import { Aggregation, LeafCommand, Option } from 'furious-commander'
+import { History } from '../../service/history'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
 import { Upload as FileUpload } from '../upload'
 import { FeedCommand } from './feed-command'
-import { History } from '../../service/history'
 
 export class Upload extends FeedCommand implements LeafCommand {
   public readonly name = 'upload'

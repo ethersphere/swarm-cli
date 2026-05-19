@@ -1,7 +1,7 @@
 import { existsSync, unlinkSync, writeFileSync } from 'fs'
 import { LeafCommand } from 'furious-commander'
 import type { Upload } from '../../src/command/upload'
-import { toMatchLinesInOrder } from '../custom-matcher'
+import { toBeQRCode, toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 
@@ -14,6 +14,7 @@ const SUCCESSFUL_SYNC_PATTERN = [
 
 expect.extend({
   toMatchLinesInOrder,
+  toBeQRCode,
 })
 
 function actUpload(command: { runnable?: LeafCommand | undefined }): [string, string] {
@@ -24,7 +25,7 @@ function actUpload(command: { runnable?: LeafCommand | undefined }): [string, st
   return [ref, his]
 }
 
-describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining }) => {
+describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining, getLastMessage }) => {
   if (existsSync('test/data/8mb.bin')) {
     unlinkSync('test/data/8mb.bin')
   }
@@ -173,5 +174,13 @@ describeCommand('Test Upload command', ({ consoleMessages, hasMessageContaining 
   it('should be able to upload text file', async () => {
     await invokeTestCli(['upload', 'test/message.txt', ...getStampOption()])
     expect(consoleMessages[0]).toContain('Swarm hash')
+  })
+
+  describe('when --qr flag provided', () => {
+    it('should print QR code to the console', async () => {
+      await invokeTestCli(['upload', 'test/message.txt', '--qr', ...getStampOption()])
+      expect(hasMessageContaining('QR for URL:')).toBeTruthy()
+      expect(getLastMessage()).toBeQRCode()
+    })
   })
 })

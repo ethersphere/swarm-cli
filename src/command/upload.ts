@@ -6,16 +6,17 @@ import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
+import { History } from '../service/history'
 import { pickStamp, printStamp } from '../service/stamp'
 import { fileExists, readStdin } from '../utils'
 import { CommandLineError } from '../utils/error'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
+import { printQRCodeWithLabel } from '../utils/qr'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
-import { History } from '../service/history'
 
 export class Upload extends RootCommand implements LeafCommand {
   public readonly name = 'upload'
@@ -120,6 +121,14 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public redundancy!: string
 
+  @Option({
+    key: 'qr',
+    description: 'Output QR code with the URL to the uploaded content',
+    type: 'boolean',
+    default: false,
+  })
+  public qr!: boolean
+
   public stdinData!: Buffer
 
   public historyAddress: Optional<Reference> = Optional.empty()
@@ -199,6 +208,10 @@ export class Upload extends RootCommand implements LeafCommand {
       if (!(await this.bee.isGateway()) && !this.quiet) {
         printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
       }
+    }
+
+    if (this.qr) {
+      printQRCodeWithLabel(url, 'QR for URL', this.console)
     }
   }
 
