@@ -82,33 +82,6 @@ export async function sendNativeTransaction(
   return { transaction, receipt }
 }
 
-export async function mintBzzTransaction(
-  privateKey: string,
-  to: string,
-  value: string,
-  jsonRpcProvider: string,
-): Promise<TransferResponse> {
-  if (!to.startsWith('0x')) {
-    to = `0x${to}`
-  }
-  const { signer, provider } = await makeReadySigner(privateKey, jsonRpcProvider)
-  const { gasPrice } = await provider.getFeeData()
-
-  if (gasPrice === null) {
-    throw new Error('Unable to determine gas price from provider')
-  }
-
-  const bzz = new Contract(Contracts.bzz, ['function mint(address to, uint256 amount) external'], signer)
-  const transaction = await bzz.mint(to, value, { gasPrice })
-  const receipt = await transaction.wait(1)
-
-  if (receipt === null) {
-    throw new Error('Transaction was not included in a block')
-  }
-
-  return { transaction, receipt }
-}
-
 export async function sendBzzTransaction(
   privateKey: string,
   to: string,

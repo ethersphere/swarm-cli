@@ -1,5 +1,5 @@
 import { Wallet } from 'ethers'
-import { mintBzzTransaction, sendNativeTransaction } from '../../src/utils/rpc'
+import { sendBzzTransaction, sendNativeTransaction } from '../../src/utils/rpc'
 import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 
@@ -21,7 +21,7 @@ describeCommand('Test `utility redeem` command', ({ consoleMessages }) => {
     const targetWallet = Wallet.createRandom()
 
     await sendNativeTransaction(FUNDER_KEY, sourceWallet.address, ETH_01, JSON_RPC_URL)
-    await mintBzzTransaction(FUNDER_KEY, sourceWallet.address, BZZ_5, JSON_RPC_URL)
+    await sendBzzTransaction(FUNDER_KEY, sourceWallet.address, BZZ_5, JSON_RPC_URL)
 
     await invokeTestCli([
       'utility',
