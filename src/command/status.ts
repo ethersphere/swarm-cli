@@ -120,7 +120,9 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.all(
         createKeyValue(
           'Reserve capacity doubling',
-          `${reserveCapacityDoubling} (${2 ** reserveCapacityDoubling} neighbourhood(s))`,
+          `${reserveCapacityDoubling} (${2 ** reserveCapacityDoubling} neighbourhood${
+            reserveCapacityDoubling > 0 ? 's' : ''
+          })`,
         ),
       )
       this.console.all('')
