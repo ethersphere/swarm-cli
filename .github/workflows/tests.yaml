@@ -38,7 +38,7 @@ jobs:
         run: bee-dev --port 16338 --no-swap &
 
       - name: Start bee-factory
-        run: bee-factory start --tag v2.8.0
+        run: bee-factory start --fresh --tag v2.8.0
 
       - name: Deposit to chequebook
         run: |
