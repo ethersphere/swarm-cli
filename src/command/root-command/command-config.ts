@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { homedir, platform } from 'os'
 import { join } from 'path'
 import { exit } from 'process'
@@ -52,6 +52,10 @@ export class CommandConfig {
     this.saveConfig()
 
     return true
+  }
+
+  public getAccessHistoryFilePath(): string {
+    return process.env.SWARM_CLI_ACCESS_HISTORY_FILE_PATH || join(this.configFolderPath, 'access-history.json')
   }
 
   public getHistoryFilePath(): string {
