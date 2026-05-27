@@ -1,15 +1,15 @@
-export enum AccessHistoryEventType {
+export enum AccessHistoryOperation {
   Init = 'init',
   Add = 'add',
   Revoke = 'revoke',
 }
 
 export type AccessHistoryEvent = {
-  reference: string
-  stamp: string
+  stampId: string
   historyAddress: string
-  type: AccessHistoryEventType
-  timestamp: number
+  granteeListRef: string
+  operation: AccessHistoryOperation
+  createdAt: number
 }
 
 export type AccessHistoryLog = { [name: string]: AccessHistoryEvent[] }

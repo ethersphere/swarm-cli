@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { exit } from 'process'
 import { CommandConfig } from '../../command/root-command/command-config'
 import { CommandLog } from '../../command/root-command/command-log'
-import { AccessHistoryEvent, AccessHistoryEventType, AccessHistoryLog } from './types/history-event'
+import { AccessHistoryEvent, AccessHistoryLog, AccessHistoryOperation } from './types/history-event'
 
 export class AccessHistory {
   private commandConfig: CommandConfig
@@ -31,14 +31,14 @@ export class AccessHistory {
     }
   }
 
-  public getEventsByType(granteeListName: string, eventType: AccessHistoryEventType): AccessHistoryEvent[] {
+  public getEventsByType(granteeListName: string, eventType: AccessHistoryOperation): AccessHistoryEvent[] {
     const history = this.getHistory()
 
     if (!history[granteeListName]) {
       return []
     }
 
-    return history[granteeListName].filter(event => event.type === eventType)
+    return history[granteeListName].filter(event => event.operation === eventType)
   }
 
   public addEvent(granteeListName: string, event: AccessHistoryEvent) {
@@ -49,11 +49,11 @@ export class AccessHistory {
     }
 
     history[granteeListName].push({
-      timestamp: event.timestamp,
-      reference: event.reference,
+      stampId: event.stampId,
       historyAddress: event.historyAddress,
-      stamp: event.stamp,
-      type: event.type,
+      granteeListRef: event.granteeListRef,
+      operation: event.operation,
+      createdAt: event.createdAt,
     })
 
     writeFileSync(this.commandConfig.getAccessHistoryFilePath(), JSON.stringify(history))

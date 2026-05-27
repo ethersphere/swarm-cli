@@ -1,7 +1,7 @@
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { AccessHistory } from '../../service/access'
-import { AccessHistoryEventType } from '../../service/access/types/history-event'
+import { AccessHistoryOperation } from '../../service/access/types/history-event'
 import { createKeyValue } from '../../utils/text'
 import { AccessCommand } from './access-command'
 
@@ -39,7 +39,7 @@ export class Init extends AccessCommand implements LeafCommand {
 
     const accessHistory = new AccessHistory(this.commandConfig, this.console)
 
-    if (accessHistory.getEventsByType(this.listName, AccessHistoryEventType.Init).length > 0) {
+    if (accessHistory.getEventsByType(this.listName, AccessHistoryOperation.Init).length > 0) {
       this.console.error(`Grantee list with name '${this.listName}' has already been initialized!`)
 
       exit(1)
@@ -49,11 +49,11 @@ export class Init extends AccessCommand implements LeafCommand {
     this.console.log(`Grantee list '${this.listName}' initialized successfully!`)
 
     accessHistory.addEvent(this.listName, {
-      timestamp: Date.now(),
-      reference: response.ref.toHex(),
+      stampId: this.stamp,
       historyAddress: response.historyref.toHex(),
-      stamp: this.stamp,
-      type: AccessHistoryEventType.Init,
+      granteeListRef: response.ref.toHex(),
+      operation: AccessHistoryOperation.Init,
+      createdAt: Date.now(),
     })
 
     if (this.verbose) {
