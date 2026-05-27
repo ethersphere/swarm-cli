@@ -7,15 +7,15 @@ expect.extend({
   toMatchLinesInOrder,
 })
 
-const FUNDER_KEY = '0x566058308ad5fa3888173c741a1fb902c9f1f19559b11fc2738dfc53637ce4e9'
-const JSON_RPC_URL = 'http://localhost:9545'
+const FUNDER_KEY = '0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba'
+const JSON_RPC_URL = 'http://localhost:8545'
 const ETH_01 = 100_000_000_000_000_000n.toString()
 const BZZ_5 = 50_000_000_000_000_000n.toString()
 
 describeCommand('Test `utility redeem` command', ({ consoleMessages }) => {
   it('should redeem funds to target address', async () => {
-    process.env.SWARM_CLI_NETWORK_ID = '4020'
-    process.env.SWARM_CLI_BZZ_ADDRESS = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab'
+    process.env.SWARM_CLI_NETWORK_ID = '1337'
+    process.env.SWARM_CLI_BZZ_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
 
     const sourceWallet = Wallet.createRandom()
     const targetWallet = Wallet.createRandom()

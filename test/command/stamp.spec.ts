@@ -1,10 +1,10 @@
+import { BatchId, Bee } from '@ethersphere/bee-js'
 import { Types } from 'cafe-utility'
+import { randomBytes } from 'crypto'
 import inquirer from 'inquirer'
 import { Buy } from '../../src/command/stamp/buy'
 import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
-import { BatchId, Bee } from '@ethersphere/bee-js'
-import { randomBytes } from 'crypto'
 
 expect.extend({
   toMatchLinesInOrder,
@@ -105,7 +105,7 @@ describeCommand(
     })
 
     it('should print custom message when there are no stamps', async () => {
-      await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:11633'])
+      await invokeTestCli(['stamp', 'list', '--bee-api-url', 'http://localhost:21633'])
       expect(getNthLastMessage(4)).toContain('You do not have any stamps.')
     })
 
