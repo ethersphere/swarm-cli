@@ -21,7 +21,7 @@ export class Init extends AccessCommand implements LeafCommand {
   @Option({
     key: 'list-name',
     alias: 'name',
-    description: 'Name of the grantees',
+    description: 'Name of the grantee list',
     required: true,
     type: 'string',
   })
