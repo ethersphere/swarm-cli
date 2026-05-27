@@ -66,8 +66,8 @@ export function describeCommand(
       return true
     })
 
-    jest.spyOn(process, 'exit').mockImplementation(() => {
-      throw new Error('process.exit() was called.')
+    jest.spyOn(process, 'exit').mockImplementation(code => {
+      throw new Error(`process.exit() was called with code ${code}`)
     })
 
     jest.spyOn(global.console, 'warn')
@@ -77,6 +77,12 @@ export function describeCommand(
       configFileName ? `${configFileName}-upload-history.json` : 'upload-history.json',
     )
     process.env.SWARM_CLI_HISTORY_FILE_PATH = historyFilePath
+
+    const accessHistoryFilePath = join(
+      configFolderPath,
+      configFileName ? `${configFileName}-access-history.json` : 'access-history.json',
+    )
+    process.env.SWARM_CLI_ACCESS_HISTORY_FILE_PATH = accessHistoryFilePath
     process.env.SWARM_CLI_VERSION_CHECK_FILE_PATH = join(configFolderPath, 'version-check.json')
 
     //if own config is needed
