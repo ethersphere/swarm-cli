@@ -12,6 +12,7 @@ export class Init extends AccessCommand implements LeafCommand {
 
   @Option({
     key: 'stamp',
+    alias: 's',
     description: 'Postage stamp ID',
     required: true,
     type: 'string',
@@ -20,7 +21,7 @@ export class Init extends AccessCommand implements LeafCommand {
 
   @Option({
     key: 'list-name',
-    alias: 'name',
+    alias: 'n',
     description: 'Name of the grantee list',
     required: true,
     type: 'string',
@@ -29,6 +30,7 @@ export class Init extends AccessCommand implements LeafCommand {
 
   @Option({
     key: 'grantee',
+    alias: 'g',
     description: 'Public address of the grantee',
     type: 'string',
     array: true,

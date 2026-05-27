@@ -16,7 +16,7 @@ describeCommand(
           'access',
           'init',
           ...getStampOption(),
-          '--name',
+          '--list-name',
           'test-access',
           '--grantee',
           pssAddress.toHex(),
@@ -26,8 +26,8 @@ describeCommand(
 
       describe('when grantee list with the same name already exists', () => {
         it('should show error message', async () => {
-          await invokeTestCli(['access', 'init', ...getStampOption(), '--name', 'test-access'])
-          await invokeTestCli(['access', 'init', ...getStampOption(), '--name', 'test-access'])
+          await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
+          await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
           expect(consoleMessages[1]).toEqual("Grantee list with name 'test-access' has already been initialized!")
           expect(consoleMessages[2]).toContain('process.exit() was called with code 1')
         })
