@@ -9,6 +9,10 @@ function deleteWholeRow(): string {
   return '\u001b[2K'
 }
 
+export function successText(string: string): string {
+  return chalk.green('✔ ' + string)
+}
+
 export function warningSymbol(): string {
   return chalk.yellow.bold('⚠️  Warning!')
 }

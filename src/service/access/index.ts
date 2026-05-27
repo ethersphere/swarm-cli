@@ -31,14 +31,18 @@ export class AccessHistory {
     }
   }
 
-  public getEventsByType(granteeListName: string, eventType: AccessHistoryOperation): AccessHistoryEvent[] {
+  public getEvents(granteeListName: string): AccessHistoryEvent[] {
     const history = this.getHistory()
 
     if (!history[granteeListName]) {
       return []
     }
 
-    return history[granteeListName].filter(event => event.operation === eventType)
+    return history[granteeListName]
+  }
+
+  public getEventsByType(granteeListName: string, eventType: AccessHistoryOperation): AccessHistoryEvent[] {
+    return this.getEvents(granteeListName).filter(event => event.operation === eventType)
   }
 
   public addEvent(granteeListName: string, event: AccessHistoryEvent) {
