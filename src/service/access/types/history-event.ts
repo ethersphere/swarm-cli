@@ -1,6 +1,6 @@
 export enum AccessHistoryOperation {
   Init = 'init',
-  Add = 'add',
+  Grant = 'grant',
   Revoke = 'revoke',
 }
 

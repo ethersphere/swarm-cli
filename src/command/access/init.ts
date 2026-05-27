@@ -19,8 +19,9 @@ export class Init extends AccessCommand implements LeafCommand {
   public stamp!: string
 
   @Option({
-    key: 'name',
-    description: 'Name of the grantee',
+    key: 'list-name',
+    alias: 'name',
+    description: 'Name of the grantees',
     required: true,
     type: 'string',
   })
