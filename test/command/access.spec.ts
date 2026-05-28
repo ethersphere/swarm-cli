@@ -55,7 +55,7 @@ describeCommand(
         await System.sleepMillis(1000)
         const pssAddress = await getPssAddress('http://localhost:21633')
         await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', pssAddress.toHex()])
-        expect(getLastMessage()).toContain(`Access granted to ${pssAddress.toHex()}!`)
+        expect(getLastMessage()).toContain(`Access granted to ${pssAddress.toHex()}`)
       })
 
       describe('when grantee list does not exist', () => {
@@ -112,7 +112,7 @@ describeCommand(
         ])
         await System.sleepMillis(1000)
         await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', pssAddress.toHex()])
-        expect(getLastMessage()).toContain(`Access revoked from ${pssAddress.toHex()}!`)
+        expect(getLastMessage()).toContain(`Access revoked from ${pssAddress.toHex()}`)
       })
 
       describe('when grantee list does not exist', () => {
