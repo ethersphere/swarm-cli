@@ -1,7 +1,7 @@
 import { System } from 'cafe-utility'
 import { existsSync, unlinkSync } from 'fs'
 import { describeCommand, invokeTestCli } from '../utility'
-import { getPssAddress } from '../utility/address'
+import { getPublicAddress } from '../utility/address'
 import { getStampOption } from '../utility/stamp'
 
 describeCommand(
@@ -16,16 +16,8 @@ describeCommand(
     })
     describe('init', () => {
       it('should initialize access with pss address as grantee', async () => {
-        const pssAddress = await getPssAddress('http://localhost:21633')
-        await invokeTestCli([
-          'access',
-          'init',
-          ...getStampOption(),
-          '--list-name',
-          'test-access',
-          '--grantee',
-          pssAddress.toHex(),
-        ])
+        const pubKey = await getPublicAddress('http://localhost:21633')
+        await invokeTestCli(['access', 'init', ...getStampOption(), '--list-name', 'test-access', '--grantee', pubKey])
         expect(getLastMessage()).toEqual("Grantee list 'test-access' initialized successfully!")
       })
 
@@ -53,9 +45,9 @@ describeCommand(
       it('should grant access to a new grantee', async () => {
         await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
         await System.sleepMillis(1000)
-        const pssAddress = await getPssAddress('http://localhost:21633')
-        await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', pssAddress.toHex()])
-        expect(getLastMessage()).toContain(`Access granted to ${pssAddress.toHex()}!`)
+        const pubKey = await getPublicAddress('http://localhost:21633')
+        await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', pubKey])
+        expect(getLastMessage()).toContain(`Access granted to ${pubKey}!`)
       })
 
       describe('when grantee list does not exist', () => {
@@ -80,16 +72,8 @@ describeCommand(
         it('should show grantee list reference and history address', async () => {
           await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
           await System.sleepMillis(1000)
-          const pssAddress = await getPssAddress('http://localhost:21633')
-          await invokeTestCli([
-            'access',
-            'grant',
-            '--list-name',
-            'test-access',
-            '--grantee',
-            pssAddress.toHex(),
-            '--verbose',
-          ])
+          const pubKey = await getPublicAddress('http://localhost:21633')
+          await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', pubKey, '--verbose'])
           expect(getNthLastMessage(2)).toContain('Grantee list reference')
           expect(getNthLastMessage(2)).toMatch(/[a-f0-9]{64}/g)
           expect(getLastMessage()).toContain('History address')
@@ -100,19 +84,11 @@ describeCommand(
 
     describe('revoke', () => {
       it('should revoke access from a grantee', async () => {
-        const pssAddress = await getPssAddress('http://localhost:21633')
-        await invokeTestCli([
-          'access',
-          'init',
-          ...getStampOption(),
-          '-n',
-          'test-access',
-          '--grantee',
-          pssAddress.toHex(),
-        ])
+        const pubKey = await getPublicAddress('http://localhost:21633')
+        await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access', '--grantee', pubKey])
         await System.sleepMillis(1000)
-        await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', pssAddress.toHex()])
-        expect(getLastMessage()).toContain(`Access revoked from ${pssAddress.toHex()}!`)
+        await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', pubKey])
+        expect(getLastMessage()).toContain(`Access revoked from ${pubKey}!`)
       })
 
       describe('when grantee list does not exist', () => {
@@ -135,31 +111,33 @@ describeCommand(
 
       describe('when verbose option is used', () => {
         it('should show grantee list reference and history address', async () => {
-          const pssAddress = await getPssAddress('http://localhost:21633')
-          await invokeTestCli([
-            'access',
-            'init',
-            ...getStampOption(),
-            '-n',
-            'test-access',
-            '--grantee',
-            pssAddress.toHex(),
-          ])
+          const pubKey = await getPublicAddress('http://localhost:21633')
+          await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access', '--grantee', pubKey])
           await System.sleepMillis(1000)
-          await invokeTestCli([
-            'access',
-            'revoke',
-            '--list-name',
-            'test-access',
-            '--grantee',
-            pssAddress.toHex(),
-            '--verbose',
-          ])
+          await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', pubKey, '--verbose'])
           expect(getNthLastMessage(2)).toContain('Grantee list reference')
           expect(getNthLastMessage(2)).toMatch(/[a-f0-9]{64}/g)
           expect(getLastMessage()).toContain('History address')
           expect(getLastMessage()).toMatch(/[a-f0-9]{64}/g)
         })
+      })
+    })
+
+    describe('list', () => {
+      it('should list all grantees in the list', async () => {
+        const granteePubKey = await getPublicAddress('http://localhost:21633')
+        await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
+        await System.sleepMillis(1000)
+        await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', granteePubKey])
+        await System.sleepMillis(1000)
+        await invokeTestCli(['access', 'list', '--list-name', 'test-access'])
+        expect(getNthLastMessage(2)).toContain(`Grantees of list 'test-access':`)
+        expect(getLastMessage()).toContain(granteePubKey)
+
+        await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', granteePubKey])
+        await System.sleepMillis(1000)
+        await invokeTestCli(['access', 'list', '--list-name', 'test-access'])
+        expect(getLastMessage()).toContain("Grantee list 'test-access' has no grantees.")
       })
     })
   },
