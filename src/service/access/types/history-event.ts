@@ -2,6 +2,7 @@ export enum AccessHistoryOperation {
   Init = 'init',
   Grant = 'grant',
   Revoke = 'revoke',
+  Upload = 'upload',
 }
 
 export type AccessHistoryEvent = {

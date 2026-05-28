@@ -1,5 +1,6 @@
 import { FileUploadOptions, RedundancyLevel, Reference, Tag, Utils } from '@ethersphere/bee-js'
 import { Numbers, Optional, System } from 'cafe-utility'
+import chalk from 'chalk'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
@@ -7,6 +8,7 @@ import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
 import { AccessHistory } from '../service/access'
+import { AccessHistoryOperation } from '../service/access/types/history-event'
 import { History } from '../service/history'
 import { pickStamp, printStamp } from '../service/stamp'
 import { fileExists, readStdin } from '../utils'
@@ -229,6 +231,11 @@ export class Upload extends RootCommand implements LeafCommand {
 
     if (this.qr) {
       printQRCodeWithLabel(url, 'QR for URL', this.console)
+    }
+
+    if (this.shareWith) {
+      this.addNewAccessHistoryEvent()
+      await this.printShareInstructions()
     }
   }
 
@@ -578,6 +585,37 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private usingACT(): boolean {
     return this.act || this.shareWith.length > 0
+  }
+
+  private addNewAccessHistoryEvent() {
+    const accessHistory = new AccessHistory(this.commandConfig, this.console)
+    const lastHistoryEvent = accessHistory.getLatestEvent(this.shareWith)
+
+    if (!lastHistoryEvent) {
+      this.console.error(`Grantee list with name '${this.shareWith}' does not exist!`)
+      exit(1)
+    }
+    accessHistory.addEvent(this.shareWith, {
+      stampId: this.stamp,
+      historyAddress: this.historyAddress.getOrThrow().toHex(),
+      granteeListRef: lastHistoryEvent.granteeListRef,
+      operation: AccessHistoryOperation.Upload,
+      createdAt: Date.now(),
+    })
+  }
+
+  private async printShareInstructions() {
+    const { publicKey } = await this.bee.getNodeAddresses()
+    this.console.log(
+      '\nTo share the uploaded content with your grantees, please provide them with the following information:\n',
+    )
+    const token = `${publicKey}:${this.historyAddress.getOrThrow().toHex()}`
+    this.console.log(chalk.bold(token))
+    this.console.log(
+      '\nThey can use this information, when using the download command, providing it in the --access option.',
+    )
+    this.console.log('Example:\n')
+    this.console.log(chalk.bold(`> swarm-cli download ${this.result.getOrThrow().toHex()} --access ${token}\n`))
   }
 
   private prepareACTUploadOptions(uploadOptions: FileUploadOptions): FileUploadOptions {
