@@ -21,6 +21,10 @@ export function warningText(string: string): string {
   return chalk.yellow(string)
 }
 
+export function deprecationWarningText(string: string): string {
+  return chalk.yellow(`DEPRECATED: ${string}`)
+}
+
 export function errorText(string: string): string {
   return chalk.red(string)
 }

@@ -1,4 +1,4 @@
-import { RedundancyLevel, Reference, Tag, Utils } from '@ethersphere/bee-js'
+import { FileUploadOptions, RedundancyLevel, Reference, Tag, Utils } from '@ethersphere/bee-js'
 import { Numbers, Optional, System } from 'cafe-utility'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
@@ -6,6 +6,7 @@ import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
+import { AccessHistory } from '../service/access'
 import { History } from '../service/history'
 import { pickStamp, printStamp } from '../service/stamp'
 import { fileExists, readStdin } from '../utils'
@@ -14,7 +15,7 @@ import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { printQRCodeWithLabel } from '../utils/qr'
 import { createSpinner } from '../utils/spinner'
-import { createKeyValue, warningSymbol, warningText } from '../utils/text'
+import { createKeyValue, deprecationWarningText, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
@@ -55,6 +56,14 @@ export class Upload extends RootCommand implements LeafCommand {
     required: { when: 'act-history-address' },
   })
   public act!: boolean
+
+  @Option({
+    key: 'share-with',
+    type: 'string',
+    description: 'Name of the grantee list to share the uploaded content with',
+    conflicts: 'act',
+  })
+  public shareWith!: string
 
   @Option({ key: 'act-history-address', type: 'string', description: 'ACT history address' })
   public optHistoryAddress!: string
@@ -137,6 +146,14 @@ export class Upload extends RootCommand implements LeafCommand {
   public async run(usedFromOtherCommand = false): Promise<void> {
     super.init()
 
+    if (this.act || this.optHistoryAddress) {
+      this.console.log(
+        deprecationWarningText(
+          '--act and --act-history-address options are deprecated and will be removed in future versions. Please use --share-with option instead.',
+        ),
+      )
+    }
+
     if (await this.hasUnsupportedGatewayOptions()) {
       exit(1)
     }
@@ -179,7 +196,7 @@ export class Upload extends RootCommand implements LeafCommand {
     const swarmHash = this.result.getOrThrow().toHex()
     this.console.log(createKeyValue('Swarm hash', swarmHash))
 
-    if (this.act) {
+    if (this.usingACT()) {
       this.console.log(createKeyValue('Swarm history address', this.historyAddress.getOrThrow().toHex()))
     }
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
@@ -248,35 +265,42 @@ export class Upload extends RootCommand implements LeafCommand {
   private async uploadStdin(tag?: Tag): Promise<string> {
     if (this.fileName) {
       const contentType = this.contentType || getMime(this.fileName) || undefined
-      const { reference, historyAddress } = await this.bee.uploadFile(this.stamp, this.stdinData, this.fileName, {
+      let uploadOptions = {
         tag: tag && tag.uid,
         pin: this.pin,
         encrypt: this.encrypt,
         contentType,
         deferred: this.deferred,
         redundancyLevel: this.determineRedundancyLevel(),
-        act: this.act,
-        actHistoryAddress: this.optHistoryAddress,
-      })
+      } as FileUploadOptions
+      uploadOptions = this.prepareACTUploadOptions(uploadOptions)
+
+      const { reference, historyAddress } = await this.bee.uploadFile(
+        this.stamp,
+        this.stdinData,
+        this.fileName,
+        uploadOptions,
+      )
       this.result = Optional.of(reference)
 
-      if (this.act) {
+      if (this.usingACT()) {
         this.historyAddress = historyAddress
       }
 
       return `${this.bee.url}/bzz/${reference.toHex()}/`
     } else {
-      const { reference, historyAddress } = await this.bee.uploadData(this.stamp, this.stdinData, {
+      let uploadOptions = {
         tag: tag?.uid,
         deferred: this.deferred,
         encrypt: this.encrypt,
         redundancyLevel: this.determineRedundancyLevel(),
-        act: this.act,
-        actHistoryAddress: this.optHistoryAddress,
-      })
+      } as FileUploadOptions
+      uploadOptions = this.prepareACTUploadOptions(uploadOptions)
+
+      const { reference, historyAddress } = await this.bee.uploadData(this.stamp, this.stdinData, uploadOptions)
       this.result = Optional.of(reference)
 
-      if (this.act) {
+      if (this.usingACT()) {
         this.historyAddress = historyAddress
       }
 
@@ -290,7 +314,7 @@ export class Upload extends RootCommand implements LeafCommand {
       folder: true,
       type: 'buffer',
     })
-    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, {
+    let uploadOptions = {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
@@ -298,12 +322,12 @@ export class Upload extends RootCommand implements LeafCommand {
       encrypt: this.encrypt,
       deferred: this.deferred,
       redundancyLevel: this.determineRedundancyLevel(),
-      act: this.act,
-      actHistoryAddress: this.optHistoryAddress,
-    })
+    } as FileUploadOptions
+    uploadOptions = this.prepareACTUploadOptions(uploadOptions)
+    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, uploadOptions)
     this.result = Optional.of(reference)
 
-    if (this.act) {
+    if (this.usingACT()) {
       this.historyAddress = historyAddress
     }
 
@@ -319,24 +343,24 @@ export class Upload extends RootCommand implements LeafCommand {
     })
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
+    let uploadOptions = {
+      tag: tag && tag.uid,
+      pin: this.pin,
+      encrypt: this.encrypt,
+      contentType,
+      deferred: this.deferred,
+      redundancyLevel: this.determineRedundancyLevel(),
+    } as FileUploadOptions
+    uploadOptions = this.prepareACTUploadOptions(uploadOptions)
     const { reference, historyAddress } = await this.bee.uploadFile(
       this.stamp,
       readable,
       this.determineFileName(parsedPath.base),
-      {
-        tag: tag && tag.uid,
-        pin: this.pin,
-        encrypt: this.encrypt,
-        contentType,
-        deferred: this.deferred,
-        redundancyLevel: this.determineRedundancyLevel(),
-        act: this.act,
-        actHistoryAddress: this.optHistoryAddress,
-      },
+      uploadOptions,
     )
     this.result = Optional.of(reference)
 
-    if (this.act) {
+    if (this.usingACT()) {
       this.historyAddress = historyAddress
     }
 
@@ -450,7 +474,7 @@ export class Upload extends RootCommand implements LeafCommand {
       return false
     }
 
-    if (this.act) {
+    if (this.usingACT()) {
       this.console.error('You are trying to upload to the gateway which does not support ACT.')
       this.console.error('Please try again without the --act option.')
 
@@ -550,5 +574,36 @@ export class Upload extends RootCommand implements LeafCommand {
     } else {
       return 'file'
     }
+  }
+
+  private usingACT(): boolean {
+    return this.act || this.shareWith.length > 0
+  }
+
+  private prepareACTUploadOptions(uploadOptions: FileUploadOptions): FileUploadOptions {
+    const options = { ...uploadOptions }
+
+    if (this.act) {
+      options.act = this.act
+
+      if (this.optHistoryAddress) {
+        options.actHistoryAddress = this.optHistoryAddress
+      }
+    }
+
+    if (this.shareWith) {
+      const accessHistory = new AccessHistory(this.commandConfig, this.console)
+      const lastHistoryEvent = accessHistory.getLatestEvent(this.shareWith)
+
+      if (!lastHistoryEvent) {
+        this.console.error(`Grantee list with name '${this.shareWith}' does not exist!`)
+        exit(1)
+      }
+
+      options.act = true
+      options.actHistoryAddress = lastHistoryEvent.historyAddress
+    }
+
+    return options
   }
 }
