@@ -52,13 +52,18 @@ export class AccessHistory {
       history[granteeListName] = []
     }
 
-    history[granteeListName].push({
+    const newEvent = {
       stampId: event.stampId,
       historyAddress: event.historyAddress,
       granteeListRef: event.granteeListRef,
       operation: event.operation,
       createdAt: event.createdAt,
-    })
+    } as AccessHistoryEvent
+
+    if (event.grantees) {
+      newEvent.grantees = event.grantees
+    }
+    history[granteeListName].push(event)
 
     writeFileSync(this.commandConfig.getAccessHistoryFilePath(), JSON.stringify(history))
   }

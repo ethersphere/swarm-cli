@@ -37,6 +37,10 @@ export function ellipsis(value: string, startIndex: number, endIndex?: number | 
   return `${value.slice(0, startIndex)}...${endIndex ? value.slice(endIndex) : ''}`
 }
 
+export function formatDate(date: Date): string {
+  return date.toISOString().replace('T', ' ').slice(0, 19) + ' UTC'
+}
+
 export function printDivided<T>(
   items: T[],
   printFn: (item: T, console: CommandLog) => void,

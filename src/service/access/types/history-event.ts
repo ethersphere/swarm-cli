@@ -10,6 +10,7 @@ export type AccessHistoryEvent = {
   granteeListRef: string
   operation: AccessHistoryOperation
   createdAt: number
+  grantees?: string[]
 }
 
 export type AccessHistoryLog = { [name: string]: AccessHistoryEvent[] }

@@ -60,6 +60,7 @@ export class Grant extends AccessCommand implements LeafCommand {
       granteeListRef: response.ref.toHex(),
       operation: AccessHistoryOperation.Grant,
       createdAt: Date.now(),
+      grantees: this.grantees,
     })
 
     if (this.verbose) {
