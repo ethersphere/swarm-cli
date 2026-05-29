@@ -584,7 +584,7 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private usingACT(): boolean {
-    return this.act || this.shareWith.length > 0
+    return this.act || Boolean(this.shareWith)
   }
 
   private addNewAccessHistoryEvent() {
