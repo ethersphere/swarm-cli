@@ -147,15 +147,17 @@ export class Upload extends RootCommand implements LeafCommand {
       throw new CommandLineError(`Given filepath '${this.path}' doesn't exist`)
     }
 
+    const isGateway = await this.bee.isGateway()
+
     if (this.stdin) {
-      if (!this.stamp) {
+      if (!this.stamp && !isGateway) {
         throw new CommandLineError('Stamp must be passed when reading data from stdin')
       }
       this.stdinData = await readStdin(this.console)
     }
 
     if (!this.stamp) {
-      if (await this.bee.isGateway()) {
+      if (isGateway) {
         this.stamp = '0'.repeat(64)
       } else {
         this.stamp = await pickStamp(this.bee, this.console)
@@ -205,7 +207,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (!usedFromOtherCommand) {
       this.console.quiet(this.result.getOrThrow().toHex())
 
-      if (!(await this.bee.isGateway()) && !this.quiet) {
+      if (!isGateway && !this.quiet) {
         printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
       }
     }
