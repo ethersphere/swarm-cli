@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.1.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.0.0...v3.1.0) (2026-05-13)
+
+
+### Features
+
+* show time data at stamp expiration ([#710](https://www.github.com/ethersphere/swarm-cli/issues/710)) ([9c32f68](https://www.github.com/ethersphere/swarm-cli/commit/9c32f68af57ebb49b39aff189e6c4730c88e6df4))
+* show warning when new swarm-cli version is available ([#708](https://www.github.com/ethersphere/swarm-cli/issues/708)) ([b3bf9bc](https://www.github.com/ethersphere/swarm-cli/commit/b3bf9bc64b6fb933308d529441209f4663a49226))
+* use amount argument and unit option for stake deposit ([#707](https://www.github.com/ethersphere/swarm-cli/issues/707)) ([d6a25cd](https://www.github.com/ethersphere/swarm-cli/commit/d6a25cd8b4d2729daedadd2432482403fd025e28))
+
+## [3.0.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.37.0...v3.0.0) (2026-05-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* add unit flag for cheque deposit and withraw (#686)
+
+### Features
+
+* add unit flag for cheque deposit and withraw ([#686](https://www.github.com/ethersphere/swarm-cli/issues/686)) ([2d6cd7a](https://www.github.com/ethersphere/swarm-cli/commit/2d6cd7a01a79b03b0e6b364d7619b9687192ee0f))
+* add upload history enable, disable and status commands ([#683](https://www.github.com/ethersphere/swarm-cli/issues/683)) ([dd9a74b](https://www.github.com/ethersphere/swarm-cli/commit/dd9a74b6977d426a659e0ab65f89d0ff189d7673))
+* implement upload history ([#679](https://www.github.com/ethersphere/swarm-cli/issues/679)) ([d72a1de](https://www.github.com/ethersphere/swarm-cli/commit/d72a1de7eef880b90e26c11aae87916bd75c084c))
+* update bee-js minor version to 10.2.x ([#664](https://www.github.com/ethersphere/swarm-cli/issues/664)) ([507c15a](https://www.github.com/ethersphere/swarm-cli/commit/507c15a742c34a0a510ff7000922fc4ed74f1e0a))
+
+
+### Bug Fixes
+
+* improve error handling to display API error messages with status… ([#670](https://www.github.com/ethersphere/swarm-cli/issues/670)) ([6fc0503](https://www.github.com/ethersphere/swarm-cli/commit/6fc05034a6296b7664b911e307705a7c7a51d347))
+
 ## [2.37.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.36.1...v2.37.0) (2025-12-17)
 
 

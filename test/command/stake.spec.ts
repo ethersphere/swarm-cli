@@ -9,8 +9,8 @@ expect.extend({
 describeCommand('Test Stake command', ({ consoleMessages }) => {
   test('should stake with bzz, plur, and print stake', async () => {
     await invokeTestCli(['stake', 'status', ...getBeeDevOption()])
-    await invokeTestCli(['stake', 'deposit', '--bzz', '10', '--yes', ...getBeeDevOption()])
-    await invokeTestCli(['stake', 'deposit', '--plur', '10', '--yes', ...getBeeDevOption()])
+    await invokeTestCli(['stake', 'deposit', '10', '--unit', 'bzz', '--yes', ...getBeeDevOption()])
+    await invokeTestCli(['stake', 'deposit', '10', '--unit', 'plur', '--yes', ...getBeeDevOption()])
     await invokeTestCli(['stake', 'status', ...getBeeDevOption()])
     expect(consoleMessages).toMatchLinesInOrder([
       ['Staked xBZZ', '0.0000000000000000'],

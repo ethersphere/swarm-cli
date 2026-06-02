@@ -6,11 +6,13 @@ import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
+import { History } from '../service/history'
 import { pickStamp, printStamp } from '../service/stamp'
 import { fileExists, readStdin } from '../utils'
 import { CommandLineError } from '../utils/error'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
+import { printQRCodeWithLabel } from '../utils/qr'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { RootCommand } from './root-command'
@@ -119,6 +121,14 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public redundancy!: string
 
+  @Option({
+    key: 'qr',
+    description: 'Output QR code with the URL to the uploaded content',
+    type: 'boolean',
+    default: false,
+  })
+  public qr!: boolean
+
   public stdinData!: Buffer
 
   public historyAddress: Optional<Reference> = Optional.empty()
@@ -166,7 +176,8 @@ export class Upload extends RootCommand implements LeafCommand {
     const url = await this.uploadAnyWithSpinner(tag, uploadingFolder)
 
     this.console.dim('Data has been sent to the Bee node successfully!')
-    this.console.log(createKeyValue('Swarm hash', this.result.getOrThrow().toHex()))
+    const swarmHash = this.result.getOrThrow().toHex()
+    this.console.log(createKeyValue('Swarm hash', swarmHash))
 
     if (this.act) {
       this.console.log(createKeyValue('Swarm history address', this.historyAddress.getOrThrow().toHex()))
@@ -180,12 +191,27 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(createKeyValue('URL', url))
 
+    if (this.commandConfig.config.historyEnabled && !usedFromOtherCommand) {
+      const history = new History(this.commandConfig, this.console)
+      history.addItem({
+        timestamp: Date.now(),
+        reference: swarmHash,
+        stamp: this.stamp,
+        path: this.path,
+        uploadType: this.uploadType(),
+      })
+    }
+
     if (!usedFromOtherCommand) {
       this.console.quiet(this.result.getOrThrow().toHex())
 
       if (!(await this.bee.isGateway()) && !this.quiet) {
         printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
       }
+    }
+
+    if (this.qr) {
+      printQRCodeWithLabel(url, 'QR for URL', this.console)
     }
   }
 
@@ -510,6 +536,19 @@ export class Upload extends RootCommand implements LeafCommand {
         return RedundancyLevel.PARANOID
       default:
         throw new CommandLineError(`Invalid redundancy level: ${this.redundancy}`)
+    }
+  }
+
+  public uploadType(): 'stdin' | 'folder' | 'file' {
+    if (this.stdin) {
+      return 'stdin'
+    }
+    const stats = FS.lstatSync(this.path)
+
+    if (stats.isDirectory()) {
+      return 'folder'
+    } else {
+      return 'file'
     }
   }
 }

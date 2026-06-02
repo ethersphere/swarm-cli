@@ -1,5 +1,6 @@
 import { Reference } from '@ethersphere/bee-js'
 import { Aggregation, LeafCommand, Option } from 'furious-commander'
+import { History } from '../../service/history'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
 import { Upload as FileUpload } from '../upload'
@@ -34,6 +35,19 @@ export class Upload extends FeedCommand implements LeafCommand {
 
     const reference = await this.runUpload()
     this.feedManifest = await this.updateFeedAndPrint(this.stamp, reference)
+
+    if (this.commandConfig.config.historyEnabled) {
+      const history = new History(this.commandConfig, this.console)
+      history.addItem({
+        timestamp: Date.now(),
+        reference: reference.toHex(),
+        stamp: this.stamp,
+        path: this.fileUpload.path,
+        uploadType: this.fileUpload.uploadType(),
+        feedIdentity: this.identity,
+        feedAddress: this.feedManifest.toHex(),
+      })
+    }
     this.console.dim('Successfully uploaded to feed.')
   }
 

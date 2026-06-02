@@ -10,6 +10,7 @@ import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
+import { printQRCodeWithLabel } from '../../utils/qr'
 
 interface FeedInfo {
   reference: Reference
@@ -35,6 +36,14 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
 
+  @Option({
+    key: 'qr',
+    description: 'Generate QR code for URLs in the result',
+    type: 'boolean',
+    default: false,
+  })
+  public qr!: boolean
+
   protected async updateFeedAndPrint(stamp: string, chunkReference: Reference): Promise<Reference> {
     const wallet = await this.getWallet()
     const topic = this.topic ? new Topic(this.topic) : Topic.fromString(this.topicString)
@@ -44,7 +53,12 @@ export class FeedCommand extends RootCommand {
     this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${chunkReference}/`))
     this.console.verbose(createKeyValue('Feed Reference', reference.toHex()))
     this.console.verbose(createKeyValue('Feed Manifest', manifest.toHex()))
-    this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
+    const manifestUrl = `${this.bee.url}/bzz/${manifest}/`
+    this.console.log(createKeyValue('Feed Manifest URL', manifestUrl))
+
+    if (this.qr) {
+      printQRCodeWithLabel(manifestUrl, 'QR for Manifest URL', this.console)
+    }
 
     this.console.quiet(manifest.toHex())
 
@@ -73,7 +87,11 @@ export class FeedCommand extends RootCommand {
       this.console.error('The provided identity does not exist. Please select one that exists.')
     }
 
-    return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
+    if (!identities[this.identity]) {
+      this.identity = await pickIdentity(this.commandConfig, this.console)
+    }
+
+    return identities[this.identity]
   }
 
   private async writeFeed(stamp: string, wallet: Wallet, topic: Topic, chunkReference: Reference): Promise<FeedInfo> {

@@ -60,7 +60,7 @@ export function printStamp(stamp: PostageBatch, console: CommandLog, settings?: 
 
   if (settings?.showTtl) {
     const ttl = Dates.secondsToHumanTime(stamp.duration.toSeconds())
-    const expires = stamp.duration.toEndDate().toISOString().slice(0, 10)
+    const expires = stamp.duration.toEndDate().toISOString().replace('T', ' ').slice(0, 19) + ' UTC'
     console.log(createKeyValue('TTL', `${ttl} (${expires})`))
   }
 

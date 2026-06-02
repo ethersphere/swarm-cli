@@ -1,9 +1,7 @@
-import { BigNumber as BN, Contract, providers, Wallet } from 'ethers'
-import { ABI, Contracts } from './contracts'
+import { Contract, JsonRpcProvider, TransactionReceipt, TransactionResponse, Wallet } from 'ethers'
+import { ABI, Contracts, getNetworkId } from './contracts'
 
-const NETWORK_ID = 100
-
-export async function eth_getBalance(address: string, provider: providers.JsonRpcProvider): Promise<string> {
+export async function eth_getBalance(address: string, provider: JsonRpcProvider): Promise<string> {
   if (!address.startsWith('0x')) {
     address = `0x${address}`
   }
@@ -14,7 +12,7 @@ export async function eth_getBalance(address: string, provider: providers.JsonRp
 
 export async function eth_getBalanceERC20(
   address: string,
-  provider: providers.JsonRpcProvider,
+  provider: JsonRpcProvider,
   tokenAddress = Contracts.bzz,
 ): Promise<string> {
   if (!address.startsWith('0x')) {
@@ -27,24 +25,28 @@ export async function eth_getBalanceERC20(
 }
 
 interface TransferResponse {
-  transaction: providers.TransactionResponse
-  receipt: providers.TransactionReceipt
+  transaction: TransactionResponse
+  receipt: TransactionReceipt
 }
 
 interface TransferCost {
-  gasPrice: BN
-  totalCost: BN
+  gasPrice: bigint
+  totalCost: bigint
 }
 
 export async function estimateNativeTransferTransactionCost(
   privateKey: string,
   jsonRpcProvider: string,
 ): Promise<TransferCost> {
-  const signer = await makeReadySigner(privateKey, jsonRpcProvider)
-  const gasLimit = '21000'
-  const gasPrice = await signer.getGasPrice()
+  const { provider } = await makeReadySigner(privateKey, jsonRpcProvider)
+  const gasLimit = 21000n
+  const { gasPrice } = await provider.getFeeData()
 
-  return { gasPrice, totalCost: gasPrice.mul(gasLimit) }
+  if (gasPrice === null) {
+    throw new Error('Unable to determine gas price from provider')
+  }
+
+  return { gasPrice, totalCost: gasPrice * gasLimit }
 }
 
 export async function sendNativeTransaction(
@@ -52,18 +54,30 @@ export async function sendNativeTransaction(
   to: string,
   value: string,
   jsonRpcProvider: string,
-  externalGasPrice?: BN,
+  externalGasPrice?: bigint,
 ): Promise<TransferResponse> {
-  const signer = await makeReadySigner(privateKey, jsonRpcProvider)
-  const gasPrice = externalGasPrice ?? (await signer.getGasPrice())
+  if (!to.startsWith('0x')) {
+    to = `0x${to}`
+  }
+  const { signer, provider } = await makeReadySigner(privateKey, jsonRpcProvider)
+  const resolvedGasPrice = externalGasPrice ?? (await provider.getFeeData()).gasPrice
+
+  if (resolvedGasPrice === null || resolvedGasPrice === undefined) {
+    throw new Error('Unable to determine gas price from provider')
+  }
+
   const transaction = await signer.sendTransaction({
     to,
-    value: BN.from(value),
-    gasPrice,
-    gasLimit: BN.from(21000),
+    value: BigInt(value),
+    gasPrice: resolvedGasPrice,
+    gasLimit: 21000n,
     type: 0,
   })
   const receipt = await transaction.wait(1)
+
+  if (receipt === null) {
+    throw new Error('Transaction was not included in a block')
+  }
 
   return { transaction, receipt }
 }
@@ -74,19 +88,31 @@ export async function sendBzzTransaction(
   value: string,
   jsonRpcProvider: string,
 ): Promise<TransferResponse> {
-  const signer = await makeReadySigner(privateKey, jsonRpcProvider)
-  const gasPrice = await signer.getGasPrice()
+  if (!to.startsWith('0x')) {
+    to = `0x${to}`
+  }
+  const { signer, provider } = await makeReadySigner(privateKey, jsonRpcProvider)
+  const { gasPrice } = await provider.getFeeData()
+
+  if (gasPrice === null) {
+    throw new Error('Unable to determine gas price from provider')
+  }
+
   const bzz = new Contract(Contracts.bzz, ABI.bzz, signer)
   const transaction = await bzz.transfer(to, value, { gasPrice })
   const receipt = await transaction.wait(1)
+
+  if (receipt === null) {
+    throw new Error('Transaction was not included in a block')
+  }
 
   return { transaction, receipt }
 }
 
 export async function makeReadySigner(privateKey: string, jsonRpcProvider: string) {
-  const provider = new providers.JsonRpcProvider(jsonRpcProvider, NETWORK_ID)
-  await provider.ready
+  const provider = new JsonRpcProvider(jsonRpcProvider, getNetworkId())
+  await provider.getNetwork()
   const signer = new Wallet(privateKey, provider)
 
-  return signer
+  return { signer, provider }
 }

@@ -53,7 +53,7 @@ export class Recover extends RootCommand implements LeafCommand {
     ]
 
     const wallet = await createWallet(this.walletSource, this.console)
-    const signer = await makeReadySigner(wallet.getPrivateKeyString(), this.jsonRpcUrl)
+    const { signer } = await makeReadySigner(wallet.getPrivateKeyString(), this.jsonRpcUrl)
     const contract = new Contract(address, abi, signer)
 
     const isPaused = await contract.paused()

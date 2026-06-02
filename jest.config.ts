@@ -7,6 +7,7 @@ import type { Config } from '@jest/types'
 import { Dates, System } from 'cafe-utility'
 import { getPssAddress } from './test/utility/address'
 import { getOrBuyStamp } from './test/utility/stamp'
+import { CommandLog, VerbosityLevel } from './src/command/root-command/command-log'
 
 export default async (): Promise<Config.InitialOptions> => {
   /**
@@ -14,6 +15,10 @@ export default async (): Promise<Config.InitialOptions> => {
    * which do not require any worker nodes, and therefore the stack
    * only consists a single queen node as well
    */
+  const console = new CommandLog(VerbosityLevel.Normal)
+
+  process.env.SKIP_VERSION_CHECK = 'true'
+
   if (!process.env.SKIP_WORKER) {
     process.env.WORKER_PSS_ADDRESS = (await getPssAddress('http://localhost:11633')).toCompressedHex()
   }
@@ -28,20 +33,12 @@ export default async (): Promise<Config.InitialOptions> => {
 
     const startedAt = Date.now()
     console.log('Waiting for Bee node to warm up on port', port)
-    const { version } = await bee.getHealth()
-    if (version.includes('2.5') || version.startsWith('2.4')) {
-      await System.waitFor(async () => (await bee.getTopology()).depth < 31, {
-        attempts: 300,
-        waitMillis: Dates.seconds(1),
-        requiredConsecutivePasses: 3,
-      })
-    } else {
-      await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
-        attempts: 300,
-        waitMillis: Dates.seconds(1),
-        requiredConsecutivePasses: 3,
-      })
-    }
+
+    await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
+      attempts: 300,
+      waitMillis: Dates.seconds(1),
+      requiredConsecutivePasses: 3,
+    })
     const elapsed = Date.now() - startedAt
     console.log(`Bee node on port ${port} warmed up in ${elapsed} milliseconds`)
   }
@@ -52,6 +49,7 @@ export default async (): Promise<Config.InitialOptions> => {
 
     console.log('Asserting chequebook balance on port', port)
     const chequebookBalance = await bee.getChequebookBalance()
+
     if (!chequebookBalance.totalBalance.eq(BZZ.fromDecimalString('10'))) {
       throw Error('Chequebook total balance is not 10 xBZZ: ' + chequebookBalance.totalBalance.toDecimalString())
     }
@@ -59,7 +57,7 @@ export default async (): Promise<Config.InitialOptions> => {
   }
 
   return {
-    collectCoverage: true,
+    collectCoverage: process.env.SKIP_COVERAGE !== 'true',
     coverageDirectory: 'coverage',
     coverageReporters: ['lcov', 'json-summary'],
     collectCoverageFrom: ['src/**/*.ts'],
@@ -79,7 +77,7 @@ export default async (): Promise<Config.InitialOptions> => {
     rootDir: 'test',
 
     // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-    testPathIgnorePatterns: ['/node_modules/'],
+    testPathIgnorePatterns: ['/node_modules/', '/test/e2e/'],
 
     // Increase timeout since we have long running cryptographic functions
     testTimeout: Dates.minutes(6),

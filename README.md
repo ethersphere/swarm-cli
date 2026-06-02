@@ -16,6 +16,7 @@ the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 - [Table of Contents](#table-of-contents)
 - [Demo](#demo)
   - [Purchasing a Postage Stamp](#purchasing-a-postage-stamp)
+  - [Creating a Postage Stamp (Interactive)](#creating-a-postage-stamp-interactive)
   - [Uploading a File](#uploading-a-file)
   - [Creating an Identity](#creating-an-identity)
   - [Uploading to a Feed](#uploading-to-a-feed)
@@ -43,6 +44,7 @@ the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
     - [Identity Picker](#identity-picker)
     - [Human Readable Topics](#human-readable-topics)
     - [Manifest address scheme](#manifest-address-scheme)
+    - [Upload History](#upload-history)
     - [Automating tasks with Swarm-CLI](#automating-tasks-with-swarm-cli)
       - [Connectivity](#connectivity)
       - [Postage Stamps](#postage-stamps)
@@ -60,6 +62,34 @@ the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 ## Purchasing a Postage Stamp
 
 ![Swarm CLI Stamp Buy Command](./docs/stamp-buy.gif)
+
+## Creating a Postage Stamp (Interactive)
+
+The `stamp create` command walks you through purchasing a postage stamp by prompting for just two values: how much data you want to store and how long it should persist.
+
+```
+swarm-cli stamp create
+```
+
+You will be prompted for:
+
+1. **Capacity** — the total size of data the batch can store (e.g. `1GB`, `500MB`, `10GB`)
+2. **TTL** — how long the stamps should remain valid (e.g. `1d`, `1w`, `1month`, `6months`)
+
+After entering both values, `swarm-cli` displays a confirmation summary:
+
+```
+You have provided the following parameters:
+Capacity: 10.737 GB
+TTL: 4 weeks
+Cost: 10.4367906627780608 xBZZ
+Available: 10000.0000000000000000 xBZZ
+Type: Immutable
+? Confirm the purchase Yes
+Stamp ID: 690ec71e2312cf7cfa1b0d32a34fc20c8c249a8ea6f557cee035354135cefaef
+```
+
+Review the cost, confirm, and the command returns your new Stamp ID. You can then use this ID with the `--stamp` option in any upload or feed command.
 
 ## Uploading a File
 
@@ -452,6 +482,46 @@ swarm-cli manifest download bzz://1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5
 ```
 
 > Note: The `bzz://` protocol can be omitted.
+
+### Upload History
+
+`swarm-cli` records a local log of your uploads so you can retrieve them later. Without this log, a hash is only shown once - at upload time - and there is no other way to find your prior uploads.
+
+> **Privacy notice:** Upload history is **enabled by default**. Each entry written to disk includes the timestamp, the resulting Swarm hash, the postage stamp ID, the upload type, and the local file path. If you prefer not to keep any local record of your activity, disable it:
+>
+> ```
+> swarm-cli history disable
+> ```
+>
+> This will offer to delete the existing history file before disabling tracking.
+
+The history file is stored at `~/.swarm-cli/upload-history.json` (on Windows: `%APPDATA%\swarm-cli\upload-history.json`).
+
+#### History commands
+
+Check whether tracking is active and how many entries exist:
+
+```
+swarm-cli history status
+```
+
+List all recorded uploads:
+
+```
+swarm-cli history list
+```
+
+Inspect a single entry by its index (as shown in `history list`):
+
+```
+swarm-cli history show <index>
+```
+
+Re-enable tracking after it has been disabled:
+
+```
+swarm-cli history enable
+```
 
 ### Automating tasks with Swarm-CLI
 

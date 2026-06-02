@@ -17,6 +17,7 @@ import { Status } from './command/status'
 import { Upload } from './command/upload'
 import { Utility } from './command/utility'
 import { Wallet } from './command/wallet'
+import { History } from './command/history'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -101,7 +102,7 @@ export const dev: IOption<boolean> = {
   default: false,
 }
 
-export const optionParameters: IOption<unknown>[] = [
+export const optionParameters: IOption<any>[] = [
   beeApiUrl,
   configFolder,
   configFile,
@@ -133,4 +134,5 @@ export const rootCommandClasses = [
   Utility,
   Grantee,
   Quickstart,
+  History,
 ]

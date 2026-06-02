@@ -29,7 +29,7 @@ jobs:
         run: npm ci
 
       - name: Install global dependencies
-        run: npm install --global bee-dev @fairdatasociety/fdp-play @ethersphere/swarm-cli npxie
+        run: npm install --global bee-dev @ethersphere/bee-factory @ethersphere/swarm-cli npxie
 
       - name: Run bee-dev
         run: bee-dev --port 16337 &
@@ -37,26 +37,45 @@ jobs:
       - name: Run bee-dev with --no-swap
         run: bee-dev --port 16338 --no-swap &
 
-      - name: Start fdp-play environment
-        run: fdp-play start --detach --fresh --bee-version d0aa8b9-commit
-
-      - name: Deposit to chequebook
-        run: |
-          swarm-cli cheque deposit 100000000000000000
-          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:11633
-          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:21633
-          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:31633
-          swarm-cli cheque deposit 100000000000000000 --bee-api-url http://localhost:41633
+      - name: Start bee-factory
+        run: bee-factory start --tag v2.8.0
 
       - name: Print swarm-cli status
         continue-on-error: true
         run: swarm-cli status
 
       - name: Tests
-        run: npm run test
+        run: npm run test:coverage
+
+      - name: Upload coverage
+        if: github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-master
+          path: test/coverage/coverage-summary.json
+
+      - name: Get master run ID
+        if: github.ref != 'refs/heads/master'
+        id: get-run-id
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RUN_ID=$(gh run list --branch master --workflow tests.yaml --limit 1 --json databaseId --jq '.[0].databaseId')
+          echo "run-id=$RUN_ID" >> $GITHUB_OUTPUT
+
+      - name: Download master coverage
+        if: github.ref != 'refs/heads/master'
+        id: download-coverage
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-master
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ steps.get-run-id.outputs.run-id }}
+          path: coverage-master
 
       - name: Compare coverage
-        if: github.ref != 'refs/heads/master'
-        run:
-          npxie coverage-comparison "${{ github.repository }}" "master" "${{ github.head_ref }}"
-          "test/coverage/coverage-summary.json" "${{ github.event.pull_request.number }}" "${{ secrets.GITHUB_TOKEN }}"
+        if: github.ref != 'refs/heads/master' && steps.download-coverage.outcome == 'success'
+        run: |
+          npxie coverage-comparison "${{ github.repository }}" "./coverage-master/coverage-summary.json" "test/coverage/coverage-summary.json" "${{ github.event.pull_request.number }}" "${{ secrets.GITHUB_TOKEN }}"

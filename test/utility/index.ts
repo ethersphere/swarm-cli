@@ -72,6 +72,13 @@ export function describeCommand(
 
     jest.spyOn(global.console, 'warn')
 
+    const historyFilePath = join(
+      configFolderPath,
+      configFileName ? `${configFileName}-upload-history.json` : 'upload-history.json',
+    )
+    process.env.SWARM_CLI_HISTORY_FILE_PATH = historyFilePath
+    process.env.SWARM_CLI_VERSION_CHECK_FILE_PATH = join(configFolderPath, 'version-check.json')
+
     //if own config is needed
     if (configFileName) {
       const fileName = `${configFileName}.json`
@@ -87,6 +94,12 @@ export function describeCommand(
 
     beforeEach(() => {
       consoleMessages.length = 0
+    })
+
+    afterEach(() => {
+      if (existsSync(historyFilePath)) {
+        unlinkSync(historyFilePath)
+      }
     })
 
     func({ consoleMessages, getNthLastMessage, getLastMessage, hasMessageContaining, configFolderPath })
