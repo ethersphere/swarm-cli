@@ -6,6 +6,7 @@ import { join, parse } from 'path'
 import { exit } from 'process'
 import { directoryExists } from '../../utils'
 import { BzzAddress, makeBzzAddress } from '../../utils/bzz-address'
+import { deprecationWarningText } from '../../utils/text'
 import { RootCommand } from '../root-command'
 
 export class Download extends RootCommand implements LeafCommand {
@@ -23,6 +24,9 @@ export class Download extends RootCommand implements LeafCommand {
   @Option({ key: 'stdout', type: 'boolean', description: 'Print to stdout (single files only)' })
   public stdout!: boolean
 
+  @Option({ key: 'access', type: 'string', description: 'Download using grantee list', conflicts: 'act' })
+  public access!: string
+
   @Option({ key: 'act', type: 'boolean', description: 'Download with ACT', default: false })
   public act!: boolean
 
@@ -39,6 +43,14 @@ export class Download extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
+
+    if (this.act) {
+      this.console.log(
+        deprecationWarningText(
+          '--act option is deprecated and will be removed in future versions. Please use --access option with publisher:historyAddress format instead.',
+        ),
+      )
+    }
 
     // can be already set from other command
     if (!this.address) {

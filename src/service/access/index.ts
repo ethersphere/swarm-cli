@@ -41,6 +41,12 @@ export class AccessHistory {
     return history[granteeListName]
   }
 
+  public getLatestEvent(granteeListName: string): AccessHistoryEvent | null {
+    const events = this.getEvents(granteeListName).sort((a, b) => b.createdAt - a.createdAt)
+
+    return events.length > 0 ? events[0] : null
+  }
+
   public getEventsByType(granteeListName: string, eventType: AccessHistoryOperation): AccessHistoryEvent[] {
     return this.getEvents(granteeListName).filter(event => event.operation === eventType)
   }
@@ -52,13 +58,18 @@ export class AccessHistory {
       history[granteeListName] = []
     }
 
-    history[granteeListName].push({
+    const newEvent = {
       stampId: event.stampId,
       historyAddress: event.historyAddress,
       granteeListRef: event.granteeListRef,
       operation: event.operation,
       createdAt: event.createdAt,
-    })
+    } as AccessHistoryEvent
+
+    if (event.grantees) {
+      newEvent.grantees = event.grantees
+    }
+    history[granteeListName].push(event)
 
     writeFileSync(this.commandConfig.getAccessHistoryFilePath(), JSON.stringify(history))
   }

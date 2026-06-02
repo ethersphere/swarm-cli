@@ -60,6 +60,7 @@ export class Revoke extends AccessCommand implements LeafCommand {
       granteeListRef: response.ref.toHex(),
       operation: AccessHistoryOperation.Revoke,
       createdAt: Date.now(),
+      grantees: this.grantees,
     })
 
     if (this.verbose) {

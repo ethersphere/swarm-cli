@@ -1,6 +1,8 @@
 import { GroupCommand } from 'furious-commander'
 import { Grant } from './grant'
+import { History } from './history'
 import { Init } from './init'
+import { List } from './list'
 import { Revoke } from './revoke'
 
 export class Access implements GroupCommand {
@@ -8,5 +10,5 @@ export class Access implements GroupCommand {
 
   public readonly description = 'Share access to your uploaded files/folders'
 
-  public subCommandClasses = [Init, Grant, Revoke]
+  public subCommandClasses = [Init, Grant, Revoke, List, History]
 }
