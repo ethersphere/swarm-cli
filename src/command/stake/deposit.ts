@@ -69,6 +69,20 @@ export class Deposit extends RootCommand implements LeafCommand {
     }
 
     if (!this.quiet && !this.yes) {
+      const reserveState = await this.bee.getReserveState()
+      const reserveCapacityDoubling = reserveState.reserveCapacityDoubling
+
+      if (amount.eq(BZZ.fromDecimalString('10')) && reserveCapacityDoubling > 0) {
+        this.yes = await this.console.confirm(
+          `It is recommended to stake ${
+            10 * 2 ** reserveCapacityDoubling
+          } xBZZ with a doubled node. Countinue with 10 xBZZ anyway?`,
+        )
+      }
+
+      if (!this.yes) {
+        exit(1)
+      }
       this.yes = await this.console.confirm(
         `You are about to deposit a non-refundable stake of ${amount.toDecimalString()} xBZZ, are you sure you wish to proceed?`,
       )

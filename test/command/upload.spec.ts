@@ -213,6 +213,15 @@ describeCommand(
         expect(getLastMessage()).toBeQRCode()
       })
     })
+
+    describe('when using stdin and bee-api-url is a gateway', () => {
+      it('should not require stamp option', async () => {
+        process.stdin.push('test content')
+        process.stdin.push(null) // Signal end of input
+        await invokeTestCli(['upload', '--stdin', '--bee-api-url', 'https://api.gateway.ethswarm.org'])
+        expect(consoleMessages[0]).toContain('Swarm hash')
+      })
+    })
   },
   { configFileName: 'upload' },
 )
