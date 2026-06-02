@@ -2,6 +2,7 @@ import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { AccessHistory } from '../../service/access'
 import { AccessHistoryOperation } from '../../service/access/types/history-event'
+import { granteeListNameProperties, granteeProperties } from '../../utils/option'
 import { createKeyValue, errorText, successText } from '../../utils/text'
 import { AccessCommand } from './access-command'
 
@@ -10,22 +11,10 @@ export class Grant extends AccessCommand implements LeafCommand {
 
   public readonly description = 'Add grantees to an existing grantee list'
 
-  @Option({
-    key: 'list-name',
-    alias: 'n',
-    description: 'Name of the grantee list',
-    required: true,
-    type: 'string',
-  })
+  @Option(granteeListNameProperties)
   public listName!: string
 
-  @Option({
-    key: 'grantee',
-    alias: 'g',
-    description: 'Public address of the grantee(s)',
-    type: 'string',
-    array: true,
-  })
+  @Option(granteeProperties)
   public grantees!: string[]
 
   public async run(): Promise<void> {

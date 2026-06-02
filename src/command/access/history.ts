@@ -2,6 +2,7 @@ import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { AccessHistory } from '../../service/access'
 import { AccessHistoryOperation } from '../../service/access/types/history-event'
+import { granteeListNameProperties } from '../../utils/option'
 import { createKeyValue, errorText, formatDate } from '../../utils/text'
 import { AccessCommand } from './access-command'
 
@@ -10,13 +11,7 @@ export class History extends AccessCommand implements LeafCommand {
 
   public readonly description = 'Show the local history of operations on a grantee list'
 
-  @Option({
-    key: 'list-name',
-    alias: 'n',
-    description: 'Name of the grantee list',
-    required: true,
-    type: 'string',
-  })
+  @Option(granteeListNameProperties)
   public listName!: string
 
   public run() {

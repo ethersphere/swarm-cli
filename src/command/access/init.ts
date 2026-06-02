@@ -2,6 +2,7 @@ import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { AccessHistory } from '../../service/access'
 import { AccessHistoryOperation } from '../../service/access/types/history-event'
+import { granteeListNameProperties, granteeProperties, stampProperties } from '../../utils/option'
 import { createKeyValue } from '../../utils/text'
 import { AccessCommand } from './access-command'
 
@@ -10,31 +11,13 @@ export class Init extends AccessCommand implements LeafCommand {
 
   public readonly description = 'Initialize a new access grantee list'
 
-  @Option({
-    key: 'stamp',
-    alias: 's',
-    description: 'Postage stamp ID',
-    required: true,
-    type: 'string',
-  })
+  @Option(stampProperties)
   public stamp!: string
 
-  @Option({
-    key: 'list-name',
-    alias: 'n',
-    description: 'Name of the grantee list',
-    required: true,
-    type: 'string',
-  })
+  @Option(granteeListNameProperties)
   public listName!: string
 
-  @Option({
-    key: 'grantee',
-    alias: 'g',
-    description: 'Public address of the grantee',
-    type: 'string',
-    array: true,
-  })
+  @Option(granteeProperties)
   public grantees!: string[]
 
   public async run(): Promise<void> {

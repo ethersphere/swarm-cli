@@ -25,3 +25,21 @@ export const topicStringProperties: IOption = {
   description: 'Construct the topic from human readable strings',
   conflicts: 'topic',
 }
+
+// Access command options
+
+export const granteeListNameProperties: IOption = {
+  key: 'list-name',
+  alias: 'n',
+  description: 'Name of the grantee list',
+  required: true,
+  type: 'string',
+}
+
+export const granteeProperties: IOption = {
+  key: 'grantee',
+  alias: 'g',
+  description: 'Public address of the grantee(s)',
+  type: 'string',
+  array: true,
+}
