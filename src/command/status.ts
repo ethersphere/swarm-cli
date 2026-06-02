@@ -115,6 +115,16 @@ export class Status extends RootCommand implements LeafCommand {
             ' GB)',
         ),
       )
+      const reserveState = await this.bee.getReserveState()
+      const reserveCapacityDoubling = reserveState.reserveCapacityDoubling
+      this.console.all(
+        createKeyValue(
+          'Reserve capacity doubling',
+          `${reserveCapacityDoubling} (${2 ** reserveCapacityDoubling} neighbourhood${
+            reserveCapacityDoubling > 0 ? 's' : ''
+          })`,
+        ),
+      )
       this.console.all('')
       this.console.all(chalk.bold('Redistribution'))
       const redistributionState = await this.bee.getRedistributionState()
