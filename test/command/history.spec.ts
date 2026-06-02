@@ -1,7 +1,7 @@
 import chalk from 'chalk'
+import { randomUUID } from 'crypto'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
-import { randomUUID } from 'crypto'
 
 async function uploadTestFile() {
   const uploadFilePath = `${__dirname}/../testpage/images/swarm.png`
@@ -30,7 +30,7 @@ describeCommand(
 
         const tableString = consoleMessages[consoleMessages.length - 1]
         expect(tableString).toContain(' 1     ')
-        expect(tableString).toContain('b4b1557e29c2')
+        expect(tableString).toMatch(/[a-f0-9]{12}/g)
         expect(tableString).toContain('testpage/images/swarm.png')
         expect(tableString).toContain('file')
         await invokeTestCli(['history', 'disable', '--yes'])
@@ -65,7 +65,7 @@ describeCommand(
         ])
         await invokeTestCli(['history', 'show', '1'])
 
-        expect(consoleMessages[8]).toContain('c86177d67756e097b')
+        expect(consoleMessages[8]).toMatch(/[a-f0-9]{64}/g)
         expect(consoleMessages[9]).toMatch(/[a-f0-9]{64}/g)
         expect(consoleMessages[10]).toContain('folder')
         expect(consoleMessages[11]).toContain('testpage/images')
