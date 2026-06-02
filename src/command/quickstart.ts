@@ -16,7 +16,7 @@ const platformTable = {
   linux: 'linux',
 }
 
-const beeVersion = 'v2.7.1'
+const beeVersion = 'v2.8.0'
 
 export class Quickstart extends RootCommand implements LeafCommand {
   public readonly name = 'quickstart'
