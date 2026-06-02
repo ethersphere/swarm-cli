@@ -21,6 +21,10 @@ export function warningText(string: string): string {
   return chalk.yellow(string)
 }
 
+export function deprecationWarningText(string: string): string {
+  return chalk.yellow(`DEPRECATED: ${string}`)
+}
+
 export function errorText(string: string): string {
   return chalk.red(string)
 }
@@ -35,6 +39,10 @@ export function createKeyValue(key: string, value: string | number | boolean, pa
 
 export function ellipsis(value: string, startIndex: number, endIndex?: number | null) {
   return `${value.slice(0, startIndex)}...${endIndex ? value.slice(endIndex) : ''}`
+}
+
+export function formatDate(date: Date): string {
+  return date.toISOString().replace('T', ' ').slice(0, 19) + ' UTC'
 }
 
 export function printDivided<T>(

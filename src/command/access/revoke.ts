@@ -5,10 +5,10 @@ import { AccessHistoryOperation } from '../../service/access/types/history-event
 import { createKeyValue, errorText, successText } from '../../utils/text'
 import { AccessCommand } from './access-command'
 
-export class Grant extends AccessCommand implements LeafCommand {
-  public readonly name = 'grant'
+export class Revoke extends AccessCommand implements LeafCommand {
+  public readonly name = 'revoke'
 
-  public readonly description = 'Add grantees to an existing grantee list'
+  public readonly description = 'Remove grantees from an existing grantee list'
 
   @Option({
     key: 'list-name',
@@ -48,17 +48,17 @@ export class Grant extends AccessCommand implements LeafCommand {
     const stampId = lastHistoryEvent.stampId
     const granteeListRef = lastHistoryEvent.granteeListRef
     const historyAddress = lastHistoryEvent.historyAddress
-    const response = await this.bee.patchGrantees(stampId, granteeListRef, historyAddress, { add: this.grantees })
+    const response = await this.bee.patchGrantees(stampId, granteeListRef, historyAddress, { revoke: this.grantees })
 
     if (response.status === 200) {
-      this.console.log(successText(`Access granted to ${this.grantees.join(', ')}`))
+      this.console.log(successText(`Access revoked from ${this.grantees.join(', ')}`))
     }
 
     accessHistory.addEvent(this.listName, {
       stampId: stampId,
       historyAddress: response.historyref.toHex(),
       granteeListRef: response.ref.toHex(),
-      operation: AccessHistoryOperation.Grant,
+      operation: AccessHistoryOperation.Revoke,
       createdAt: Date.now(),
       grantees: this.grantees,
     })
