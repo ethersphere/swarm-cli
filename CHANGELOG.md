@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.2.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.1.0...v3.2.0) (2026-06-02)
+
+
+### Features
+
+* add neighborhood doubling related info warnings ([#722](https://www.github.com/ethersphere/swarm-cli/issues/722)) ([7fea255](https://www.github.com/ethersphere/swarm-cli/commit/7fea2559bdbefe5c623b569e3c29d44f375b874d))
+* add qr option for upload command ([#719](https://www.github.com/ethersphere/swarm-cli/issues/719)) ([523b6ef](https://www.github.com/ethersphere/swarm-cli/commit/523b6ef58b1626c0764c9fdc987ab928d2533b7e))
+
+
+### Bug Fixes
+
+* allow to omit stamp when bee url is a gateway ([#743](https://www.github.com/ethersphere/swarm-cli/issues/743)) ([1cde1b9](https://www.github.com/ethersphere/swarm-cli/commit/1cde1b97ab057d28c58184a82f63f16ce25fff3d))
+* use overlay prefix and correct depth for rchash command ([#675](https://www.github.com/ethersphere/swarm-cli/issues/675)) ([c422749](https://www.github.com/ethersphere/swarm-cli/commit/c422749891b7fe010a886f658dda2b91b0f23b29))
+
 ## [3.1.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.0.0...v3.1.0) (2026-05-13)
 
 
