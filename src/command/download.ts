@@ -39,6 +39,13 @@ export class Download extends RootCommand implements LeafCommand {
         actTimestamp: this.manifestDownload.actTimestamp,
       })
       response = responseAct.data
+    } else if (this.manifestDownload.access) {
+      const [publisher, historyAddress] = this.manifestDownload.access.split(':')
+      const responseAct = await this.bee.downloadFile(this.address.hash, this.manifestDownload.destination, {
+        actPublisher: publisher,
+        actHistoryAddress: historyAddress,
+      })
+      response = responseAct.data
     } else {
       if (this.address.hash.length === 128) {
         const fileData = await this.bee.downloadFile(this.address.hash, undefined)

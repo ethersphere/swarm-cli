@@ -2,7 +2,7 @@ import { Bee, PostageBatch } from '@ethersphere/bee-js'
 import { Dates } from 'cafe-utility'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
-import { createKeyValue } from '../../utils/text'
+import { createKeyValue, formatDate } from '../../utils/text'
 
 /**
  * Displays an interactive stamp picker to select a Stamp ID.
@@ -60,7 +60,7 @@ export function printStamp(stamp: PostageBatch, console: CommandLog, settings?: 
 
   if (settings?.showTtl) {
     const ttl = Dates.secondsToHumanTime(stamp.duration.toSeconds())
-    const expires = stamp.duration.toEndDate().toISOString().replace('T', ' ').slice(0, 19) + ' UTC'
+    const expires = formatDate(stamp.duration.toEndDate())
     console.log(createKeyValue('TTL', `${ttl} (${expires})`))
   }
 

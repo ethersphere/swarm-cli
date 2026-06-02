@@ -1,4 +1,4 @@
-import { Binary } from 'cafe-utility'
+import { Binary, System } from 'cafe-utility'
 import { existsSync, mkdtempSync, readdirSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -41,6 +41,29 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
       '--stdout',
     ])
     expect(consoleMessages[0]).toContain('Hello Swarm!')
+  })
+
+  describe('when --access option is used', () => {
+    it('should download with act and print to stdout', async () => {
+      const addressesInvocation = await invokeTestCli(['addresses'])
+      const addressesCommand = addressesInvocation.runnable as Addresses
+      await invokeTestCli(['access', 'init', ...getStampOption(), '--list-name', 'test-download'])
+      System.sleepMillis(1000)
+      const uploadInvocation = await invokeTestCli([
+        'upload',
+        'test/message.txt',
+        '--share-with',
+        'test-download',
+        ...getStampOption(),
+      ])
+      const uploadCommand = uploadInvocation.runnable as Upload
+      const ref = uploadCommand.result.getOrThrow().toHex()
+      const history = uploadCommand.historyAddress.getOrThrow().toHex()
+      const publicKey = addressesCommand.nodeAddresses.publicKey.toHex()
+      consoleMessages.length = 0
+      await invokeTestCli(['download', ref, '--access', `${publicKey}:${history}`, '--stdout'])
+      expect(consoleMessages[0]).toContain('Hello Swarm!')
+    })
   })
 
   it('should fall back to manifest download', async () => {

@@ -47,7 +47,7 @@ describeCommand(
         await System.sleepMillis(1000)
         const pubKey = await getPublicAddress('http://localhost:21633')
         await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', pubKey])
-        expect(getLastMessage()).toContain(`Access granted to ${pubKey}!`)
+        expect(getLastMessage()).toContain(`Access granted to ${pubKey}`)
       })
 
       describe('when grantee list does not exist', () => {
@@ -88,7 +88,7 @@ describeCommand(
         await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access', '--grantee', pubKey])
         await System.sleepMillis(1000)
         await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', pubKey])
-        expect(getLastMessage()).toContain(`Access revoked from ${pubKey}!`)
+        expect(getLastMessage()).toContain(`Access revoked from ${pubKey}`)
       })
 
       describe('when grantee list does not exist', () => {
@@ -138,6 +138,40 @@ describeCommand(
         await System.sleepMillis(1000)
         await invokeTestCli(['access', 'list', '--list-name', 'test-access'])
         expect(getLastMessage()).toContain("Grantee list 'test-access' has no grantees.")
+      })
+
+      describe('when grantee list does not exist', () => {
+        it('should show error message', async () => {
+          await invokeTestCli(['access', 'list', '-n', 'nonexistent-list'])
+          expect(consoleMessages[0]).toContain("Grantee list with name 'nonexistent-list' does not exist!")
+          expect(consoleMessages[1]).toContain('process.exit() was called with code 1')
+        })
+      })
+    })
+
+    describe('history', () => {
+      it('should show the history of operations on a grantee list', async () => {
+        const granteePubKey = await getPublicAddress('http://localhost:21633')
+        await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access', '--grantee', granteePubKey])
+        await System.sleepMillis(1000)
+        await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', granteePubKey])
+        await System.sleepMillis(1000)
+        await invokeTestCli(['access', 'history', '--list-name', 'test-access'])
+        process.stderr.write(consoleMessages.join('\n'))
+        expect(getNthLastMessage(10)).toContain('Latest history address')
+        expect(getNthLastMessage(9)).toContain('Latest grantee list reference')
+        expect(getNthLastMessage(7)).toContain('revoke')
+        expect(getNthLastMessage(5)).toContain('Grantees:')
+        expect(getNthLastMessage(5)).toContain(granteePubKey)
+        expect(getNthLastMessage(3)).toContain('init')
+      })
+
+      describe('when grantee list does not exist', () => {
+        it('should show error message', async () => {
+          await invokeTestCli(['access', 'history', '-n', 'nonexistent-list'])
+          expect(consoleMessages[0]).toContain("Grantee list with name 'nonexistent-list' does not exist!")
+          expect(consoleMessages[1]).toContain('process.exit() was called with code 1')
+        })
       })
     })
   },
