@@ -149,6 +149,24 @@ describeCommand(
       })
     })
 
+    describe('list', () => {
+      it('should show all grantee list names', async () => {
+        await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
+        await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access-2'])
+        await System.sleepMillis(1000)
+        await invokeTestCli(['access', 'list'])
+        expect(getNthLastMessage(2)).toContain('test-access')
+        expect(getNthLastMessage(1)).toContain('test-access-2')
+      })
+
+      describe('when grantee list does not exist', () => {
+        it('should show error message', async () => {
+          await invokeTestCli(['access', 'list'])
+          expect(consoleMessages[0]).toContain('No grantee lists found.')
+        })
+      })
+    })
+
     describe('history', () => {
       it('should show the history of operations on a grantee list', async () => {
         const granteePubKey = await getPublicAddress('http://localhost:21633')

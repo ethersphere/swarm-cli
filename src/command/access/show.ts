@@ -6,7 +6,7 @@ import { errorText } from '../../utils/text'
 import { AccessCommand } from './access-command'
 
 export class Show extends AccessCommand implements LeafCommand {
-  public readonly name = 'Show'
+  public readonly name = 'show'
 
   public readonly description = 'Show grantees of an existing grantee list'
 
