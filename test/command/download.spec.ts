@@ -1,5 +1,5 @@
 import { Binary, System } from 'cafe-utility'
-import { existsSync, mkdtempSync, readdirSync, readFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, readdirSync, readFileSync, unlinkSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Addresses } from '../../src/command/addresses'
@@ -44,11 +44,19 @@ describeCommand('Test Download command', ({ consoleMessages, getLastMessage }) =
   })
 
   describe('when --access option is used', () => {
+    afterEach(() => {
+      const historyFilePath = `${__dirname}/../testconfig/access-history.json`
+
+      if (existsSync(historyFilePath)) {
+        unlinkSync(historyFilePath)
+      }
+    })
+
     it('should download with act and print to stdout', async () => {
       const addressesInvocation = await invokeTestCli(['addresses'])
       const addressesCommand = addressesInvocation.runnable as Addresses
       await invokeTestCli(['access', 'init', ...getStampOption(), '--list-name', 'test-download'])
-      System.sleepMillis(1000)
+      await System.sleepMillis(1000)
       const uploadInvocation = await invokeTestCli([
         'upload',
         'test/message.txt',
@@ -61,6 +69,15 @@ describeCommand('Test Download command', ({ consoleMessages, getLastMessage }) =
       const history = uploadCommand.historyAddress.getOrThrow().toHex()
       const publicKey = addressesCommand.nodeAddresses.publicKey.toHex()
       await invokeTestCli(['download', ref, '--access', `${publicKey}:${history}`, '--stdout'])
+      expect(getLastMessage()).toContain('Hello Swarm!')
+    })
+
+    it('should be able to download with instructions', async () => {
+      await invokeTestCli(['access', 'init', ...getStampOption(), '--list-name', 'test-download'])
+      await System.sleepMillis(1000)
+      await invokeTestCli(['upload', 'test/message.txt', '--share-with', 'test-download', ...getStampOption()])
+      const instructions = getLastMessage().split(' ')
+      await invokeTestCli(instructions.slice(2).concat(['--stdout']))
       expect(getLastMessage()).toContain('Hello Swarm!')
     })
   })
