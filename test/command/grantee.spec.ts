@@ -8,8 +8,12 @@ const stripAnsi = (str: string) =>
 
 function extractReferences(consoleMessages: string[]): [string, string] {
   const nonAnsiConsoleMessages = consoleMessages.map(stripAnsi)
-  const referenceMatch = nonAnsiConsoleMessages.find(m => m.includes('Grantee reference:'))?.match(/Grantee reference: (\w{128})/)
-  const historyMatch = nonAnsiConsoleMessages.find(m => m.includes('Grantee history reference:'))?.match(/Grantee history reference: (\w{64})/)
+  const referenceMatch = nonAnsiConsoleMessages
+    .find(m => m.includes('Grantee reference:'))
+    ?.match(/Grantee reference: (\w{128})/)
+  const historyMatch = nonAnsiConsoleMessages
+    .find(m => m.includes('Grantee history reference:'))
+    ?.match(/Grantee history reference: (\w{64})/)
 
   return [referenceMatch ? referenceMatch[1] : '', historyMatch ? historyMatch[1] : '']
 }
