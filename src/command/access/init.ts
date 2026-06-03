@@ -2,6 +2,7 @@ import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { AccessHistory } from '../../service/access'
 import { AccessHistoryOperation } from '../../service/access/types/history-event'
+import { pickStamp } from '../../service/stamp'
 import { granteeListNameProperties, granteeProperties, stampProperties } from '../../utils/option'
 import { createKeyValue } from '../../utils/text'
 import { AccessCommand } from './access-command'
@@ -22,6 +23,10 @@ export class Init extends AccessCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
+
+    if (!this.stamp) {
+      this.stamp = await pickStamp(this.bee, this.console)
+    }
 
     const accessHistory = new AccessHistory(this.commandConfig, this.console)
 
