@@ -54,6 +54,10 @@ export class CommandConfig {
     return true
   }
 
+  public getAccessHistoryFilePath(): string {
+    return process.env.SWARM_CLI_ACCESS_HISTORY_FILE_PATH || join(this.configFolderPath, 'access-history.json')
+  }
+
   public getHistoryFilePath(): string {
     return process.env.SWARM_CLI_HISTORY_FILE_PATH || join(this.configFolderPath, 'upload-history.json')
   }

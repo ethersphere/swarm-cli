@@ -1,11 +1,13 @@
 import { IOption } from 'furious-commander'
 import PackageJson from '../package.json'
+import { Access } from './command/access'
 import { Addresses } from './command/addresses'
 import { Cheque } from './command/cheque'
 import { Download } from './command/download'
 import { Feed } from './command/feed'
 import { Grantee } from './command/grantee'
 import { Hash } from './command/hash'
+import { History } from './command/history'
 import { Identity } from './command/identity'
 import { Manifest } from './command/manifest'
 import { Pinning } from './command/pinning'
@@ -17,7 +19,6 @@ import { Status } from './command/status'
 import { Upload } from './command/upload'
 import { Utility } from './command/utility'
 import { Wallet } from './command/wallet'
-import { History } from './command/history'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -135,4 +136,5 @@ export const rootCommandClasses = [
   Grantee,
   Quickstart,
   History,
+  Access,
 ]
