@@ -611,13 +611,13 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.log(
       '\nTo share the uploaded content with your grantees, please provide them with the following information:\n',
     )
-    const token = `${publicKey.toCompressedHex()}:${this.historyAddress.getOrThrow().toHex()}`
+    const token = `${publicKey.toHex()}:${this.historyAddress.getOrThrow().toHex()}`
     this.console.log(chalk.bold(token))
     this.console.log(
       '\nThey can use this information, when using the download command, providing it in the --access option.',
     )
     this.console.log('Example:\n')
-    this.console.log(chalk.bold(`> swarm-cli download ${this.result.getOrThrow().toHex()} --access ${token}\n`))
+    this.console.log(`> swarm-cli download ${this.result.getOrThrow().toHex()} --access ${token}`)
   }
 
   private prepareACTUploadOptions(uploadOptions: FileUploadOptions): FileUploadOptions {
