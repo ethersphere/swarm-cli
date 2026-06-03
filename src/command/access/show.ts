@@ -5,10 +5,10 @@ import { granteeListNameProperties } from '../../utils/option'
 import { errorText } from '../../utils/text'
 import { AccessCommand } from './access-command'
 
-export class List extends AccessCommand implements LeafCommand {
-  public readonly name = 'list'
+export class Show extends AccessCommand implements LeafCommand {
+  public readonly name = 'Show'
 
-  public readonly description = 'List grantees of an existing grantee list'
+  public readonly description = 'Show grantees of an existing grantee list'
 
   @Option(granteeListNameProperties)
   public listName!: string

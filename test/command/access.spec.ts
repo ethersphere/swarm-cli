@@ -123,26 +123,26 @@ describeCommand(
       })
     })
 
-    describe('list', () => {
-      it('should list all grantees in the list', async () => {
+    describe('show', () => {
+      it('should show all grantees in the list', async () => {
         const granteePubKey = await getPublicAddress('http://localhost:21633')
         await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
         await System.sleepMillis(1000)
         await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', granteePubKey])
         await System.sleepMillis(1000)
-        await invokeTestCli(['access', 'list', '--list-name', 'test-access'])
+        await invokeTestCli(['access', 'show', '--list-name', 'test-access'])
         expect(getNthLastMessage(2)).toContain(`Grantees of list 'test-access':`)
         expect(getLastMessage()).toContain(granteePubKey)
 
         await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', granteePubKey])
         await System.sleepMillis(1000)
-        await invokeTestCli(['access', 'list', '--list-name', 'test-access'])
+        await invokeTestCli(['access', 'show', '--list-name', 'test-access'])
         expect(getLastMessage()).toContain("Grantee list 'test-access' has no grantees.")
       })
 
       describe('when grantee list does not exist', () => {
         it('should show error message', async () => {
-          await invokeTestCli(['access', 'list', '-n', 'nonexistent-list'])
+          await invokeTestCli(['access', 'show', '-n', 'nonexistent-list'])
           expect(consoleMessages[0]).toContain("Grantee list with name 'nonexistent-list' does not exist!")
           expect(consoleMessages[1]).toContain('process.exit() was called with code 1')
         })
