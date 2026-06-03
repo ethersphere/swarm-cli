@@ -1,15 +1,15 @@
-import { describeCommand, invokeTestCli } from '../utility'
-import { getStampOption } from '../utility/stamp'
 import * as fs from 'fs'
 import * as path from 'path'
+import { describeCommand, invokeTestCli } from '../utility'
+import { getStampOption } from '../utility/stamp'
 
 const stripAnsi = (str: string) =>
   str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '')
 
 function extractReferences(consoleMessages: string[]): [string, string] {
   const nonAnsiConsoleMessages = consoleMessages.map(stripAnsi)
-  const referenceMatch = nonAnsiConsoleMessages[0].match(/Grantee reference: (\w{128})/)
-  const historyMatch = nonAnsiConsoleMessages[1].match(/Grantee history reference: (\w{64})/)
+  const referenceMatch = nonAnsiConsoleMessages.find(m => m.includes('Grantee reference:'))?.match(/Grantee reference: (\w{128})/)
+  const historyMatch = nonAnsiConsoleMessages.find(m => m.includes('Grantee history reference:'))?.match(/Grantee history reference: (\w{64})/)
 
   return [referenceMatch ? referenceMatch[1] : '', historyMatch ? historyMatch[1] : '']
 }
