@@ -11,7 +11,7 @@ function makeTmpDir(): string {
   return mkdtempSync(join(tmpdir(), 'swarm-cli-testrun-'))
 }
 
-describeCommand('Test Download command', ({ consoleMessages }) => {
+describeCommand('Test Download command', ({ consoleMessages, getLastMessage }) => {
   it('should download and print to stdout', async () => {
     const file = 'message.txt'
     const invocation = await invokeTestCli(['upload', 'test/' + file, ...getStampOption()])
@@ -60,9 +60,8 @@ describeCommand('Test Download command', ({ consoleMessages }) => {
       const ref = uploadCommand.result.getOrThrow().toHex()
       const history = uploadCommand.historyAddress.getOrThrow().toHex()
       const publicKey = addressesCommand.nodeAddresses.publicKey.toHex()
-      consoleMessages.length = 0
       await invokeTestCli(['download', ref, '--access', `${publicKey}:${history}`, '--stdout'])
-      expect(consoleMessages[0]).toContain('Hello Swarm!')
+      expect(getLastMessage()).toContain('Hello Swarm!')
     })
   })
 
