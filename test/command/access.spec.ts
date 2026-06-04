@@ -155,8 +155,8 @@ describeCommand(
         await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access-2'])
         await System.sleepMillis(1000)
         await invokeTestCli(['access', 'list'])
-        expect(getNthLastMessage(2)).toContain('test-access')
-        expect(getNthLastMessage(1)).toContain('test-access-2')
+        expect(getNthLastMessage(3)).toContain('test-access')
+        expect(getNthLastMessage(2)).toContain('test-access-2')
       })
 
       describe('when grantee list does not exist', () => {
