@@ -23,5 +23,7 @@ export class List extends AccessCommand implements LeafCommand {
     for (const listName of granteeListNames) {
       this.console.log(listName)
     }
+
+    this.console.log('Run `swarm-cli access show --list-name <name>` to view grantees for a specific list')
   }
 }
