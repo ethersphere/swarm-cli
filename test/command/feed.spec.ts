@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto'
+import QRCode from 'qrcode'
 import { Upload } from '../../src/command/upload'
 import { toBeQRCode, toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
@@ -111,6 +112,32 @@ describeCommand(
         expect(consoleMessages[10]).toBeQRCode()
         expect(hasMessageContaining('QR for Manifest URL:')).toBeTruthy()
         expect(consoleMessages[13]).toBeQRCode()
+      })
+
+      describe('when the URL is local', () => {
+        it('should change the URL to use gateway', async () => {
+          const stampBatchId = await getOrBuyStamp()
+          // create identity
+          const identityName = randomUUID()
+          await invokeTestCli(['identity', 'create', identityName, '--password', 'test'])
+          jest.spyOn(QRCode, 'toString')
+          await invokeTestCli([
+            'feed',
+            'upload',
+            '--identity',
+            identityName,
+            '--password',
+            'test',
+            '--stamp',
+            stampBatchId.toHex(),
+            '--qr',
+            `${__dirname}/../testpage/images/swarm.png`,
+          ])
+          expect(QRCode.toString).toHaveBeenCalledWith(
+            expect.stringContaining('https://api.gateway.ethswarm.org/bzz/'),
+            { type: 'terminal', small: true },
+          )
+        })
       })
     })
 

@@ -1,6 +1,7 @@
 import { System } from 'cafe-utility'
 import { existsSync, unlinkSync, writeFileSync } from 'fs'
 import { LeafCommand } from 'furious-commander'
+import QRCode from 'qrcode'
 import type { Upload } from '../../src/command/upload'
 import { toBeQRCode, toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
@@ -211,6 +212,17 @@ describeCommand(
         await invokeTestCli(['upload', 'test/message.txt', '--qr', ...getStampOption()])
         expect(hasMessageContaining('QR for URL:')).toBeTruthy()
         expect(getLastMessage()).toBeQRCode()
+      })
+
+      describe('when the URL is local', () => {
+        it('should change the URL to use gateway', async () => {
+          jest.spyOn(QRCode, 'toString')
+          await invokeTestCli(['upload', 'test/message.txt', '--qr', ...getStampOption()])
+          expect(QRCode.toString).toHaveBeenCalledWith(
+            expect.stringContaining('https://api.gateway.ethswarm.org/bzz/'),
+            { type: 'terminal', small: true },
+          )
+        })
       })
     })
 
