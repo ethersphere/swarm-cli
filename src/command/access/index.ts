@@ -4,11 +4,12 @@ import { History } from './history'
 import { Init } from './init'
 import { List } from './list'
 import { Revoke } from './revoke'
+import { Show } from './show'
 
 export class Access implements GroupCommand {
   public readonly name = 'access'
 
   public readonly description = 'Share access to your uploaded files/folders'
 
-  public subCommandClasses = [Init, Grant, Revoke, List, History]
+  public subCommandClasses = [Init, Grant, Revoke, Show, History, List]
 }
