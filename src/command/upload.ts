@@ -232,7 +232,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (this.qr) {
-      printQRCodeWithLabel(url, 'QR for URL', this.console)
+      printQRCodeWithLabel(this.publicUrl(url), 'QR for URL', this.console)
     }
 
     if (this.shareWith) {
@@ -645,5 +645,21 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     return options
+  }
+
+  private publicUrl(url: string): string {
+    let publicUrl: string = url
+
+    const isLocal = ['localhost', '127.0.0.1', '::1'].includes(new URL(this.bee.url).hostname)
+
+    if (isLocal) {
+      publicUrl = Object.assign(new URL(url), {
+        protocol: 'https:',
+        host: 'api.gateway.ethswarm.org',
+        port: '',
+      }).toString()
+    }
+
+    return publicUrl
   }
 }
