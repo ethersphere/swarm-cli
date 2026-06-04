@@ -6,11 +6,12 @@ import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { printStamp } from '../../service/stamp'
 import { topicProperties, topicStringProperties } from '../../utils/option'
+import { printQRCodeWithLabel } from '../../utils/qr'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
+import { publicUrl } from '../../utils/url'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
-import { printQRCodeWithLabel } from '../../utils/qr'
 
 interface FeedInfo {
   reference: Reference
@@ -57,7 +58,7 @@ export class FeedCommand extends RootCommand {
     this.console.log(createKeyValue('Feed Manifest URL', manifestUrl))
 
     if (this.qr) {
-      printQRCodeWithLabel(manifestUrl, 'QR for Manifest URL', this.console)
+      printQRCodeWithLabel(publicUrl(manifestUrl), 'QR for Manifest URL', this.console)
     }
 
     this.console.quiet(manifest.toHex())

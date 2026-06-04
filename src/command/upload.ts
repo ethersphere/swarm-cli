@@ -18,6 +18,7 @@ import { stampProperties } from '../utils/option'
 import { printQRCodeWithLabel } from '../utils/qr'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue, deprecationWarningText, warningSymbol, warningText } from '../utils/text'
+import { publicUrl } from '../utils/url'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
 
@@ -232,7 +233,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (this.qr) {
-      printQRCodeWithLabel(url, 'QR for URL', this.console)
+      printQRCodeWithLabel(publicUrl(url), 'QR for URL', this.console)
     }
 
     if (this.shareWith) {
