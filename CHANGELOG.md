@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.3.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.2.0...v3.3.0) (2026-06-04)
+
+
+### Features
+
+* improve access control user experience ([#734](https://www.github.com/ethersphere/swarm-cli/issues/734)) ([1a9d09e](https://www.github.com/ethersphere/swarm-cli/commit/1a9d09e71e0e16d646d05f84f35ae195773fa107))
+* modify access list command and introduce access show ([#747](https://www.github.com/ethersphere/swarm-cli/issues/747)) ([99846e7](https://www.github.com/ethersphere/swarm-cli/commit/99846e7d71545af968f1ea2b3458f7e09e6e3851))
+* prompt for stamp, when not provided for access init ([#748](https://www.github.com/ethersphere/swarm-cli/issues/748)) ([93eb222](https://www.github.com/ethersphere/swarm-cli/commit/93eb222f964a1f837fe41444282d3474854b0abd))
+
+
+### Bug Fixes
+
+* generate qr from a publicly available url ([#752](https://www.github.com/ethersphere/swarm-cli/issues/752)) ([704e7e4](https://www.github.com/ethersphere/swarm-cli/commit/704e7e4fd249acf9081e8f633362e3b16e2c9240))
+
 ## [3.2.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.1.0...v3.2.0) (2026-06-02)
 
 
