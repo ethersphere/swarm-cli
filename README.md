@@ -103,19 +103,71 @@ Review the cost, confirm, and the command returns your new Stamp ID. You can the
 
 ![Swarm CLI Feed Upload Command](./docs/feed-upload.gif)
 
-## Upload a file with ACT
+## Access Control Trie (ACT)
 
+You can use ACT related commands to manage access control for your content. To use and manage ACT, you need to use the `access` commands.
+
+### Initialize ACT
+
+```sh
+swarm-cli access init --stamp <postage_batch_id> --list-name <grantee_list_name>
+```
+
+### Grant access to a certain grantee
+
+```sh
+swarm-cli access grant --list-name <grantee_list_name> --grantee <grantee_public_key>
+```
+
+### Revoke access from a certain grantee
+
+```sh
+swarm-cli revoke grant --list-name <grantee_list_name> --grantee <grantee_public_key>
+```
+
+### Show list of grantee lists
+
+```sh
+swarm-cli access list
+```
+
+### Show grantees in a certain grantee list
+
+```sh
+swarm-cli access show --list-name <grantee_list_name>
+```
+
+### Get the list of events for a certain grantee list
+
+```sh
+swarm-cli access history --list-name <grantee_list_name>
+```
+
+### Upload a file with ACT
+
+```sh
+swarm-cli upload <file> --share-with <grantee_list_name>
+```
+
+##### [DEPRECATED]
 ```sh
 swarm-cli upload <file> --act --stamp <postage_batch_id>
 ```
 
-## Download a file with ACT
+### Download a file with ACT
 
+`token` constructed from the owners public key and the history address
+
+```sh
+swarm-cli download <swarm_hash> <file> --access <token>
+```
+
+##### [DEPRECATED]
 ```sh
 swarm-cli download <swarm_hash> <file> --act --act-history-address <swarm_history_address> --act-publisher <public_key>
 ```
 
-## Create a grantees list
+### Create a grantees list [DEPRECATED]
 
 ```sh
 swarm-cli grantee create grantees.json --stamp <postage_batch_id>
@@ -132,13 +184,13 @@ swarm-cli grantee create grantees.json --stamp <postage_batch_id>
 }
 ```
 
-## Get a grantees list
+### Get a grantees list [DEPRECATED]
 
 ```sh
 swarm-cli grantee get <grantee_reference>
 ```
 
-## Patch a grantees list
+### Patch a grantees list [DEPRECATED]
 
 ```sh
 swarm-cli  grantee patch grantees-patch.json \
