@@ -15,7 +15,7 @@ async function sendAndExpect(message: string): Promise<void> {
     '--topic-string',
     topic,
     '--bee-api-url',
-    'http://localhost:11633',
+    'http://localhost:1635',
     '--timeout',
     '120000',
   ])
@@ -51,7 +51,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       '--topic-string',
       'PSS Test',
       '--bee-api-url',
-      'http://localhost:11633',
+      'http://localhost:1635',
       '--timeout',
       '30000',
       '--out-file',

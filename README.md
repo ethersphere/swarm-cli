@@ -122,7 +122,7 @@ swarm-cli access grant --list-name <grantee_list_name> --grantee <grantee_public
 ### Revoke access from a certain grantee
 
 ```sh
-swarm-cli revoke grant --list-name <grantee_list_name> --grantee <grantee_public_key>
+swarm-cli access revoke --list-name <grantee_list_name> --grantee <grantee_public_key>
 ```
 
 ### Show list of grantee lists
@@ -156,7 +156,7 @@ swarm-cli upload <file> --act --stamp <postage_batch_id>
 
 ### Download a file with ACT
 
-`token` constructed from the owners public key and the history address
+`token` constructed from the owner's public key and the history address
 
 ```sh
 swarm-cli download <swarm_hash> <file> --access <token>
@@ -193,7 +193,7 @@ swarm-cli grantee get <grantee_reference>
 ### Patch a grantees list [DEPRECATED]
 
 ```sh
-swarm-cli  grantee patch grantees-patch.json \
+swarm-cli grantee patch grantees-patch.json \
     --reference <grantee_reference> \
     --history <grantee_history_reference> \
     --stamp <postage_batch_id>
@@ -270,6 +270,8 @@ pss        Send, receive, or subscribe to PSS messages
 manifest   Operate on manifests
 utility    Utility commands for managing wallets
 grantee    Create, Get, Patch grantee list
+history    Get upload history
+access     Share access to your uploaded files/folders
 
 Run 'swarm-cli GROUP --help' to see available commands in a group
 

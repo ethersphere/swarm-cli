@@ -16,7 +16,7 @@ describeCommand(
     })
     describe('init', () => {
       it('should initialize access with pss address as grantee', async () => {
-        const pubKey = await getPublicAddress('http://localhost:21633')
+        const pubKey = await getPublicAddress('http://localhost:1637')
         await invokeTestCli(['access', 'init', ...getStampOption(), '--list-name', 'test-access', '--grantee', pubKey])
         expect(getLastMessage()).toEqual("Grantee list 'test-access' initialized successfully!")
       })
@@ -45,7 +45,7 @@ describeCommand(
       it('should grant access to a new grantee', async () => {
         await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
         await System.sleepMillis(1000)
-        const pubKey = await getPublicAddress('http://localhost:21633')
+        const pubKey = await getPublicAddress('http://localhost:1637')
         await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', pubKey])
         expect(getLastMessage()).toContain(`Access granted to ${pubKey}`)
       })
@@ -72,7 +72,7 @@ describeCommand(
         it('should show grantee list reference and history address', async () => {
           await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
           await System.sleepMillis(1000)
-          const pubKey = await getPublicAddress('http://localhost:21633')
+          const pubKey = await getPublicAddress('http://localhost:1637')
           await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', pubKey, '--verbose'])
           expect(getNthLastMessage(2)).toContain('Grantee list reference')
           expect(getNthLastMessage(2)).toMatch(/[a-f0-9]{64}/g)
@@ -84,7 +84,7 @@ describeCommand(
 
     describe('revoke', () => {
       it('should revoke access from a grantee', async () => {
-        const pubKey = await getPublicAddress('http://localhost:21633')
+        const pubKey = await getPublicAddress('http://localhost:1637')
         await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access', '--grantee', pubKey])
         await System.sleepMillis(1000)
         await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', pubKey])
@@ -111,7 +111,7 @@ describeCommand(
 
       describe('when verbose option is used', () => {
         it('should show grantee list reference and history address', async () => {
-          const pubKey = await getPublicAddress('http://localhost:21633')
+          const pubKey = await getPublicAddress('http://localhost:1637')
           await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access', '--grantee', pubKey])
           await System.sleepMillis(1000)
           await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', pubKey, '--verbose'])
@@ -125,7 +125,7 @@ describeCommand(
 
     describe('show', () => {
       it('should show all grantees in the list', async () => {
-        const granteePubKey = await getPublicAddress('http://localhost:21633')
+        const granteePubKey = await getPublicAddress('http://localhost:1637')
         await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access'])
         await System.sleepMillis(1000)
         await invokeTestCli(['access', 'grant', '--list-name', 'test-access', '--grantee', granteePubKey])
@@ -169,7 +169,7 @@ describeCommand(
 
     describe('history', () => {
       it('should show the history of operations on a grantee list', async () => {
-        const granteePubKey = await getPublicAddress('http://localhost:21633')
+        const granteePubKey = await getPublicAddress('http://localhost:1637')
         await invokeTestCli(['access', 'init', ...getStampOption(), '-n', 'test-access', '--grantee', granteePubKey])
         await System.sleepMillis(1000)
         await invokeTestCli(['access', 'revoke', '--list-name', 'test-access', '--grantee', granteePubKey])
