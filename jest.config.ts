@@ -20,7 +20,7 @@ export default async (): Promise<Config.InitialOptions> => {
   process.env.SKIP_VERSION_CHECK = 'true'
 
   if (!process.env.SKIP_WORKER) {
-    process.env.WORKER_PSS_ADDRESS = (await getPssAddress('http://localhost:11633')).toCompressedHex()
+    process.env.WORKER_PSS_ADDRESS = (await getPssAddress('http://localhost:1635')).toCompressedHex()
   }
 
   if (!process.env.TEST_STAMP) {
