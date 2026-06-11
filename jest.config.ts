@@ -5,9 +5,9 @@
 import { Bee, BZZ } from '@ethersphere/bee-js'
 import type { Config } from '@jest/types'
 import { Dates, System } from 'cafe-utility'
+import { CommandLog, VerbosityLevel } from './src/command/root-command/command-log'
 import { getPssAddress } from './test/utility/address'
 import { getOrBuyStamp } from './test/utility/stamp'
-import { CommandLog, VerbosityLevel } from './src/command/root-command/command-log'
 
 export default async (): Promise<Config.InitialOptions> => {
   /**
@@ -28,7 +28,7 @@ export default async (): Promise<Config.InitialOptions> => {
   }
 
   for (let i = 0; i < 5; i++) {
-    const port = 1633 + i * 10000
+    const port = 1633 + i * 2
     const bee = new Bee(`http://localhost:${port}`)
 
     const startedAt = Date.now()
@@ -44,7 +44,7 @@ export default async (): Promise<Config.InitialOptions> => {
   }
 
   for (let i = 0; i < 5; i++) {
-    const port = 1633 + i * 10000
+    const port = 1633 + i * 2
     const bee = new Bee(`http://localhost:${port}`)
 
     console.log('Asserting chequebook balance on port', port)
