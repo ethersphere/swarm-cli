@@ -38,9 +38,6 @@ export class RootCommand {
   @ExternalOption('yes')
   public yes!: boolean
 
-  @ExternalOption('dev')
-  public dev!: boolean
-
   public bee!: Bee
 
   public console!: CommandLog
@@ -73,7 +70,7 @@ export class RootCommand {
     if (this.header.length) {
       beeOptions.headers = parseHeaders(this.header)
     }
-    // this.bee = this.dev ? new BeeDev(t is.beeApiUrl, beeOptions) : new Bee(this.beeApiUrl, beeOptions)
+    this.bee = new Bee(this.beeApiUrl, beeOptions)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
