@@ -1,14 +1,14 @@
-import { Bee, BeeDev, BeeOptions, Reference } from '@ethersphere/bee-js'
+import { Bee, BeeOptions, Reference } from '@ethersphere/bee-js'
 import { Optional } from 'cafe-utility'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
+import PackageJson from '../../../package.json'
 import { printCurlCommand } from '../../curl'
+import { checkForUpdates, getLatestVersionCheck } from '../../service/version_checker'
 import { parseHeaders } from '../../utils'
+import { warningText } from '../../utils/text'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CONFIG_OPTIONS, CommandConfig } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
-import { checkForUpdates, getLatestVersionCheck } from '../../service/version_checker'
-import PackageJson from '../../../package.json'
-import { warningText } from '../../utils/text'
 
 export class RootCommand {
   @ExternalOption('bee-api-url')
@@ -37,9 +37,6 @@ export class RootCommand {
 
   @ExternalOption('yes')
   public yes!: boolean
-
-  @ExternalOption('dev')
-  public dev!: boolean
 
   public bee!: Bee
 
@@ -73,7 +70,7 @@ export class RootCommand {
     if (this.header.length) {
       beeOptions.headers = parseHeaders(this.header)
     }
-    this.bee = this.dev ? new BeeDev(this.beeApiUrl, beeOptions) : new Bee(this.beeApiUrl, beeOptions)
+    this.bee = new Bee(this.beeApiUrl, beeOptions)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
