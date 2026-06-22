@@ -96,13 +96,6 @@ export const yes: IOption<string[]> = {
   description: 'Agree to all prompts',
 }
 
-export const dev: IOption<boolean> = {
-  key: 'dev',
-  description: 'Indicate that the connected Bee node is running in dev mode',
-  type: 'boolean',
-  default: false,
-}
-
 export const optionParameters: IOption<any>[] = [
   beeApiUrl,
   configFolder,
@@ -114,7 +107,6 @@ export const optionParameters: IOption<any>[] = [
   curl,
   header,
   yes,
-  dev,
 ]
 
 export const rootCommandClasses = [
