@@ -28,7 +28,7 @@ export class Status extends RootCommand implements LeafCommand {
     const nodeInfo = await this.bee.getNodeInfo()
     this.console.all(createKeyValue('Mode', nodeInfo.beeMode))
 
-    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
       this.console.all('')
       this.console.all(chalk.bold('Chainsync'))
       const { block, chainTip, currentPrice } = await this.bee.getChainState()
@@ -41,16 +41,14 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.all(createKeyValue('Storage Price', currentPrice.toLocaleString() + ' PLUR / chunk / block'))
     }
 
-    if (nodeInfo.beeMode !== BeeModes.DEV) {
-      this.console.all('')
-      this.console.all(chalk.bold('Topology'))
-      const topology = await this.bee.getTopology()
-      this.console.all(createKeyValue('Connected Peers', topology.connected))
-      this.console.all(createKeyValue('Population', topology.population))
-      this.console.all(createKeyValue('Depth', topology.depth))
-    }
+    this.console.all('')
+    this.console.all(chalk.bold('Topology'))
+    const topology = await this.bee.getTopology()
+    this.console.all(createKeyValue('Connected Peers', topology.connected))
+    this.console.all(createKeyValue('Population', topology.population))
+    this.console.all(createKeyValue('Depth', topology.depth))
 
-    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
       this.console.all('')
       this.console.all(chalk.bold('Wallet'))
       try {
@@ -63,7 +61,7 @@ export class Status extends RootCommand implements LeafCommand {
       }
     }
 
-    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT && nodeInfo.beeMode !== BeeModes.DEV) {
+    if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
       this.console.all('')
       this.console.all(chalk.bold('Chequebook'))
       try {
