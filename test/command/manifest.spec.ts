@@ -307,7 +307,7 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     await invokeTestCli(['manifest', 'download', 'g'.repeat(64)])
     expect(consoleMessages[0]).toContain(
       FORMATTED_ERROR +
-        ' Expected hex string for Bytes#constructor(bytes), got: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
+        ' expected hex string (origin=string, code=invalid_format, format=regex, pattern=/^(?:0x)?[0-9a-fA-F]*$/i)',
     )
   })
 
@@ -315,7 +315,7 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
     await invokeTestCli(['manifest', 'list', 'g'.repeat(64)])
     expect(consoleMessages[0]).toContain(
       FORMATTED_ERROR +
-        ' Expected hex string for Bytes#constructor(bytes), got: gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg',
+        ' expected hex string (origin=string, code=invalid_format, format=regex, pattern=/^(?:0x)?[0-9a-fA-F]*$/i)',
     )
   })
 

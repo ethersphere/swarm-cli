@@ -36,6 +36,16 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
   if (!process.exitCode) {
     process.exitCode = 1
   }
+
+  // bee-js validates with zod; a ZodError.message is a JSON blob of issues.
+  // Flatten each issue into a readable line that shows where the violation came from.
+  if (error?.name === 'ZodError' && Array.isArray(error?.issues)) {
+    const message = error.issues.map(formatZodIssue).join('; ')
+    printer.printError(FORMATTED_ERROR + ' ' + message)
+
+    return
+  }
+
   // grab error.message, or error if it is a string
   let message: string | null
   const responseBody = error?.responseBody
@@ -80,6 +90,22 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
       printer.printError('Check your Bee log to learn if your request reached the node.')
     }
   }
+}
+
+function formatZodIssue(issue: any): string {
+  const hasPath = Array.isArray(issue?.path) && issue.path.length > 0
+
+  const details = [
+    issue?.origin != null ? `origin=${issue.origin}` : null,
+    issue?.code != null ? `code=${issue.code}` : null,
+    issue?.format != null ? `format=${issue.format}` : null,
+    issue?.pattern != null ? `pattern=${issue.pattern}` : null,
+    hasPath ? `path=${issue.path.join('.')}` : null,
+  ]
+    .filter(Boolean)
+    .join(', ')
+
+  return `${issue?.message ?? 'validation failed'} (${details})`
 }
 
 function isGenericErrorPattern(errorName: string, message: string | unknown): boolean {
