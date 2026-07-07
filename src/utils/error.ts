@@ -14,6 +14,15 @@ export interface BeeErrorOptions {
   notFoundMessage?: string
 }
 
+type BeeJSError = {
+  path?: string[]
+  code?: string
+  format?: string
+  pattern?: string
+  origin?: string
+  message?: string
+}
+
 function hasStatusCode(error: any, statusCode: number): boolean {
   return error?.response?.status === statusCode
 }
@@ -40,7 +49,7 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
   // bee-js validates with zod; a ZodError.message is a JSON blob of issues.
   // Flatten each issue into a readable line that shows where the violation came from.
   if (error?.name === 'ZodError' && Array.isArray(error?.issues)) {
-    const message = error.issues.map(formatZodIssue).join('; ')
+    const message = error.issues.map(formatBeeJsError).join('; ')
     printer.printError(FORMATTED_ERROR + ' ' + message)
 
     return
@@ -92,15 +101,15 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
   }
 }
 
-function formatZodIssue(issue: any): string {
+function formatBeeJsError(issue: BeeJSError): string {
   const hasPath = Array.isArray(issue?.path) && issue.path.length > 0
 
   const details = [
-    issue?.origin != null ? `origin=${issue.origin}` : null,
-    issue?.code != null ? `code=${issue.code}` : null,
-    issue?.format != null ? `format=${issue.format}` : null,
-    issue?.pattern != null ? `pattern=${issue.pattern}` : null,
-    hasPath ? `path=${issue.path.join('.')}` : null,
+    issue?.origin !== null ? `origin=${issue.origin}` : null,
+    issue?.code !== null ? `code=${issue.code}` : null,
+    issue?.format !== null ? `format=${issue.format}` : null,
+    issue?.pattern !== null ? `pattern=${issue.pattern}` : null,
+    hasPath ? `path=${issue?.path?.join('.')}` : null,
   ]
     .filter(Boolean)
     .join(', ')
