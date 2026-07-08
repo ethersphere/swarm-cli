@@ -1,7 +1,8 @@
 import chalk from 'chalk'
 import inquirer from 'inquirer'
-import { describeCommand, invokeTestCli } from '../utility'
 import { createKeyValue } from '../../src/utils/text'
+import { describeCommand, invokeTestCli } from '../utility'
+import { getStampOption } from '../utility/stamp'
 
 describeCommand('Postage stamp price estimation prompt', ({ consoleMessages }) => {
   it('stamp buy should prompt for price confirmation', async () => {
@@ -15,6 +16,21 @@ describeCommand('Postage stamp price estimation prompt', ({ consoleMessages }) =
       name: 'value',
       prefix: chalk.bold.cyan('?'),
       type: 'confirm',
+    })
+  })
+})
+
+describeCommand('Rename postage stamp prompt', ({ getNthLastMessage }) => {
+  it('stamp rename should prompt for new name', async () => {
+    jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: 'new-stamp-name' })
+    await invokeTestCli(['stamp', 'rename', ...getStampOption()])
+    expect(getNthLastMessage(2)).toContain(
+      `Postage stamp ${getStampOption()[1]} has been successfully renamed to 'new-stamp-name'`,
+    )
+    expect(inquirer.prompt).toHaveBeenCalledWith({
+      message: 'Please provide a new label for the postage stamp:',
+      name: 'value',
+      prefix: chalk.bold.cyan('?'),
     })
   })
 })
