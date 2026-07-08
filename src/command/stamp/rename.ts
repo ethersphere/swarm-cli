@@ -6,7 +6,7 @@ import { StampCommand } from './stamp-command'
 export class Rename extends StampCommand implements LeafCommand {
   public readonly name = 'rename'
 
-  public readonly description = 'Rename a postage stamp'
+  public readonly description = 'Update the label of a postage stamp'
 
   @Argument({ key: 'label', description: 'New label for the postage stamp' })
   public label!: string
