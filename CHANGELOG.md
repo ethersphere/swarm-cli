@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.3.0...v3.4.0) (2026-07-08)
+
+
+### Features
+
+* trigger release of bee-js update ([#768](https://www.github.com/ethersphere/swarm-cli/issues/768)) ([cdb8b85](https://www.github.com/ethersphere/swarm-cli/commit/cdb8b850eed4450ac943d2b10570c764d08a0ca3))
+
 ## [3.3.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.2.0...v3.3.0) (2026-06-04)
 
 
