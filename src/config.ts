@@ -5,7 +5,6 @@ import { Addresses } from './command/addresses'
 import { Cheque } from './command/cheque'
 import { Download } from './command/download'
 import { Feed } from './command/feed'
-import { Grantee } from './command/grantee'
 import { Hash } from './command/hash'
 import { History } from './command/history'
 import { Identity } from './command/identity'
@@ -125,7 +124,6 @@ export const rootCommandClasses = [
   Stake,
   Wallet,
   Utility,
-  Grantee,
   Quickstart,
   History,
   Access,

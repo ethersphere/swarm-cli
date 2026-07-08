@@ -20,11 +20,15 @@ the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
   - [Uploading a File](#uploading-a-file)
   - [Creating an Identity](#creating-an-identity)
   - [Uploading to a Feed](#uploading-to-a-feed)
-  - [Upload file with ACT](#upload-file-with-act)
-  - [Download file with ACT](#download-file-with-act)
-  - [Create grantees list](#create-grantees-list)
-  - [Get grantees list](#get-grantees-list)
-  - [Patch grantees list](#patch-grantees-list)
+  - [Access control trie (ACT)](#access-control-trie-(act))
+    - [Initialize ACT](#initialize-act)
+    - [Grant access to a certain grantee](#grant-access-to-a-certain-grantee)
+    - [Revoke access from a certain grantee](#revoke-access-from-a-certain-grantee)
+    - [Show list of grantee lists](#show-list-of-grantee-lists)
+    - [Show grantees in a certain grantee list](#show-grantees-in-a-certain-grantee-list)
+    - [Get the list of events for a certain grantee list](#get-the-list-of-events-for-a-certain-grantee-list)
+    - [Upload a file with ACT](#upload-a-file-with-act)
+    - [Download a file with ACT](#download-a-file-with-act)
 - [Description](#description)
   - [Installation](#installation)
     - [From npm](#from-npm)
@@ -149,68 +153,12 @@ swarm-cli access history --list-name <grantee_list_name>
 swarm-cli upload <file> --share-with <grantee_list_name>
 ```
 
-##### [DEPRECATED]
-```sh
-swarm-cli upload <file> --act --stamp <postage_batch_id>
-```
-
 ### Download a file with ACT
 
 `token` constructed from the owner's public key and the history address
 
 ```sh
 swarm-cli download <swarm_hash> <file> --access <token>
-```
-
-##### [DEPRECATED]
-```sh
-swarm-cli download <swarm_hash> <file> --act --act-history-address <swarm_history_address> --act-publisher <public_key>
-```
-
-### Create a grantees list [DEPRECATED]
-
-```sh
-swarm-cli grantee create grantees.json --stamp <postage_batch_id>
-```
-
-`grantees.json`:
-
-```json
-{ "grantees": [
-    "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e8",
-    "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e9",
-    "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12ee"
-]
-}
-```
-
-### Get a grantees list [DEPRECATED]
-
-```sh
-swarm-cli grantee get <grantee_reference>
-```
-
-### Patch a grantees list [DEPRECATED]
-
-```sh
-swarm-cli grantee patch grantees-patch.json \
-    --reference <grantee_reference> \
-    --history <grantee_history_reference> \
-    --stamp <postage_batch_id>
-```
-
-`grantees-patch.json`:
-
-```json
-{
-    "add": [
-        "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e7"
-    ],
-    "revoke": [
-        "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12e9",
-        "02ceff1422a7026ba54ad89967d81f2805a55eb3d05f64eb5c49ea6024212b12ee"
-    ]
-}
 ```
 
 # Description
@@ -269,7 +217,6 @@ stamp      Buy, list and show postage stamps
 pss        Send, receive, or subscribe to PSS messages
 manifest   Operate on manifests
 utility    Utility commands for managing wallets
-grantee    Create, Get, Patch grantee list
 history    Get upload history
 access     Share access to your uploaded files/folders
 

@@ -21,28 +21,6 @@ describeCommand('Test Download command', ({ consoleMessages, getLastMessage }) =
     expect(consoleMessages[0]).toContain('Hello Swarm!')
   })
 
-  it('should download with act and print to stdout', async () => {
-    const addressesInvocation = await invokeTestCli(['addresses'])
-    const addressesCommand = addressesInvocation.runnable as Addresses
-    const uploadInvocation = await invokeTestCli(['upload', 'test/message.txt', '--act', ...getStampOption()])
-    const uploadCommand = uploadInvocation.runnable as Upload
-    const ref = uploadCommand.result.getOrThrow().toHex()
-    const history = uploadCommand.historyAddress.getOrThrow().toHex()
-    const publicKey = addressesCommand.nodeAddresses.publicKey.toHex()
-    consoleMessages.length = 0
-    await invokeTestCli([
-      'download',
-      ref,
-      '--act',
-      '--act-history-address',
-      history,
-      '--act-publisher',
-      publicKey,
-      '--stdout',
-    ])
-    expect(consoleMessages[0]).toContain('Hello Swarm!')
-  })
-
   describe('when --access option is used', () => {
     afterEach(() => {
       const historyFilePath = `${__dirname}/../testconfig/access-history.json`
