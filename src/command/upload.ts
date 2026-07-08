@@ -17,7 +17,7 @@ import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { printQRCodeWithLabel } from '../utils/qr'
 import { createSpinner } from '../utils/spinner'
-import { createKeyValue, deprecationWarningText, warningSymbol, warningText } from '../utils/text'
+import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { publicUrl } from '../utils/url'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
@@ -52,24 +52,12 @@ export class Upload extends RootCommand implements LeafCommand {
   public deferred!: boolean
 
   @Option({
-    key: 'act',
-    type: 'boolean',
-    description: 'Upload with ACT',
-    default: false,
-    required: { when: 'act-history-address' },
-  })
-  public act!: boolean
-
-  @Option({
     key: 'share-with',
     type: 'string',
     description: 'Name of the grantee list to share the uploaded content with',
     conflicts: 'act',
   })
   public shareWith!: string
-
-  @Option({ key: 'act-history-address', type: 'string', description: 'ACT history address' })
-  public optHistoryAddress!: string
 
   @Option({
     key: 'sync',
@@ -148,14 +136,6 @@ export class Upload extends RootCommand implements LeafCommand {
   // eslint-disable-next-line complexity
   public async run(usedFromOtherCommand = false): Promise<void> {
     super.init()
-
-    if (this.act || this.optHistoryAddress) {
-      this.console.log(
-        deprecationWarningText(
-          '--act and --act-history-address options are deprecated and will be removed in future versions. Please use --share-with option instead.',
-        ),
-      )
-    }
 
     if (await this.hasUnsupportedGatewayOptions()) {
       exit(1)
@@ -236,7 +216,7 @@ export class Upload extends RootCommand implements LeafCommand {
       printQRCodeWithLabel(publicUrl(url), 'QR for URL', this.console)
     }
 
-    if (this.shareWith) {
+    if (this.usingACT()) {
       this.addNewAccessHistoryEvent()
       await this.printShareInstructions()
     }
@@ -486,7 +466,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
     if (this.usingACT()) {
       this.console.error('You are trying to upload to the gateway which does not support ACT.')
-      this.console.error('Please try again without the --act option.')
+      this.console.error('Please try again without the --share-with option.')
 
       return true
     }
@@ -587,7 +567,7 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private usingACT(): boolean {
-    return this.act || Boolean(this.shareWith)
+    return Boolean(this.shareWith)
   }
 
   private addNewAccessHistoryEvent() {
@@ -623,14 +603,6 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private prepareACTUploadOptions(uploadOptions: FileUploadOptions): FileUploadOptions {
     const options = { ...uploadOptions }
-
-    if (this.act) {
-      options.act = this.act
-
-      if (this.optHistoryAddress) {
-        options.actHistoryAddress = this.optHistoryAddress
-      }
-    }
 
     if (this.shareWith) {
       const accessHistory = new AccessHistory(this.commandConfig, this.console)
