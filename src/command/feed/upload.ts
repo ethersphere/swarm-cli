@@ -1,5 +1,8 @@
-import { Aggregation, LeafCommand } from 'furious-commander'
+import { Reference } from '@ethersphere/bee-js'
+import { Aggregation, LeafCommand, Option } from 'furious-commander'
+import { History } from '../../service/history'
 import { pickStamp } from '../../service/stamp'
+import { stampProperties } from '../../utils/option'
 import { Upload as FileUpload } from '../upload'
 import { FeedCommand } from './feed-command'
 
@@ -8,28 +11,49 @@ export class Upload extends FeedCommand implements LeafCommand {
 
   public readonly description = 'Upload to a feed'
 
-  public feedManifest?: string
+  public feedManifest?: Reference
 
   @Aggregation(['upload'])
   public fileUpload!: FileUpload
 
+  @Option(stampProperties)
+  public stamp!: string
+
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.stamp) {
-      const stamp = await pickStamp(this.beeDebug, this.console)
-      this.stamp = stamp
-      this.fileUpload.stamp = stamp
+      if (await this.bee.isGateway()) {
+        this.stamp = '0'.repeat(64)
+        this.fileUpload.stamp = '0'.repeat(64)
+      } else {
+        const stamp = await pickStamp(this.bee, this.console)
+        this.stamp = stamp
+        this.fileUpload.stamp = stamp
+      }
     }
 
     const reference = await this.runUpload()
-    this.feedManifest = await this.updateFeedAndPrint(reference)
+    this.feedManifest = await this.updateFeedAndPrint(this.stamp, reference)
+
+    if (this.commandConfig.config.historyEnabled) {
+      const history = new History(this.commandConfig, this.console)
+      history.addItem({
+        timestamp: Date.now(),
+        reference: reference.toHex(),
+        stamp: this.stamp,
+        path: this.fileUpload.path,
+        uploadType: this.fileUpload.uploadType(),
+        feedIdentity: this.identity,
+        feedAddress: this.feedManifest.toHex(),
+      })
+    }
     this.console.dim('Successfully uploaded to feed.')
   }
 
-  private async runUpload(): Promise<string> {
+  private async runUpload(): Promise<Reference> {
     await this.fileUpload.run(true)
 
-    return this.fileUpload.hash
+    return this.fileUpload.result.getOrThrow()
   }
 }

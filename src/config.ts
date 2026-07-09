@@ -1,32 +1,29 @@
 import { IOption } from 'furious-commander'
 import PackageJson from '../package.json'
+import { Access } from './command/access'
 import { Addresses } from './command/addresses'
 import { Cheque } from './command/cheque'
 import { Download } from './command/download'
 import { Feed } from './command/feed'
 import { Hash } from './command/hash'
+import { History } from './command/history'
 import { Identity } from './command/identity'
 import { Manifest } from './command/manifest'
 import { Pinning } from './command/pinning'
 import { Pss } from './command/pss'
+import { Quickstart } from './command/quickstart'
 import { Stake } from './command/stake'
 import { Stamp } from './command/stamp'
 import { Status } from './command/status'
 import { Upload } from './command/upload'
 import { Utility } from './command/utility'
+import { Wallet } from './command/wallet'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
   default: 'http://localhost:1633',
   description: 'URL of the Bee-client API',
   envKey: 'BEE_API_URL',
-}
-
-export const beeDebugApiUrl: IOption<string> = {
-  key: 'bee-debug-api-url',
-  default: 'http://localhost:1635',
-  description: 'URL of the Bee-client Debug API',
-  envKey: 'BEE_DEBUG_API_URL',
 }
 
 export const configFolder: IOption<string> = {
@@ -98,9 +95,8 @@ export const yes: IOption<string[]> = {
   description: 'Agree to all prompts',
 }
 
-export const optionParameters: IOption<unknown>[] = [
+export const optionParameters: IOption<any>[] = [
   beeApiUrl,
-  beeDebugApiUrl,
   configFolder,
   configFile,
   verbose,
@@ -126,5 +122,9 @@ export const rootCommandClasses = [
   Addresses,
   Manifest,
   Stake,
+  Wallet,
   Utility,
+  Quickstart,
+  History,
+  Access,
 ]

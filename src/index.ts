@@ -20,3 +20,15 @@ cli({
   application,
   errorHandler,
 })
+
+process.stdout.on('error', error => {
+  if (error.code !== 'EPIPE') {
+    throw error
+  }
+})
+
+process.stderr.on('error', error => {
+  if (error.code !== 'EPIPE') {
+    throw error
+  }
+})

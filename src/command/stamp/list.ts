@@ -1,7 +1,7 @@
+import { PostageBatch } from '@ethersphere/bee-js'
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
-import { enrichStamp, printStamp } from '../../service/stamp'
-import { EnrichedStamp } from '../../service/stamp/types/stamp'
+import { printStamp } from '../../service/stamp'
 import { printDivided } from '../../utils/text'
 import { CommandLog } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
@@ -43,19 +43,17 @@ export class List extends StampCommand implements LeafCommand {
   public minUsage!: number
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     this.console.verbose(`Listing postage stamps...`)
 
-    const stamps = (await this.beeDebug.getAllPostageBatch()) || []
+    const stamps = (await this.bee.getPostageBatches()) || []
 
     if (stamps.length === 0) {
       this.console.error('You do not have any stamps.')
       exit(1)
     }
 
-    const enrichedStamps = stamps.map(enrichStamp)
-
-    const filteredStamps = enrichedStamps.filter(x => x.usageNormal >= this.minUsage && x.usageNormal <= this.maxUsage)
+    const filteredStamps = stamps.filter(x => x.usage * 100 >= this.minUsage && x.usage * 100 <= this.maxUsage)
 
     if (filteredStamps.length === 0) {
       exit(1)
@@ -65,14 +63,18 @@ export class List extends StampCommand implements LeafCommand {
 
     const orderedStamps = this.leastUsed
       ? limitedStamps.sort((a, b) => a.usage - b.usage)
-      : limitedStamps.sort((a, b) => b.batchTTL - a.batchTTL)
+      : limitedStamps.sort((a, b) => b.duration.toSeconds() - a.duration.toSeconds())
 
     printDivided(
       orderedStamps,
-      (items: EnrichedStamp, console: CommandLog) => {
+      (items: PostageBatch, console: CommandLog) => {
         printStamp(items, console, { printUsageInQuiet: !this.hideUsage, showTtl: true })
       },
       this.console,
     )
+
+    if (!this.quiet && !this.verbose) {
+      this.console.info('Run with --verbose for more details.')
+    }
   }
 }

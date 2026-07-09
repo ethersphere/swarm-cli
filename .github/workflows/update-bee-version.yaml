@@ -1,0 +1,51 @@
+name: Update Bee version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Bee version (e.g. v2.9.0)'
+        required: true
+
+env:
+  VERSION: ${{ github.event.inputs.version }}
+
+jobs:
+  update-bee-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate version
+        run: |
+          if ! printf '%s' "$VERSION" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$'; then
+            echo "invalid version: $VERSION" >&2; exit 1
+          fi
+
+      - name: Update beeVersion in quickstart.ts
+        run: |
+          sed -i "s/const beeVersion = 'v[^']*'/const beeVersion = '${VERSION}'/" src/command/quickstart.ts
+          grep -q "const beeVersion = '${VERSION}'" src/command/quickstart.ts || { echo 'sed did not match'; exit 1; }
+
+      - name: Generate App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.BEE_RUNNER_APP_ID }}
+          private-key: ${{ secrets.BEE_RUNNER_KEY }}
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v8.1.1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: 'chore: update Bee to ${{ env.VERSION }}'
+          branch: update-bee-${{ env.VERSION }}
+          title: 'chore: update Bee to ${{ env.VERSION }}'
+          body: |
+            Automated update of the Bee binary version to `${{ env.VERSION }}` in `quickstart.ts`.
+          labels: dependencies

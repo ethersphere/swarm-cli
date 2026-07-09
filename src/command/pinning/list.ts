@@ -19,8 +19,8 @@ export class List extends PinningCommand implements LeafCommand {
     this.console.log('')
 
     for (const pin of pins) {
-      this.console.log(pin)
-      this.console.quiet(pin)
+      this.console.log(pin.toHex())
+      this.console.quiet(pin.toHex())
     }
   }
 }

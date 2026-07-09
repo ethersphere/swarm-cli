@@ -1,6 +1,6 @@
 {
   "name": "@ethersphere/swarm-cli",
-  "version": "2.7.0",
+  "version": "3.4.0",
   "description": "CLI tool for Bee",
   "keywords": [
     "Bee",
@@ -26,12 +26,13 @@
     "prepare": "npm run build",
     "build": "rimraf dist && tsc",
     "test": "jest --config=jest.config.ts",
+    "test.e2e": "jest --config=jest-e2e.config.ts",
     "test:coverage": "jest --config=jest.config.ts --coverage",
-    "types:check": "tsc --project tsconfig.test.json",
+    "check": "tsc --project tsconfig.test.json",
     "start": "ts-node src/index.ts",
     "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
-    "bee": "bee-factory start"
+    "bee": "npx @fairdatasociety/fdp-play@3.3.0 start --detach --fresh --bee-version 2.6.0"
   },
   "engines": {
     "node": ">=14.0.0",
@@ -41,14 +42,14 @@
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
-    "@ethersphere/bee-factory": "^0.5.0",
     "@types/cli-progress": "^3.8.0",
     "@types/inquirer": "^8.2.5",
     "@types/jest": "^29.2.3",
-    "@types/node": "^18.11.9",
+    "@types/node": "^24.9.2",
+    "@types/node-fetch": "^2.6.12",
+    "@types/qrcode": "^1.5.6",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
-    "cafe-utility": "^10.8.1",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.1.5",
@@ -60,19 +61,21 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.4"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@ethersphere/bee-js": "^6.5.1",
-    "@fairdatasociety/bmt-js": "^2.1.0",
-    "bignumber.js": "^9.1.0",
+    "@ethereumjs/wallet": "^2.0.4",
+    "@ethersphere/bee-js": "^12.0.0",
+    "cafe-utility": "^33.3.1",
     "chalk": "^2.4.2",
     "cli-progress": "^3.11.2",
-    "ethereumjs-wallet": "^1.0.2",
+    "cli-table3": "^0.6.5",
+    "ethers": "^6.16.0",
     "furious-commander": "^1.7.1",
     "inquirer": "^8.2.5",
-    "mantaray-js": "^1.0.3",
+    "node-fetch": "^2.7.0",
     "ora": "^5.3.0",
+    "qrcode": "^1.5.4",
     "ws": "^8.11.0"
   }
 }

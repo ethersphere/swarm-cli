@@ -5,38 +5,90 @@ jobs:
   make:
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [20.x]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
+
       - name: Install deps
         run: npm ci
+
       - name: Install ncc
         run: npm install --global @vercel/ncc
+
       - name: Install pkg
-        run: npm install --global pkg
+        run: npm install -g @yao-pkg/pkg
+
       - name: Create bin/
         run: mkdir bin
+
       - name: Run ncc
         run: ncc build src/index.ts -o bin
+
       - name: Run pkg
         run: pkg bin/index.js
+
       - name: Rename binaries
         run: |
           mv index-linux Swarm-CLI-Linux
           mv index-macos Swarm-CLI-MacOS
           mv index-win.exe Swarm-CLI-Windows.exe
-      - uses: actions/upload-artifact@v3
+
+      - uses: actions/upload-artifact@v4
         with:
           name: Swarm-CLI-Linux
           path: Swarm-CLI-Linux
-      - uses: actions/upload-artifact@v3
+
+      - uses: actions/upload-artifact@v4
         with:
           name: Swarm-CLI-MacOS
           path: Swarm-CLI-MacOS
-      - uses: actions/upload-artifact@v3
+
+      - uses: actions/upload-artifact@v4
         with:
           name: Swarm-CLI-Windows.exe
           path: Swarm-CLI-Windows.exe
+
+      - name: Get latest release
+        id: latest_release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            core.setOutput("upload_url", releases[0].upload_url);
+
+      - name: Upload Linux binary
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.latest_release.outputs.upload_url }}
+          asset_path: Swarm-CLI-Linux
+          asset_name: Swarm-CLI-Linux
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHA_PAT_BASIC }}
+
+      - name: Upload MacOS binary
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.latest_release.outputs.upload_url }}
+          asset_path: Swarm-CLI-MacOS
+          asset_name: Swarm-CLI-MacOS
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHA_PAT_BASIC }}
+
+      - name: Upload Windows binary
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.latest_release.outputs.upload_url }}
+          asset_path: Swarm-CLI-Windows.exe
+          asset_name: Swarm-CLI-Windows.exe
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHA_PAT_BASIC }}

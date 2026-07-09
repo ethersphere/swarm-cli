@@ -1,3 +1,4 @@
+import { Topic } from '@ethersphere/bee-js'
 import { readFileSync } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
@@ -48,7 +49,7 @@ export class Send extends PssCommand implements LeafCommand {
   sendable?: string | Uint8Array
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (this.path) {
       if (!fileExists(this.path)) {
@@ -69,12 +70,12 @@ export class Send extends PssCommand implements LeafCommand {
     }
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      this.stamp = await pickStamp(this.bee, this.console)
     }
 
     this.console.log('Sending PSS message on topic ' + this.topic)
 
-    await this.bee.pssSend(this.stamp, this.topic, this.target, this.sendable, this.recipient)
+    await this.bee.pssSend(this.stamp, new Topic(this.topic), this.target, this.sendable, this.recipient)
     this.console.log('Message sent successfully.')
   }
 }

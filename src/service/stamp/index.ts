@@ -1,10 +1,8 @@
-import { BeeDebug, PostageBatch, Utils } from '@ethersphere/bee-js'
+import { Bee, PostageBatch } from '@ethersphere/bee-js'
+import { Dates } from 'cafe-utility'
 import { exit } from 'process'
 import { CommandLog } from '../../command/root-command/command-log'
-import { getFieldOrNull, secondsToDhms } from '../../utils'
-import { Storage } from '../../utils/storage'
-import { createKeyValue } from '../../utils/text'
-import { EnrichedStamp } from './types/stamp'
+import { createKeyValue, formatDate } from '../../utils/text'
 
 /**
  * Displays an interactive stamp picker to select a Stamp ID.
@@ -16,12 +14,17 @@ import { EnrichedStamp } from './types/stamp'
  *
  * @returns {Promise<string>} Hex representation of the Stamp ID.
  */
-export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promise<string> {
-  const stamps = ((await beeDebug.getAllPostageBatch()) || []).map(enrichStamp)
+export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> {
+  const stamps = await bee.getAllPostageBatch()
 
   const choices = stamps
-    .filter(stamp => stamp.usable || stamp.batchTTL > 0)
-    .map(stamp => `${stamp.batchID} ${stamp.remainingCapacity} expires in ${secondsToDhms(stamp.batchTTL, true)}`)
+    .filter(stamp => stamp.usable || stamp.duration.toSeconds() > 1)
+    .map(
+      stamp =>
+        `${stamp.batchID} ${stamp.remainingSize.toFormattedString()} remaining, TTL ${Dates.secondsToHumanTime(
+          stamp.duration.toSeconds(),
+        )}`,
+    )
 
   if (!choices.length) {
     console.error('You need to have at least one stamp for this action.')
@@ -34,57 +37,31 @@ export async function pickStamp(beeDebug: BeeDebug, console: CommandLog): Promis
   return hex
 }
 
-export function enrichStamp(stamp: PostageBatch): EnrichedStamp {
-  const usage = Utils.getStampUsage(stamp.utilization, stamp.depth, stamp.bucketDepth)
-  const usageNormal = Math.ceil(usage * 100)
-  const usageText = usageNormal + '%'
-  const capacity = new Storage(Utils.getStampMaximumCapacityBytes(stamp.depth))
-  const remainingCapacity = new Storage(capacity.getBytes() * (1 - usage))
-
-  return {
-    ...stamp,
-    usage,
-    usageNormal,
-    usageText,
-    capacity,
-    remainingCapacity,
-  }
-}
-
 interface PrintStampSettings {
   shortenBatchId?: boolean
   showTtl?: boolean
-  shortenTtl?: boolean
   printUsageInQuiet?: boolean
 }
 
-export function printStamp(
-  stamp: PostageBatch | EnrichedStamp,
-  console: CommandLog,
-  settings?: PrintStampSettings,
-): void {
-  const richStamp = ensureEnrichedStamp(stamp)
-  const batchId = settings?.shortenBatchId ? stamp.batchID.slice(0, 8) : stamp.batchID
+export function printStamp(stamp: PostageBatch, console: CommandLog, settings?: PrintStampSettings): void {
+  const batchId = settings?.shortenBatchId ? stamp.batchID.toHex().slice(0, 8) : stamp.batchID.toHex()
   console.log(createKeyValue('Stamp ID', batchId))
 
   if (stamp.label) {
     console.log(createKeyValue('Label', stamp.label))
   }
-  console.log(createKeyValue('Usage', richStamp.usageText))
-  console.log(createKeyValue('Remaining Capacity', richStamp.remainingCapacity.toString()))
-  console.verbose(
+  console.log(createKeyValue('Usage', stamp.usageText))
+  console.log(
     createKeyValue(
-      richStamp.immutableFlag ? 'Total Capacity (immutable)' : 'Total Capacity (mutable)',
-      richStamp.capacity.toString(),
+      stamp.immutableFlag ? 'Capacity (immutable)' : 'Capacity (mutable)',
+      `${stamp.remainingSize.toFormattedString()} remaining out of ${stamp.size.toFormattedString()}`,
     ),
   )
 
   if (settings?.showTtl) {
-    const ttl = stamp.batchTTL === -1 ? 'unknown' : secondsToDhms(stamp.batchTTL, settings?.shortenTtl)
-    const expires =
-      stamp.batchTTL === -1 ? 'unknown' : new Date(Date.now() + stamp.batchTTL * 1000).toISOString().slice(0, 10)
-    console.log(createKeyValue('TTL', ttl))
-    console.log(createKeyValue('Expires', expires))
+    const ttl = Dates.secondsToHumanTime(stamp.duration.toSeconds())
+    const expires = formatDate(stamp.duration.toEndDate())
+    console.log(createKeyValue('TTL', `${ttl} (${expires})`))
   }
 
   console.verbose(createKeyValue('Depth', stamp.depth))
@@ -93,13 +70,5 @@ export function printStamp(
   console.verbose(createKeyValue('Usable', stamp.usable))
   console.verbose(createKeyValue('Utilization', stamp.utilization))
   console.verbose(createKeyValue('Block Number', stamp.blockNumber))
-  console.quiet(settings?.printUsageInQuiet ? `${batchId} ${richStamp.usageText}` : batchId)
-}
-
-function ensureEnrichedStamp(stamp: PostageBatch | EnrichedStamp): EnrichedStamp {
-  if (!getFieldOrNull(stamp, 'usageText')) {
-    return enrichStamp(stamp)
-  }
-
-  return stamp as EnrichedStamp
+  console.quiet(settings?.printUsageInQuiet ? `${batchId} ${stamp.usageText}` : batchId)
 }

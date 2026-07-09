@@ -1,5 +1,365 @@
 # Changelog
 
+## [3.4.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.3.0...v3.4.0) (2026-07-08)
+
+
+### Features
+
+* trigger release of bee-js update ([#768](https://www.github.com/ethersphere/swarm-cli/issues/768)) ([cdb8b85](https://www.github.com/ethersphere/swarm-cli/commit/cdb8b850eed4450ac943d2b10570c764d08a0ca3))
+
+## [3.3.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.2.0...v3.3.0) (2026-06-04)
+
+
+### Features
+
+* improve access control user experience ([#734](https://www.github.com/ethersphere/swarm-cli/issues/734)) ([1a9d09e](https://www.github.com/ethersphere/swarm-cli/commit/1a9d09e71e0e16d646d05f84f35ae195773fa107))
+* modify access list command and introduce access show ([#747](https://www.github.com/ethersphere/swarm-cli/issues/747)) ([99846e7](https://www.github.com/ethersphere/swarm-cli/commit/99846e7d71545af968f1ea2b3458f7e09e6e3851))
+* prompt for stamp, when not provided for access init ([#748](https://www.github.com/ethersphere/swarm-cli/issues/748)) ([93eb222](https://www.github.com/ethersphere/swarm-cli/commit/93eb222f964a1f837fe41444282d3474854b0abd))
+
+
+### Bug Fixes
+
+* generate qr from a publicly available url ([#752](https://www.github.com/ethersphere/swarm-cli/issues/752)) ([704e7e4](https://www.github.com/ethersphere/swarm-cli/commit/704e7e4fd249acf9081e8f633362e3b16e2c9240))
+
+## [3.2.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.1.0...v3.2.0) (2026-06-02)
+
+
+### Features
+
+* add neighborhood doubling related info warnings ([#722](https://www.github.com/ethersphere/swarm-cli/issues/722)) ([7fea255](https://www.github.com/ethersphere/swarm-cli/commit/7fea2559bdbefe5c623b569e3c29d44f375b874d))
+* add qr option for upload command ([#719](https://www.github.com/ethersphere/swarm-cli/issues/719)) ([523b6ef](https://www.github.com/ethersphere/swarm-cli/commit/523b6ef58b1626c0764c9fdc987ab928d2533b7e))
+
+
+### Bug Fixes
+
+* allow to omit stamp when bee url is a gateway ([#743](https://www.github.com/ethersphere/swarm-cli/issues/743)) ([1cde1b9](https://www.github.com/ethersphere/swarm-cli/commit/1cde1b97ab057d28c58184a82f63f16ce25fff3d))
+* use overlay prefix and correct depth for rchash command ([#675](https://www.github.com/ethersphere/swarm-cli/issues/675)) ([c422749](https://www.github.com/ethersphere/swarm-cli/commit/c422749891b7fe010a886f658dda2b91b0f23b29))
+
+## [3.1.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.0.0...v3.1.0) (2026-05-13)
+
+
+### Features
+
+* show time data at stamp expiration ([#710](https://www.github.com/ethersphere/swarm-cli/issues/710)) ([9c32f68](https://www.github.com/ethersphere/swarm-cli/commit/9c32f68af57ebb49b39aff189e6c4730c88e6df4))
+* show warning when new swarm-cli version is available ([#708](https://www.github.com/ethersphere/swarm-cli/issues/708)) ([b3bf9bc](https://www.github.com/ethersphere/swarm-cli/commit/b3bf9bc64b6fb933308d529441209f4663a49226))
+* use amount argument and unit option for stake deposit ([#707](https://www.github.com/ethersphere/swarm-cli/issues/707)) ([d6a25cd](https://www.github.com/ethersphere/swarm-cli/commit/d6a25cd8b4d2729daedadd2432482403fd025e28))
+
+## [3.0.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.37.0...v3.0.0) (2026-05-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* add unit flag for cheque deposit and withraw (#686)
+
+### Features
+
+* add unit flag for cheque deposit and withraw ([#686](https://www.github.com/ethersphere/swarm-cli/issues/686)) ([2d6cd7a](https://www.github.com/ethersphere/swarm-cli/commit/2d6cd7a01a79b03b0e6b364d7619b9687192ee0f))
+* add upload history enable, disable and status commands ([#683](https://www.github.com/ethersphere/swarm-cli/issues/683)) ([dd9a74b](https://www.github.com/ethersphere/swarm-cli/commit/dd9a74b6977d426a659e0ab65f89d0ff189d7673))
+* implement upload history ([#679](https://www.github.com/ethersphere/swarm-cli/issues/679)) ([d72a1de](https://www.github.com/ethersphere/swarm-cli/commit/d72a1de7eef880b90e26c11aae87916bd75c084c))
+* update bee-js minor version to 10.2.x ([#664](https://www.github.com/ethersphere/swarm-cli/issues/664)) ([507c15a](https://www.github.com/ethersphere/swarm-cli/commit/507c15a742c34a0a510ff7000922fc4ed74f1e0a))
+
+
+### Bug Fixes
+
+* improve error handling to display API error messages with status… ([#670](https://www.github.com/ethersphere/swarm-cli/issues/670)) ([6fc0503](https://www.github.com/ethersphere/swarm-cli/commit/6fc05034a6296b7664b911e307705a7c7a51d347))
+
+## [2.37.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.36.1...v2.37.0) (2025-12-17)
+
+
+### Features
+
+* rename utility get-bee command to quickstart ([#660](https://www.github.com/ethersphere/swarm-cli/issues/660)) ([e7b9343](https://www.github.com/ethersphere/swarm-cli/commit/e7b9343a5b19c87935eb606f52f19b6f684b6993))
+
+### [2.36.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.36.0...v2.36.1) (2025-11-07)
+
+
+### Bug Fixes
+
+* stream manifest download ([#657](https://www.github.com/ethersphere/swarm-cli/issues/657)) ([0fa9b06](https://www.github.com/ethersphere/swarm-cli/commit/0fa9b060112a3937539f0a934657e7ab74227f26))
+
+## [2.36.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.35.0...v2.36.0) (2025-10-01)
+
+
+### Features
+
+* add price to status ([#648](https://www.github.com/ethersphere/swarm-cli/issues/648)) ([6665c94](https://www.github.com/ethersphere/swarm-cli/commit/6665c94edbcc661c0f31a18a419f334625745961))
+
+
+### Bug Fixes
+
+* do not error out in status when swap is disabled ([#655](https://www.github.com/ethersphere/swarm-cli/issues/655)) ([c05e8fb](https://www.github.com/ethersphere/swarm-cli/commit/c05e8fbe6c93a7ec4cdaa90ca438435c6872bfd7))
+
+## [2.35.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.34.0...v2.35.0) (2025-08-11)
+
+
+### Features
+
+* display manifest root metadata ([#643](https://www.github.com/ethersphere/swarm-cli/issues/643)) ([f52bbc9](https://www.github.com/ethersphere/swarm-cli/commit/f52bbc971c9fc3e30d555916de4374fc0b3be569))
+
+## [2.34.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.33.0...v2.34.0) (2025-07-30)
+
+
+### Features
+
+* bump get-bee to download bee v2.6.0 ([#637](https://www.github.com/ethersphere/swarm-cli/issues/637)) ([20aaa69](https://www.github.com/ethersphere/swarm-cli/commit/20aaa697a282a13807cd9b4a01b1eaa09a7f4867))
+
+
+### Bug Fixes
+
+* allow buying stamps in dev mode ([#640](https://www.github.com/ethersphere/swarm-cli/issues/640)) ([8639497](https://www.github.com/ethersphere/swarm-cli/commit/8639497f9c5b77039f92d86f61e939cfa7ed0171))
+* decrypt encrypted file during download ([#636](https://www.github.com/ethersphere/swarm-cli/issues/636)) ([78f38fa](https://www.github.com/ethersphere/swarm-cli/commit/78f38fa236023e0eb255e28c8279715168236896))
+* do not check postage batch for gateway feed upload ([#629](https://www.github.com/ethersphere/swarm-cli/issues/629)) ([626300a](https://www.github.com/ethersphere/swarm-cli/commit/626300a0410134386babb31bb5a782eab6489939))
+* use wrapped feeds in download command ([#633](https://www.github.com/ethersphere/swarm-cli/issues/633)) ([a82a598](https://www.github.com/ethersphere/swarm-cli/commit/a82a5989073840fbdc8aa72de8061efdf62fe2b0))
+* use wrapped feeds in feed print command ([#632](https://www.github.com/ethersphere/swarm-cli/issues/632)) ([f6e988b](https://www.github.com/ethersphere/swarm-cli/commit/f6e988b7156f8558ae661be49c23e3904cb49ebb))
+
+## [2.33.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.32.0...v2.33.0) (2025-07-03)
+
+
+### Features
+
+* improve gateway checks ([#627](https://www.github.com/ethersphere/swarm-cli/issues/627)) ([213507e](https://www.github.com/ethersphere/swarm-cli/commit/213507e138ff4c924b7388a677ec1b07f96c53fc))
+
+## [2.32.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.31.0...v2.32.0) (2025-07-02)
+
+
+### Features
+
+* add stake command group ([#623](https://www.github.com/ethersphere/swarm-cli/issues/623)) ([4cf0441](https://www.github.com/ethersphere/swarm-cli/commit/4cf0441209bb6875f2020df6cc65a993f5e9e440))
+* add wallet command group ([#624](https://www.github.com/ethersphere/swarm-cli/issues/624)) ([8ef81af](https://www.github.com/ethersphere/swarm-cli/commit/8ef81af8889c490a1b82e7b95397edea7bd33b4a))
+* handle out of balance during postage batch creation ([#625](https://www.github.com/ethersphere/swarm-cli/issues/625)) ([d258040](https://www.github.com/ethersphere/swarm-cli/commit/d258040dde2b0bffc65dc377ac3a4f7fa9aaf4ad))
+* upgrade to bee-js v9.4.1 ([#619](https://www.github.com/ethersphere/swarm-cli/issues/619)) ([08bf706](https://www.github.com/ethersphere/swarm-cli/commit/08bf706082f363f52fdf71919b6a6c032065944f))
+* upgrade to bee-js v9.5.0 ([#621](https://www.github.com/ethersphere/swarm-cli/issues/621)) ([2b612d5](https://www.github.com/ethersphere/swarm-cli/commit/2b612d5bb63818b510463e2ad79af81f2288e685))
+
+## [2.31.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.30.0...v2.31.0) (2025-06-19)
+
+
+### Features
+
+* add rchash command ([#613](https://www.github.com/ethersphere/swarm-cli/issues/613)) ([07b7b7e](https://www.github.com/ethersphere/swarm-cli/commit/07b7b7ed1067a7ff675317b62a273ee07321dcf9))
+* add reserve information to status ([#610](https://www.github.com/ethersphere/swarm-cli/issues/610)) ([e844dac](https://www.github.com/ethersphere/swarm-cli/commit/e844dac58c05d3ba4c4d1a2e5d8c6ce30a939034))
+* allow specifying bzz as staking unit ([#615](https://www.github.com/ethersphere/swarm-cli/issues/615)) ([59b50a1](https://www.github.com/ethersphere/swarm-cli/commit/59b50a13049d610b441c53ebdc6406faba890593))
+* check chainsync status before creating batch ([#614](https://www.github.com/ethersphere/swarm-cli/issues/614)) ([5b2f467](https://www.github.com/ethersphere/swarm-cli/commit/5b2f467776a44b3eded33d5f52c47e794b5f8b34))
+
+
+### Bug Fixes
+
+* update package for ethereumjs wallet ([#611](https://www.github.com/ethersphere/swarm-cli/issues/611)) ([429fa8c](https://www.github.com/ethersphere/swarm-cli/commit/429fa8c4e08abf6fb75ae3195f3119c0d0e0ee59))
+
+## [2.30.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.29.0...v2.30.0) (2025-06-14)
+
+
+### Features
+
+* use wrapped feed ([#608](https://www.github.com/ethersphere/swarm-cli/issues/608)) ([04a40e9](https://www.github.com/ethersphere/swarm-cli/commit/04a40e924f97e134cc085da86a30d9ff65c76e4f))
+
+## [2.29.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.28.1...v2.29.0) (2025-06-02)
+
+
+### Features
+
+* print current path for upload and timeout ([#605](https://www.github.com/ethersphere/swarm-cli/issues/605)) ([cee6b9d](https://www.github.com/ethersphere/swarm-cli/commit/cee6b9d8db725e66c677a613fb90b6f7bcb1e5a9))
+
+
+### Bug Fixes
+
+* handle epipe on stdout and stderr silently ([#607](https://www.github.com/ethersphere/swarm-cli/issues/607)) ([56f6ae3](https://www.github.com/ethersphere/swarm-cli/commit/56f6ae38ba2671fe97e7482a824d54f4646b03de))
+
+### [2.28.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.28.0...v2.28.1) (2025-06-02)
+
+
+### Bug Fixes
+
+* change order of status checks so chainsync comes earlier ([#602](https://www.github.com/ethersphere/swarm-cli/issues/602)) ([2e3b1dc](https://www.github.com/ethersphere/swarm-cli/commit/2e3b1dc1c5f6fa7c7e608bf65677d0708b9336e4))
+
+## [2.28.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.27.0...v2.28.0) (2025-05-07)
+
+
+### Features
+
+* update to new batch effective utilization table ([#588](https://www.github.com/ethersphere/swarm-cli/issues/588)) ([152a451](https://www.github.com/ethersphere/swarm-cli/commit/152a4519dfd7a84fa0ca946d8c48d795348f5d00))
+
+## [2.27.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.26.1...v2.27.0) (2025-04-24)
+
+
+### Features
+
+* add command to create external batch ([#584](https://www.github.com/ethersphere/swarm-cli/issues/584)) ([649b03c](https://www.github.com/ethersphere/swarm-cli/commit/649b03c8c7dd0ac09d597457d46a93a8177312ae))
+
+### [2.26.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.26.0...v2.26.1) (2025-04-01)
+
+
+### Bug Fixes
+
+* apply axios vulnerability fix ([#581](https://www.github.com/ethersphere/swarm-cli/issues/581)) ([57068fa](https://www.github.com/ethersphere/swarm-cli/commit/57068fa56a3e1a5fa3ba8f36e4cc49e02ecf6aca))
+
+## [2.26.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.25.0...v2.26.0) (2025-03-25)
+
+
+### Features
+
+* add cid command ([#579](https://www.github.com/ethersphere/swarm-cli/issues/579)) ([738ae88](https://www.github.com/ethersphere/swarm-cli/commit/738ae8882fd49be44623701f046233a1b8ad27b0))
+
+## [2.25.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.24.0...v2.25.0) (2025-03-17)
+
+
+### Features
+
+* upgrade bee-js to 9.0.3 ([#575](https://www.github.com/ethersphere/swarm-cli/issues/575)) ([4116d36](https://www.github.com/ethersphere/swarm-cli/commit/4116d368f3b3b2a880ba219c9787befc9ddb6585))
+
+
+### Bug Fixes
+
+* act download ([#576](https://www.github.com/ethersphere/swarm-cli/issues/576)) ([a904fe2](https://www.github.com/ethersphere/swarm-cli/commit/a904fe2e0f80838ee3a77b5f23fabc83b9146f90))
+
+## [2.24.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.23.0...v2.24.0) (2025-03-12)
+
+
+### Features
+
+* add act commands ([#569](https://www.github.com/ethersphere/swarm-cli/issues/569)) ([fd879bc](https://www.github.com/ethersphere/swarm-cli/commit/fd879bc33ca271e6e78750a9cba6461441c71d1a))
+
+## [2.23.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.22.0...v2.23.0) (2025-03-10)
+
+
+### Features
+
+* add stamp extend command ([#567](https://www.github.com/ethersphere/swarm-cli/issues/567)) ([5dba920](https://www.github.com/ethersphere/swarm-cli/commit/5dba920c23b5e38949c282df93d833619bb8a164))
+* update get-bee to fetch bee 2.4.0 ([#560](https://www.github.com/ethersphere/swarm-cli/issues/560)) ([7ac4839](https://www.github.com/ethersphere/swarm-cli/commit/7ac483931d7a3913aff864caa25cd9d49c1c37cb))
+
+## [2.22.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.21.0...v2.22.0) (2024-12-09)
+
+
+### Features
+
+* add chainsync info to status command ([#549](https://www.github.com/ethersphere/swarm-cli/issues/549)) ([951814d](https://www.github.com/ethersphere/swarm-cli/commit/951814dce629ee40d52a95afbbbcf11c2c2f7dca))
+
+## [2.21.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.20.0...v2.21.0) (2024-12-09)
+
+
+### Features
+
+* improve onboarding flow ([#556](https://www.github.com/ethersphere/swarm-cli/issues/556)) ([2cc2c6f](https://www.github.com/ethersphere/swarm-cli/commit/2cc2c6fbc52b2788873b95405960a16069cce9b9))
+
+## [2.20.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.19.0...v2.20.0) (2024-12-08)
+
+
+### Features
+
+* optionally deploy config in get-bee command ([#554](https://www.github.com/ethersphere/swarm-cli/issues/554)) ([e2085b9](https://www.github.com/ethersphere/swarm-cli/commit/e2085b9f3c9d59f516647c61daf89570d58550d1))
+
+## [2.19.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.18.0...v2.19.0) (2024-12-05)
+
+
+### Features
+
+* add stamp create, utility get-bee and utility redeem commands ([#551](https://www.github.com/ethersphere/swarm-cli/issues/551)) ([8b0d5a4](https://www.github.com/ethersphere/swarm-cli/commit/8b0d5a491e11c6194da4e167f8f73c0a8e5a7bf2))
+
+## [2.18.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.17.0...v2.18.0) (2024-10-24)
+
+
+### Features
+
+* upgrade to bee-js 8.3 ([#547](https://www.github.com/ethersphere/swarm-cli/issues/547)) ([710ef02](https://www.github.com/ethersphere/swarm-cli/commit/710ef0234d7ff53f8f7e24a056284fe7a5431e29))
+
+## [2.17.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.16.0...v2.17.0) (2024-10-03)
+
+
+### Features
+
+* update to bee-js 8.1.0 ([#541](https://www.github.com/ethersphere/swarm-cli/issues/541)) ([edfa7bc](https://www.github.com/ethersphere/swarm-cli/commit/edfa7bcefd03ae6f73206c1c0eb57ff8ba90649c))
+
+## [2.16.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.15.0...v2.16.0) (2024-09-17)
+
+
+### Features
+
+* add verbose hint to stamp list command ([#537](https://www.github.com/ethersphere/swarm-cli/issues/537)) ([9aa63a4](https://www.github.com/ethersphere/swarm-cli/commit/9aa63a48403ffa85773a7f28d0d0de2755ad6856))
+
+## [2.15.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.14.0...v2.15.0) (2024-09-16)
+
+
+### Features
+
+* upgrade to bee-js 8 ([#531](https://www.github.com/ethersphere/swarm-cli/issues/531)) ([e8b1842](https://www.github.com/ethersphere/swarm-cli/commit/e8b18422c0b72383e51c41596b2b10f85b2529b1))
+
+
+### Bug Fixes
+
+* handle missing chequebook in addresses command ([#534](https://www.github.com/ethersphere/swarm-cli/issues/534)) ([05cb0ed](https://www.github.com/ethersphere/swarm-cli/commit/05cb0ed83dc69cbc964d18630feffd26da8c12ba))
+
+## [2.14.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.13.1...v2.14.0) (2024-09-11)
+
+
+### Features
+
+* allow setting default stamp with stamp env ([#530](https://www.github.com/ethersphere/swarm-cli/issues/530)) ([4067a19](https://www.github.com/ethersphere/swarm-cli/commit/4067a193a21bac9ae38b8e75a182fc07aa110f81))
+* update to bee-js 7.1.2 ([#528](https://www.github.com/ethersphere/swarm-cli/issues/528)) ([b00a6e9](https://www.github.com/ethersphere/swarm-cli/commit/b00a6e9b824bb13bcf2482f954118d92d46b6e67))
+
+### [2.13.1](https://www.github.com/ethersphere/swarm-cli/compare/v2.13.0...v2.13.1) (2024-08-08)
+
+
+### Bug Fixes
+
+* support identity in feed print ([#526](https://www.github.com/ethersphere/swarm-cli/issues/526)) ([8f633c0](https://www.github.com/ethersphere/swarm-cli/commit/8f633c035ed2367cb3d789d90bfea0ce4e21ea4d))
+
+## [2.13.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.12.0...v2.13.0) (2024-06-26)
+
+
+### Features
+
+* print feed update references ([#522](https://www.github.com/ethersphere/swarm-cli/issues/522)) ([972c750](https://www.github.com/ethersphere/swarm-cli/commit/972c750edfa73accade0481ff8fd7794e1e17449))
+
+
+### Bug Fixes
+
+* do not require stamp for feed print ([#520](https://www.github.com/ethersphere/swarm-cli/issues/520)) ([01bc9b7](https://www.github.com/ethersphere/swarm-cli/commit/01bc9b7d1476000c6a85fd25eb68d679796e99dc))
+
+## [2.12.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.11.0...v2.12.0) (2024-06-26)
+
+
+### Features
+
+* add cheque withdraw-all command ([#519](https://www.github.com/ethersphere/swarm-cli/issues/519)) ([764f958](https://www.github.com/ethersphere/swarm-cli/commit/764f958f01efdbf2d934d0e49c8b735b18804426))
+* disambiguate xdai and xbzz values ([#511](https://www.github.com/ethersphere/swarm-cli/issues/511)) ([c0a5337](https://www.github.com/ethersphere/swarm-cli/commit/c0a53379cdb1e0558659f3e6d8386ebe5a4034c1))
+* improve stamp capacity listing ([#514](https://www.github.com/ethersphere/swarm-cli/issues/514)) ([cf776ab](https://www.github.com/ethersphere/swarm-cli/commit/cf776abac64d8755dbf89c227efaac3f6921f8a4))
+* print helpful message after topup and dilute ([#516](https://www.github.com/ethersphere/swarm-cli/issues/516)) ([391ca6f](https://www.github.com/ethersphere/swarm-cli/commit/391ca6f18e29cb0e0abc290bef961bd61e2a616c))
+* remove upload size warning ([#515](https://www.github.com/ethersphere/swarm-cli/issues/515)) ([fb11c19](https://www.github.com/ethersphere/swarm-cli/commit/fb11c1985657d2bb45c371386a85127fb2afd5ff))
+
+
+### Bug Fixes
+
+* do not error out on dev mode ttl ([#517](https://www.github.com/ethersphere/swarm-cli/issues/517)) ([6de29f9](https://www.github.com/ethersphere/swarm-cli/commit/6de29f993df6a819c8e6ef816a5c759157f3280f))
+* set immutable stamps as default ([#513](https://www.github.com/ethersphere/swarm-cli/issues/513)) ([55eacab](https://www.github.com/ethersphere/swarm-cli/commit/55eacabd33e340ef4e6a126c2714fdc4f67e44ff))
+
+## [2.11.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.10.0...v2.11.0) (2024-06-18)
+
+
+### Features
+
+* upgrade bee-js to 7.0.3 ([#505](https://www.github.com/ethersphere/swarm-cli/issues/505)) ([f4b24ac](https://www.github.com/ethersphere/swarm-cli/commit/f4b24acbce3e6e9ae783f29e234e9c999f4e60fc))
+
+## [2.10.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.9.0...v2.10.0) (2024-06-03)
+
+
+### Features
+
+* merge api ([#503](https://www.github.com/ethersphere/swarm-cli/issues/503)) ([0106e4d](https://www.github.com/ethersphere/swarm-cli/commit/0106e4de697dfe97dfcae42eff8d2c74755df410))
+
+## [2.9.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.8.0...v2.9.0) (2024-04-15)
+
+
+### Features
+
+* add redundancy options ([#487](https://www.github.com/ethersphere/swarm-cli/issues/487)) ([0452759](https://www.github.com/ethersphere/swarm-cli/commit/045275982ecba9caa07c9d3e2ac8d231a0711420))
+
+## [2.8.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.7.0...v2.8.0) (2024-02-08)
+
+
+### Features
+
+* speed up manifest sync ([#490](https://www.github.com/ethersphere/swarm-cli/issues/490)) ([90fc2d0](https://www.github.com/ethersphere/swarm-cli/commit/90fc2d081e6152decb7b42676933154ff3c05de0))
+* upgrade to bee-js 6.7.2 ([#493](https://www.github.com/ethersphere/swarm-cli/issues/493)) ([ab3e13e](https://www.github.com/ethersphere/swarm-cli/commit/ab3e13e6442a503d38cf6980a3c6257c7accd066))
+
 ## [2.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v2.6.0...v2.7.0) (2023-11-29)
 
 

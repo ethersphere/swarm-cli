@@ -1,4 +1,4 @@
-import Wallet from 'ethereumjs-wallet'
+import { Wallet } from '@ethereumjs/wallet'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
@@ -19,7 +19,7 @@ export class Show extends IdentityCommand implements LeafCommand {
   public password!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     const { identity } = await this.getOrPickIdentity(this.identityName)
 
     await this.maybePromptForSensitive()

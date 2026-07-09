@@ -1,5 +1,5 @@
+import { Wallet } from '@ethereumjs/wallet'
 import { randomBytes } from 'crypto'
-import Wallet from 'ethereumjs-wallet'
 import { Argument, LeafCommand, Option, Utils } from 'furious-commander'
 import { getPrintableIdentityType } from '../../service/identity'
 import { Identity, IdentityType } from '../../service/identity/types'
@@ -30,7 +30,7 @@ export class Create extends IdentityCommand implements LeafCommand {
   public onlyKeypair!: boolean
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (Utils.getSourcemap().name === 'default') {
       this.console.info(`No identity name specified, defaulting to '${this.identityName}'`)
