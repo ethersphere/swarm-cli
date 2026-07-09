@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.4.0...v3.5.0) (2026-07-09)
+
+
+### Features
+
+* rename command for stamp ([#772](https://www.github.com/ethersphere/swarm-cli/issues/772)) ([e2d8fe6](https://www.github.com/ethersphere/swarm-cli/commit/e2d8fe60a433d1e53315873f8126ddeb2ce2aa86))
+
 ## [3.4.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.3.0...v3.4.0) (2026-07-08)
 
 
