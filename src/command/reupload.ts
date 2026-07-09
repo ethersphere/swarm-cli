@@ -1,9 +1,10 @@
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { pickStamp } from '../../service/stamp'
-import { stampProperties } from '../../utils/option'
-import { PinningCommand } from './pinning-command'
+import { pickStamp } from '../service/stamp'
+import { stampProperties } from '../utils/option'
+import { RootCommand } from './root-command'
+import { History } from '../service/history'
 
-export class Reupload extends PinningCommand implements LeafCommand {
+export class Reupload extends RootCommand implements LeafCommand {
   // CLI FIELDS
 
   public readonly name = 'reupload'
@@ -33,6 +34,17 @@ export class Reupload extends PinningCommand implements LeafCommand {
     try {
       await this.bee.reuploadPinnedData(this.stamp, this.address)
       this.console.log('Reuploaded successfully.')
+
+      if (this.commandConfig.config.historyEnabled) {
+        const history = new History(this.commandConfig, this.console)
+        history.addItem({
+          timestamp: Date.now(),
+          reference: this.address,
+          stamp: this.stamp,
+          path: null,
+          uploadType: 'reupload',
+        })
+      }
     } catch (error) {
       this.console.printBeeError(error, { notFoundMessage: 'No locally pinned content found with that address.' })
     }

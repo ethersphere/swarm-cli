@@ -224,6 +224,7 @@ Run 'swarm-cli GROUP --help' to see available commands in a group
 
 █ Available Commands:
 
+reupload    Reupload locally pinned content
 upload      Upload file to Swarm
 download    Download arbitrary Swarm hash
 hash        Print the Swarm hash of a file
