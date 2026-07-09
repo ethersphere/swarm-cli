@@ -1,42 +1,110 @@
+import { Binary, System } from 'cafe-utility'
+import { existsSync, mkdtempSync, readdirSync, readFileSync, unlinkSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { Addresses } from '../../src/command/addresses'
 import { Upload } from '../../src/command/upload'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
-import { mkdtempSync } from 'node:fs'
-import { join } from 'node:path'
-import { tmpdir } from 'node:os'
 
 function makeTmpDir(): string {
   return mkdtempSync(join(tmpdir(), 'swarm-cli-testrun-'))
 }
 
-describeCommand('Test Download command', ({ consoleMessages }) => {
+describeCommand('Test Download command', ({ consoleMessages, getLastMessage }) => {
   it('should download and print to stdout', async () => {
-    const invocation = await invokeTestCli(['upload', 'test/message.txt', ...getStampOption()])
-    const { hash } = invocation.runnable as Upload
+    const file = 'message.txt'
+    const invocation = await invokeTestCli(['upload', 'test/' + file, ...getStampOption()])
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
-    await invokeTestCli(['download', hash, '--stdout'])
+    await invokeTestCli(['download', hash.toHex(), '--stdout'])
     expect(consoleMessages[0]).toContain('Hello Swarm!')
+  })
+
+  describe('when --access option is used', () => {
+    afterEach(() => {
+      const historyFilePath = `${__dirname}/../testconfig/access-history.json`
+
+      if (existsSync(historyFilePath)) {
+        unlinkSync(historyFilePath)
+      }
+    })
+
+    it('should download with act and print to stdout', async () => {
+      const addressesInvocation = await invokeTestCli(['addresses'])
+      const addressesCommand = addressesInvocation.runnable as Addresses
+      await invokeTestCli(['access', 'init', ...getStampOption(), '--list-name', 'test-download'])
+      await System.sleepMillis(1000)
+      const uploadInvocation = await invokeTestCli([
+        'upload',
+        'test/message.txt',
+        '--share-with',
+        'test-download',
+        ...getStampOption(),
+      ])
+      const uploadCommand = uploadInvocation.runnable as Upload
+      const ref = uploadCommand.result.getOrThrow().toHex()
+      const history = uploadCommand.historyAddress.getOrThrow().toHex()
+      const publicKey = addressesCommand.nodeAddresses.publicKey.toHex()
+      await invokeTestCli(['download', ref, '--access', `${publicKey}:${history}`, '--stdout'])
+      expect(getLastMessage()).toContain('Hello Swarm!')
+    })
+
+    it('should be able to download with instructions', async () => {
+      await invokeTestCli(['access', 'init', ...getStampOption(), '--list-name', 'test-download'])
+      await System.sleepMillis(1000)
+      await invokeTestCli(['upload', 'test/message.txt', '--share-with', 'test-download', ...getStampOption()])
+      const instructions = getLastMessage().split(' ')
+      await invokeTestCli(instructions.slice(2).concat(['--stdout']))
+      expect(getLastMessage()).toContain('Hello Swarm!')
+    })
   })
 
   it('should fall back to manifest download', async () => {
     const tmpDir = makeTmpDir()
     const invocation = await invokeTestCli(['upload', 'test/testpage', ...getStampOption()])
-    const { hash } = invocation.runnable as Upload
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
-    await invokeTestCli(['download', hash, tmpDir])
-    expect(consoleMessages[0]).toContain('images/swarm.png')
-    expect(consoleMessages[2]).toContain('index.html')
-    expect(consoleMessages[4]).toContain('swarm.bzz')
+    await invokeTestCli(['download', hash.toHex(), tmpDir])
+    expect(consoleMessages.some(x => x.includes('images/swarm.png'))).toBe(true)
+    expect(consoleMessages.some(x => x.includes('index.html'))).toBe(true)
+    expect(consoleMessages.some(x => x.includes('swarm.bzz'))).toBe(true)
   })
 
   it('should ignore --stdout if downloading folder', async () => {
     const tmpDir = makeTmpDir()
     const invocation = await invokeTestCli(['upload', 'test/testpage', ...getStampOption()])
-    const { hash } = invocation.runnable as Upload
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
     consoleMessages.length = 0
-    await invokeTestCli(['download', hash, tmpDir, '--stdout'])
-    expect(consoleMessages[0]).toContain('images/swarm.png')
-    expect(consoleMessages[2]).toContain('index.html')
-    expect(consoleMessages[4]).toContain('swarm.bzz')
+    await invokeTestCli(['download', hash.toHex(), tmpDir, '--stdout'])
+    expect(consoleMessages.some(x => x.includes('images/swarm.png'))).toBe(true)
+    expect(consoleMessages.some(x => x.includes('index.html'))).toBe(true)
+    expect(consoleMessages.some(x => x.includes('swarm.bzz'))).toBe(true)
+  })
+
+  it('should download an encrypted file', async () => {
+    const invocation = await invokeTestCli(['upload', 'docs/upload.gif', '--encrypt', ...getStampOption()])
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
+    expect(hash.toHex()).toHaveLength(128)
+    expect(existsSync(hash.toHex())).toBe(false)
+    await invokeTestCli(['download', hash.toHex()])
+    expect(existsSync(hash.toHex() + '/upload.gif')).toBe(true)
+    const data1 = readFileSync(hash.toHex() + '/upload.gif')
+    const data2 = readFileSync('docs/upload.gif')
+    expect(Binary.equals(data1, data2)).toBe(true)
+  })
+
+  it('should download an encrypted folder', async () => {
+    const invocation = await invokeTestCli(['upload', 'docs', '--encrypt', ...getStampOption()])
+    const hash = (invocation.runnable as Upload).result.getOrThrow()
+    expect(hash.toHex()).toHaveLength(128)
+    await invokeTestCli(['download', hash.toHex()])
+    expect(existsSync(hash.toHex())).toBe(true)
+    const content = readdirSync(hash.toHex())
+    expect(content.length).toBe(4)
+    expect(content.includes('upload.gif')).toBe(true)
+    expect(content.includes('stamp-buy.gif')).toBe(true)
+    expect(content.includes('identity-create.gif')).toBe(true)
+    expect(content.includes('feed-upload.gif')).toBe(true)
   })
 })

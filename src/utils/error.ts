@@ -1,3 +1,4 @@
+import { Objects } from 'cafe-utility'
 import { getFieldOrNull } from '.'
 import { FORMATTED_ERROR } from '../command/root-command/printer'
 import { printer } from '../printer'
@@ -13,11 +14,26 @@ export interface BeeErrorOptions {
   notFoundMessage?: string
 }
 
+type BeeJSError = {
+  path?: string[]
+  code?: string
+  format?: string
+  pattern?: string
+  origin?: string
+  message?: string
+}
+
 function hasStatusCode(error: any, statusCode: number): boolean {
   return error?.response?.status === statusCode
 }
 
 function isNotFoundError(error: unknown): boolean {
+  const message = Objects.getDeep(error, 'message')
+
+  if (typeof message === 'string' && message.includes('status code 404')) {
+    return true
+  }
+
   return hasStatusCode(error, 404)
 }
 
@@ -29,8 +45,25 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
   if (!process.exitCode) {
     process.exitCode = 1
   }
+
+  // bee-js validates with zod; a ZodError.message is a JSON blob of issues.
+  // Flatten each issue into a readable line that shows where the violation came from.
+  if (error?.name === 'ZodError' && Array.isArray(error?.issues)) {
+    const message = error.issues.map(formatBeeJsError).join('; ')
+    printer.printError(FORMATTED_ERROR + ' ' + message)
+
+    return
+  }
+
   // grab error.message, or error if it is a string
-  const message: string | null = typeof error === 'string' ? error : error?.response?.data?.message || error?.message
+  let message: string | null
+  const responseBody = error?.responseBody
+
+  if (responseBody?.code && responseBody?.message) {
+    message = `${responseBody.message} (HTTP ${responseBody.code})`
+  } else {
+    message = typeof error === 'string' ? error : error?.response?.data?.message || error?.message
+  }
   const type: string | null = getFieldOrNull(error, 'type')
 
   // write custom message for 500
@@ -66,6 +99,22 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
       printer.printError('Check your Bee log to learn if your request reached the node.')
     }
   }
+}
+
+function formatBeeJsError(issue: BeeJSError): string {
+  const hasPath = Array.isArray(issue?.path) && issue.path.length > 0
+
+  const details = [
+    issue?.origin !== null ? `origin=${issue.origin}` : null,
+    issue?.code !== null ? `code=${issue.code}` : null,
+    issue?.format !== null ? `format=${issue.format}` : null,
+    issue?.pattern !== null ? `pattern=${issue.pattern}` : null,
+    hasPath ? `path=${issue?.path?.join('.')}` : null,
+  ]
+    .filter(Boolean)
+    .join(', ')
+
+  return `${issue?.message ?? 'validation failed'} (${details})`
 }
 
 function isGenericErrorPattern(errorName: string, message: string | unknown): boolean {

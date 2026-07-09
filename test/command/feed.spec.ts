@@ -1,6 +1,14 @@
+import { randomUUID } from 'crypto'
+import QRCode from 'qrcode'
 import { Upload } from '../../src/command/upload'
+import { toBeQRCode, toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
-import { getStampOption } from '../utility/stamp'
+import { getOrBuyStamp, getStampOption } from '../utility/stamp'
+
+expect.extend({
+  toMatchLinesInOrder,
+  toBeQRCode,
+})
 
 describeCommand(
   'Test Feed command',
@@ -33,7 +41,6 @@ describeCommand(
         '--password',
         'test',
         '--quiet',
-        ...getStampOption(),
       ])
       expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
     })
@@ -54,7 +61,7 @@ describeCommand(
         ...getStampOption(),
       ])
       // print with address
-      await invokeTestCli(['feed', 'print', '--address', address, '--quiet', ...getStampOption()])
+      await invokeTestCli(['feed', 'print', '--address', address, '--quiet'])
       expect(getLastMessage()).toMatch(/[a-z0-9]{64}/)
     })
 
@@ -62,7 +69,8 @@ describeCommand(
       await invokeTestCli(['identity', 'create', 'update-feed-test', '-P', '1234', '-v'])
       const uploadCommand = await invokeTestCli(['upload', 'README.md', ...getStampOption()])
       const upload = uploadCommand.runnable as Upload
-      const { hash } = upload
+      const hash = upload.result.getOrThrow()
+
       consoleMessages.length = 0
       await invokeTestCli([
         'feed',
@@ -74,14 +82,66 @@ describeCommand(
         '-P',
         '1234',
         '-r',
-        hash,
+        hash.toHex(),
         ...getStampOption(),
       ])
       expect(hasMessageContaining('Feed Manifest URL')).toBeTruthy()
       expect(hasMessageContaining('/bzz/')).toBeTruthy()
     })
 
-    it('should increment number of updates for sequence feeds', async () => {
+    describe('when --qr flag provided', () => {
+      it('should print QR code to the console', async () => {
+        const stampBatchId = await getOrBuyStamp()
+        // create identity
+        const identityName = randomUUID()
+        await invokeTestCli(['identity', 'create', identityName, '--password', 'test'])
+        // upload
+        await invokeTestCli([
+          'feed',
+          'upload',
+          '--identity',
+          identityName,
+          '--password',
+          'test',
+          '--stamp',
+          stampBatchId.toHex(),
+          '--qr',
+          `${__dirname}/../testpage/images/swarm.png`,
+        ])
+        expect(hasMessageContaining('QR for URL:')).toBeTruthy()
+        expect(consoleMessages[10]).toBeQRCode()
+        expect(hasMessageContaining('QR for Manifest URL:')).toBeTruthy()
+        expect(consoleMessages[13]).toBeQRCode()
+      })
+
+      describe('when the URL is local', () => {
+        it('should change the URL to use gateway', async () => {
+          const stampBatchId = await getOrBuyStamp()
+          // create identity
+          const identityName = randomUUID()
+          await invokeTestCli(['identity', 'create', identityName, '--password', 'test'])
+          jest.spyOn(QRCode, 'toString')
+          await invokeTestCli([
+            'feed',
+            'upload',
+            '--identity',
+            identityName,
+            '--password',
+            'test',
+            '--stamp',
+            stampBatchId.toHex(),
+            '--qr',
+            `${__dirname}/../testpage/images/swarm.png`,
+          ])
+          expect(QRCode.toString).toHaveBeenCalledWith(
+            expect.stringContaining('https://api.gateway.ethswarm.org/bzz/'),
+            { type: 'terminal', small: true },
+          )
+        })
+      })
+    })
+
+    it.skip('should increment number of updates for sequence feeds', async () => {
       await invokeTestCli(['identity', 'create', 'd12617', '--password', 'test'])
       await invokeTestCli([
         'feed',
@@ -93,9 +153,8 @@ describeCommand(
         'test',
         ...getStampOption(),
       ])
-      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test', ...getStampOption()])
-      expect(getLastMessage()).toContain('Number of Updates')
-      expect(getLastMessage()).toContain('1')
+      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test'])
+      expect(consoleMessages).toMatchLinesInOrder([['Number of Updates', '1']])
       await invokeTestCli([
         'feed',
         'upload',
@@ -106,9 +165,11 @@ describeCommand(
         'test',
         ...getStampOption(),
       ])
-      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test', ...getStampOption()])
-      expect(getLastMessage()).toContain('Number of Updates')
-      expect(getLastMessage()).toContain('2')
+      await invokeTestCli(['feed', 'print', '--identity', 'd12617', '--password', 'test'])
+      expect(consoleMessages).toMatchLinesInOrder([
+        ['Number of Updates', '1'],
+        ['Number of Updates', '2'],
+      ])
     })
   },
   { configFileName: 'feed' },

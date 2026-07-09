@@ -2,37 +2,65 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/en/configuration.html
  */
+import { Bee, BZZ } from '@ethersphere/bee-js'
 import type { Config } from '@jest/types'
+import { Dates, System } from 'cafe-utility'
+import { CommandLog, VerbosityLevel } from './src/command/root-command/command-log'
 import { getPssAddress } from './test/utility/address'
 import { getOrBuyStamp } from './test/utility/stamp'
 
 export default async (): Promise<Config.InitialOptions> => {
-  process.env.MAX_UPLOAD_SIZE = '5000000' // 5 megabytes
-
   /**
    * SKIP_WORKER can be enabled when running a subset of the tests manually,
    * which do not require any worker nodes, and therefore the stack
    * only consists a single queen node as well
    */
+  const console = new CommandLog(VerbosityLevel.Normal)
+
+  process.env.SKIP_VERSION_CHECK = 'true'
+
   if (!process.env.SKIP_WORKER) {
-    process.env.WORKER_PSS_ADDRESS = await getPssAddress('http://localhost:11635')
+    process.env.WORKER_PSS_ADDRESS = (await getPssAddress('http://localhost:1635')).toCompressedHex()
   }
 
-  if (!process.env.STAMP) {
-    process.env.STAMP = await getOrBuyStamp()
+  if (!process.env.TEST_STAMP) {
+    process.env.TEST_STAMP = (await getOrBuyStamp()).toHex()
+  }
+
+  for (let i = 0; i < 5; i++) {
+    const port = 1633 + i * 2
+    const bee = new Bee(`http://localhost:${port}`)
+
+    const startedAt = Date.now()
+    console.log('Waiting for Bee node to warm up on port', port)
+
+    await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
+      attempts: 300,
+      waitMillis: Dates.seconds(1),
+      requiredConsecutivePasses: 3,
+    })
+    const elapsed = Date.now() - startedAt
+    console.log(`Bee node on port ${port} warmed up in ${elapsed} milliseconds`)
+  }
+
+  for (let i = 0; i < 5; i++) {
+    const port = 1633 + i * 2
+    const bee = new Bee(`http://localhost:${port}`)
+
+    console.log('Asserting chequebook balance on port', port)
+    const chequebookBalance = await bee.getChequebookBalance()
+
+    if (!chequebookBalance.totalBalance.eq(BZZ.fromDecimalString('10'))) {
+      throw Error('Chequebook total balance is not 10 xBZZ: ' + chequebookBalance.totalBalance.toDecimalString())
+    }
+    console.log(`Chequebook balance on port ${port} is 10 xBZZ`)
   }
 
   return {
-    // Indicates whether the coverage information should be collected while executing the test
-    // collectCoverage: false,
-
-    // The directory where Jest should output its coverage files
+    collectCoverage: process.env.SKIP_COVERAGE !== 'true',
     coverageDirectory: 'coverage',
-
-    // An array of regexp pattern strings used to skip coverage collection
-    coveragePathIgnorePatterns: ['/node_modules/'],
-
-    // An array of directory names to be searched recursively up from the requiring module's location
+    coverageReporters: ['lcov', 'json-summary'],
+    collectCoverageFrom: ['src/**/*.ts'],
     moduleDirectories: ['node_modules'],
 
     // Run tests from one or more projects
@@ -49,9 +77,9 @@ export default async (): Promise<Config.InitialOptions> => {
     rootDir: 'test',
 
     // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-    testPathIgnorePatterns: ['/node_modules/'],
+    testPathIgnorePatterns: ['/node_modules/', '/test/e2e/'],
 
     // Increase timeout since we have long running cryptographic functions
-    testTimeout: 4 * 60 * 1000,
+    testTimeout: Dates.minutes(6),
   }
 }

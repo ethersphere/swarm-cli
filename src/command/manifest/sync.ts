@@ -1,14 +1,16 @@
+import { MantarayNode, MerkleTree } from '@ethersphere/bee-js'
+import { Binary, Optional } from 'cafe-utility'
+import chalk from 'chalk'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
-import { Reference } from 'mantaray-js'
 import { join } from 'path'
 import { pickStamp } from '../../service/stamp'
 import { readdirDeepAsync } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
 import { stampProperties } from '../../utils/option'
-import { ManifestCommand } from './manifest-command'
+import { RootCommand } from '../root-command'
 
-export class Sync extends ManifestCommand implements LeafCommand {
+export class Sync extends RootCommand implements LeafCommand {
   public readonly name = 'sync'
   public readonly description = 'Sync a local folder to an existing manifest'
 
@@ -29,49 +31,57 @@ export class Sync extends ManifestCommand implements LeafCommand {
   public remove!: boolean
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      this.stamp = await pickStamp(this.bee, this.console)
     }
+
     const address = new BzzAddress(this.bzzUrl)
-    const { node } = await this.initializeNode(address.hash)
+
+    const node = await MantarayNode.unmarshal(this.bee, address.hash)
+    await node.loadRecursively(this.bee)
+
+    const map = new Map<string, MantarayNode>()
+    const nodes = node.collect()
+    for (const node of nodes) {
+      map.set(node.fullPathString, node)
+    }
+
     const files = await readdirDeepAsync(this.folder, this.folder)
-    const forks = this.getForksPathMapping(this.findAllValueForks(node))
+
     for (const file of files) {
-      const fork = forks[file]
+      const existing = map.get(file)
 
-      if (fork) {
-        fork.found = true
-
-        if (!fork.node.getEntry) {
-          continue
-        }
-
-        const remoteData = await this.bee.downloadData(Buffer.from(fork.node.getEntry).toString('hex'))
+      if (existing) {
         const localData = readFileSync(join(this.folder, file))
+        const rootChunk = await MerkleTree.root(localData)
 
-        // TODO make this more efficient once the chunker is available
-        if (localData.equals(remoteData)) {
-          this.console.log('ok -> ' + file)
+        if (Binary.equals(rootChunk.hash(), existing.targetAddress)) {
+          this.console.log(chalk.gray(file) + ' ' + chalk.blue('UNCHANGED'))
         } else {
-          const { reference } = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
-          node.addFork(this.encodePath(file), Buffer.from(reference, 'hex') as Reference)
-          this.console.log('updated -> ' + file)
+          const { reference } = await this.bee.uploadData(this.stamp, localData)
+          node.addFork(file, reference)
+          this.console.log(chalk.gray(file) + ' ' + chalk.yellow('CHANGED'))
         }
       } else {
         const { reference } = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
-        node.addFork(this.encodePath(file), Buffer.from(reference, 'hex') as Reference)
-        this.console.log('new -> ' + file)
+        node.addFork(file, reference)
+        this.console.log(chalk.gray(file) + ' ' + chalk.green('NEW'))
       }
     }
 
     if (this.remove) {
-      for (const fork of Object.values(forks).filter(x => !x.found)) {
-        node.removePath(this.encodePath(fork.path))
-        this.console.log('removed -> ' + fork.path)
+      for (const n of nodes) {
+        if (!files.includes(node.fullPathString)) {
+          node.removeFork(n.fullPathString)
+          this.console.log(chalk.gray(n.fullPathString) + ' ' + chalk.red('REMOVED'))
+        }
       }
     }
-    await this.saveAndPrintNode(node, this.stamp)
+
+    const root = await node.saveRecursively(this.bee, this.stamp)
+    this.console.log(root.reference.toHex())
+    this.result = Optional.of(root.reference)
   }
 }

@@ -1,10 +1,18 @@
+import { PublicKey } from '@ethersphere/bee-js'
 import { invokeTestCli } from '.'
 import { Addresses } from '../../src/command/addresses'
 
-export async function getPssAddress(beeDebugApiUrl: string): Promise<string> {
-  const execution = await invokeTestCli(['addresses', '--bee-debug-api-url', beeDebugApiUrl])
+export async function getPssAddress(beeApiUrl: string): Promise<PublicKey> {
+  const execution = await invokeTestCli(['addresses', '--bee-api-url', beeApiUrl])
 
   return (execution.runnable as Addresses).nodeAddresses.pssPublicKey
+}
+
+export async function getPublicAddress(beeApiUrl: string): Promise<string> {
+  const response = await fetch(beeApiUrl + '/addresses')
+  const data = await response.json()
+
+  return data.publicKey
 }
 
 export function getWorkerPssAddress(stringLength: number): string {

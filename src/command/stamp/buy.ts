@@ -1,17 +1,18 @@
-import { Utils } from '@ethersphere/bee-js'
+import { BatchId, Utils } from '@ethersphere/bee-js'
+import { Dates, Numbers } from 'cafe-utility'
+import chalk from 'chalk'
 import { LeafCommand, Option } from 'furious-commander'
-import { printStamp } from '../../service/stamp'
-import { secondsToDhms, sleep } from '../../utils'
+import { exit } from 'process'
+import { isChainStateReady } from '../../utils/chainsync'
 import { createSpinner } from '../../utils/spinner'
-import { Storage } from '../../utils/storage'
-import { createKeyValue, deletePreviousLine } from '../../utils/text'
+import { createKeyValue } from '../../utils/text'
 import { VerbosityLevel } from '../root-command/command-log'
 import { StampCommand } from './stamp-command'
 
 export class Buy extends StampCommand implements LeafCommand {
   public readonly name = 'buy'
 
-  public readonly description = 'Buy postage stamp'
+  public readonly description = 'Buy postage stamp based on depth and amount'
 
   @Option({
     key: 'depth',
@@ -40,7 +41,7 @@ export class Buy extends StampCommand implements LeafCommand {
   })
   public gasPrice!: bigint
 
-  @Option({ key: 'immutable', description: 'Disable stamp reuse', type: 'boolean' })
+  @Option({ key: 'immutable', description: 'Disable stamp reuse', type: 'boolean', default: true })
   public immutable!: boolean
 
   @Option({ key: 'label', description: 'Label of the postage stamp' })
@@ -55,28 +56,55 @@ export class Buy extends StampCommand implements LeafCommand {
   public waitUsable!: boolean
 
   // CLASS FIELDS
-  public postageBatchId!: string
+  public postageBatchId!: BatchId
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
-    const estimatedCost = Utils.getStampCostInBzz(this.depth, Number(this.amount))
-    const estimatedCapacity = new Storage(Utils.getStampMaximumCapacityBytes(this.depth))
-    const estimatedTtl = Utils.getStampTtlSeconds(Number(this.amount))
+    if (!(await isChainStateReady(this.bee))) {
+      this.console.error('Synchronization with the blockchain is not yet complete.')
+      this.console.error('Please wait until the Bee is fully synced before buying a postage stamp.')
+      this.console.error('You can check the synchronization status with the "status" command.')
 
-    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toFixed(3)} BZZ`))
-    this.console.log(createKeyValue('Estimated capacity', estimatedCapacity.toString()))
-    this.console.log(createKeyValue('Estimated TTL', secondsToDhms(estimatedTtl)))
+      return
+    }
+
+    const chainState = await this.bee.getChainState()
+    const minimumAmount = BigInt(chainState.currentPrice) * 17280n
+
+    if (minimumAmount >= this.amount) {
+      this.console.error('The amount is too low. The minimum amount is', (minimumAmount + 1n).toString())
+
+      return
+    }
+
+    const estimatedCost = Utils.getStampCost(this.depth, BigInt(this.amount))
+    const { bzzBalance } = await this.bee.getWalletBalance()
+
+    if (estimatedCost.gt(bzzBalance)) {
+      this.console.error('You do not have enough BZZ to create this postage stamp.')
+      this.console.error(`Estimated cost: ${estimatedCost.toDecimalString()} xBZZ`)
+      this.console.error(`Available balance: ${bzzBalance.toDecimalString()} xBZZ`)
+
+      this.console.log('')
+      this.console.log('Visit the following link to learn how to fund your Bee node:')
+      this.console.log(chalk.blue('https://docs.ethswarm.org/docs/bee/installation/fund-your-node/'))
+
+      exit(1)
+    }
+
+    const estimatedCapacity = Numbers.convertBytes(Utils.getStampEffectiveBytes(this.depth))
+    const estimatedTtl = Utils.getStampDuration(BigInt(this.amount), Number(chainState.currentPrice), 5)
+
+    this.console.log(createKeyValue('Estimated cost', `${estimatedCost.toDecimalString()} xBZZ`))
+    this.console.log(createKeyValue('Estimated capacity', estimatedCapacity))
+    this.console.log(createKeyValue('Estimated TTL', Dates.secondsToHumanTime(estimatedTtl.toSeconds())))
     this.console.log(createKeyValue('Type', this.immutable ? 'Immutable' : 'Mutable'))
 
     if (this.immutable) {
-      this.console.info(
-        'Once an immutable stamp is maxed out, it disallows further content uploads, thereby safeguarding your previously uploaded content from unintentional overwriting.',
-      )
+      this.console.info('At full capacity, an immutable stamp no longer allows new content uploads.')
     } else {
-      this.console.info(
-        'When a mutable stamp reaches full capacity, it still permits new content uploads. However, this comes with the caveat of overwriting previously uploaded content associated with the same stamp.',
-      )
+      this.console.info('At full capacity, a mutable stamp allows new content uploads, but overwrites old content.')
     }
 
     if (!this.quiet && !this.yes) {
@@ -87,61 +115,25 @@ export class Buy extends StampCommand implements LeafCommand {
       return
     }
 
-    const spinner = createSpinner('Buying postage stamp. This may take a few minutes.')
+    const spinner = createSpinner('Creating postage batch. This may take up to 5 minutes.')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
     }
 
     try {
-      const batchId = await this.beeDebug.createPostageBatch(this.amount.toString(), this.depth, {
+      const batchId = await this.bee.createPostageBatch(this.amount.toString(), this.depth, {
         label: this.label,
         gasPrice: this.gasPrice?.toString(),
         immutableFlag: this.immutable,
+        waitForUsable: this.waitUsable === false ? false : true,
       })
       spinner.stop()
-      this.console.quiet(batchId)
-      this.console.log(createKeyValue('Stamp ID', batchId))
+      this.console.quiet(batchId.toHex())
+      this.console.log(createKeyValue('Stamp ID', batchId.toHex()))
       this.postageBatchId = batchId
     } finally {
       spinner.stop()
     }
-
-    if (this.waitUsable) {
-      await this.waitToBecomeUsable()
-    }
-  }
-
-  private async waitToBecomeUsable(): Promise<void> {
-    const spinner = createSpinner('Waiting for postage stamp to become usable...')
-
-    if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
-      spinner.start()
-    }
-    let running = true
-
-    while (running) {
-      try {
-        const stamp = await this.beeDebug.getPostageBatch(this.postageBatchId)
-
-        if (!stamp.usable) {
-          await sleep(1000)
-          continue
-        }
-
-        spinner.stop()
-
-        if (this.verbosity === VerbosityLevel.Verbose) {
-          if (!this.curl) {
-            deletePreviousLine()
-          }
-          printStamp(stamp, this.console, { showTtl: true })
-        }
-        running = false
-      } catch {
-        await sleep(1000)
-      }
-    }
-    spinner.stop()
   }
 }

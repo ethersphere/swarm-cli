@@ -1,6 +1,8 @@
-import { Argument, LeafCommand } from 'furious-commander'
+import { Argument, LeafCommand, Option } from 'furious-commander'
+import { BZZ } from '@ethersphere/bee-js'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
+import { validateTokenAmount } from '../../utils/validate'
 
 export class Deposit extends ChequeCommand implements LeafCommand {
   public readonly name = 'deposit'
@@ -11,18 +13,29 @@ export class Deposit extends ChequeCommand implements LeafCommand {
 
   @Argument({
     key: 'amount',
-    type: 'bigint',
-    description: 'Amount of tokens to deposit in PLUR',
+    description: 'Amount of tokens to deposit',
+    type: 'decimal-string',
     required: true,
-    minimum: BigInt(1),
+    validate: validateTokenAmount,
   })
-  public amount!: bigint
+  public amount!: string
+
+  @Option({
+    key: 'unit',
+    type: 'enum',
+    description: 'Unit of the amount',
+    enum: ['bzz', 'plur'],
+    default: 'bzz',
+  })
+  public unit!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
-    const response = await this.beeDebug.depositTokens(this.amount.toString())
-    this.console.log(createKeyValue('Tx', response))
-    this.console.quiet(response)
+    const amountBzz = this.unit === 'bzz' ? BZZ.fromDecimalString(this.amount) : BZZ.fromPLUR(this.amount)
+
+    const response = await this.bee.depositBZZToChequebook(amountBzz)
+    this.console.log(createKeyValue('Tx', response.toHex()))
+    this.console.quiet(response.toHex())
   }
 }

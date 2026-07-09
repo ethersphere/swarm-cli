@@ -17,7 +17,7 @@ export class Lock extends RootCommand implements LeafCommand {
   public walletSource!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
     const wallet = await createWallet(this.walletSource, this.console)
     const password = await this.console.askForPasswordWithConfirmation(
       'Enter a new password to encrypt key file',

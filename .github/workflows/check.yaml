@@ -25,18 +25,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      ## Try getting the node modules from cache, if failed npm ci
-      - uses: actions/cache@v2
-        id: cache-npm
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-${{ env.cache-name }}-
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
       - name: Install npm deps
-        if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Commit linting
@@ -48,13 +37,7 @@ jobs:
           CI: true
 
       - name: Types check
-        run: npm run types:check
+        run: npm run check
 
       - name: Build nodejs code
         run: npm run build
-
-      - name: Check and update the supported Bee version
-        uses: ethersphere/update-supported-bee-action@v1
-        if: github.ref == 'refs/heads/master'
-        with:
-          token: ${{ secrets.GHA_PAT_BASIC }}

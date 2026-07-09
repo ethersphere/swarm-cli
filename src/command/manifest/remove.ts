@@ -1,10 +1,13 @@
+import { MantarayNode } from '@ethersphere/bee-js'
+import { Optional } from 'cafe-utility'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { pickStamp } from '../../service/stamp'
 import { BzzAddress } from '../../utils/bzz-address'
+import { CommandLineError } from '../../utils/error'
 import { stampProperties } from '../../utils/option'
-import { ManifestCommand } from './manifest-command'
+import { RootCommand } from '../root-command'
 
-export class Remove extends ManifestCommand implements LeafCommand {
+export class Remove extends RootCommand implements LeafCommand {
   public readonly name = 'remove'
   public readonly description = 'Remove a path from an existing manifest'
 
@@ -15,20 +18,38 @@ export class Remove extends ManifestCommand implements LeafCommand {
   public stamp!: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     if (!this.stamp) {
-      this.stamp = await pickStamp(this.beeDebug, this.console)
+      this.stamp = await pickStamp(this.bee, this.console)
     }
 
     const address = new BzzAddress(this.bzzUrl)
-    const { node } = await this.initializeNode(address.hash)
-    const forks = this.findAllValueForks(node)
-    for (const fork of forks) {
-      if (fork.path === address.path || fork.path.startsWith(address.path + '/')) {
-        node.removePath(this.encodePath(fork.path))
+
+    if (!address.path) {
+      throw new CommandLineError('Path is required in the address to know what to remove')
+    }
+
+    const node = await MantarayNode.unmarshal(this.bee, address.hash)
+    await node.loadRecursively(this.bee)
+
+    const nodes = node.collect()
+    for (const n of nodes) {
+      if (n.fullPathString.startsWith(address.path)) {
+        node.removeFork(n.fullPathString)
       }
     }
-    await this.saveAndPrintNode(node, this.stamp)
+
+    const root = await node.saveRecursively(this.bee, this.stamp)
+    this.console.log(root.reference.toHex())
+    this.result = Optional.of(root.reference)
+  }
+
+  protected promptAdditionalFileDelete(mainPath: string, paths: string[]): Promise<boolean> {
+    return this.console.confirmAndDelete(
+      `Deleting the ${mainPath} will result in deletion of the additional resources: \n\t${paths.join(
+        '\n\t',
+      )}\nContinue?`,
+    )
   }
 }

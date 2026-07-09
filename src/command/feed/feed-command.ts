@@ -1,25 +1,24 @@
-import { Reference } from '@ethersphere/bee-js'
-import Wallet from 'ethereumjs-wallet'
+import { Wallet } from '@ethereumjs/wallet'
+import { Reference, Topic } from '@ethersphere/bee-js'
 import { Option } from 'furious-commander'
 import { exit } from 'process'
 import { getWalletFromIdentity, pickIdentity } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
 import { printStamp } from '../../service/stamp'
-import { stampProperties, topicProperties, topicStringProperties } from '../../utils/option'
+import { topicProperties, topicStringProperties } from '../../utils/option'
+import { printQRCodeWithLabel } from '../../utils/qr'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
+import { publicUrl } from '../../utils/url'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'
 
 interface FeedInfo {
-  reference: string
-  manifest: string
+  reference: Reference
+  manifest: Reference
 }
 
 export class FeedCommand extends RootCommand {
-  @Option(stampProperties)
-  public stamp!: string
-
   @Option({
     key: 'identity',
     alias: 'i',
@@ -38,21 +37,34 @@ export class FeedCommand extends RootCommand {
   @Option({ key: 'password', alias: 'P', description: 'Password for the wallet' })
   public password!: string
 
-  protected async updateFeedAndPrint(chunkReference: string): Promise<string> {
+  @Option({
+    key: 'qr',
+    description: 'Generate QR code for URLs in the result',
+    type: 'boolean',
+    default: false,
+  })
+  public qr!: boolean
+
+  protected async updateFeedAndPrint(stamp: string, chunkReference: Reference): Promise<Reference> {
     const wallet = await this.getWallet()
-    const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
-    const { reference, manifest } = await this.writeFeed(wallet, topic, chunkReference)
+    const topic = this.topic ? new Topic(this.topic) : Topic.fromString(this.topicString)
+    const { reference, manifest } = await this.writeFeed(stamp, wallet, topic, chunkReference)
 
-    this.console.verbose(createKeyValue('Chunk Reference', chunkReference))
+    this.console.verbose(createKeyValue('Chunk Reference', chunkReference.toHex()))
     this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${chunkReference}/`))
-    this.console.verbose(createKeyValue('Feed Reference', reference))
-    this.console.verbose(createKeyValue('Feed Manifest', manifest))
-    this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
+    this.console.verbose(createKeyValue('Feed Reference', reference.toHex()))
+    this.console.verbose(createKeyValue('Feed Manifest', manifest.toHex()))
+    const manifestUrl = `${this.bee.url}/bzz/${manifest}/`
+    this.console.log(createKeyValue('Feed Manifest URL', manifestUrl))
 
-    this.console.quiet(manifest)
+    if (this.qr) {
+      printQRCodeWithLabel(publicUrl(manifestUrl), 'QR for Manifest URL', this.console)
+    }
 
-    if (!this.quiet && this.debugApiIsUsable()) {
-      printStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
+    this.console.quiet(manifest.toHex())
+
+    if (!this.quiet && !(await this.bee.isGateway())) {
+      printStamp(await this.bee.getPostageBatch(stamp), this.console, { shortenBatchId: true })
     }
 
     return manifest
@@ -76,10 +88,14 @@ export class FeedCommand extends RootCommand {
       this.console.error('The provided identity does not exist. Please select one that exists.')
     }
 
-    return identities[this.identity] || identities[await pickIdentity(this.commandConfig, this.console)]
+    if (!identities[this.identity]) {
+      this.identity = await pickIdentity(this.commandConfig, this.console)
+    }
+
+    return identities[this.identity]
   }
 
-  private async writeFeed(wallet: Wallet, topic: string, chunkReference: string): Promise<FeedInfo> {
+  private async writeFeed(stamp: string, wallet: Wallet, topic: Topic, chunkReference: Reference): Promise<FeedInfo> {
     const spinner = createSpinner('Writing feed...')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
@@ -87,16 +103,12 @@ export class FeedCommand extends RootCommand {
     }
 
     try {
-      const writer = this.bee.makeFeedWriter('sequence', topic, wallet.getPrivateKey())
-      const reference = await writer.upload(this.stamp, chunkReference as Reference)
-      const { reference: manifest } = await this.bee.createFeedManifest(
-        this.stamp,
-        'sequence',
-        topic,
-        wallet.getAddressString(),
-      )
+      const writer = this.bee.makeFeedWriter(topic, wallet.getPrivateKey())
+      const feedManifestResult = await this.bee.createFeedManifest(stamp, topic, wallet.getAddressString())
+      const data = await this.bee.downloadData(chunkReference)
+      const { reference } = await writer.uploadPayload(stamp, data.toUint8Array())
 
-      return { reference, manifest }
+      return { reference, manifest: feedManifestResult }
     } finally {
       spinner.stop()
     }

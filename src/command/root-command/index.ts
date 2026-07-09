@@ -1,8 +1,11 @@
-import { Bee, BeeDebug, BeeOptions } from '@ethersphere/bee-js'
+import { Bee, BeeOptions, Reference } from '@ethersphere/bee-js'
+import { Optional } from 'cafe-utility'
 import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
-import { exit } from 'process'
+import PackageJson from '../../../package.json'
 import { printCurlCommand } from '../../curl'
+import { checkForUpdates, getLatestVersionCheck } from '../../service/version_checker'
 import { parseHeaders } from '../../utils'
+import { warningText } from '../../utils/text'
 import { ConfigOption } from '../../utils/types/config-option'
 import { CONFIG_OPTIONS, CommandConfig } from './command-config'
 import { CommandLog, VerbosityLevel } from './command-log'
@@ -10,9 +13,6 @@ import { CommandLog, VerbosityLevel } from './command-log'
 export class RootCommand {
   @ExternalOption('bee-api-url')
   public beeApiUrl!: string
-
-  @ExternalOption('bee-debug-api-url')
-  public beeDebugApiUrl!: string
 
   @ExternalOption('config-folder')
   public configFolder!: string
@@ -39,43 +39,21 @@ export class RootCommand {
   public yes!: boolean
 
   public bee!: Bee
-  public _beeDebug!: BeeDebug
+
   public console!: CommandLog
+
   public readonly appName = 'swarm-cli'
+
   public commandConfig!: CommandConfig
+
   private sourcemap!: Sourcemap
+
   /**
-   * Store Debug API errors here. It cannot be determined beforehand if Debug API is going to be used,
-   * since it is optional for some commands. The `beeDebug` getter should check if there are any errors
-   * here. Since the checks require async operations, this logic cannot be in the getter.
+   * Resulting reference of the command for reflection (e.g. in tests)
    */
-  private debugApiErrors: string[] = []
+  public result: Optional<Reference> = Optional.empty()
 
-  private async setupBeeDebug(): Promise<void> {
-    if (!(await this.checkDebugApiHealth())) {
-      this.debugApiErrors.push('Could not reach Debug API at ' + this.beeDebugApiUrl)
-      this.debugApiErrors.push('Make sure you have the Debug API enabled in your Bee config')
-      this.debugApiErrors.push('or correct the URL with the --bee-debug-api-url option.')
-    }
-  }
-
-  protected debugApiIsUsable(): boolean {
-    return this.debugApiErrors.length === 0
-  }
-
-  public get beeDebug(): BeeDebug {
-    if (!this.debugApiIsUsable()) {
-      for (const message of this.debugApiErrors) {
-        this.console.error(message)
-      }
-
-      exit(1)
-    }
-
-    return this._beeDebug
-  }
-
-  protected async init(): Promise<void> {
+  protected init(): void {
     this.commandConfig = new CommandConfig(this.appName, this.console, this.configFile, this.configFolder)
     this.sourcemap = Utils.getSourcemap()
 
@@ -93,7 +71,6 @@ export class RootCommand {
       beeOptions.headers = parseHeaders(this.header)
     }
     this.bee = new Bee(this.beeApiUrl, beeOptions)
-    this._beeDebug = new BeeDebug(this.beeDebugApiUrl, beeOptions)
     this.verbosity = VerbosityLevel.Normal
 
     if (this.quiet) {
@@ -103,7 +80,19 @@ export class RootCommand {
     }
     this.console = new CommandLog(this.verbosity)
 
-    await this.setupBeeDebug()
+    if (!this.quiet) {
+      const latestVersionCheck = getLatestVersionCheck(this.commandConfig)
+
+      if (latestVersionCheck === null) {
+        checkForUpdates(this.commandConfig)
+      } else if (latestVersionCheck.latestVersion !== PackageJson.version) {
+        this.console.log(
+          warningText(
+            `A new version of swarm-cli is available: ${latestVersionCheck.latestVersion}. You are using version ${PackageJson.version}. Please update to get the latest features and fixes.`,
+          ),
+        )
+      }
+    }
   }
 
   private maybeSetFromConfig(option: ConfigOption): void {
@@ -113,16 +102,6 @@ export class RootCommand {
       if (value !== undefined) {
         this[option.propertyKey] = value
       }
-    }
-  }
-
-  private async checkDebugApiHealth(): Promise<boolean> {
-    try {
-      const health = await this._beeDebug.getHealth()
-
-      return health.status === 'ok'
-    } catch (error) {
-      return false
     }
   }
 }

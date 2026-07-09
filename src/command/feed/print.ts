@@ -1,9 +1,10 @@
-import Wallet from 'ethereumjs-wallet'
+import { Wallet } from '@ethereumjs/wallet'
+import { MerkleTree, Topic } from '@ethersphere/bee-js'
+import { Binary } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { Identity } from '../../service/identity/types'
-import { pickStamp } from '../../service/stamp'
 import { getFieldOrNull } from '../../utils'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
@@ -24,36 +25,88 @@ export class Print extends FeedCommand implements LeafCommand {
   })
   public address!: string
 
-  public async run(): Promise<void> {
-    await super.init()
+  @Option({ key: 'list', type: 'boolean', description: 'List all updates' })
+  public list!: boolean
 
-    const topic = this.topic || this.bee.makeFeedTopic(this.topicString)
+  public async run(): Promise<void> {
+    super.init()
+
+    if (!this.address) {
+      const wallet = await this.getWallet()
+      this.address = wallet.getAddressString()
+    }
+
+    const topic = this.topic ? new Topic(this.topic) : Topic.fromString(this.topicString)
+
+    // construct the feed manifest chunk
+    const body = Binary.concatBytes(
+      new Uint8Array(32),
+      new Uint8Array([
+        0x57, 0x68, 0xb3, 0xb6, 0xa7, 0xdb, 0x56, 0xd2, 0x1d, 0x1a, 0xbf, 0xf4, 0x0d, 0x41, 0xce, 0xbf, 0xc8, 0x34,
+        0x48, 0xfe, 0xd8, 0xd7, 0xe9, 0xb0, 0x6e, 0xc0, 0xd3, 0xb0, 0x73, 0xf2, 0x8f, 0x20,
+      ]),
+      new Uint8Array(37),
+      new Uint8Array([0x80]),
+      new Uint8Array(26),
+      new Uint8Array([0x12, 0x01, 0x2f]),
+      new Uint8Array(29),
+      new Uint8Array([
+        0x85, 0x04, 0xf2, 0xa1, 0x07, 0xca, 0x94, 0x0b, 0xea, 0xfc, 0x4c, 0xe2, 0xf6, 0xc9, 0xa9, 0xf0, 0x96, 0x8c,
+        0x62, 0xa5, 0xb5, 0x89, 0x3f, 0xf0, 0xe4, 0xe1, 0xe2, 0x98, 0x30, 0x48, 0xd2, 0x76, 0x00, 0xbe,
+      ]),
+      new TextEncoder().encode(
+        `{"swarm-feed-owner":"${this.address.replace(
+          '0x',
+          '',
+        )}","swarm-feed-topic":"${topic}","swarm-feed-type":"Sequence"}`,
+      ),
+      new Uint8Array(12).fill(0x0a),
+    )
+
+    const root = (await MerkleTree.root(body)).hash()
+
+    const manifest = Binary.uint8ArrayToHex(root)
+    this.console.quiet(manifest)
+
+    if (this.quiet) {
+      return
+    }
+    this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
+
     const spinner = createSpinner(`Looking up feed topic ${topic}`)
     spinner.start()
+
     try {
       const addressString = this.address || (await this.getAddressString())
-      const reader = this.bee.makeFeedReader('sequence', topic, addressString)
-      const { reference, feedIndex, feedIndexNext } = await reader.download()
-
-      if (!this.stamp) {
-        spinner.stop()
-        this.stamp = await pickStamp(this.beeDebug, this.console)
-        spinner.start()
-      }
-
-      const { reference: manifest } = await this.bee.createFeedManifest(this.stamp, 'sequence', topic, addressString)
-
+      const reader = this.bee.makeFeedReader(topic, addressString)
+      const { payload, feedIndex, feedIndexNext } = await reader.download()
+      // TODO: verify this
+      const reference = payload
       spinner.stop()
-      this.console.verbose(createKeyValue('Chunk Reference', reference))
+      this.console.verbose(createKeyValue('Chunk Reference', reference.toHex()))
       this.console.verbose(createKeyValue('Chunk Reference URL', `${this.bee.url}/bzz/${reference}/`))
-      this.console.verbose(createKeyValue('Feed Index', feedIndex))
-      this.console.verbose(createKeyValue('Next Index', feedIndexNext))
+      this.console.verbose(createKeyValue('Feed Index', feedIndex.toBigInt().toString()))
+      this.console.verbose(createKeyValue('Next Index', feedIndexNext?.toBigInt().toString() ?? 'N/A'))
       this.console.verbose(createKeyValue('Feed Manifest', manifest))
 
-      this.console.quiet(manifest)
       this.console.log(createKeyValue('Topic', `${topic}`))
-      this.console.log(createKeyValue('Feed Manifest URL', `${this.bee.url}/bzz/${manifest}/`))
-      this.console.log(createKeyValue('Number of Updates', parseInt(feedIndex, 16) + 1))
+      const numberOfUpdates = feedIndex.toBigInt() + BigInt(1)
+      this.console.log(createKeyValue('Number of Updates', numberOfUpdates.toString()))
+
+      if (this.list) {
+        for (let i = 0; i < numberOfUpdates; i++) {
+          const owner = Binary.hexToUint8Array(this.address)
+          const reader = this.bee.makeFeedReader(topic, owner)
+          const socPayload = await reader.downloadPayload({ index: i })
+          const merkleTree = await MerkleTree.root(socPayload.payload.toUint8Array())
+          const cacAddress = Binary.uint8ArrayToHex(merkleTree.hash())
+          this.console.log('')
+          this.console.log(createKeyValue(`Update ${i}`, cacAddress))
+          this.console.log(`${this.bee.url}/bzz/${cacAddress}/`)
+        }
+      } else {
+        this.console.log('Run with --list to see all updates')
+      }
     } catch (error) {
       spinner.stop()
       const message = getFieldOrNull(error, 'message')

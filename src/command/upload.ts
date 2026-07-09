@@ -1,23 +1,26 @@
-import { Tag, Utils } from '@ethersphere/bee-js'
+import { FileUploadOptions, RedundancyLevel, Reference, Tag, Utils } from '@ethersphere/bee-js'
+import { Numbers, Optional, System } from 'cafe-utility'
+import chalk from 'chalk'
 import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from 'furious-commander'
 import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
+import { AccessHistory } from '../service/access'
+import { AccessHistoryOperation } from '../service/access/types/history-event'
+import { History } from '../service/history'
 import { pickStamp, printStamp } from '../service/stamp'
-import { fileExists, isGateway, readStdin, sleep } from '../utils'
+import { fileExists, readStdin } from '../utils'
 import { CommandLineError } from '../utils/error'
-import { Message } from '../utils/message'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
+import { printQRCodeWithLabel } from '../utils/qr'
 import { createSpinner } from '../utils/spinner'
-import { Storage } from '../utils/storage'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
+import { publicUrl } from '../utils/url'
 import { RootCommand } from './root-command'
 import { VerbosityLevel } from './root-command/command-log'
-
-const MAX_UPLOAD_SIZE = new Storage(parseInt(process.env.MAX_UPLOAD_SIZE || '', 10) || 100 * 1000 * 1000) // 100 megabytes
 
 export class Upload extends RootCommand implements LeafCommand {
   public readonly name = 'upload'
@@ -49,6 +52,14 @@ export class Upload extends RootCommand implements LeafCommand {
   public deferred!: boolean
 
   @Option({
+    key: 'share-with',
+    type: 'string',
+    description: 'Name of the grantee list to share the uploaded content with',
+    conflicts: 'act',
+  })
+  public shareWith!: string
+
+  @Option({
     key: 'sync',
     type: 'boolean',
     description: 'Wait for chunk synchronization over the network',
@@ -67,7 +78,7 @@ export class Upload extends RootCommand implements LeafCommand {
     key: 'sync-polling-time',
     description: 'Waiting time in ms between sync pollings',
     type: 'number',
-    default: 500,
+    default: 1000,
   })
   public syncPollingTime!: number
 
@@ -75,7 +86,7 @@ export class Upload extends RootCommand implements LeafCommand {
     key: 'sync-polling-trials',
     description: 'After the given trials the sync polling will stop',
     type: 'number',
-    default: 15,
+    default: 60,
   })
   public syncPollingTrials!: number
 
@@ -104,17 +115,29 @@ export class Upload extends RootCommand implements LeafCommand {
   })
   public contentType!: string
 
-  // CLASS FIELDS
+  @Option({
+    key: 'redundancy',
+    description: 'Redundancy of the upload (MEDIUM, STRONG, INSANE, PARANOID)',
+  })
+  public redundancy!: string
 
-  public hash!: string
+  @Option({
+    key: 'qr',
+    description: 'Output QR code with the URL to the uploaded content',
+    type: 'boolean',
+    default: false,
+  })
+  public qr!: boolean
 
   public stdinData!: Buffer
 
+  public historyAddress: Optional<Reference> = Optional.empty()
+
   // eslint-disable-next-line complexity
   public async run(usedFromOtherCommand = false): Promise<void> {
-    await super.init()
+    super.init()
 
-    if (this.hasUnsupportedGatewayOptions()) {
+    if (await this.hasUnsupportedGatewayOptions()) {
       exit(1)
     }
 
@@ -124,22 +147,24 @@ export class Upload extends RootCommand implements LeafCommand {
       throw new CommandLineError(`Given filepath '${this.path}' doesn't exist`)
     }
 
+    const isGateway = await this.bee.isGateway()
+
     if (this.stdin) {
-      if (!this.stamp) {
+      if (!this.stamp && !isGateway) {
         throw new CommandLineError('Stamp must be passed when reading data from stdin')
       }
       this.stdinData = await readStdin(this.console)
     }
 
     if (!this.stamp) {
-      if (isGateway(this.beeApiUrl)) {
+      if (isGateway) {
         this.stamp = '0'.repeat(64)
       } else {
-        this.stamp = await pickStamp(this.beeDebug, this.console)
+        this.stamp = await pickStamp(this.bee, this.console)
       }
     }
 
-    await this.maybeRunSizeChecks()
+    await this.maybePrintRedundancyStats()
 
     const tag = this.sync ? await this.bee.createTag() : undefined
 
@@ -153,7 +178,12 @@ export class Upload extends RootCommand implements LeafCommand {
     const url = await this.uploadAnyWithSpinner(tag, uploadingFolder)
 
     this.console.dim('Data has been sent to the Bee node successfully!')
-    this.console.log(createKeyValue('Swarm hash', this.hash))
+    const swarmHash = this.result.getOrThrow().toHex()
+    this.console.log(createKeyValue('Swarm hash', swarmHash))
+
+    if (this.usingACT()) {
+      this.console.log(createKeyValue('Swarm history address', this.historyAddress.getOrThrow().toHex()))
+    }
     this.console.dim('Waiting for file chunks to be synced on Swarm network...')
 
     if (this.sync && tag) {
@@ -163,17 +193,37 @@ export class Upload extends RootCommand implements LeafCommand {
     this.console.dim('Uploading was successful!')
     this.console.log(createKeyValue('URL', url))
 
-    if (!usedFromOtherCommand) {
-      this.console.quiet(this.hash)
+    if (this.commandConfig.config.historyEnabled && !usedFromOtherCommand) {
+      const history = new History(this.commandConfig, this.console)
+      history.addItem({
+        timestamp: Date.now(),
+        reference: swarmHash,
+        stamp: this.stamp,
+        path: this.path,
+        uploadType: this.uploadType(),
+      })
+    }
 
-      if (!isGateway(this.beeApiUrl) && !this.quiet && this.debugApiIsUsable()) {
-        printStamp(await this.beeDebug.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
+    if (!usedFromOtherCommand) {
+      this.console.quiet(this.result.getOrThrow().toHex())
+
+      if (!isGateway && !this.quiet) {
+        printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
       }
+    }
+
+    if (this.qr) {
+      printQRCodeWithLabel(publicUrl(url), 'QR for URL', this.console)
+    }
+
+    if (this.usingACT()) {
+      this.addNewAccessHistoryEvent()
+      await this.printShareInstructions()
     }
   }
 
   private async uploadAnyWithSpinner(tag: Tag | undefined, isFolder: boolean): Promise<string> {
-    const spinner = createSpinner('Uploading data...')
+    const spinner = createSpinner(this.path ? `Uploading ${this.path}...` : 'Uploading data from stdin...')
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       spinner.start()
@@ -205,24 +255,46 @@ export class Upload extends RootCommand implements LeafCommand {
   private async uploadStdin(tag?: Tag): Promise<string> {
     if (this.fileName) {
       const contentType = this.contentType || getMime(this.fileName) || undefined
-      const { reference } = await this.bee.uploadFile(this.stamp, this.stdinData, this.fileName, {
+      let uploadOptions = {
         tag: tag && tag.uid,
         pin: this.pin,
         encrypt: this.encrypt,
         contentType,
         deferred: this.deferred,
-      })
-      this.hash = reference
+        redundancyLevel: this.determineRedundancyLevel(),
+      } as FileUploadOptions
+      uploadOptions = this.prepareACTUploadOptions(uploadOptions)
 
-      return `${this.bee.url}/bzz/${this.hash}/`
+      const { reference, historyAddress } = await this.bee.uploadFile(
+        this.stamp,
+        this.stdinData,
+        this.fileName,
+        uploadOptions,
+      )
+      this.result = Optional.of(reference)
+
+      if (this.usingACT()) {
+        this.historyAddress = historyAddress
+      }
+
+      return `${this.bee.url}/bzz/${reference.toHex()}/`
     } else {
-      const { reference } = await this.bee.uploadData(this.stamp, this.stdinData, {
+      let uploadOptions = {
         tag: tag?.uid,
         deferred: this.deferred,
-      })
-      this.hash = reference
+        encrypt: this.encrypt,
+        redundancyLevel: this.determineRedundancyLevel(),
+      } as FileUploadOptions
+      uploadOptions = this.prepareACTUploadOptions(uploadOptions)
 
-      return `${this.bee.url}/bytes/${this.hash}`
+      const { reference, historyAddress } = await this.bee.uploadData(this.stamp, this.stdinData, uploadOptions)
+      this.result = Optional.of(reference)
+
+      if (this.usingACT()) {
+        this.historyAddress = historyAddress
+      }
+
+      return `${this.bee.url}/bytes/${reference.toHex()}`
     }
   }
 
@@ -232,17 +304,24 @@ export class Upload extends RootCommand implements LeafCommand {
       folder: true,
       type: 'buffer',
     })
-    const { reference } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, {
+    let uploadOptions = {
       indexDocument: this.indexDocument,
       errorDocument: this.errorDocument,
       tag: tag && tag.uid,
       pin: this.pin,
       encrypt: this.encrypt,
       deferred: this.deferred,
-    })
-    this.hash = reference
+      redundancyLevel: this.determineRedundancyLevel(),
+    } as FileUploadOptions
+    uploadOptions = this.prepareACTUploadOptions(uploadOptions)
+    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, uploadOptions)
+    this.result = Optional.of(reference)
 
-    return `${this.bee.url}/bzz/${this.hash}/`
+    if (this.usingACT()) {
+      this.historyAddress = historyAddress
+    }
+
+    return `${this.bee.url}/bzz/${reference.toHex()}/`
   }
 
   private async uploadSingleFile(tag?: Tag): Promise<string> {
@@ -254,16 +333,28 @@ export class Upload extends RootCommand implements LeafCommand {
     })
     const readable = FS.createReadStream(this.path)
     const parsedPath = parse(this.path)
-    const { reference } = await this.bee.uploadFile(this.stamp, readable, this.determineFileName(parsedPath.base), {
+    let uploadOptions = {
       tag: tag && tag.uid,
       pin: this.pin,
       encrypt: this.encrypt,
       contentType,
       deferred: this.deferred,
-    })
-    this.hash = reference
+      redundancyLevel: this.determineRedundancyLevel(),
+    } as FileUploadOptions
+    uploadOptions = this.prepareACTUploadOptions(uploadOptions)
+    const { reference, historyAddress } = await this.bee.uploadFile(
+      this.stamp,
+      readable,
+      this.determineFileName(parsedPath.base),
+      uploadOptions,
+    )
+    this.result = Optional.of(reference)
 
-    return `${this.bee.url}/bzz/${this.hash}/`
+    if (this.usingACT()) {
+      this.historyAddress = historyAddress
+    }
+
+    return `${this.bee.url}/bzz/${reference.toHex()}/`
   }
 
   /**
@@ -305,42 +396,55 @@ export class Upload extends RootCommand implements LeafCommand {
         progressBar.setTotal(tag.split)
         progressBar.update(syncProgress)
       }
-      await sleep(pollingTime)
+      await System.sleepMillis(pollingTime)
     }
     progressBar.stop()
 
     if (synced) {
       this.console.dim('Data has been synced on Swarm network')
     } else {
-      this.console.error('Data syncing timeout.')
+      this.console.error(
+        this.path
+          ? `Data syncing timeout for ${this.path} (${syncProgress} / ${tag.split})`
+          : `Data syncing timeout (${syncProgress} / ${tag.split})`,
+      )
       exit(1)
     }
   }
 
-  private async maybeRunSizeChecks(): Promise<void> {
-    if (this.yes) {
-      return
-    }
-    const size = await this.getUploadSize()
-
-    if (size.getBytes() < MAX_UPLOAD_SIZE.getBytes()) {
+  private async maybePrintRedundancyStats(): Promise<void> {
+    if (!this.redundancy || this.quiet) {
       return
     }
 
-    const message = `Size is larger than the recommended maximum value of ${MAX_UPLOAD_SIZE}`
+    const currentSetting = Utils.getRedundancyStat(this.redundancy)
+    const originalSize = await this.getUploadSize()
+    const originalChunks = Math.ceil(originalSize / 4e3)
+    const sizeMultiplier = Utils.approximateOverheadForRedundancyLevel(
+      originalChunks,
+      currentSetting.value,
+      this.encrypt,
+    )
+    const newSize = originalChunks * 4e3 * (1 + sizeMultiplier)
+    const extraSize = newSize - originalSize
 
-    if (this.quiet) {
-      throw new CommandLineError(Message.requireOptionConfirmation('yes', message))
-    }
+    this.console.log(createKeyValue('Redundancy setting', currentSetting.label))
+    this.console.log(`This setting will provide ${Math.round(currentSetting.errorTolerance * 100)}% error tolerance.`)
+    this.console.log(`An additional ${Numbers.convertBytes(extraSize)} of data will be uploaded approximately.`)
+    this.console.log(
+      `${Numbers.convertBytes(originalSize)} → ${Numbers.convertBytes(newSize)} (+${Numbers.convertBytes(extraSize)})`,
+    )
 
-    const confirmation = await this.console.confirm(message + ' Do you want to proceed?')
+    if (!this.yes && !this.quiet) {
+      const confirmation = await this.console.confirm('Do you want to proceed?')
 
-    if (!confirmation) {
-      exit(1)
+      if (!confirmation) {
+        exit(0)
+      }
     }
   }
 
-  private async getUploadSize(): Promise<Storage> {
+  private async getUploadSize(): Promise<number> {
     let size = -1
 
     if (this.stdin) {
@@ -350,15 +454,21 @@ export class Upload extends RootCommand implements LeafCommand {
       size = stats.isDirectory() ? await Utils.getFolderSize(this.path) : stats.size
     }
 
-    const storage = new Storage(size)
-    this.console.verbose(`Upload size is approximately ${storage}`)
+    this.console.verbose(`Upload size is approximately ${Numbers.convertBytes(size)}`)
 
-    return storage
+    return size
   }
 
-  private hasUnsupportedGatewayOptions(): boolean {
-    if (!isGateway(this.beeApiUrl)) {
+  private async hasUnsupportedGatewayOptions(): Promise<boolean> {
+    if (!(await this.bee.isGateway())) {
       return false
+    }
+
+    if (this.usingACT()) {
+      this.console.error('You are trying to upload to the gateway which does not support ACT.')
+      this.console.error('Please try again without the --share-with option.')
+
+      return true
     }
 
     if (this.pin) {
@@ -394,7 +504,7 @@ export class Upload extends RootCommand implements LeafCommand {
     if (connectedPeers === null) {
       this.console.log(warningSymbol())
       this.console.log(warningText('Could not fetch connected peers info.'))
-      this.console.log(warningText('Either the debug API is not enabled, or you are uploading to a gateway node.'))
+      this.console.log(warningText('Are you uploading to a gateway node?'))
       this.console.log(warningText('Synchronization may time out.'))
     } else if (connectedPeers === 0) {
       this.console.log(warningSymbol())
@@ -405,7 +515,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async getConnectedPeers(): Promise<number | null> {
     try {
-      const { connected } = await this._beeDebug.getTopology()
+      const { connected } = await this.bee.getTopology()
 
       return connected
     } catch {
@@ -423,5 +533,90 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     return defaultName
+  }
+
+  private determineRedundancyLevel(): RedundancyLevel | undefined {
+    if (!this.redundancy) {
+      return undefined
+    }
+    switch (this.redundancy.toUpperCase()) {
+      case 'MEDIUM':
+        return RedundancyLevel.MEDIUM
+      case 'STRONG':
+        return RedundancyLevel.STRONG
+      case 'INSANE':
+        return RedundancyLevel.INSANE
+      case 'PARANOID':
+        return RedundancyLevel.PARANOID
+      default:
+        throw new CommandLineError(`Invalid redundancy level: ${this.redundancy}`)
+    }
+  }
+
+  public uploadType(): 'stdin' | 'folder' | 'file' {
+    if (this.stdin) {
+      return 'stdin'
+    }
+    const stats = FS.lstatSync(this.path)
+
+    if (stats.isDirectory()) {
+      return 'folder'
+    } else {
+      return 'file'
+    }
+  }
+
+  private usingACT(): boolean {
+    return Boolean(this.shareWith)
+  }
+
+  private addNewAccessHistoryEvent() {
+    const accessHistory = new AccessHistory(this.commandConfig, this.console)
+    const lastHistoryEvent = accessHistory.getLatestEvent(this.shareWith)
+
+    if (!lastHistoryEvent) {
+      this.console.error(`Grantee list with name '${this.shareWith}' does not exist!`)
+      exit(1)
+    }
+    accessHistory.addEvent(this.shareWith, {
+      stampId: this.stamp,
+      historyAddress: this.historyAddress.getOrThrow().toHex(),
+      granteeListRef: lastHistoryEvent.granteeListRef,
+      operation: AccessHistoryOperation.Upload,
+      createdAt: Date.now(),
+    })
+  }
+
+  private async printShareInstructions() {
+    const { publicKey } = await this.bee.getNodeAddresses()
+    this.console.log(
+      '\nTo share the uploaded content with your grantees, please provide them with the following information:\n',
+    )
+    const token = `${publicKey.toHex()}:${this.historyAddress.getOrThrow().toHex()}`
+    this.console.log(chalk.bold(token))
+    this.console.log(
+      '\nThey can use this information, when using the download command, providing it in the --access option.',
+    )
+    this.console.log('Example:\n')
+    this.console.log(`> swarm-cli download ${this.result.getOrThrow().toHex()} --access ${token}`)
+  }
+
+  private prepareACTUploadOptions(uploadOptions: FileUploadOptions): FileUploadOptions {
+    const options = { ...uploadOptions }
+
+    if (this.shareWith) {
+      const accessHistory = new AccessHistory(this.commandConfig, this.console)
+      const lastHistoryEvent = accessHistory.getLatestEvent(this.shareWith)
+
+      if (!lastHistoryEvent) {
+        this.console.error(`Grantee list with name '${this.shareWith}' does not exist!`)
+        exit(1)
+      }
+
+      options.act = true
+      options.actHistoryAddress = lastHistoryEvent.historyAddress
+    }
+
+    return options
   }
 }

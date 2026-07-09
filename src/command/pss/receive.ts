@@ -1,3 +1,4 @@
+import { Topic } from '@ethersphere/bee-js'
 import { createWriteStream } from 'fs'
 import { LeafCommand, Option } from 'furious-commander'
 import { getFieldOrNull } from '../../utils'
@@ -28,21 +29,20 @@ export class Receive extends PssCommand implements LeafCommand {
   public receivedMessage?: string
 
   public async run(): Promise<void> {
-    await super.init()
+    super.init()
 
     this.console.log('Waiting for one PSS message on topic ' + this.topic)
 
     const stream = this.outFile ? createWriteStream(this.outFile, { encoding: 'binary' }) : null
 
     try {
-      const data = await this.bee.pssReceive(this.topic, this.timeout)
+      const data = await this.bee.pssReceive(new Topic(this.topic), this.timeout)
 
-      this.receivedMessage = data.text()
+      this.receivedMessage = data.toUtf8()
 
       if (stream) {
         stream.write(data)
       } else {
-        // TODO: utf-8 decoding may fail, text is probably not the best choice here
         this.console.log(this.receivedMessage)
         this.console.quiet(this.receivedMessage)
       }

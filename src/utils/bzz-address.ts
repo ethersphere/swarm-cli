@@ -1,8 +1,6 @@
-import { Bee } from '@ethersphere/bee-js'
-import { MantarayFork, MantarayNode, MetadataMapping } from 'mantaray-js'
+import { Bee, MantarayNode, MerkleTree } from '@ethersphere/bee-js'
+import { Binary } from 'cafe-utility'
 import { CommandLineError } from './error'
-
-const INDEX_DOCUMENT_FORK_PREFIX = '47'
 
 export class BzzAddress {
   public hash: string
@@ -19,6 +17,10 @@ export class BzzAddress {
     const parts = url.split('/')
     this.hash = parts[0].toLowerCase()
 
+    if (this.hash.startsWith('0x')) {
+      this.hash = this.hash.slice(2)
+    }
+
     if (!/[a-z0-9]{64,128}/.test(this.hash)) {
       throw new CommandLineError('Invalid BZZ hash: expected 64 or 128 long hexadecimal hash')
     }
@@ -30,58 +32,20 @@ export class BzzAddress {
 export async function makeBzzAddress(bee: Bee, url: string): Promise<BzzAddress> {
   const address = new BzzAddress(url)
 
-  const feedReference = await resolveFeedManifest(bee, address.hash)
+  try {
+    const manifest = await MantarayNode.unmarshal(bee, address.hash)
+    await manifest.loadRecursively(bee)
 
-  if (feedReference) {
-    address.hash = feedReference
+    const resolvedFeed = await manifest.resolveFeed(bee)
+
+    await resolvedFeed.ifPresentAsync(async feed => {
+      const merkleTree = await MerkleTree.root(feed.payload.toUint8Array())
+      const cacAddress = Binary.uint8ArrayToHex(merkleTree.hash())
+      address.hash = cacAddress
+    })
+
+    return address
+  } catch {
+    return address
   }
-
-  return address
-}
-
-async function resolveFeedManifest(bee: Bee, hash: string): Promise<string | null> {
-  const metadata = await getRootSlashMetadata(bee, hash)
-
-  if (!metadata) {
-    return null
-  }
-
-  const owner = metadata['swarm-feed-owner']
-  const topic = metadata['swarm-feed-topic']
-
-  if (!owner || !topic) {
-    return null
-  }
-
-  const reader = bee.makeFeedReader('sequence', topic, owner)
-  const response = await reader.download()
-
-  return response.reference
-}
-
-async function getRootSlashMetadata(bee: Bee, hash: string): Promise<MetadataMapping | null> {
-  const data = await bee.downloadData(hash)
-  const node = new MantarayNode()
-  node.deserialize(data)
-
-  if (!node.forks) {
-    return null
-  }
-  const fork = Reflect.get(node.forks, INDEX_DOCUMENT_FORK_PREFIX) as MantarayFork | undefined
-
-  if (!fork) {
-    return null
-  }
-  const metadataNode = fork.node
-
-  if (!metadataNode.IsWithMetadataType()) {
-    return null
-  }
-  const metadata = metadataNode.getMetadata
-
-  if (!metadata) {
-    return null
-  }
-
-  return metadata
 }

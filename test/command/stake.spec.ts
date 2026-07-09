@@ -1,18 +1,22 @@
+import { toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
-import BigNumber from 'bignumber.js'
+import { getBeeDevOption } from '../utility/stamp'
+
+expect.extend({
+  toMatchLinesInOrder,
+})
 
 describeCommand('Test Stake command', ({ consoleMessages }) => {
-  it('should print stake balance', async () => {
-    await invokeTestCli(['stake'])
-    expect(consoleMessages[0]).toContain('Staked BZZ')
-  })
-
-  it('should print balance in quiet mode', async () => {
-    await invokeTestCli(['stake', '--quiet'])
-
-    const initialStake = BigNumber(consoleMessages[0])
-    await invokeTestCli(['stake', '--quiet', '--deposit', '100_000T'])
-    const afterDepositStake = BigNumber(consoleMessages[1])
-    expect(afterDepositStake.minus(initialStake).isEqualTo(10)).toEqual(true)
+  test('should stake with bzz, plur, and print stake', async () => {
+    await invokeTestCli(['stake', 'status', ...getBeeDevOption()])
+    await invokeTestCli(['stake', 'deposit', '10', '--unit', 'bzz', '--yes', ...getBeeDevOption()])
+    await invokeTestCli(['stake', 'deposit', '10', '--unit', 'plur', '--yes', ...getBeeDevOption()])
+    await invokeTestCli(['stake', 'status', ...getBeeDevOption()])
+    expect(consoleMessages).toMatchLinesInOrder([
+      ['Staked xBZZ', '0.0000000000000000'],
+      ['Stake deposited successfully!'],
+      ['Stake deposited successfully!'],
+      ['Staked xBZZ', '10.0000000000000010'],
+    ])
   })
 })

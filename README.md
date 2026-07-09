@@ -7,43 +7,55 @@
 ![](https://img.shields.io/badge/npm-%3E%3D6.0.0-orange.svg?style=flat-square)
 ![](https://img.shields.io/badge/Node.js-%3E%3D12.0.0-orange.svg?style=flat-square)
 
-Stay up to date with changes by joining the [official Discord](https://discord.gg/GU22h2utj6) and by keeping an eye on the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
+Stay up to date with changes by joining the [official Discord](https://discord.gg/GU22h2utj6) and by keeping an eye on
+the [releases tab](https://github.com/ethersphere/swarm-cli/releases).
 
 # Table of Contents
 
 - [Swarm-CLI](#swarm-cli)
 - [Table of Contents](#table-of-contents)
 - [Demo](#demo)
-  * [Purchasing a Postage Stamp](#purchasing-a-postage-stamp)
-  * [Uploading a File](#uploading-a-file)
-  * [Creating an Identity](#creating-an-identity)
-  * [Uploading to a Feed](#uploading-to-a-feed)
+  - [Purchasing a Postage Stamp](#purchasing-a-postage-stamp)
+  - [Creating a Postage Stamp (Interactive)](#creating-a-postage-stamp-interactive)
+  - [Uploading a File](#uploading-a-file)
+  - [Creating an Identity](#creating-an-identity)
+  - [Uploading to a Feed](#uploading-to-a-feed)
+  - [Access control trie (ACT)](#access-control-trie-(act))
+    - [Initialize ACT](#initialize-act)
+    - [Grant access to a certain grantee](#grant-access-to-a-certain-grantee)
+    - [Revoke access from a certain grantee](#revoke-access-from-a-certain-grantee)
+    - [Show list of grantee lists](#show-list-of-grantee-lists)
+    - [Show grantees in a certain grantee list](#show-grantees-in-a-certain-grantee-list)
+    - [Get the list of events for a certain grantee list](#get-the-list-of-events-for-a-certain-grantee-list)
+    - [Upload a file with ACT](#upload-a-file-with-act)
+    - [Download a file with ACT](#download-a-file-with-act)
 - [Description](#description)
-  * [Installation](#installation)
-    + [From npm](#from-npm)
-    + [From source](#from-source)
-  * [Usage](#usage)
-  * [Commands](#commands)
-  * [Example usage](#example-usage)
-  * [Usability Features](#usability-features)
-    + [Uploading Files, Folders, Websites, and Arbitrary Data from stdin](#uploading-files--folders--websites--and-arbitrary-data-from-stdin)
+  - [Installation](#installation)
+    - [From npm](#from-npm)
+    - [From source](#from-source)
+  - [Usage](#usage)
+  - [Commands](#commands)
+  - [Example usage](#example-usage)
+  - [Usability Features](#usability-features)
+    - [Uploading Files, Folders, Websites, and Arbitrary Data from stdin](#uploading-files--folders--websites--and-arbitrary-data-from-stdin)
       - [Files](#files)
       - [Folders and Websites](#folders-and-websites)
       - [Standard Input](#standard-input)
-    + [Custom HTTP Headers](#custom-http-headers)
-    + [Autocomplete](#autocomplete)
-    + [Numerical Separator and Units](#numerical-separator-and-units)
-    + [Stamp Picker](#stamp-picker)
-    + [Identity Picker](#identity-picker)
-    + [Human Readable Topics](#human-readable-topics)
-    + [Manifest address scheme](#manifest-address-scheme)
-    + [Automating tasks with Swarm-CLI](#automating-tasks-with-swarm-cli)
+    - [Custom HTTP Headers](#custom-http-headers)
+    - [Autocomplete](#autocomplete)
+    - [Numerical Separator and Units](#numerical-separator-and-units)
+    - [Stamp Picker](#stamp-picker)
+    - [Identity Picker](#identity-picker)
+    - [Human Readable Topics](#human-readable-topics)
+    - [Manifest address scheme](#manifest-address-scheme)
+    - [Upload History](#upload-history)
+    - [Automating tasks with Swarm-CLI](#automating-tasks-with-swarm-cli)
       - [Connectivity](#connectivity)
       - [Postage Stamps](#postage-stamps)
       - [Uploading](#uploading)
-  * [Config](#config)
-  * [Assignment priority](#assignment-priority)
-  * [System environment](#system-environment)
+  - [Config](#config)
+  - [Assignment priority](#assignment-priority)
+  - [System environment](#system-environment)
 - [Development](#development)
 - [Contribute](#contribute)
 - [Maintainers](#maintainers)
@@ -54,6 +66,34 @@ Stay up to date with changes by joining the [official Discord](https://discord.g
 ## Purchasing a Postage Stamp
 
 ![Swarm CLI Stamp Buy Command](./docs/stamp-buy.gif)
+
+## Creating a Postage Stamp (Interactive)
+
+The `stamp create` command walks you through purchasing a postage stamp by prompting for just two values: how much data you want to store and how long it should persist.
+
+```
+swarm-cli stamp create
+```
+
+You will be prompted for:
+
+1. **Capacity** — the total size of data the batch can store (e.g. `1GB`, `500MB`, `10GB`)
+2. **TTL** — how long the stamps should remain valid (e.g. `1d`, `1w`, `1month`, `6months`)
+
+After entering both values, `swarm-cli` displays a confirmation summary:
+
+```
+You have provided the following parameters:
+Capacity: 10.737 GB
+TTL: 4 weeks
+Cost: 10.4367906627780608 xBZZ
+Available: 10000.0000000000000000 xBZZ
+Type: Immutable
+? Confirm the purchase Yes
+Stamp ID: 690ec71e2312cf7cfa1b0d32a34fc20c8c249a8ea6f557cee035354135cefaef
+```
+
+Review the cost, confirm, and the command returns your new Stamp ID. You can then use this ID with the `--stamp` option in any upload or feed command.
 
 ## Uploading a File
 
@@ -67,6 +107,60 @@ Stay up to date with changes by joining the [official Discord](https://discord.g
 
 ![Swarm CLI Feed Upload Command](./docs/feed-upload.gif)
 
+## Access Control Trie (ACT)
+
+You can use ACT related commands to manage access control for your content. To use and manage ACT, you need to use the `access` commands.
+
+### Initialize ACT
+
+```sh
+swarm-cli access init --stamp <postage_batch_id> --list-name <grantee_list_name>
+```
+
+### Grant access to a certain grantee
+
+```sh
+swarm-cli access grant --list-name <grantee_list_name> --grantee <grantee_public_key>
+```
+
+### Revoke access from a certain grantee
+
+```sh
+swarm-cli access revoke --list-name <grantee_list_name> --grantee <grantee_public_key>
+```
+
+### Show list of grantee lists
+
+```sh
+swarm-cli access list
+```
+
+### Show grantees in a certain grantee list
+
+```sh
+swarm-cli access show --list-name <grantee_list_name>
+```
+
+### Get the list of events for a certain grantee list
+
+```sh
+swarm-cli access history --list-name <grantee_list_name>
+```
+
+### Upload a file with ACT
+
+```sh
+swarm-cli upload <file> --share-with <grantee_list_name>
+```
+
+### Download a file with ACT
+
+`token` constructed from the owner's public key and the history address
+
+```sh
+swarm-cli download <swarm_hash> <file> --access <token>
+```
+
 # Description
 
 > Manage your Bee node and interact with the Swarm network via the CLI
@@ -77,20 +171,17 @@ For the currently supported operations, see the [Commands](#commands) section.
 
 ## Installation
 
+Requires Node.js 18 or higher. It is recommended to use [NVM](https://github.com/nvm-sh/nvm) to manage Node.js versions.
+
+> Warning! Installing Node.js via package managers (e.g. `apt`, `yum`, `brew`) may not work as expected, as they may
+> install an older version of Node.js.
+
 ### From npm
 
-To install globally (requires `npm root --global` to be writable):
+Install globally:
 
 ```sh
 npm install --global @ethersphere/swarm-cli
-```
-
-To install locally:
-
-```sh
-cd [some directory for nodejs files]
-npm install @ethersphere/swarm-cli
-./node_modules/.bin/swarm-cli --help
 ```
 
 ### From source
@@ -110,7 +201,7 @@ Running a command with the `--help` option prints out the usage of a command.
 Running `swarm-cli` without arguments prints the available commands:
 
 ```
-Swarm CLI 1.5.0 - Manage your Bee node and interact with the Swarm network via the CLI
+Swarm CLI 2.11.0 - Manage your Bee node and interact with the Swarm network via the CLI
 
 █ Usage:
 
@@ -125,6 +216,9 @@ cheque     Deposit, withdraw and manage cheques
 stamp      Buy, list and show postage stamps
 pss        Send, receive, or subscribe to PSS messages
 manifest   Operate on manifests
+utility    Utility commands for managing wallets
+history    Get upload history
+access     Share access to your uploaded files/folders
 
 Run 'swarm-cli GROUP --help' to see available commands in a group
 
@@ -132,33 +226,50 @@ Run 'swarm-cli GROUP --help' to see available commands in a group
 
 upload      Upload file to Swarm
 download    Download arbitrary Swarm hash
-status      Check API availability and Bee compatibility
+hash        Print the Swarm hash of a file
+status      Check Bee status
 addresses   Display the addresses of the Bee node
+stake       Manages nodes stake
 
 Run 'swarm-cli COMMAND --help' for more information on a command
 ```
 
 ## Example usage
 
-Let's say we want to upload our website to Swarm and update a feed to point to the newest version. For updating a feed we would need to sign it with an Ethereum key, so first we need to create one with the `identity create` command:
+Let's say we want to upload our website to Swarm and update a feed to point to the newest version. For updating a feed
+we would need to sign it with an Ethereum key, so first we need to create one with the `identity create` command:
 
 ```
 swarm-cli identity create
 ```
 
-This command will ask for a password. After that a new identity is created (named `main`). Now we can use this identity to sign updates. It's also possible to import and export Ethereum JSON V3 format identities that works with other apps (e.g. wallets).
+This command will ask for a password. After that a new identity is created (named `main`). Now we can use this identity
+to sign updates. It's also possible to import and export Ethereum JSON V3 format identities that works with other apps
+(e.g. wallets).
 
-Another requirement for uploading to the Swarm network is a valid postage batch, also called a postage stamp or simply a stamp. Stamps need to be purchased with BZZ tokens. We can use the `stamp buy` command to take care of this step. The `--amount` and `--depth` options alter the capacity of the postage stamp. For example, running `stamp buy --amount 1 --depth 20` will get back with a Stamp ID after a while. We will be using that with the `--stamp` option in commands which upload files, or write feeds.
+Another requirement for uploading to the Swarm network is a valid postage batch, also called a postage stamp or simply a
+stamp. Stamps need to be purchased with xBZZ tokens. We can use the `stamp buy` command to take care of this step. The
+`--amount` and `--depth` options alter the capacity of the postage stamp. For example, running
+`stamp buy --amount 1 --depth 20` will get back with a Stamp ID after a while. We will be using that with the `--stamp`
+option in commands which upload files, or write feeds.
 
-For uploading to a feed we can use the `feed upload` command. It expects the path of the folder (or file) we want to upload and as options it expects `identity` to be provided along with the `password` that belongs to it, as well as the earlier mentioned `stamp`.
+For uploading to a feed we can use the `feed upload` command. It expects the path of the folder (or file) we want to
+upload and as options it expects `identity` to be provided along with the `password` that belongs to it, as well as the
+earlier mentioned `stamp`.
 
 ```
 swarm-cli feed upload path-to-be-uploaded --identity my-identity --password my-secret-password --stamp stamp-id
 ```
 
-In this example we are uploading the content of the `dist` folder. If the uploading was successful the last printed line will contain a `Feed Manifest URL`. This URL can be opened in the browser. If the uploaded folder contains an `index.html` file then it will be automatically displayed when visiting the URL.
+In this example we are uploading the content of the `dist` folder. If the uploading was successful the last printed line
+will contain a `Feed Manifest URL`. This URL can be opened in the browser. If the uploaded folder contains an
+`index.html` file then it will be automatically displayed when visiting the URL.
 
-This URL will stay the same when we upload an updated version of the website. Because of this we can also put this URL into a reverse proxy configuration or use the reference (the hex string after the `/bzz/`) in an ENS record. There is more information about that in the [Bee documentation](https://docs.ethswarm.org/docs/getting-started/host-your-website-using-ens). The uploaded content can be found on the link in the line starting with `URL`. This will change every time the content is modified.
+This URL will stay the same when we upload an updated version of the website. Because of this we can also put this URL
+into a reverse proxy configuration or use the reference (the hex string after the `/bzz/`) in an ENS record. There is
+more information about that in the
+[Bee documentation](https://docs.ethswarm.org/docs/getting-started/host-your-website-using-ens). The uploaded content
+can be found on the link in the line starting with `URL`. This will change every time the content is modified.
 
 ## Usability Features
 
@@ -172,7 +283,8 @@ Use `swarm-cli` to upload a single file:
 swarm-cli upload README.md
 ```
 
-The command above will print a `/bzz` URL that may be opened in the browser. If the browser is able to handle the file format then the file is displayed, otherwise it will be offered to be downloaded.
+The command above will print a `/bzz` URL that may be opened in the browser. If the browser is able to handle the file
+format then the file is displayed, otherwise it will be offered to be downloaded.
 
 #### Folders and Websites
 
@@ -182,7 +294,9 @@ The command above will print a `/bzz` URL that may be opened in the browser. If 
 swarm-cli upload build/
 ```
 
-This also yields a `/bzz` URL. If there is an `index.html` present in the root of the folder, `--index-document` will be automatically applied by `swarm-cli`. This option sets which file the browser should open for an empty path. You may also freely set `--index-document` during upload to change this.
+This also yields a `/bzz` URL. If there is an `index.html` present in the root of the folder, `--index-document` will be
+automatically applied by `swarm-cli`. This option sets which file the browser should open for an empty path. You may
+also freely set `--index-document` during upload to change this.
 
 #### Standard Input
 
@@ -192,7 +306,10 @@ You can pipe data from other commands to `swarm-cli` using the `--stdin` option.
 curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...]
 ```
 
-Unlike other upload methods, this results in a `/bytes` URL, which cannot be displayed by browsers normally. You can still share your hash and others can download it. However, with the `--name` option, you can give your arbitrary data a file name, and `swarm-cli` will attempt to determine the suitable content type for your data. Given it is successful, `swarm-cli` will print a `/bzz` URL instead of the `/bytes` URL, which is good to be displayed in browsers. Example:
+Unlike other upload methods, this results in a `/bytes` URL, which cannot be displayed by browsers normally. You can
+still share your hash and others can download it. However, with the `--name` option, you can give your arbitrary data a
+file name, and `swarm-cli` will attempt to determine the suitable content type for your data. Given it is successful,
+`swarm-cli` will print a `/bzz` URL instead of the `/bytes` URL, which is good to be displayed in browsers. Example:
 
 ```
 curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...] --name random.jpg
@@ -204,7 +321,9 @@ There is also a `--content-type` option if you want to adjust it manually:
 curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp [...] --name random --content-type image/jpeg
 ```
 
-Please note that stdin is reserved for the data you are uploading, so interactive features are disabled during this time. Because of that, `--stamp` must be passed beforehand. You may create an alias for grabbing the ID of the least used postage stamp:
+Please note that stdin is reserved for the data you are uploading, so interactive features are disabled during this
+time. Because of that, `--stamp` must be passed beforehand. You may create an alias for grabbing the ID of the least
+used postage stamp:
 
 ```
 alias st='swarm-cli stamp list --least-used --limit 1 --hide-usage --quiet'
@@ -216,9 +335,10 @@ Leveraging the alias above, you can use a shortcut for uploading from stdin:
 curl -L https://picsum.photos/200 | swarm-cli --stdin --stamp $(st)
 ```
 
-### Custom HTTP Headers 
+### Custom HTTP Headers
 
-Similarly to `curl`, you may use the `--header` or `-H` option to specify as many additional headers as you want, which will be sent with all requests:
+Similarly to `curl`, you may use the `--header` or `-H` option to specify as many additional headers as you want, which
+will be sent with all requests:
 
 ```
 swarm-cli upload README.md -H "Authorization: [...]" -H "X-Custom-Header: Your Value"
@@ -226,19 +346,24 @@ swarm-cli upload README.md -H "Authorization: [...]" -H "X-Custom-Header: Your V
 
 ### Autocomplete
 
-`swarm-cli` has support for autocomplete in `bash`, `zsh` and `fish`. This turns on `<tab><tab>` suggestions which can complete commands, paths and options for you.
+`swarm-cli` has support for autocomplete in `bash`, `zsh` and `fish`. This turns on `<tab><tab>` suggestions which can
+complete commands, paths and options for you.
 
 To enable it, you need to install it once via two options:
- - Running `swarm-cli --generate-completion` and following the instructions there
- - Running `swarm-cli --install-completion` which automatically appends the completion script to your configuration file
 
-| Shell   | Completion System                                 | Configuration Path                       |
-|---------|---------------------------------------------------|------------------------------------------|
-| `bash`  | `compdef` & `compadd` OR `complete` & `COMPREPLY` | `$HOME/.bashrc` & `$HOME/.bash_profile`  |
-| `zsh`   | `compdef` & `compadd` OR `complete` & `COMPREPLY` | `$HOME/.zshrc`                           |
-| `fish`  | `complete`                                        | `$HOME/.config/fish/config.fish`         |
+- Running `swarm-cli --generate-completion` and following the instructions there
+- Running `swarm-cli --install-completion` which automatically appends the completion script to your configuration file
 
-> Warning! If you start a subshell (e.g. running `bash` from `zsh`), your `SHELL` env variable would still be the old value! The generation and completion script cannot detect your shell accurately in that case, so please set `SHELL` manually. It is generally advised to run `--generate-completion` first to ensure the shell and the paths are properly detected.
+| Shell  | Completion System                                 | Configuration Path                      |
+| ------ | ------------------------------------------------- | --------------------------------------- |
+| `bash` | `compdef` & `compadd` OR `complete` & `COMPREPLY` | `$HOME/.bashrc` & `$HOME/.bash_profile` |
+| `zsh`  | `compdef` & `compadd` OR `complete` & `COMPREPLY` | `$HOME/.zshrc`                          |
+| `fish` | `complete`                                        | `$HOME/.config/fish/config.fish`        |
+
+> Warning! If you start a subshell (e.g. running `bash` from `zsh`), your `SHELL` env variable would still be the old
+> value! The generation and completion script cannot detect your shell accurately in that case, so please set `SHELL`
+> manually. It is generally advised to run `--generate-completion` first to ensure the shell and the paths are properly
+> detected.
 
 Example:
 
@@ -256,7 +381,8 @@ You need to source your configuration, or restart your shell, to load the change
 
 ### Numerical Separator and Units
 
-As most of the units are specified in wei and PLUR - the smallest denominations of currencies - they are a bit difficult to write out.
+As most of the units are specified in wei and PLUR - the smallest denominations of currencies - they are a bit difficult
+to write out.
 
 To aid this, you may use underscores (`_`) and `K`, `M`, `B` and `T` units to make your numbers more comprehensible.
 
@@ -280,7 +406,8 @@ Look for hints in the `--help` sections. Take the `upload` command for example:
    --stamp   ID of the postage stamp to use  [required when quiet][string]
 ```
 
-That means, you don't have to provide the postage stamp ID beforehand. Simply running `swarm-cli upload <path>` will prompt you with an interactive stamp picker:
+That means, you don't have to provide the postage stamp ID beforehand. Simply running `swarm-cli upload <path>` will
+prompt you with an interactive stamp picker:
 
 ```
 ? Please select a stamp for this action.
@@ -294,11 +421,14 @@ That means, you don't have to provide the postage stamp ID beforehand. Simply ru
 
 Similarly to Stamp Picker, when an identity is not provided, an interactive picker will be prompted.
 
-Take the command `feed upload` for example. Albeit it takes quite a lot of options, you can run it with typing as little as `feed upload <path>`.
+Take the command `feed upload` for example. Albeit it takes quite a lot of options, you can run it with typing as little
+as `feed upload <path>`.
 
-`swarm-cli` will take you through some prompts to interactively specify all required options, such as `identity`, `password` of the identity, and the mandatory `stamp`.
+`swarm-cli` will take you through some prompts to interactively specify all required options, such as `identity`,
+`password` of the identity, and the mandatory `stamp`.
 
-Passing identities is also tolerant to errors, so if you provide one which does not exist, the output will tell you and you can correct it:
+Passing identities is also tolerant to errors, so if you provide one which does not exist, the output will tell you and
+you can correct it:
 
 ```
 The provided identity does not exist. Please select one that exists.
@@ -312,7 +442,8 @@ You may need to pass topics on multiple occasions - for example, when uploading 
 
 Topics are 32-byte long identifiers, so you need 64 characters to write them out in hexadecimal string format.
 
-You can do that with the `--topic` or `-t` option, or alternatively take a shortcut and use a human readable string which will be hashed by `swarm-cli` for your convenience. It is available via the `--topic-string` or `-T` option.
+You can do that with the `--topic` or `-t` option, or alternatively take a shortcut and use a human readable string
+which will be hashed by `swarm-cli` for your convenience. It is available via the `--topic-string` or `-T` option.
 
 Example:
 
@@ -331,11 +462,15 @@ Only one is required: [topic] or [topic-string]
 
 ### Manifest address scheme
 
-The `manifest` commands enable low-level operation on manifests. These always require a root manifest reference (hash) argument as the input. Some commands, however, work with subparts of the manifest. A few examples are: downloading only a folder from a manifest, listing files only under a specific path in a manifest, and adding files or folders not to the root of the manifest, but under some path.
+The `manifest` commands enable low-level operation on manifests. These always require a root manifest reference (hash)
+argument as the input. Some commands, however, work with subparts of the manifest. A few examples are: downloading only
+a folder from a manifest, listing files only under a specific path in a manifest, and adding files or folders not to the
+root of the manifest, but under some path.
 
 These can be achieved by using the `bzz://<hash>/<path>` scheme in the `<address>` argument as follows:
 
-List entries under the `/command/pss` prefix in manifest `1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f`
+List entries under the `/command/pss` prefix in manifest
+`1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f`
 
 ```
 swarm-cli manifest list bzz://1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5012ee749604a7b425f/command/pss
@@ -349,9 +484,51 @@ swarm-cli manifest download bzz://1512546a3f4d0fea9f35fa1177486bdfe2bc2536917ad5
 
 > Note: The `bzz://` protocol can be omitted.
 
+### Upload History
+
+`swarm-cli` records a local log of your uploads so you can retrieve them later. Without this log, a hash is only shown once - at upload time - and there is no other way to find your prior uploads.
+
+> **Privacy notice:** Upload history is **enabled by default**. Each entry written to disk includes the timestamp, the resulting Swarm hash, the postage stamp ID, the upload type, and the local file path. If you prefer not to keep any local record of your activity, disable it:
+>
+> ```
+> swarm-cli history disable
+> ```
+>
+> This will offer to delete the existing history file before disabling tracking.
+
+The history file is stored at `~/.swarm-cli/upload-history.json` (on Windows: `%APPDATA%\swarm-cli\upload-history.json`).
+
+#### History commands
+
+Check whether tracking is active and how many entries exist:
+
+```
+swarm-cli history status
+```
+
+List all recorded uploads:
+
+```
+swarm-cli history list
+```
+
+Inspect a single entry by its index (as shown in `history list`):
+
+```
+swarm-cli history show <index>
+```
+
+Re-enable tracking after it has been disabled:
+
+```
+swarm-cli history enable
+```
+
 ### Automating tasks with Swarm-CLI
 
-Running `swarm-cli` with the flag `--quiet` (or `-q` for short) disables all interactive features, and makes commands print information in an easily parsable format. The exit code also indicates whether running the command was successful or not. These may be useful for automating tasks both in CI environments and in your terminal too.
+Running `swarm-cli` with the flag `--quiet` (or `-q` for short) disables all interactive features, and makes commands
+print information in an easily parsable format. The exit code also indicates whether running the command was successful
+or not. These may be useful for automating tasks both in CI environments and in your terminal too.
 
 Below you will find a few snippets to give an idea how it can be used to compose tasks.
 
@@ -414,7 +591,8 @@ On Windows systems: `$HOME\AppData\swarm-cli`
 
 The configuration file is saved with `600` file permission.
 
-On first run, this configuration will be generated with default values, that you are able to change on your demand under the before mentioned path.
+On first run, this configuration will be generated with default values, that you are able to change on your demand under
+the before mentioned path.
 
 ## Assignment priority
 
@@ -423,7 +601,8 @@ It is possible to set value of particular parameters in different ways.
 The assignment priority of how option gets its value in question is the following:
 
 1. passed CLI option value (with e.g. `--option-example-1`)
-2. env variable for that option in form of either `OPTION_EXAMPLE_1` or `SWARM_CLI_OPTION_EXAMPLE_1` (if it is available)
+2. env variable for that option in form of either `OPTION_EXAMPLE_1` or `SWARM_CLI_OPTION_EXAMPLE_1` (if it is
+   available)
 3. CLI configuration value of that option (if it is available)
 4. option's default fallback value (or it is required to define by #1)
 
@@ -431,15 +610,13 @@ The assignment priority of how option gets its value in question is the followin
 
 With specific system environment variables you can alter the behaviour of the CLI
 
-* `BEE_API_URL` - API URL of Bee client
-* `BEE_DEBUG_API_URL` - Debug API URL of Bee client
-* `SWARM_CLI_CONFIG_FOLDER` - full path to a configuration folder
-* `SWARM_CLI_CONFIG_FILE` - configuration file name, defaults to config.json
+- `BEE_API_URL` - API URL of Bee client
+- `SWARM_CLI_CONFIG_FOLDER` - full path to a configuration folder
+- `SWARM_CLI_CONFIG_FILE` - configuration file name, defaults to config.json
 
 # Development
 
-After the project has been cloned, the dependencies must be
-installed. Run the following in the project folder:
+After the project has been cloned, the dependencies must be installed. Run the following in the project folder:
 
 ```sh
  $ npm install
@@ -459,9 +636,8 @@ To make the local `swarm-cli` files in the `dist/` directory available as a glob
 
 If all went well you should be able to run `swarm-cli`.
 
-If `npm link` fails, or you don't want to install anything, then you
-can use `node dist/src/index.js` to run `swarm-cli` from the checked out
-directory.
+If `npm link` fails, or you don't want to install anything, then you can use `node dist/src/index.js` to run `swarm-cli`
+from the checked out directory.
 
 # Contribute
 
