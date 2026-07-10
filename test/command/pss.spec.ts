@@ -70,7 +70,6 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       ...getStampOption(),
     ])
     await receivePromise
-    await System.sleepMillis(4000)
     expect(existsSync('test/testconfig/out.txt')).toBeTruthy()
     const messageFromFile = readFileSync('test/testconfig/out.txt', 'ascii')
     expect(messageFromFile).toBe('Message in a file')
