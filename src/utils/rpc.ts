@@ -19,7 +19,7 @@ export async function eth_getBalanceERC20(
     address = `0x${address}`
   }
   const contract = new Contract(tokenAddress, ABI.bzz, provider)
-  const balance = await contract.balanceOf(address)
+  const balance = await contract.balanceOf!(address)
 
   return balance.toString()
 }
@@ -99,7 +99,7 @@ export async function sendBzzTransaction(
   }
 
   const bzz = new Contract(Contracts.bzz, ABI.bzz, signer)
-  const transaction = await bzz.transfer(to, value, { gasPrice })
+  const transaction = await bzz.transfer!(to, value, { gasPrice })
   const receipt = await transaction.wait(1)
 
   if (receipt === null) {
