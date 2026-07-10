@@ -6,8 +6,10 @@ export const getOrBuyStamp = async (): Promise<BatchId> => {
   const bee = new Bee('http://localhost:1633')
   const availableStamps = await bee.getAllPostageBatch()
 
-  if (availableStamps.length > 0) {
-    const usedStamp = availableStamps[0].batchID
+  const [existingStamp] = availableStamps
+
+  if (existingStamp) {
+    const usedStamp = existingStamp.batchID
     console.log('Using existing stamp: ', usedStamp.toHex())
 
     return usedStamp

@@ -84,7 +84,8 @@ export class RootCommand {
       const latestVersionCheck = getLatestVersionCheck(this.commandConfig)
 
       if (latestVersionCheck === null) {
-        checkForUpdates(this.commandConfig)
+        // fire-and-forget: a version check must not block CLI startup; it swallows its own errors
+        void checkForUpdates(this.commandConfig)
       } else if (latestVersionCheck.latestVersion !== PackageJson.version) {
         this.console.log(
           warningText(

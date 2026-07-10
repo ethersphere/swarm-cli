@@ -58,7 +58,7 @@ export class FeedCommand extends RootCommand {
     this.console.log(createKeyValue('Feed Manifest URL', manifestUrl))
 
     if (this.qr) {
-      printQRCodeWithLabel(publicUrl(manifestUrl), 'QR for Manifest URL', this.console)
+      await printQRCodeWithLabel(publicUrl(manifestUrl), 'QR for Manifest URL', this.console)
     }
 
     this.console.quiet(manifest.toHex())
@@ -92,7 +92,14 @@ export class FeedCommand extends RootCommand {
       this.identity = await pickIdentity(this.commandConfig, this.console)
     }
 
-    return identities[this.identity]
+    const identity = identities[this.identity]
+
+    if (!identity) {
+      this.console.error('The provided identity does not exist.')
+      exit(1)
+    }
+
+    return identity
   }
 
   private async writeFeed(stamp: string, wallet: Wallet, topic: Topic, chunkReference: Reference): Promise<FeedInfo> {

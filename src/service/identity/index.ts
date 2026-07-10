@@ -17,11 +17,11 @@ export function getPrintableIdentityType(type: IdentityType): string {
   }
 }
 
-export function isSimpleWallet(wallet: IdentityWallet, identityType: IdentityType): wallet is SimpleWallet {
+export function isSimpleWallet(_wallet: IdentityWallet, identityType: IdentityType): _wallet is SimpleWallet {
   return identityType === IdentityType.simple
 }
 
-export function isV3Wallet(wallet: IdentityWallet, identityType: IdentityType): wallet is V3Keystore {
+export function isV3Wallet(_wallet: IdentityWallet, identityType: IdentityType): _wallet is V3Keystore {
   return identityType === IdentityType.v3
 }
 

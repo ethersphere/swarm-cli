@@ -14,7 +14,7 @@ export class PssCommand extends RootCommand {
   })
   public topicString!: string
 
-  public init(): void {
+  public override init(): void {
     super.init()
 
     this.topic = Topic.fromString(this.topicString).toHex()
