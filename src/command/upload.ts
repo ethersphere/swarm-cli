@@ -213,7 +213,7 @@ export class Upload extends RootCommand implements LeafCommand {
     }
 
     if (this.qr) {
-      printQRCodeWithLabel(publicUrl(url), 'QR for URL', this.console)
+      await printQRCodeWithLabel(publicUrl(url), 'QR for URL', this.console)
     }
 
     if (this.usingACT()) {

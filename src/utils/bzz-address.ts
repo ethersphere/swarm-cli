@@ -15,7 +15,7 @@ export class BzzAddress {
       throw new CommandLineError('Invalid BZZ path: cannot contain multiple continuous slashes')
     }
     const parts = url.split('/')
-    this.hash = parts[0].toLowerCase()
+    this.hash = (parts[0] ?? '').toLowerCase()
 
     if (this.hash.startsWith('0x')) {
       this.hash = this.hash.slice(2)

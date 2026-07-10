@@ -2,7 +2,7 @@ import { exit } from 'process'
 import { RootCommand } from '../root-command'
 
 export class PinningCommand extends RootCommand {
-  protected async init(): Promise<void> {
+  protected override async init(): Promise<void> {
     super.init()
 
     if (await this.bee.isGateway()) {

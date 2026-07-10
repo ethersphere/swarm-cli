@@ -31,8 +31,8 @@ export function describeCommand(
   describe(description, () => {
     const consoleMessages: string[] = []
     const configFileName = options?.configFileName
-    const getNthLastMessage = (n: number) => consoleMessages[consoleMessages.length - n]
-    const getLastMessage = () => consoleMessages[consoleMessages.length - 1]
+    const getNthLastMessage = (n: number) => consoleMessages[consoleMessages.length - n] ?? ''
+    const getLastMessage = () => consoleMessages[consoleMessages.length - 1] ?? ''
     const hasMessageContaining = (substring: string) =>
       Boolean(consoleMessages.find(consoleMessage => consoleMessage.includes(substring)))
     const configFolderPath = join(__dirname, '..', 'testconfig')

@@ -41,8 +41,8 @@ describeCommand(
       const uploadFolderPath = `${__dirname}/../testpage`
       const commandBuilder = await invokeTestCli([commandKey, uploadFolderPath, ...getStampOption()])
 
-      expect(commandBuilder.initedCommands[0].command.name).toBe('upload')
-      const command = commandBuilder.initedCommands[0].command as Upload
+      expect(commandBuilder.initedCommands[0]!.command.name).toBe('upload')
+      const command = commandBuilder.initedCommands[0]!.command as Upload
       expect(command.result.getOrThrow().toHex().length).toBe(64)
     })
 
@@ -51,8 +51,8 @@ describeCommand(
       const uploadFolderPath = `${__dirname}/../testpage/images/swarm.png`
       const commandBuilder = await invokeTestCli([commandKey, uploadFolderPath, ...getStampOption()])
 
-      expect(commandBuilder.initedCommands[0].command.name).toBe('upload')
-      const command = commandBuilder.initedCommands[0].command as Upload
+      expect(commandBuilder.initedCommands[0]!.command.name).toBe('upload')
+      const command = commandBuilder.initedCommands[0]!.command as Upload
       expect(command.result.getOrThrow().toHex().length).toBe(64)
     })
 

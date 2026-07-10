@@ -20,13 +20,14 @@ export class History extends AccessCommand implements LeafCommand {
     const accessHistory = new AccessHistory(this.commandConfig, this.console)
     const events = accessHistory.getEvents(this.listName).sort((a, b) => b.createdAt - a.createdAt)
 
-    if (events.length === 0) {
+    const lastEvent = events[0]
+
+    if (!lastEvent) {
       this.console.error(errorText(`Grantee list with name '${this.listName}' does not exist!`))
 
       exit(1)
     }
 
-    const lastEvent = events[0]
     this.console.log(createKeyValue('Latest history address', lastEvent.historyAddress))
     this.console.log(createKeyValue('Latest grantee list reference', lastEvent.granteeListRef))
 

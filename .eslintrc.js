@@ -32,4 +32,13 @@ module.exports = {
     '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-misused-promises': 'error',
   },
+  overrides: [
+    {
+      // tests legitimately assert on values they have set up
+      files: ['test/**/*.ts'],
+      rules: {
+        '@typescript-eslint/no-non-null-assertion': 'off',
+      },
+    },
+  ],
 }

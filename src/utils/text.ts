@@ -50,12 +50,11 @@ export function printDivided<T>(
   printFn: (item: T, console: CommandLog) => void,
   console: CommandLog,
 ): void {
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i]
+  items.forEach((item, i) => {
     printFn(item, console)
 
     if (i !== items.length - 1) {
       console.divider()
     }
-  }
+  })
 }
