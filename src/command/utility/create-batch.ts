@@ -65,7 +65,7 @@ export class CreateBatch extends RootCommand implements LeafCommand {
 
     this.console.log(`Approving spending of ${cost.toDecimalString()} BZZ to ${wallet.address}`)
     const tokenProxyContract = new Contract(Contracts.bzz, ABI.tokenProxy, signer)
-    const approve = await tokenProxyContract.approve(Contracts.postageStamp, cost.toPLURBigInt().toString(), {
+    const approve = await tokenProxyContract.approve!(Contracts.postageStamp, cost.toPLURBigInt().toString(), {
       gasLimit: 130_000,
       type: 2,
       maxFeePerGas: Numbers.make('2gwei'),
@@ -77,7 +77,7 @@ export class CreateBatch extends RootCommand implements LeafCommand {
     this.console.log(`Creating postage batch for ${wallet.address} with depth ${this.depth} and amount ${this.amount}`)
     const postageStampContract = new Contract(Contracts.postageStamp, ABI.postageStamp, signer)
     const createBatchArgs = [signer.address, this.amount, this.depth, 16, `0x${Strings.randomHex(64)}`, false]
-    const createBatch = await postageStampContract.createBatch(...createBatchArgs, {
+    const createBatch = await postageStampContract.createBatch!(...createBatchArgs, {
       gasLimit: 1_000_000,
       type: 2,
       maxFeePerGas: Numbers.make('3gwei'),
