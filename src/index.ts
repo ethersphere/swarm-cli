@@ -13,7 +13,8 @@ if (setDefaultResultOrder) {
   setDefaultResultOrder('ipv4first')
 }
 
-cli({
+// fire-and-forget entry point: cli() reports its own failures via the errorHandler above
+void cli({
   rootCommandClasses,
   optionParameters,
   printer,

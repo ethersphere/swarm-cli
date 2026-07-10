@@ -34,7 +34,7 @@ export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> 
   const value = await console.promptList(choices, 'Please select a stamp for this action')
   const [hex] = value.split(' ')
 
-  return hex
+  return hex ?? value
 }
 
 interface PrintStampSettings {

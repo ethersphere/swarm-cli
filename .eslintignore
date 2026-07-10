@@ -1,1 +1,3 @@
 dist/**
+# upload fixtures — sample project trees used as test payloads, not real source
+test/data/**
