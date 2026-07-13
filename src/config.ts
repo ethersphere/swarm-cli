@@ -18,6 +18,7 @@ import { Status } from './command/status'
 import { Upload } from './command/upload'
 import { Utility } from './command/utility'
 import { Wallet } from './command/wallet'
+import { Reupload } from './command/reupload'
 
 export const beeApiUrl: IOption<string> = {
   key: 'bee-api-url',
@@ -127,4 +128,5 @@ export const rootCommandClasses = [
   Quickstart,
   History,
   Access,
+  Reupload,
 ]
