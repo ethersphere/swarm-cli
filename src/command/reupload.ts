@@ -9,7 +9,7 @@ export class Reupload extends RootCommand implements LeafCommand {
 
   public readonly name = 'reupload'
 
-  public readonly description = 'Reupload locally pinned content'
+  public readonly description = 'Reupload and restamp content on the network'
 
   @Argument({
     key: 'address',
@@ -46,7 +46,7 @@ export class Reupload extends RootCommand implements LeafCommand {
         })
       }
     } catch (error) {
-      this.console.printBeeError(error, { notFoundMessage: 'No locally pinned content found with that address.' })
+      this.console.printBeeError(error, { notFoundMessage: 'No content found with that address.' })
     }
   }
 }
