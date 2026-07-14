@@ -29,7 +29,7 @@ export class List extends HistoryCommand implements LeafCommand {
       head: ['Index', 'Timestamp', 'Reference', 'Postage stamp batch ID', 'File path', 'Upload type'],
       style: {
         head: useColors ? ['green', 'bold'] : [],
-        border: useColors ? ['grey'] : []
+        border: useColors ? ['grey'] : [],
       },
       wordWrap: true,
     })
