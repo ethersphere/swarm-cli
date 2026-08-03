@@ -13,7 +13,7 @@ async function uploadTestFile() {
 
 describeCommand(
   'Test History command',
-  ({ consoleMessages })  => {
+  ({ consoleMessages }) => {
     describe('list', () => {
       it('should have table header row', async () => {
         await invokeTestCli(['history', 'enable'])
@@ -128,7 +128,7 @@ describeCommand(
       })
     })
 
-    describe('ansi: list colors', () =>{
+    describe('ansi: list colors', () => {
       const originalIsTTY = process.stdout.isTTY
       const colorsWereEnabled = colors.enabled
 
@@ -137,7 +137,7 @@ describeCommand(
       })
 
       afterAll(() => {
-        if(!colorsWereEnabled) {
+        if (!colorsWereEnabled) {
           colors.disable()
         }
       })
@@ -161,7 +161,8 @@ describeCommand(
         process.stdout.isTTY = true
         await invokeTestCli(['history', 'list'])
 
-        expect(consoleMessages[1]).toMatch(ANSI_PATTERN)      })
+        expect(consoleMessages[1]).toMatch(ANSI_PATTERN)
+      })
     })
   },
   { configFileName: 'history' },
