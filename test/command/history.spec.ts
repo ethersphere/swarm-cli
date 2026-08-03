@@ -2,6 +2,9 @@ import chalk from 'chalk'
 import { randomUUID } from 'crypto'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
+import colors from '@colors/colors/safe'
+
+const ANSI_PATTERN = /\u001B\[\d+m/ //adding this for testing the ansi disable part
 
 async function uploadTestFile() {
   const uploadFilePath = `${__dirname}/../testpage/images/swarm.png`
@@ -10,7 +13,7 @@ async function uploadTestFile() {
 
 describeCommand(
   'Test History command',
-  ({ consoleMessages }) => {
+  ({ consoleMessages })  => {
     describe('list', () => {
       it('should have table header row', async () => {
         await invokeTestCli(['history', 'enable'])
@@ -123,6 +126,42 @@ describeCommand(
         expect(consoleMessages[11]).toEqual('Number of history entries: 1')
         await invokeTestCli(['history', 'disable', '--yes'])
       })
+    })
+
+    describe('ansi: list colors', () =>{
+      const originalIsTTY = process.stdout.isTTY
+      const colorsWereEnabled = colors.enabled
+
+      beforeAll(() => {
+        colors.enable()
+      })
+
+      afterAll(() => {
+        if(!colorsWereEnabled) {
+          colors.disable()
+        }
+      })
+
+      afterEach(() => {
+        process.stdout.isTTY = originalIsTTY
+        invokeTestCli(['history', 'disable', '--yes'])
+      })
+
+      it('should not use colors when stdout is not a TTY', async () => {
+        await invokeTestCli(['history', 'enable'])
+        process.stdout.isTTY = false
+        await invokeTestCli(['history', 'list'])
+
+        expect(consoleMessages[1]).not.toMatch(ANSI_PATTERN)
+        expect(consoleMessages[1]).toContain('Timestamp')
+      })
+
+      it('should use colors when stdout is a TTY', async () => {
+        await invokeTestCli(['history', 'enable'])
+        process.stdout.isTTY = true
+        await invokeTestCli(['history', 'list'])
+
+        expect(consoleMessages[1]).toMatch(ANSI_PATTERN)      })
     })
   },
   { configFileName: 'history' },
