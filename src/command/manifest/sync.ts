@@ -66,7 +66,9 @@ export class Sync extends RootCommand implements LeafCommand {
   }
 
   private async expectedReference(data: Uint8Array, level: RedundancyLevel): Promise<Uint8Array> {
-    const onBatch = makeErasureBatch(level, false, async () => {})
+    const onBatch = makeErasureBatch(level, false, async () => {
+      // no-op: only the resulting hash is needed here, nothing to persist
+    })
     const splitter = new ChunkSplitter(onBatch, undefined, false, makeIntermediateChunkHandler(level))
     await splitter.append(data)
     const root = await splitter.finalize()
@@ -81,12 +83,12 @@ export class Sync extends RootCommand implements LeafCommand {
       this.stamp = await pickStamp(this.bee, this.console)
     }
 
-    const requestedRedundancyLevel = this.determineRedundancyLevel()
-    const effectiveRedundancyLevel = requestedRedundancyLevel ?? DEFAULT_REDUNDANCY_LEVEL
-    const uploadOptions =
-      requestedRedundancyLevel === undefined
-        ? undefined
-        : { headers: { 'swarm-redundancy-level': String(requestedRedundancyLevel) } }
+    // Always sent explicitly, even when --redundancy is omitted: leaving this to the
+    // node's own implicit default would make the comparison below only as reliable as
+    // a guess about that node's behavior, which we've seen differ between Bee versions
+    // (2.6.0 defaults to OFF, 2.8.1+ to MEDIUM). Fixing it here removes the ambiguity.
+    const effectiveRedundancyLevel = this.determineRedundancyLevel() ?? DEFAULT_REDUNDANCY_LEVEL
+    const uploadOptions = { headers: { 'swarm-redundancy-level': String(effectiveRedundancyLevel) } }
 
     const address = new BzzAddress(this.bzzUrl)
 
