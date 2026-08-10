@@ -73,7 +73,7 @@ export class Sync extends RootCommand implements LeafCommand {
 
     if (this.remove) {
       for (const n of nodes) {
-        if (!files.includes(node.fullPathString)) {
+        if (!files.includes(n.fullPathString)) {
           node.removeFork(n.fullPathString)
           this.console.log(chalk.gray(n.fullPathString) + ' ' + chalk.red('REMOVED'))
         }
