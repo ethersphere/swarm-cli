@@ -1,10 +1,10 @@
 import { readFileSync } from 'fs'
 import type { Reupload } from '../../src/command/reupload'
+import { Buy } from '../../src/command/stamp/buy'
 import type { Upload } from '../../src/command/upload'
 import { HistoryItem } from '../../src/service/history/types/history-item'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
-import { Buy } from '../../src/command/stamp/buy'
 
 describeCommand(
   'Test Reupload command',
@@ -49,14 +49,14 @@ describeCommand(
 
       // 4. Verify the history entry
       const reuploadCommand = reuploadBuilder.runnable as Reupload
-      const historyPath = (reuploadCommand as any).commandConfig.getHistoryFilePath()
+      const historyPath = reuploadCommand.commandConfig.getHistoryFilePath()
       const items = JSON.parse(readFileSync(historyPath, 'utf-8')) as HistoryItem[]
 
       const lastItem = items[items.length - 1]
-      expect(lastItem.reference).toBe(reference)
-      expect(lastItem.uploadType).toBe('reupload')
-      expect(lastItem.path).toBeNull()
-      expect(lastItem.stamp).toBe(newStampId)
+      expect(lastItem!.reference).toBe(reference)
+      expect(lastItem!.uploadType).toBe('reupload')
+      expect(lastItem!.path).toBeNull()
+      expect(lastItem!.stamp).toBe(newStampId)
     })
   },
   { configFileName: 'reupload' },
