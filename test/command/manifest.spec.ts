@@ -15,7 +15,7 @@ expect.extend({
 })
 
 async function runAndGetManifest(argv: string[]): Promise<string> {
-  if (['create', 'add', 'sync', 'merge', 'remove'].includes(argv[1])) {
+  if (['create', 'add', 'sync', 'merge', 'remove'].includes(argv[1] ?? '')) {
     argv = [...argv, ...getStampOption()]
   }
   const commandBuilder = await invokeTestCli(argv)

@@ -48,7 +48,7 @@ describeCommand(
     it('should print feed using address only', async () => {
       // create identity
       await invokeTestCli(['identity', 'create', 'test2', '--password', 'test'])
-      const address = getLastMessage().split(' ')[1]
+      const address = getLastMessage().split(' ')[1] ?? ''
       // upload
       await invokeTestCli([
         'feed',

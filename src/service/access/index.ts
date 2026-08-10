@@ -44,7 +44,7 @@ export class AccessHistory {
   public getLatestEvent(granteeListName: string): AccessHistoryEvent | null {
     const events = this.getEvents(granteeListName).sort((a, b) => b.createdAt - a.createdAt)
 
-    return events.length > 0 ? events[0] : null
+    return events[0] ?? null
   }
 
   public getEventsByType(granteeListName: string, eventType: AccessHistoryOperation): AccessHistoryEvent[] {

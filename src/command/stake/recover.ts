@@ -56,7 +56,7 @@ export class Recover extends RootCommand implements LeafCommand {
     const { signer } = await makeReadySigner(wallet.getPrivateKeyString(), this.jsonRpcUrl)
     const contract = new Contract(address, abi, signer)
 
-    const isPaused = await contract.paused()
+    const isPaused = await contract.paused!()
 
     if (!isPaused) {
       this.console.error('The contract is not paused. No need to recover xBZZ.')
@@ -65,6 +65,6 @@ export class Recover extends RootCommand implements LeafCommand {
     }
 
     this.console.log('Recovering xBZZ from paused staking contract...')
-    await contract.migrateStake()
+    await contract.migrateStake!()
   }
 }

@@ -23,7 +23,7 @@ export function toMatchLinesInOrder(received: string[], pattern: string[][]) {
 
 export function toMatchLinesInAnyOrder(received: string[], pattern: string[][]) {
   for (const p of pattern) {
-    if (received.some(r => r.includes(p[0]))) {
+    if (received.some(r => p.every(substring => r.includes(substring)))) {
       continue
     }
 

@@ -1,4 +1,5 @@
-import { MantarayNode, MerkleTree } from '@ethersphere/bee-js'
+import { MantarayNode, RedundancyLevel } from '@ethersphere/bee-js'
+import { ChunkSplitter, makeErasureBatch, makeIntermediateChunkHandler } from '@upcoming/swarm-core'
 import { Binary, Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { readFileSync } from 'fs'
@@ -7,8 +8,16 @@ import { join } from 'path'
 import { pickStamp } from '../../service/stamp'
 import { readdirDeepAsync } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
+import { CommandLineError } from '../../utils/error'
 import { stampProperties } from '../../utils/option'
 import { RootCommand } from '../root-command'
+
+// Bee applies this level itself whenever a client doesn't ask for a specific one
+// (verified against a real node - bee-js's own docs claim OFF is the server default,
+// which does not match observed behavior). Assumed here so the local pre-check below
+// can replicate the same erasure coding Bee applies, rather than compare against a
+// bare, non-redundant hash that will never match a redundant upload.
+const DEFAULT_REDUNDANCY_LEVEL = RedundancyLevel.MEDIUM
 
 export class Sync extends RootCommand implements LeafCommand {
   public readonly name = 'sync'
@@ -30,12 +39,56 @@ export class Sync extends RootCommand implements LeafCommand {
   })
   public remove!: boolean
 
+  @Option({
+    key: 'redundancy',
+    description: 'Redundancy of the upload (OFF, MEDIUM, STRONG, INSANE, PARANOID)',
+  })
+  public redundancy!: string
+
+  private determineRedundancyLevel(): RedundancyLevel | undefined {
+    if (!this.redundancy) {
+      return undefined
+    }
+    switch (this.redundancy.toUpperCase()) {
+      case 'OFF':
+        return RedundancyLevel.OFF
+      case 'MEDIUM':
+        return RedundancyLevel.MEDIUM
+      case 'STRONG':
+        return RedundancyLevel.STRONG
+      case 'INSANE':
+        return RedundancyLevel.INSANE
+      case 'PARANOID':
+        return RedundancyLevel.PARANOID
+      default:
+        throw new CommandLineError(`Invalid redundancy level: ${this.redundancy}`)
+    }
+  }
+
+  private async expectedReference(data: Uint8Array, level: RedundancyLevel): Promise<Uint8Array> {
+    const onBatch = makeErasureBatch(level, false, async () => {
+      // no-op: only the resulting hash is needed here, nothing to persist
+    })
+    const splitter = new ChunkSplitter(onBatch, undefined, false, makeIntermediateChunkHandler(level))
+    await splitter.append(data)
+    const root = await splitter.finalize()
+
+    return root.hash().toUint8Array()
+  }
+
   public async run(): Promise<void> {
     super.init()
 
     if (!this.stamp) {
       this.stamp = await pickStamp(this.bee, this.console)
     }
+
+    // Always sent explicitly, even when --redundancy is omitted: leaving this to the
+    // node's own implicit default would make the comparison below only as reliable as
+    // a guess about that node's behavior, which we've seen differ between Bee versions
+    // (2.6.0 defaults to OFF, 2.8.1+ to MEDIUM). Fixing it here removes the ambiguity.
+    const effectiveRedundancyLevel = this.determineRedundancyLevel() ?? DEFAULT_REDUNDANCY_LEVEL
+    const uploadOptions = { headers: { 'swarm-redundancy-level': String(effectiveRedundancyLevel) } }
 
     const address = new BzzAddress(this.bzzUrl)
 
@@ -55,17 +108,22 @@ export class Sync extends RootCommand implements LeafCommand {
 
       if (existing) {
         const localData = readFileSync(join(this.folder, file))
-        const rootChunk = await MerkleTree.root(localData)
+        const expected = await this.expectedReference(new Uint8Array(localData), effectiveRedundancyLevel)
 
-        if (Binary.equals(rootChunk.hash(), existing.targetAddress)) {
+        if (Binary.equals(expected, existing.targetAddress)) {
           this.console.log(chalk.gray(file) + ' ' + chalk.blue('UNCHANGED'))
         } else {
-          const { reference } = await this.bee.uploadData(this.stamp, localData)
+          const { reference } = await this.bee.uploadData(this.stamp, localData, undefined, uploadOptions)
           node.addFork(file, reference)
           this.console.log(chalk.gray(file) + ' ' + chalk.yellow('CHANGED'))
         }
       } else {
-        const { reference } = await this.bee.uploadData(this.stamp, readFileSync(join(this.folder, file)))
+        const { reference } = await this.bee.uploadData(
+          this.stamp,
+          readFileSync(join(this.folder, file)),
+          undefined,
+          uploadOptions,
+        )
         node.addFork(file, reference)
         this.console.log(chalk.gray(file) + ' ' + chalk.green('NEW'))
       }
@@ -73,7 +131,7 @@ export class Sync extends RootCommand implements LeafCommand {
 
     if (this.remove) {
       for (const n of nodes) {
-        if (!files.includes(node.fullPathString)) {
+        if (!files.includes(n.fullPathString)) {
           node.removeFork(n.fullPathString)
           this.console.log(chalk.gray(n.fullPathString) + ' ' + chalk.red('REMOVED'))
         }

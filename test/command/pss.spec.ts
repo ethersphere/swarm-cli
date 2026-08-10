@@ -45,7 +45,8 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       unlinkSync('test/testconfig/out.txt')
     }
     writeFileSync('test/testconfig/in.txt', 'Message in a file')
-    invokeTestCli([
+    // start the receiver listening, then send to trigger it, then await the receiver
+    const receivePromise = invokeTestCli([
       'pss',
       'receive',
       '--topic-string',
@@ -68,7 +69,7 @@ describeCommand('Test PSS command', ({ getNthLastMessage, getLastMessage }) => {
       'test/testconfig/in.txt',
       ...getStampOption(),
     ])
-    await System.sleepMillis(4000)
+    await receivePromise
     expect(existsSync('test/testconfig/out.txt')).toBeTruthy()
     const messageFromFile = readFileSync('test/testconfig/out.txt', 'ascii')
     expect(messageFromFile).toBe('Message in a file')
