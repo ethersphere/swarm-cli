@@ -1,4 +1,4 @@
-import { FileUploadOptions, RedundancyLevel, Reference, Tag, Utils } from '@ethersphere/bee-js'
+import { BeeRequestOptions, FileUploadOptions, Reference, RedundancyLevel, Tag, Utils } from '@ethersphere/bee-js'
 import { Numbers, Optional, System } from 'cafe-utility'
 import chalk from 'chalk'
 import { Presets, SingleBar } from 'cli-progress'
@@ -16,6 +16,7 @@ import { CommandLineError } from '../utils/error'
 import { getMime } from '../utils/mime'
 import { stampProperties } from '../utils/option'
 import { printQRCodeWithLabel } from '../utils/qr'
+import { determineRedundancyLevel } from '../utils/redundancy'
 import { createSpinner } from '../utils/spinner'
 import { createKeyValue, warningSymbol, warningText } from '../utils/text'
 import { publicUrl } from '../utils/url'
@@ -117,7 +118,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   @Option({
     key: 'redundancy',
-    description: 'Redundancy of the upload (MEDIUM, STRONG, INSANE, PARANOID)',
+    description: 'Redundancy of the upload (OFF, MEDIUM, STRONG, INSANE, PARANOID)',
   })
   public redundancy!: string
 
@@ -261,8 +262,8 @@ export class Upload extends RootCommand implements LeafCommand {
         encrypt: this.encrypt,
         contentType,
         deferred: this.deferred,
-        redundancyLevel: this.determineRedundancyLevel(),
       } as FileUploadOptions
+
       uploadOptions = this.prepareACTUploadOptions(uploadOptions)
 
       const { reference, historyAddress } = await this.bee.uploadFile(
@@ -270,6 +271,7 @@ export class Upload extends RootCommand implements LeafCommand {
         this.stdinData,
         this.fileName,
         uploadOptions,
+        this.buildRequestOptions(),
       )
       this.result = Optional.of(reference)
 
@@ -283,11 +285,15 @@ export class Upload extends RootCommand implements LeafCommand {
         tag: tag?.uid,
         deferred: this.deferred,
         encrypt: this.encrypt,
-        redundancyLevel: this.determineRedundancyLevel(),
       } as FileUploadOptions
       uploadOptions = this.prepareACTUploadOptions(uploadOptions)
 
-      const { reference, historyAddress } = await this.bee.uploadData(this.stamp, this.stdinData, uploadOptions)
+      const { reference, historyAddress } = await this.bee.uploadData(
+        this.stamp,
+        this.stdinData,
+        uploadOptions,
+        this.buildRequestOptions(),
+      )
       this.result = Optional.of(reference)
 
       if (this.usingACT()) {
@@ -311,10 +317,14 @@ export class Upload extends RootCommand implements LeafCommand {
       pin: this.pin,
       encrypt: this.encrypt,
       deferred: this.deferred,
-      redundancyLevel: this.determineRedundancyLevel(),
     } as FileUploadOptions
     uploadOptions = this.prepareACTUploadOptions(uploadOptions)
-    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(this.stamp, this.path, uploadOptions)
+    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(
+      this.stamp,
+      this.path,
+      uploadOptions,
+      this.buildRequestOptions(),
+    )
     this.result = Optional.of(reference)
 
     if (this.usingACT()) {
@@ -339,7 +349,6 @@ export class Upload extends RootCommand implements LeafCommand {
       encrypt: this.encrypt,
       contentType,
       deferred: this.deferred,
-      redundancyLevel: this.determineRedundancyLevel(),
     } as FileUploadOptions
     uploadOptions = this.prepareACTUploadOptions(uploadOptions)
     const { reference, historyAddress } = await this.bee.uploadFile(
@@ -347,6 +356,7 @@ export class Upload extends RootCommand implements LeafCommand {
       readable,
       this.determineFileName(parsedPath.base),
       uploadOptions,
+      this.buildRequestOptions(),
     )
     this.result = Optional.of(reference)
 
@@ -414,6 +424,19 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async maybePrintRedundancyStats(): Promise<void> {
     if (!this.redundancy || this.quiet) {
+      return
+    }
+
+    // Validate here first - Utils.getRedundancyStat below throws its own, less clear
+    // error for anything it doesn't recognize, including OFF, which reaches this method
+    // before buildRequestOptions() ever runs its own validation.
+    const redundancyResult = determineRedundancyLevel(this.redundancy)
+    if (redundancyResult.error !== undefined) {
+      throw redundancyResult.error
+    }
+
+    // Utils.getRedundancyStat only covers the levels that add overhead - OFF has none to report.
+    if (redundancyResult.value === RedundancyLevel.OFF) {
       return
     }
 
@@ -535,22 +558,16 @@ export class Upload extends RootCommand implements LeafCommand {
     return defaultName
   }
 
-  private determineRedundancyLevel(): RedundancyLevel | undefined {
-    if (!this.redundancy) {
-      return undefined
+  private buildRequestOptions(): BeeRequestOptions {
+    const effectiveRedundancyResult = determineRedundancyLevel(this.redundancy)
+    if (effectiveRedundancyResult.error !== undefined) {
+      throw effectiveRedundancyResult.error
     }
-    switch (this.redundancy.toUpperCase()) {
-      case 'MEDIUM':
-        return RedundancyLevel.MEDIUM
-      case 'STRONG':
-        return RedundancyLevel.STRONG
-      case 'INSANE':
-        return RedundancyLevel.INSANE
-      case 'PARANOID':
-        return RedundancyLevel.PARANOID
-      default:
-        throw new CommandLineError(`Invalid redundancy level: ${this.redundancy}`)
+    const uploadHeaders = {} as Record<string, string>
+    if (effectiveRedundancyResult.value !== undefined) {
+      uploadHeaders['swarm-redundancy-level'] = String(effectiveRedundancyResult.value)
     }
+    return { headers: uploadHeaders }
   }
 
   public uploadType(): 'stdin' | 'folder' | 'file' {
