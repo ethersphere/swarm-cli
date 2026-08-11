@@ -1,11 +1,34 @@
+import { MerkleTree } from '@ethersphere/bee-js'
 import { System } from 'cafe-utility'
-import { existsSync, unlinkSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { LeafCommand } from 'furious-commander'
 import QRCode from 'qrcode'
+import { Readable } from 'stream'
 import type { Upload } from '../../src/command/upload'
 import { toBeQRCode, toMatchLinesInOrder } from '../custom-matcher'
 import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
+
+// process.stdin is a real, singleton stream - once ended via push(null) it can never
+// accept more data, so a test suite that uploads from stdin more than once needs a
+// fresh stream per call rather than reusing the real one.
+async function invokeTestCliWithStdin(argv: string[], data: Buffer): ReturnType<typeof invokeTestCli> {
+  const stream = new Readable({
+    read: () => {
+      // no-op: all data is pushed upfront below, nothing to pull on demand
+    },
+  })
+  stream.push(data)
+  stream.push(null)
+
+  const original = process.stdin
+  Object.defineProperty(process, 'stdin', { value: stream, configurable: true })
+  try {
+    return await invokeTestCli(argv)
+  } finally {
+    Object.defineProperty(process, 'stdin', { value: original, configurable: true })
+  }
+}
 
 const SUCCESSFUL_SYNC_PATTERN = [
   ['Data has been sent to the Bee node successfully!'],
@@ -84,6 +107,57 @@ describeCommand(
         const [ref, his] = actUpload(commandBuilder)
         expect(ref).toHaveLength(64)
         expect(his).toHaveLength(64)
+      })
+    })
+
+    describe('redundancy level', () => {
+      // needs to be big enough to span multiple chunks - redundancy only encodes
+      // the intermediate tree, so a single-chunk file would show no difference at all
+      const REDUNDANT_FILE = 'test/testpage/images/swarm.png'
+
+      it('should upload without any redundancy when --redundancy OFF is passed', async () => {
+        const data = readFileSync(REDUNDANT_FILE)
+        const commandBuilder = await invokeTestCliWithStdin(
+          ['upload', '--stdin', '--redundancy', 'OFF', ...getStampOption()],
+          data,
+        )
+        const uploadCommand = commandBuilder.runnable as Upload
+
+        const bareRootChunk = await MerkleTree.root(new Uint8Array(data))
+        const bareReference = Buffer.from(bareRootChunk.hash()).toString('hex')
+
+        expect(uploadCommand.result.getOrThrow().toHex()).toBe(bareReference)
+      })
+
+      it('should produce a different reference than --redundancy OFF when a higher level is requested', async () => {
+        const offBuilder = await invokeTestCli([
+          'upload',
+          REDUNDANT_FILE,
+          '--redundancy',
+          'OFF',
+          '--yes',
+          ...getStampOption(),
+        ])
+        const offReference = (offBuilder.runnable as Upload).result.getOrThrow().toHex()
+
+        // MEDIUM (unlike OFF) prints overhead stats and prompts for confirmation
+        // unless --yes is passed, which would otherwise hang waiting on stdin here.
+        const mediumBuilder = await invokeTestCli([
+          'upload',
+          REDUNDANT_FILE,
+          '--redundancy',
+          'MEDIUM',
+          '--yes',
+          ...getStampOption(),
+        ])
+        const mediumReference = (mediumBuilder.runnable as Upload).result.getOrThrow().toHex()
+
+        expect(mediumReference).not.toBe(offReference)
+      })
+
+      it('should reject an invalid redundancy level', async () => {
+        await invokeTestCli(['upload', 'test/message.txt', '--redundancy', 'NOT_A_LEVEL', ...getStampOption()])
+        expect(hasMessageContaining('Invalid redundancy level')).toBeTruthy()
       })
     })
 

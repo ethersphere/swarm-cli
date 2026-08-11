@@ -8,16 +8,9 @@ import { join } from 'path'
 import { pickStamp } from '../../service/stamp'
 import { readdirDeepAsync } from '../../utils'
 import { BzzAddress } from '../../utils/bzz-address'
-import { CommandLineError } from '../../utils/error'
 import { stampProperties } from '../../utils/option'
+import { DEFAULT_REDUNDANCY_LEVEL, determineRedundancyLevel } from '../../utils/redundancy'
 import { RootCommand } from '../root-command'
-
-// Bee applies this level itself whenever a client doesn't ask for a specific one
-// (verified against a real node - bee-js's own docs claim OFF is the server default,
-// which does not match observed behavior). Assumed here so the local pre-check below
-// can replicate the same erasure coding Bee applies, rather than compare against a
-// bare, non-redundant hash that will never match a redundant upload.
-const DEFAULT_REDUNDANCY_LEVEL = RedundancyLevel.MEDIUM
 
 export class Sync extends RootCommand implements LeafCommand {
   public readonly name = 'sync'
@@ -45,26 +38,6 @@ export class Sync extends RootCommand implements LeafCommand {
   })
   public redundancy!: string
 
-  private determineRedundancyLevel(): RedundancyLevel | undefined {
-    if (!this.redundancy) {
-      return undefined
-    }
-    switch (this.redundancy.toUpperCase()) {
-      case 'OFF':
-        return RedundancyLevel.OFF
-      case 'MEDIUM':
-        return RedundancyLevel.MEDIUM
-      case 'STRONG':
-        return RedundancyLevel.STRONG
-      case 'INSANE':
-        return RedundancyLevel.INSANE
-      case 'PARANOID':
-        return RedundancyLevel.PARANOID
-      default:
-        throw new CommandLineError(`Invalid redundancy level: ${this.redundancy}`)
-    }
-  }
-
   private async expectedReference(data: Uint8Array, level: RedundancyLevel): Promise<Uint8Array> {
     const onBatch = makeErasureBatch(level, false, async () => {
       // no-op: only the resulting hash is needed here, nothing to persist
@@ -87,7 +60,11 @@ export class Sync extends RootCommand implements LeafCommand {
     // node's own implicit default would make the comparison below only as reliable as
     // a guess about that node's behavior, which we've seen differ between Bee versions
     // (2.6.0 defaults to OFF, 2.8.1+ to MEDIUM). Fixing it here removes the ambiguity.
-    const effectiveRedundancyLevel = this.determineRedundancyLevel() ?? DEFAULT_REDUNDANCY_LEVEL
+    const effectiveRedundancyResult = determineRedundancyLevel(this.redundancy)
+    if (effectiveRedundancyResult.error !== undefined) {
+      throw effectiveRedundancyResult.error
+    }
+    const effectiveRedundancyLevel = effectiveRedundancyResult.value ?? DEFAULT_REDUNDANCY_LEVEL
     const uploadOptions = { headers: { 'swarm-redundancy-level': String(effectiveRedundancyLevel) } }
 
     const address = new BzzAddress(this.bzzUrl)
