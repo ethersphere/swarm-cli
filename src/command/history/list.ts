@@ -22,10 +22,14 @@ export class List extends HistoryCommand implements LeafCommand {
 
       return
     }
+
+    const useColors = Boolean(process.stdout.isTTY)
+
     const table = new Table({
       head: ['Index', 'Timestamp', 'Reference', 'Postage stamp batch ID', 'File path', 'Upload type'],
       style: {
-        head: ['green', 'bold'],
+        head: useColors ? ['green', 'bold'] : [],
+        border: useColors ? ['grey'] : [],
       },
       wordWrap: true,
     })
