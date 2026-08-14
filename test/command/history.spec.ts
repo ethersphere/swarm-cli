@@ -131,7 +131,6 @@ describeCommand(
       const colorsWereEnabled = colors.enabled
       const ANSI_PATTERN = /\u001B\[\d+m/ //adding this for testing the ansi disable part
 
-
       beforeAll(() => {
         colors.enable()
       })
