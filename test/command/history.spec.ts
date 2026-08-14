@@ -141,11 +141,10 @@ describeCommand(
         }
       })
 
-      afterEach( async () => {
+      afterEach(async () => {
         process.stdout.isTTY = originalIsTTY
         await invokeTestCli(['history', 'disable', '--yes'])
       })
-
       it('should not use colors when stdout is not a TTY', async () => {
         await invokeTestCli(['history', 'enable'])
         process.stdout.isTTY = false
