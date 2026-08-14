@@ -4,8 +4,6 @@ import { describeCommand, invokeTestCli } from '../utility'
 import { getStampOption } from '../utility/stamp'
 import colors from '@colors/colors/safe'
 
-const ANSI_PATTERN = /\u001B\[\d+m/ //adding this for testing the ansi disable part
-
 async function uploadTestFile() {
   const uploadFilePath = `${__dirname}/../testpage/images/swarm.png`
   await invokeTestCli(['upload', uploadFilePath, ...getStampOption()])
@@ -131,6 +129,8 @@ describeCommand(
     describe('ansi: list colors', () => {
       const originalIsTTY = process.stdout.isTTY
       const colorsWereEnabled = colors.enabled
+      const ANSI_PATTERN = /\u001B\[\d+m/ //adding this for testing the ansi disable part
+
 
       beforeAll(() => {
         colors.enable()
