@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.5.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.4.0...v3.5.0) (2026-08-14)
+
+
+### Features
+
+* move reupload command to root level ([#774](https://www.github.com/ethersphere/swarm-cli/issues/774)) ([df32655](https://www.github.com/ethersphere/swarm-cli/commit/df32655225e83cb8f44f24d69111dd6166a9c8cf))
+* rename command for stamp ([#772](https://www.github.com/ethersphere/swarm-cli/issues/772)) ([e2d8fe6](https://www.github.com/ethersphere/swarm-cli/commit/e2d8fe60a433d1e53315873f8126ddeb2ce2aa86))
+
+
+### Bug Fixes
+
+* disable ANSI colors in history list when stdout is not a TTY ([#777](https://www.github.com/ethersphere/swarm-cli/issues/777)) ([a898483](https://www.github.com/ethersphere/swarm-cli/commit/a8984839f77f30d579a194377e035f88e74e59ff))
+* make possible to turn off erasure codeing at upload ([#781](https://www.github.com/ethersphere/swarm-cli/issues/781)) ([34f3292](https://www.github.com/ethersphere/swarm-cli/commit/34f329248c94a8a2f2fff20fa7cf854a390f6ac2))
+
 ## [3.4.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.3.0...v3.4.0) (2026-07-08)
 
 
