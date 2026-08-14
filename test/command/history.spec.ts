@@ -141,7 +141,7 @@ describeCommand(
         }
       })
 
-      afterEach(() => {
+      afterEach( async () => {
         process.stdout.isTTY = originalIsTTY
         await invokeTestCli(['history', 'disable', '--yes'])
       })
