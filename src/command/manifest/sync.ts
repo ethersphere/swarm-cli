@@ -1,5 +1,5 @@
 import { MantarayNode, RedundancyLevel } from '@ethersphere/bee-js'
-import { ChunkSplitter, makeErasureBatch, makeIntermediateChunkHandler } from '@upcoming/swarm-core'
+import { ChunkSplitter, makeErasureBatch, makeIntermediateChunkHandler } from '@ethersphere/core-sdk'
 import { Binary, Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { readFileSync } from 'fs'
