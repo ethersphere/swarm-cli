@@ -36,7 +36,7 @@ export class Init extends AccessCommand implements LeafCommand {
       exit(1)
     }
 
-    const response = await this.bee.createGrantees(this.stamp, this.grantees)
+    const response = await this.bee.grantee.create(this.stamp, this.grantees)
     this.console.log(`Grantee list '${this.listName}' initialized successfully!`)
 
     accessHistory.addEvent(this.listName, {

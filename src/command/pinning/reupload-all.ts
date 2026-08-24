@@ -13,7 +13,7 @@ export class ReuploadAll extends PinningCommand implements LeafCommand {
   public async run(): Promise<void> {
     await super.init()
 
-    const chunks = await this.bee.getAllPins()
+    const chunks = await this.bee.pin.getAll()
 
     const total = chunks.length
     let successful = 0
@@ -36,7 +36,7 @@ export class ReuploadAll extends PinningCommand implements LeafCommand {
 
   private async reuploadOne(chunk: string): Promise<void> {
     this.console.log('Reuploading ' + chunk + '...')
-    await this.bee.reuploadPinnedData(this.stamp, chunk)
+    await this.bee.pin.reuploadData(this.stamp, chunk)
     this.console.log('Reuploaded successfully.')
   }
 }

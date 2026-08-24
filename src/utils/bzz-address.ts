@@ -1,4 +1,4 @@
-import { Bee, MantarayNode, MerkleTree } from '@ethersphere/bee-js'
+import { Bee, MantarayNode, ChunkSplitter } from '@ethersphere/bee-js'
 import { Binary } from 'cafe-utility'
 import { CommandLineError } from './error'
 
@@ -39,8 +39,8 @@ export async function makeBzzAddress(bee: Bee, url: string): Promise<BzzAddress>
     const resolvedFeed = await manifest.resolveFeed(bee)
 
     await resolvedFeed.ifPresentAsync(async feed => {
-      const merkleTree = await MerkleTree.root(feed.payload.toUint8Array())
-      const cacAddress = Binary.uint8ArrayToHex(merkleTree.hash())
+      const merkleTree = await ChunkSplitter.root(feed.payload.toUint8Array())
+      const cacAddress = Binary.uint8ArrayToHex(merkleTree.hash().toUint8Array())
       address.hash = cacAddress
     })
 

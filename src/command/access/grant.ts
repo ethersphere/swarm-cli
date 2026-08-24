@@ -37,7 +37,7 @@ export class Grant extends AccessCommand implements LeafCommand {
     const stampId = lastHistoryEvent.stampId
     const granteeListRef = lastHistoryEvent.granteeListRef
     const historyAddress = lastHistoryEvent.historyAddress
-    const response = await this.bee.patchGrantees(stampId, granteeListRef, historyAddress, { add: this.grantees })
+    const response = await this.bee.grantee.patch(stampId, granteeListRef, historyAddress, { add: this.grantees })
 
     if (response.status === 200) {
       this.console.log(successText(`Access granted to ${this.grantees.join(', ')}`))

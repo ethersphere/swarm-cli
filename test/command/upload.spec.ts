@@ -1,4 +1,4 @@
-import { MerkleTree } from '@ethersphere/bee-js'
+import { ChunkSplitter } from '@ethersphere/bee-js'
 import { System } from 'cafe-utility'
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { LeafCommand } from 'furious-commander'
@@ -123,8 +123,8 @@ describeCommand(
         )
         const uploadCommand = commandBuilder.runnable as Upload
 
-        const bareRootChunk = await MerkleTree.root(new Uint8Array(data))
-        const bareReference = Buffer.from(bareRootChunk.hash()).toString('hex')
+        const bareRootChunk = await ChunkSplitter.root(new Uint8Array(data))
+        const bareReference = Buffer.from(bareRootChunk.hash().toUint8Array()).toString('hex')
 
         expect(uploadCommand.result.getOrThrow().toHex()).toBe(bareReference)
       })

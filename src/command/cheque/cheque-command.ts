@@ -16,7 +16,7 @@ export class ChequeCommand extends RootCommand {
   }
 
   protected async getCashableCheques(): Promise<Cashable[]> {
-    const { lastcheques } = await this.bee.getLastCheques()
+    const { lastcheques } = await this.bee.cheque.getAllLatest()
 
     const results: Cashable[] = []
     for (const cheque of lastcheques) {
@@ -42,7 +42,7 @@ export class ChequeCommand extends RootCommand {
 
   protected async getUncashedAmount(address: string): Promise<BZZ> {
     try {
-      const lastCashout = await this.bee.getLastCashoutAction(address)
+      const lastCashout = await this.bee.cheque.getLastCashoutAction(address)
 
       return lastCashout.uncashedAmount
     } catch (error) {

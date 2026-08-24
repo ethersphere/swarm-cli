@@ -31,7 +31,7 @@ export class Dilute extends StampCommand implements LeafCommand {
       this.stamp = await pickStamp(this.bee, this.console)
     }
 
-    const details = await this.bee.getPostageBatch(this.stamp)
+    const details = await this.bee.stamp.get(this.stamp)
 
     if (this.depth <= details.depth) {
       throw new CommandLineError(`This postage stamp already has depth ${details.depth}. The new value must be higher.`)
@@ -44,7 +44,7 @@ export class Dilute extends StampCommand implements LeafCommand {
     }
 
     try {
-      await this.bee.diluteBatch(this.stamp, this.depth)
+      await this.bee.stamp.dilute(this.stamp, this.depth)
     } finally {
       spinner.stop()
     }

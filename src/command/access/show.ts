@@ -25,7 +25,7 @@ export class Show extends AccessCommand implements LeafCommand {
       exit(1)
     }
 
-    const response = await this.bee.getGrantees(lastHistoryEvent.granteeListRef)
+    const response = await this.bee.grantee.get(lastHistoryEvent.granteeListRef)
 
     if (response.grantees.length === 0) {
       this.console.log(`Grantee list '${this.listName}' has no grantees.`)

@@ -75,7 +75,7 @@ export class Send extends PssCommand implements LeafCommand {
 
     this.console.log('Sending PSS message on topic ' + this.topic)
 
-    await this.bee.pssSend(this.stamp, new Topic(this.topic), this.target, this.sendable, this.recipient)
+    await this.bee.messaging.pssSend(this.stamp, new Topic(this.topic), this.target, this.sendable, this.recipient)
     this.console.log('Message sent successfully.')
   }
 }

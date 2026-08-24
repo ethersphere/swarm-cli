@@ -16,22 +16,22 @@ export class Status extends RootCommand implements LeafCommand {
     this.console.all(chalk.bold('Bee'))
     process.stdout.write(createKeyValue('API', this.beeApiUrl))
     try {
-      await this.bee.checkConnection()
+      await this.bee.connectivity.checkConnection()
       process.stdout.write(chalk.bold.green(' [OK]') + '\n')
     } catch {
       process.stdout.write(chalk.bold.red(' [FAILED]') + '\n')
       process.stdout.write('\nIs your Bee node running?\n')
       exit(1)
     }
-    const versions = await this.bee.getVersions()
+    const versions = await this.bee.status.getVersions()
     this.console.all(createKeyValue('Version', versions.beeVersion))
-    const nodeInfo = await this.bee.getNodeInfo()
+    const nodeInfo = await this.bee.status.getNodeInfo()
     this.console.all(createKeyValue('Mode', nodeInfo.beeMode))
 
     if (nodeInfo.beeMode !== BeeModes.ULTRA_LIGHT) {
       this.console.all('')
       this.console.all(chalk.bold('Chainsync'))
-      const { block, chainTip, currentPrice } = await this.bee.getChainState()
+      const { block, chainTip, currentPrice } = await this.bee.status.getChainState()
       this.console.all(
         createKeyValue(
           'Block',
@@ -43,7 +43,7 @@ export class Status extends RootCommand implements LeafCommand {
 
     this.console.all('')
     this.console.all(chalk.bold('Topology'))
-    const topology = await this.bee.getTopology()
+    const topology = await this.bee.connectivity.getTopology()
     this.console.all(createKeyValue('Connected Peers', topology.connected))
     this.console.all(createKeyValue('Population', topology.population))
     this.console.all(createKeyValue('Depth', topology.depth))
@@ -52,7 +52,7 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.all('')
       this.console.all(chalk.bold('Wallet'))
       try {
-        const { bzzBalance, nativeTokenBalance } = await this.bee.getWalletBalance()
+        const { bzzBalance, nativeTokenBalance } = await this.bee.wallet.getBalance()
         this.console.all(createKeyValue('xBZZ', bzzBalance.toDecimalString()))
         this.console.all(createKeyValue('xDAI', nativeTokenBalance.toDecimalString()))
       } catch {
@@ -65,7 +65,7 @@ export class Status extends RootCommand implements LeafCommand {
       this.console.all('')
       this.console.all(chalk.bold('Chequebook'))
       try {
-        const { totalBalance, availableBalance } = await this.bee.getChequebookBalance()
+        const { totalBalance, availableBalance } = await this.bee.chequebook.getBalance()
         this.console.all(createKeyValue('Available xBZZ', availableBalance.toDecimalString()))
         this.console.all(createKeyValue('Total xBZZ', totalBalance.toDecimalString()))
       } catch {
@@ -77,12 +77,12 @@ export class Status extends RootCommand implements LeafCommand {
     if (nodeInfo.beeMode === BeeModes.FULL) {
       this.console.all('')
       this.console.all(chalk.bold('Staking'))
-      const stake = await this.bee.getStake()
-      const surplusStake = await this.bee.getWithdrawableStake()
+      const stake = await this.bee.stake.get()
+      const surplusStake = await this.bee.stake.getWithdrawable()
       this.console.all(createKeyValue('Staked xBZZ', stake.toDecimalString()))
       this.console.all(createKeyValue('Withdrawable staked xBZZ', surplusStake.toDecimalString()))
 
-      const reserveStatus = await this.bee.getStatus()
+      const reserveStatus = await this.bee.status.get()
       this.console.all('')
       this.console.all(chalk.bold('Reserve'))
       this.console.all(
@@ -113,7 +113,7 @@ export class Status extends RootCommand implements LeafCommand {
             ' GB)',
         ),
       )
-      const reserveState = await this.bee.getReserveState()
+      const reserveState = await this.bee.status.getReserveState()
       const reserveCapacityDoubling = reserveState.reserveCapacityDoubling
       this.console.all(
         createKeyValue(
@@ -125,7 +125,7 @@ export class Status extends RootCommand implements LeafCommand {
       )
       this.console.all('')
       this.console.all(chalk.bold('Redistribution'))
-      const redistributionState = await this.bee.getRedistributionState()
+      const redistributionState = await this.bee.stake.getRedistributionState()
       const currentRound = redistributionState.round
       this.console.all(createKeyValue('Reward', redistributionState.reward.toDecimalString() + ' xBZZ'))
       this.console.all(createKeyValue('Has sufficient funds', redistributionState.hasSufficientFunds))

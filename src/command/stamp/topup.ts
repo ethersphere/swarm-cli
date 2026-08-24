@@ -36,7 +36,7 @@ export class Topup extends StampCommand implements LeafCommand {
     }
 
     try {
-      await this.bee.topUpBatch(this.stamp, this.amount.toString())
+      await this.bee.stamp.topUp(this.stamp, this.amount.toString())
     } finally {
       spinner.stop()
     }

@@ -148,7 +148,7 @@ export class Upload extends RootCommand implements LeafCommand {
       throw new CommandLineError(`Given filepath '${this.path}' doesn't exist`)
     }
 
-    const isGateway = await this.bee.isGateway()
+    const isGateway = await this.bee.connectivity.isGateway()
 
     if (this.stdin) {
       if (!this.stamp && !isGateway) {
@@ -167,7 +167,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
     await this.maybePrintRedundancyStats()
 
-    const tag = this.sync ? await this.bee.createTag() : undefined
+    const tag = this.sync ? await this.bee.tag.create() : undefined
 
     const uploadingFolder = !this.stdin && FS.statSync(this.path).isDirectory()
 
@@ -209,7 +209,7 @@ export class Upload extends RootCommand implements LeafCommand {
       this.console.quiet(this.result.getOrThrow().toHex())
 
       if (!isGateway && !this.quiet) {
-        printStamp(await this.bee.getPostageBatch(this.stamp), this.console, { shortenBatchId: true })
+        printStamp(await this.bee.stamp.get(this.stamp), this.console, { shortenBatchId: true })
       }
     }
 
@@ -266,7 +266,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
       uploadOptions = this.prepareACTUploadOptions(uploadOptions)
 
-      const { reference, historyAddress } = await this.bee.uploadFile(
+      const { reference, historyAddress } = await this.bee.file.upload(
         this.stamp,
         this.stdinData,
         this.fileName,
@@ -288,7 +288,7 @@ export class Upload extends RootCommand implements LeafCommand {
       } as FileUploadOptions
       uploadOptions = this.prepareACTUploadOptions(uploadOptions)
 
-      const { reference, historyAddress } = await this.bee.uploadData(
+      const { reference, historyAddress } = await this.bee.data.upload(
         this.stamp,
         this.stdinData,
         uploadOptions,
@@ -319,7 +319,7 @@ export class Upload extends RootCommand implements LeafCommand {
       deferred: this.deferred,
     } as FileUploadOptions
     uploadOptions = this.prepareACTUploadOptions(uploadOptions)
-    const { reference, historyAddress } = await this.bee.uploadFilesFromDirectory(
+    const { reference, historyAddress } = await this.bee.collection.uploadFromDirectory(
       this.stamp,
       this.path,
       uploadOptions,
@@ -351,7 +351,7 @@ export class Upload extends RootCommand implements LeafCommand {
       deferred: this.deferred,
     } as FileUploadOptions
     uploadOptions = this.prepareACTUploadOptions(uploadOptions)
-    const { reference, historyAddress } = await this.bee.uploadFile(
+    const { reference, historyAddress } = await this.bee.file.upload(
       this.stamp,
       readable,
       this.determineFileName(parsedPath.base),
@@ -386,7 +386,7 @@ export class Upload extends RootCommand implements LeafCommand {
       progressBar.start(tag.split, 0)
     }
     for (let i = 0; i < pollingTrials; i++) {
-      tag = await this.bee.retrieveTag(tagUid)
+      tag = await this.bee.tag.get(tagUid)
       const newSyncProgress = tag.seen + tag.synced
 
       if (newSyncProgress > syncProgress) {
@@ -483,7 +483,7 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async hasUnsupportedGatewayOptions(): Promise<boolean> {
-    if (!(await this.bee.isGateway())) {
+    if (!(await this.bee.connectivity.isGateway())) {
       return false
     }
 
@@ -538,7 +538,7 @@ export class Upload extends RootCommand implements LeafCommand {
 
   private async getConnectedPeers(): Promise<number | null> {
     try {
-      const { connected } = await this.bee.getTopology()
+      const { connected } = await this.bee.connectivity.getTopology()
 
       return connected
     } catch {
@@ -605,7 +605,7 @@ export class Upload extends RootCommand implements LeafCommand {
   }
 
   private async printShareInstructions() {
-    const { publicKey } = await this.bee.getNodeAddresses()
+    const { publicKey } = await this.bee.connectivity.getNodeAddresses()
     this.console.log(
       '\nTo share the uploaded content with your grantees, please provide them with the following information:\n',
     )

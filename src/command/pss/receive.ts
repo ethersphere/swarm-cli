@@ -36,7 +36,7 @@ export class Receive extends PssCommand implements LeafCommand {
     const stream = this.outFile ? createWriteStream(this.outFile, { encoding: 'binary' }) : null
 
     try {
-      const data = await this.bee.pssReceive(new Topic(this.topic), this.timeout)
+      const data = await this.bee.messaging.pssReceive(new Topic(this.topic), this.timeout)
 
       this.receivedMessage = data.toUtf8()
 

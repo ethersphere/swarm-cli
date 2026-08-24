@@ -11,7 +11,7 @@ export class Status extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const { bzzBalance, nativeTokenBalance } = await this.bee.getWalletBalance()
+    const { bzzBalance, nativeTokenBalance } = await this.bee.wallet.getBalance()
 
     this.console.all(chalk.bold('Wallet'))
     this.console.all(createKeyValue('xBZZ', bzzBalance.toDecimalString()))

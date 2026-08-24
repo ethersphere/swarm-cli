@@ -75,7 +75,7 @@ describeCommand(
 
     it('should buy stamp', async () => {
       const createPostageBatch = jest
-        .spyOn(Bee.prototype, 'createPostageBatch')
+        .spyOn(Bee.prototype.stamp, 'create')
         .mockResolvedValue(new BatchId(fakeBatchIdHash))
       await invokeTestCli(['stamp', 'buy', '--amount', '600_000_000', '--depth', '20', '--yes'])
       expect(createPostageBatch).toHaveBeenCalledWith('600000000', 20, expect.objectContaining({ immutableFlag: true }))
@@ -85,7 +85,7 @@ describeCommand(
 
     it('should buy stamp with immutable flag', async () => {
       const createPostageBatch = jest
-        .spyOn(Bee.prototype, 'createPostageBatch')
+        .spyOn(Bee.prototype.stamp, 'create')
         .mockResolvedValue(new BatchId(fakeBatchIdHash))
       await invokeTestCli([
         'stamp',
@@ -117,7 +117,7 @@ describeCommand(
 
     it('should wait until stamp is usable', async () => {
       const createPostageBatch = jest
-        .spyOn(Bee.prototype, 'createPostageBatch')
+        .spyOn(Bee.prototype.stamp, 'create')
         .mockResolvedValue(new BatchId(fakeBatchIdHash))
       await invokeTestCli([
         'stamp',
@@ -142,7 +142,7 @@ describeCommand(
     it('should accept estimate cost prompt', async () => {
       jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: true })
       const createPostageBatch = jest
-        .spyOn(Bee.prototype, 'createPostageBatch')
+        .spyOn(Bee.prototype.stamp, 'create')
         .mockResolvedValue(new BatchId(fakeBatchIdHash))
       const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1b'])
       const command = execution.runnable as Buy
@@ -154,7 +154,7 @@ describeCommand(
     it('should reject estimate cost prompt', async () => {
       jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: false })
       const createPostageBatch = jest
-        .spyOn(Bee.prototype, 'createPostageBatch')
+        .spyOn(Bee.prototype.stamp, 'create')
         .mockResolvedValue(new BatchId(fakeBatchIdHash))
       const execution = await invokeTestCli(['stamp', 'buy', '--depth', '20', '--amount', '1b'])
       const command = execution.runnable as Buy
@@ -165,7 +165,7 @@ describeCommand(
 
     it('should be possible to buy with underscores and units', async () => {
       const createPostageBatch = jest
-        .spyOn(Bee.prototype, 'createPostageBatch')
+        .spyOn(Bee.prototype.stamp, 'create')
         .mockResolvedValue(new BatchId(fakeBatchIdHash))
       await invokeTestCli([
         'stamp',

@@ -40,7 +40,7 @@ export class Add extends RootCommand implements LeafCommand {
     const files = await getFiles(this.path)
     for (const file of files) {
       const path = stat.isDirectory() ? join(this.path, file) : this.path
-      const { reference } = await this.bee.uploadData(this.stamp, readFileSync(path))
+      const { reference } = await this.bee.data.upload(this.stamp, readFileSync(path))
       const remotePath = this.getForkPath(address.path, files, file)
       node.addFork(remotePath, reference)
 

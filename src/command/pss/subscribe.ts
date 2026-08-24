@@ -22,7 +22,7 @@ export class Subscribe extends PssCommand implements LeafCommand {
 
     const stream = this.outFile ? createWriteStream(this.outFile) : null
 
-    this.bee.pssSubscribe(new Topic(this.topic), {
+    this.bee.messaging.pssSubscribe(new Topic(this.topic), {
       onMessage: data => {
         if (stream) {
           stream.write(data)

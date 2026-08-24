@@ -20,8 +20,8 @@ export class Rchash extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
-    const addresses = await this.bee.getNodeAddresses()
-    const status = await this.bee.getStatus()
+    const addresses = await this.bee.connectivity.getNodeAddresses()
+    const status = await this.bee.status.get()
     const depth = this.depth ?? status.committedDepth
     const anchor = addresses.overlay.toHex().slice(0, Math.max(2, Math.ceil(depth / 8) * 2))
     let stillRunning = true

@@ -23,7 +23,7 @@ export class Upload extends FeedCommand implements LeafCommand {
     super.init()
 
     if (!this.stamp) {
-      if (await this.bee.isGateway()) {
+      if (await this.bee.connectivity.isGateway()) {
         this.stamp = '0'.repeat(64)
         this.fileUpload.stamp = '0'.repeat(64)
       } else {

@@ -1,5 +1,10 @@
 import { MantarayNode, RedundancyLevel } from '@ethersphere/bee-js'
-import { ChunkSplitter, makeErasureBatch, makeIntermediateChunkHandler } from '@ethersphere/core-sdk'
+import {
+  ChunkSplitter,
+  makeErasureBatch,
+  makeIntermediateChunkHandler,
+  MantarayNode as CoreMantarayNode,
+} from '@ethersphere/core-sdk'
 import { Binary, Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { readFileSync } from 'fs'
@@ -72,7 +77,7 @@ export class Sync extends RootCommand implements LeafCommand {
     const node = await MantarayNode.unmarshal(this.bee, address.hash)
     await node.loadRecursively(this.bee)
 
-    const map = new Map<string, MantarayNode>()
+    const map = new Map<string, CoreMantarayNode>()
     const nodes = node.collect()
     for (const node of nodes) {
       map.set(node.fullPathString, node)
@@ -90,12 +95,12 @@ export class Sync extends RootCommand implements LeafCommand {
         if (Binary.equals(expected, existing.targetAddress)) {
           this.console.log(chalk.gray(file) + ' ' + chalk.blue('UNCHANGED'))
         } else {
-          const { reference } = await this.bee.uploadData(this.stamp, localData, undefined, uploadOptions)
+          const { reference } = await this.bee.data.upload(this.stamp, localData, undefined, uploadOptions)
           node.addFork(file, reference)
           this.console.log(chalk.gray(file) + ' ' + chalk.yellow('CHANGED'))
         }
       } else {
-        const { reference } = await this.bee.uploadData(
+        const { reference } = await this.bee.data.upload(
           this.stamp,
           readFileSync(join(this.folder, file)),
           undefined,

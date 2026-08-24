@@ -15,7 +15,7 @@ export class Unpin extends PinningCommand implements LeafCommand {
     await super.init()
 
     try {
-      await this.bee.unpin(this.address)
+      await this.bee.pin.remove(this.address)
       this.console.log('Unpinned successfully')
     } catch (error) {
       this.console.printBeeError(error, { notFoundMessage: `No root chunk found with address ${this.address}` })

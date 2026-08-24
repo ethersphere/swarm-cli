@@ -15,7 +15,7 @@ export class Pin extends PinningCommand implements LeafCommand {
     await super.init()
 
     try {
-      await this.bee.pin(this.address)
+      await this.bee.pin.add(this.address)
       this.console.log('Pinned successfully')
     } catch (error) {
       this.console.printBeeError(error, { notFoundMessage: `No root chunk found with address ${this.address}` })

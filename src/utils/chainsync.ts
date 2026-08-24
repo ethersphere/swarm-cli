@@ -3,7 +3,7 @@ import { Bee } from '@ethersphere/bee-js'
 const THRESHOLD = 10_000
 
 export async function isChainStateReady(bee: Bee): Promise<boolean> {
-  const chainState = await bee.getChainState()
+  const chainState = await bee.status.getChainState()
 
   return chainState.chainTip > chainState.block - THRESHOLD
 }

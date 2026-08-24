@@ -1,4 +1,4 @@
-import { MerkleTree, Reference } from '@ethersphere/bee-js'
+import { ChunkSplitter, Reference } from '@ethersphere/bee-js'
 import { readFileSync } from 'fs'
 import { Argument, LeafCommand } from 'furious-commander'
 import { RootCommand } from './root-command'
@@ -17,6 +17,6 @@ export class Hash extends RootCommand implements LeafCommand {
 
   public async run(): Promise<void> {
     super.init()
-    this.console.all(new Reference((await MerkleTree.root(readFileSync(this.path))).hash()).toHex())
+    this.console.all(new Reference((await ChunkSplitter.root(readFileSync(this.path))).hash().toUint8Array()).toHex())
   }
 }

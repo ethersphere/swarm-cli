@@ -15,7 +15,7 @@ export class Extend extends StampCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const batches = await this.bee.getAllPostageBatch()
+    const batches = await this.bee.stamp.getAll()
     const batchId = await pickStamp(this.bee, this.console)
     const batch = batches.find(b => b.batchID.toHex() === batchId)
 
@@ -23,7 +23,7 @@ export class Extend extends StampCommand implements LeafCommand {
       throw Error(`Batch with ID ${batchId} not found`)
     }
 
-    const { bzzBalance } = await this.bee.getWalletBalance()
+    const { bzzBalance } = await this.bee.wallet.getBalance()
     const mode = await this.console.promptList(['Size', 'Duration'], 'What do you want to extend?')
 
     this.console.log(`Current balance is ${bzzBalance.toDecimalString()} BZZ`)
@@ -32,7 +32,7 @@ export class Extend extends StampCommand implements LeafCommand {
       this.console.log(`Current size is ${batch.size.toFormattedString()}`)
       const wantedSize = await this.console.askForValue('New size')
       const size = Size.fromBytes(Numbers.makeStorage(wantedSize))
-      const cost = await this.bee.getSizeExtensionCost(batchId, size)
+      const cost = await this.bee.storage.getSizeExtensionCost(batchId, size)
 
       if (cost.gt(bzzBalance)) {
         this.console.error(`Need ${cost.toDecimalString()} BZZ to extend the size to ${size.toFormattedString()}`)
@@ -51,7 +51,7 @@ export class Extend extends StampCommand implements LeafCommand {
         }
 
         try {
-          await this.bee.extendStorageSize(batchId, size)
+          await this.bee.storage.extendSize(batchId, size)
         } finally {
           spinner.stop()
         }
@@ -61,7 +61,7 @@ export class Extend extends StampCommand implements LeafCommand {
       const wantedLength = await this.console.askForValue('Add duration')
       const addedDuration = Duration.fromMilliseconds(Dates.make(wantedLength))
       const totalDuration = Duration.fromMilliseconds(Dates.make(wantedLength) + batch.duration.toSeconds() * 1000)
-      const cost = await this.bee.getDurationExtensionCost(batchId, addedDuration)
+      const cost = await this.bee.storage.getDurationExtensionCost(batchId, addedDuration)
 
       if (cost.gt(bzzBalance)) {
         this.console.error(
@@ -84,7 +84,7 @@ export class Extend extends StampCommand implements LeafCommand {
         }
 
         try {
-          await this.bee.extendStorageDuration(batchId, addedDuration)
+          await this.bee.storage.extendDuration(batchId, addedDuration)
         } finally {
           spinner.stop()
         }

@@ -34,7 +34,7 @@ export class Deposit extends ChequeCommand implements LeafCommand {
 
     const amountBzz = this.unit === 'bzz' ? BZZ.fromDecimalString(this.amount) : BZZ.fromPLUR(this.amount)
 
-    const response = await this.bee.depositBZZToChequebook(amountBzz)
+    const response = await this.bee.chequebook.deposit(amountBzz)
     this.console.log(createKeyValue('Tx', response.toHex()))
     this.console.quiet(response.toHex())
   }

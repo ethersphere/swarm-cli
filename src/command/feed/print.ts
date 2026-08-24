@@ -1,5 +1,5 @@
 import { Wallet } from '@ethereumjs/wallet'
-import { MerkleTree, Topic } from '@ethersphere/bee-js'
+import { ChunkSplitter, Topic } from '@ethersphere/bee-js'
 import { Binary } from 'cafe-utility'
 import { LeafCommand, Option } from 'furious-commander'
 import { exit } from 'process'
@@ -63,7 +63,7 @@ export class Print extends FeedCommand implements LeafCommand {
       new Uint8Array(12).fill(0x0a),
     )
 
-    const root = (await MerkleTree.root(body)).hash()
+    const root = (await ChunkSplitter.root(body)).hash().toUint8Array()
 
     const manifest = Binary.uint8ArrayToHex(root)
     this.console.quiet(manifest)
@@ -78,7 +78,7 @@ export class Print extends FeedCommand implements LeafCommand {
 
     try {
       const addressString = this.address || (await this.getAddressString())
-      const reader = this.bee.makeFeedReader(topic, addressString)
+      const reader = this.bee.feed.makeReader(topic, addressString)
       const { payload, feedIndex, feedIndexNext } = await reader.download()
       // TODO: verify this
       const reference = payload
@@ -96,10 +96,10 @@ export class Print extends FeedCommand implements LeafCommand {
       if (this.list) {
         for (let i = 0; i < numberOfUpdates; i++) {
           const owner = Binary.hexToUint8Array(this.address)
-          const reader = this.bee.makeFeedReader(topic, owner)
+          const reader = this.bee.feed.makeReader(topic, owner)
           const socPayload = await reader.downloadPayload({ index: i })
-          const merkleTree = await MerkleTree.root(socPayload.payload.toUint8Array())
-          const cacAddress = Binary.uint8ArrayToHex(merkleTree.hash())
+          const merkleTree = await ChunkSplitter.root(socPayload.payload.toUint8Array())
+          const cacAddress = Binary.uint8ArrayToHex(merkleTree.hash().toUint8Array())
           this.console.log('')
           this.console.log(createKeyValue(`Update ${i}`, cacAddress))
           this.console.log(`${this.bee.url}/bzz/${cacAddress}/`)
