@@ -110,9 +110,10 @@ describeCommand(
 
     describe('deposit', () => {
       const fakeTxHash = 'a'.repeat(64)
+      const chequebookPrototype = Object.getPrototypeOf(new Bee('http://localhost:1633').chequebook)
 
       it('should deposit {amount} of BZZ to chequebook', async () => {
-        const spy = jest.spyOn(Bee.prototype.chequebook, 'deposit').mockResolvedValue(new TransactionId(fakeTxHash))
+        const spy = jest.spyOn(chequebookPrototype, 'deposit').mockResolvedValue(new TransactionId(fakeTxHash))
         await invokeTestCli(['cheque', 'deposit', '20'])
         expect(spy).toHaveBeenCalledWith(BZZ.fromDecimalString('20'))
         expect(getLastMessage()).toContain('Tx:')
@@ -120,7 +121,7 @@ describeCommand(
       })
 
       it('should deposit {amount} of PLUR to chequebook', async () => {
-        const spy = jest.spyOn(Bee.prototype.chequebook, 'deposit').mockResolvedValue(new TransactionId(fakeTxHash))
+        const spy = jest.spyOn(chequebookPrototype, 'deposit').mockResolvedValue(new TransactionId(fakeTxHash))
         await invokeTestCli(['cheque', 'deposit', '15', '--unit', 'plur'])
         expect(spy).toHaveBeenCalledWith(BZZ.fromPLUR('15'))
         expect(getLastMessage()).toContain('Tx:')
@@ -130,9 +131,10 @@ describeCommand(
 
     describe('withdraw', () => {
       const fakeTxHash = 'a'.repeat(64)
+      const chequebookPrototype = Object.getPrototypeOf(new Bee('http://localhost:1633').chequebook)
 
       it('should withdraw {amount} of BZZ from chequebook', async () => {
-        const spy = jest.spyOn(Bee.prototype.chequebook, 'withdraw').mockResolvedValue(new TransactionId(fakeTxHash))
+        const spy = jest.spyOn(chequebookPrototype, 'withdraw').mockResolvedValue(new TransactionId(fakeTxHash))
         await invokeTestCli(['cheque', 'withdraw', '20'])
         expect(spy).toHaveBeenCalledWith(BZZ.fromDecimalString('20'))
         expect(getLastMessage()).toContain('Tx:')
@@ -140,7 +142,7 @@ describeCommand(
       })
 
       it('should withdraw {amount} of PLUR from chequebook', async () => {
-        const spy = jest.spyOn(Bee.prototype.chequebook, 'withdraw').mockResolvedValue(new TransactionId(fakeTxHash))
+        const spy = jest.spyOn(chequebookPrototype, 'withdraw').mockResolvedValue(new TransactionId(fakeTxHash))
         await invokeTestCli(['cheque', 'withdraw', '15', '--unit', 'plur'])
         expect(spy).toHaveBeenCalledWith(BZZ.fromPLUR('15'))
         expect(getLastMessage()).toContain('Tx:')
