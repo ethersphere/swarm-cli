@@ -305,18 +305,12 @@ describeCommand('Test Manifest command', ({ consoleMessages, hasMessageContainin
 
   it('should handle error for invalid download hash', async () => {
     await invokeTestCli(['manifest', 'download', 'g'.repeat(64)])
-    expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR +
-        ' expected hex string (origin=string, code=invalid_format, format=regex, pattern=/^(?:0x)?[0-9a-fA-F]*$/i)',
-    )
+    expect(consoleMessages[0]).toContain(FORMATTED_ERROR + ` Bytes#constructor: invalid hex string: ${'g'.repeat(64)}`)
   })
 
   it('should handle error for invalid list hash', async () => {
     await invokeTestCli(['manifest', 'list', 'g'.repeat(64)])
-    expect(consoleMessages[0]).toContain(
-      FORMATTED_ERROR +
-        ' expected hex string (origin=string, code=invalid_format, format=regex, pattern=/^(?:0x)?[0-9a-fA-F]*$/i)',
-    )
+    expect(consoleMessages[0]).toContain(FORMATTED_ERROR + ` Bytes#constructor: invalid hex string: ${'g'.repeat(64)}`)
   })
 
   it('should handle error for 404 download hash', async () => {
