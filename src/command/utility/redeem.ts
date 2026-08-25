@@ -45,7 +45,7 @@ export class Redeem extends RootCommand implements LeafCommand {
 
     if (!this.target) {
       this.console.log('Fetching Bee wallet address...')
-      const { ethereum } = await this.bee.getNodeAddresses()
+      const { ethereum } = await this.bee.connectivity.getNodeAddresses()
       this.target = ethereum.toHex()
     }
 

@@ -34,7 +34,7 @@ export default async (): Promise<Config.InitialOptions> => {
     const startedAt = Date.now()
     console.log('Waiting for Bee node to warm up on port', port)
 
-    await System.waitFor(async () => (await bee.getStatus()).isWarmingUp === false, {
+    await System.waitFor(async () => (await bee.status.get()).isWarmingUp === false, {
       attempts: 300,
       waitMillis: Dates.seconds(1),
       requiredConsecutivePasses: 3,
@@ -48,7 +48,7 @@ export default async (): Promise<Config.InitialOptions> => {
     const bee = new Bee(`http://localhost:${port}`)
 
     console.log('Asserting chequebook balance on port', port)
-    const chequebookBalance = await bee.getChequebookBalance()
+    const chequebookBalance = await bee.chequebook.getBalance()
 
     if (!chequebookBalance.totalBalance.eq(BZZ.fromDecimalString('10'))) {
       throw Error('Chequebook total balance is not 10 xBZZ: ' + chequebookBalance.totalBalance.toDecimalString())

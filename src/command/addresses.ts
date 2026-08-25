@@ -15,9 +15,9 @@ export class Addresses extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    this.nodeAddresses = await this.bee.getNodeAddresses()
-    const wrappedChequebookAddress = await this.bee
-      .getChequebookAddress()
+    this.nodeAddresses = await this.bee.connectivity.getNodeAddresses()
+    const wrappedChequebookAddress = await this.bee.chequebook
+      .getAddress()
       .then(x => {
         return Optional.of(x)
       })

@@ -32,7 +32,7 @@ export class Reupload extends RootCommand implements LeafCommand {
 
     this.console.log('Reuploading ' + this.address + '...')
     try {
-      await this.bee.reuploadPinnedData(this.stamp, this.address)
+      await this.bee.pin.reuploadData(this.stamp, this.address)
       this.console.log('Reuploaded successfully.')
 
       if (this.commandConfig.config.historyEnabled) {

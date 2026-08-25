@@ -12,7 +12,7 @@ export class Withdraw extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const surplusStake = await this.bee.getWithdrawableStake()
+    const surplusStake = await this.bee.stake.getWithdrawable()
 
     if (surplusStake.eq(BZZ.fromDecimalString('0'))) {
       this.console.log('There is no surplus stake to withdraw.')
@@ -36,7 +36,7 @@ export class Withdraw extends RootCommand implements LeafCommand {
       spinner.start()
     }
     try {
-      await this.bee.withdrawSurplusStake()
+      await this.bee.stake.withdrawSurplus()
       spinner.stop()
 
       this.console.log(

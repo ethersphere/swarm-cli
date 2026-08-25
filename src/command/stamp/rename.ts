@@ -25,7 +25,7 @@ export class Rename extends StampCommand implements LeafCommand {
       this.label = await this.console.askForValue('Please provide a new label for the postage stamp:')
     }
 
-    await this.bee.updatePostageBatchLabel(this.stamp, this.label)
+    await this.bee.stamp.updateLabel(this.stamp, this.label)
 
     this.console.log(`Postage stamp ${this.stamp} has been successfully renamed to '${this.label}'`)
     this.console.log(`Check it later with swarm-cli stamp show ${this.stamp}`)

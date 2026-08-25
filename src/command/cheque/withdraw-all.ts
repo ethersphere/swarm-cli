@@ -12,7 +12,7 @@ export class WithdrawAll extends ChequeCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const balance = await this.bee.getChequebookBalance()
+    const balance = await this.bee.chequebook.getBalance()
 
     if (balance.availableBalance.toPLURBigInt() === BigInt(0)) {
       this.console.error('No tokens to withdraw.')
@@ -20,7 +20,7 @@ export class WithdrawAll extends ChequeCommand implements LeafCommand {
       return
     }
     this.console.log(`Withdrawing ${balance.availableBalance.toDecimalString()} xBZZ from the chequebook`)
-    const response = await this.bee.withdrawTokens(balance.availableBalance.toPLURString())
+    const response = await this.bee.chequebook.withdraw(balance.availableBalance.toPLURString())
     this.console.log(createKeyValue('Tx', response.toHex()))
     this.console.quiet(response.toHex())
   }

@@ -63,8 +63,8 @@ export class FeedCommand extends RootCommand {
 
     this.console.quiet(manifest.toHex())
 
-    if (!this.quiet && !(await this.bee.isGateway())) {
-      printStamp(await this.bee.getPostageBatch(stamp), this.console, { shortenBatchId: true })
+    if (!this.quiet && !(await this.bee.connectivity.isGateway())) {
+      printStamp(await this.bee.stamp.get(stamp), this.console, { shortenBatchId: true })
     }
 
     return manifest
@@ -110,9 +110,9 @@ export class FeedCommand extends RootCommand {
     }
 
     try {
-      const writer = this.bee.makeFeedWriter(topic, wallet.getPrivateKey())
-      const feedManifestResult = await this.bee.createFeedManifest(stamp, topic, wallet.getAddressString())
-      const data = await this.bee.downloadData(chunkReference)
+      const writer = this.bee.feed.makeWriter(topic, wallet.getPrivateKey())
+      const feedManifestResult = await this.bee.feed.createManifest(stamp, topic, wallet.getAddressString())
+      const data = await this.bee.data.download(chunkReference)
       const { reference } = await writer.uploadPayload(stamp, data.toUint8Array())
 
       return { reference, manifest: feedManifestResult }

@@ -84,8 +84,8 @@ export class Create extends StampCommand implements LeafCommand {
     this.console.log(createKeyValue('Capacity', size.toFormattedString()))
     this.console.log(createKeyValue('TTL', Dates.secondsToHumanTime(duration.toSeconds())))
 
-    const estimatedCost = await this.bee.getStorageCost(size, duration)
-    const { bzzBalance } = await this.bee.getWalletBalance()
+    const estimatedCost = await this.bee.storage.getCost(size, duration)
+    const { bzzBalance } = await this.bee.wallet.getBalance()
 
     if (estimatedCost.gt(bzzBalance)) {
       this.console.error('You do not have enough BZZ to create this postage stamp.')
@@ -119,7 +119,7 @@ export class Create extends StampCommand implements LeafCommand {
     }
 
     try {
-      const batchId = await this.bee.buyStorage(size, duration, {
+      const batchId = await this.bee.storage.buy(size, duration, {
         label: this.label,
         immutableFlag: this.immutable,
         waitForUsable: true,

@@ -38,18 +38,18 @@ export class Download extends RootCommand implements LeafCommand {
         this.console.error('Invalid access format. Expected format: publisher:historyAddress')
         process.exit(1)
       }
-      const responseAct = await this.bee.downloadFile(this.address.hash, this.manifestDownload.destination, {
+      const responseAct = await this.bee.file.download(this.address.hash, this.manifestDownload.destination, {
         actPublisher: publisher,
         actHistoryAddress: historyAddress,
       })
       response = responseAct.data
     } else {
       if (this.address.hash.length === 128) {
-        const fileData = await this.bee.downloadFile(this.address.hash, undefined)
+        const fileData = await this.bee.file.download(this.address.hash, undefined)
         nameOverride = fileData.name
         response = fileData.data
       } else {
-        response = await this.bee.downloadData(this.address.hash, undefined)
+        response = await this.bee.data.download(this.address.hash, undefined)
       }
     }
 

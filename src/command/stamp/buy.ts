@@ -69,7 +69,7 @@ export class Buy extends StampCommand implements LeafCommand {
       return
     }
 
-    const chainState = await this.bee.getChainState()
+    const chainState = await this.bee.status.getChainState()
     const minimumAmount = BigInt(chainState.currentPrice) * 17280n
 
     if (minimumAmount >= this.amount) {
@@ -79,7 +79,7 @@ export class Buy extends StampCommand implements LeafCommand {
     }
 
     const estimatedCost = Utils.getStampCost(this.depth, BigInt(this.amount))
-    const { bzzBalance } = await this.bee.getWalletBalance()
+    const { bzzBalance } = await this.bee.wallet.getBalance()
 
     if (estimatedCost.gt(bzzBalance)) {
       this.console.error('You do not have enough BZZ to create this postage stamp.')
@@ -122,7 +122,7 @@ export class Buy extends StampCommand implements LeafCommand {
     }
 
     try {
-      const batchId = await this.bee.createPostageBatch(this.amount.toString(), this.depth, {
+      const batchId = await this.bee.stamp.create(this.amount.toString(), this.depth, {
         label: this.label,
         gasPrice: this.gasPrice?.toString(),
         immutableFlag: this.immutable,

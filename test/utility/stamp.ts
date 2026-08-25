@@ -4,7 +4,7 @@ import { Numbers } from 'cafe-utility'
 
 export const getOrBuyStamp = async (): Promise<BatchId> => {
   const bee = new Bee('http://localhost:1633')
-  const availableStamps = await bee.getAllPostageBatch()
+  const availableStamps = await bee.stamp.getAll()
 
   const [existingStamp] = availableStamps
 
@@ -16,7 +16,7 @@ export const getOrBuyStamp = async (): Promise<BatchId> => {
   }
 
   console.log('Buying new stamp.')
-  const newStamp = await bee.createPostageBatch(Numbers.make('2b').toString(), 22, { waitForUsable: true })
+  const newStamp = await bee.stamp.create(Numbers.make('2b').toString(), 22, { waitForUsable: true })
   console.log('Bought stamp: ', newStamp.toHex())
 
   return newStamp

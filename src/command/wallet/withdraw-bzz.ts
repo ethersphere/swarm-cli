@@ -45,7 +45,7 @@ export class WithdrawBZZ extends RootCommand implements LeafCommand {
       return
     }
 
-    const transaction = await this.bee.withdrawBZZToExternalWallet(amount, this.address)
+    const transaction = await this.bee.wallet.withdrawBZZ(amount, this.address)
     this.console.log(createKeyValue('Transaction', transaction.represent()))
     this.console.log(createKeyValue('URL', `https://gnosisscan.io/tx/0x${transaction.represent()}`))
   }

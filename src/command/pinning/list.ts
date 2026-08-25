@@ -13,7 +13,7 @@ export class List extends PinningCommand implements LeafCommand {
     await super.init()
     this.console.info('Getting pinned root hashes...')
 
-    const pins = await this.bee.getAllPins()
+    const pins = await this.bee.pin.getAll()
 
     this.console.log(chalk.bold(`Found ${pins.length} pinned root hashes`))
     this.console.log('')

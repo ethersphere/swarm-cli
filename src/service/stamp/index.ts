@@ -15,7 +15,7 @@ import { createKeyValue, formatDate } from '../../utils/text'
  * @returns {Promise<string>} Hex representation of the Stamp ID.
  */
 export async function pickStamp(bee: Bee, console: CommandLog): Promise<string> {
-  const stamps = await bee.getAllPostageBatch()
+  const stamps = await bee.stamp.getAll()
 
   const choices = stamps
     .filter(stamp => stamp.usable || stamp.duration.toSeconds() > 1)

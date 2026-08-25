@@ -37,7 +37,7 @@ export class Revoke extends AccessCommand implements LeafCommand {
     const stampId = lastHistoryEvent.stampId
     const granteeListRef = lastHistoryEvent.granteeListRef
     const historyAddress = lastHistoryEvent.historyAddress
-    const response = await this.bee.patchGrantees(stampId, granteeListRef, historyAddress, { revoke: this.grantees })
+    const response = await this.bee.grantee.patch(stampId, granteeListRef, historyAddress, { revoke: this.grantees })
 
     if (response.status === 200) {
       this.console.log(successText(`Access revoked from ${this.grantees.join(', ')}`))

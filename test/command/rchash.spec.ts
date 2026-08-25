@@ -12,7 +12,7 @@ describeCommand('Test Utility rchash command', ({ consoleMessages }) => {
     await System.waitFor(
       async () => {
         const bee = new Bee('http://localhost:1633')
-        const status = await bee.getStatus()
+        const status = await bee.status.get()
 
         return status.isWarmingUp === false
       },
@@ -26,7 +26,7 @@ describeCommand('Test Utility rchash command', ({ consoleMessages }) => {
     await System.waitFor(
       async () => {
         const bee = new Bee('http://localhost:1633')
-        const status = await bee.getStatus()
+        const status = await bee.status.get()
 
         return status.isWarmingUp === false
       },

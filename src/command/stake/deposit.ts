@@ -44,7 +44,7 @@ export class Deposit extends RootCommand implements LeafCommand {
   }
 
   private async deposit(amount: BZZ): Promise<void> {
-    const currentStake = await this.bee.getStake()
+    const currentStake = await this.bee.stake.get()
 
     if (currentStake.lt(MIN_DEPOSIT) && amount.lt(MIN_DEPOSIT)) {
       if (this.quiet) {
@@ -69,7 +69,7 @@ export class Deposit extends RootCommand implements LeafCommand {
     }
 
     if (!this.quiet && !this.yes) {
-      const reserveState = await this.bee.getReserveState()
+      const reserveState = await this.bee.status.getReserveState()
       const reserveCapacityDoubling = reserveState.reserveCapacityDoubling
 
       if (amount.eq(BZZ.fromDecimalString('10')) && reserveCapacityDoubling > 0) {
@@ -99,7 +99,7 @@ export class Deposit extends RootCommand implements LeafCommand {
     }
 
     try {
-      await this.bee.depositStake(amount)
+      await this.bee.stake.deposit(amount)
       spinner.stop()
     } catch (e) {
       spinner.stop()

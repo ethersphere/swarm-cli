@@ -74,7 +74,7 @@ export class Cashout extends ChequeCommand implements LeafCommand {
     try {
       this.console.log(chalk.green('Cashing out:'))
       this.printCheque({ address, amount })
-      const transaction = await this.bee.cashoutLastCheque(address, {
+      const transaction = await this.bee.cheque.cashoutLast(address, {
         gasLimit: this.gasLimit,
         gasPrice: this.gasPrice,
       })

@@ -5,7 +5,7 @@ export class PinningCommand extends RootCommand {
   protected override async init(): Promise<void> {
     super.init()
 
-    if (await this.bee.isGateway()) {
+    if (await this.bee.connectivity.isGateway()) {
       this.console.error('Pinning is currently not supported on the gateway node.')
       this.console.error('You can use the pinning API with your local Bee node.')
 

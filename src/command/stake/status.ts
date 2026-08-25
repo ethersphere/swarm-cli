@@ -10,8 +10,8 @@ export class Status extends RootCommand implements LeafCommand {
   public async run(): Promise<void> {
     super.init()
 
-    const stake = await this.bee.getStake()
-    const surplusStake = await this.bee.getWithdrawableStake()
+    const stake = await this.bee.stake.get()
+    const surplusStake = await this.bee.stake.getWithdrawable()
 
     this.console.log(createKeyValue('Staked xBZZ', stake.toDecimalString()))
     this.console.log(createKeyValue('Withdrawable staked xBZZ', surplusStake.toDecimalString()))

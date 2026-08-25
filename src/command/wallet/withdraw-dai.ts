@@ -45,7 +45,7 @@ export class WithdrawDAI extends RootCommand implements LeafCommand {
       return
     }
 
-    const transaction = await this.bee.withdrawDAIToExternalWallet(amount, this.address)
+    const transaction = await this.bee.wallet.withdrawDAI(amount, this.address)
     this.console.log(createKeyValue('Transaction', transaction.represent()))
     this.console.log(createKeyValue('URL', `https://gnosisscan.io/tx/0x${transaction.represent()}`))
   }
