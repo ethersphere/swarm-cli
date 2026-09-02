@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.5.0...v3.6.0) (2026-09-02)
+
+
+### Features
+
+* trigger re-release of 3.5.0 ([#787](https://www.github.com/ethersphere/swarm-cli/issues/787)) ([7020da5](https://www.github.com/ethersphere/swarm-cli/commit/7020da5ab531bc200f47a4bacc04f32e95f32a17))
+
 ## [3.5.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.4.0...v3.5.0) (2026-08-25)
 
 
