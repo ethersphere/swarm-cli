@@ -21,6 +21,31 @@ describeCommand('Postage stamp prompt', ({ consoleMessages, getNthLastMessage })
     })
   })
 
+  describe('Stamp type', () => {
+    it('stamp create should prompt for immutable or mutable', async () => {
+      jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: 'Mutable' }).mockResolvedValueOnce({ value: false })
+      await invokeTestCli(['stamp', 'create', '--capacity', '1GB', '--ttl', '1d'])
+      expect(inquirer.prompt).toHaveBeenCalledWith({
+        message: 'Type',
+        name: 'value',
+        prefix: chalk.bold.cyan('?'),
+        type: 'list',
+        choices: ['Immutable', 'Mutable'],
+        loop: false,
+      })
+      expect(consoleMessages).toContain(createKeyValue('Type', 'Mutable'))
+    })
+
+    it('stamp create should not prompt for type when it is given', async () => {
+      const prompt = jest.spyOn(inquirer, 'prompt')
+      prompt.mockClear()
+      prompt.mockResolvedValueOnce({ value: false })
+      await invokeTestCli(['stamp', 'create', '--capacity', '1GB', '--ttl', '1d', '--immutable', 'false'])
+      expect(prompt).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'list' }))
+      expect(consoleMessages).toContain(createKeyValue('Type', 'Mutable'))
+    })
+  })
+
   describe('Rename postage stamp', () => {
     it('should prompt for new name', async () => {
       jest.spyOn(inquirer, 'prompt').mockResolvedValueOnce({ value: 'new-stamp-name' })

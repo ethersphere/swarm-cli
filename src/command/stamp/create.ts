@@ -1,7 +1,7 @@
 import { BatchId, Duration, Size } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import chalk from 'chalk'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option, Utils } from 'furious-commander'
 import { exit } from 'process'
 import { isChainStateReady } from '../../utils/chainsync'
 import { createSpinner } from '../../utils/spinner'
@@ -43,6 +43,10 @@ export class Create extends StampCommand implements LeafCommand {
 
   public postageBatchId!: BatchId
 
+  private shouldAskForImmutable(): boolean {
+    return !this.quiet && !this.yes && Utils.getSourcemap()['immutable'] === 'default'
+  }
+
   public async run(): Promise<void> {
     super.init()
 
@@ -78,6 +82,14 @@ export class Create extends StampCommand implements LeafCommand {
       this.console.error('The minimum TTL is 1 day')
 
       return
+    }
+
+    if (this.shouldAskForImmutable()) {
+      this.console.log('Please select the type of the postage stamp')
+      this.console.log(`${chalk.bold('Immutable')}: at full capacity, new uploads are rejected`)
+      this.console.log(`${chalk.bold('Mutable')}: at full capacity, new uploads overwrite old content`)
+      this.immutable = (await this.console.promptList(['Immutable', 'Mutable'], 'Type')) === 'Immutable'
+      this.console.log('')
     }
 
     this.console.log('You have provided the following parameters:')
