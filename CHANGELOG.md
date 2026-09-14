@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.6.0...v3.7.0) (2026-09-14)
+
+
+### Features
+
+* prompt user for stamp type, when flag not set ([#792](https://www.github.com/ethersphere/swarm-cli/issues/792)) ([9a5a783](https://www.github.com/ethersphere/swarm-cli/commit/9a5a783180aaee0c366e371d5d8aea0be69121cf))
+
 ## [3.6.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.5.0...v3.6.0) (2026-09-02)
 
 
