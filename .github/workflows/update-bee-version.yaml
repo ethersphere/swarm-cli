@@ -6,9 +6,12 @@ on:
       version:
         description: 'Bee version (e.g. v2.9.0)'
         required: true
+  # Sent by ethersphere/bee when a stable Bee tag is pushed.
+  repository_dispatch:
+    types: [bee-released]
 
 env:
-  VERSION: ${{ github.event.inputs.version }}
+  VERSION: ${{ github.event.inputs.version || github.event.client_payload.version }}
 
 jobs:
   update-bee-version:
