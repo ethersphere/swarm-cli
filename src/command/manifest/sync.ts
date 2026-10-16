@@ -1,6 +1,7 @@
 import { MantarayNode, RedundancyLevel } from '@ethersphere/bee-js'
 import {
   ChunkSplitter,
+  getMaxShards,
   makeErasureBatch,
   makeIntermediateChunkHandler,
   MantarayNode as CoreMantarayNode,
@@ -47,7 +48,7 @@ export class Sync extends RootCommand implements LeafCommand {
     const onBatch = makeErasureBatch(level, false, async () => {
       // no-op: only the resulting hash is needed here, nothing to persist
     })
-    const splitter = new ChunkSplitter(onBatch, undefined, false, makeIntermediateChunkHandler(level))
+    const splitter = new ChunkSplitter(onBatch, getMaxShards(level, false), false, makeIntermediateChunkHandler(level))
     await splitter.append(data)
     const root = await splitter.finalize()
 
