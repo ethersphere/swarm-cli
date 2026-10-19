@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.6.0...v3.7.0) (2026-10-19)
+
+
+### Features
+
+* prompt user for stamp type, when flag not set ([#792](https://www.github.com/ethersphere/swarm-cli/issues/792)) ([9a5a783](https://www.github.com/ethersphere/swarm-cli/commit/9a5a783180aaee0c366e371d5d8aea0be69121cf))
+
+
+### Bug Fixes
+
+* bee-js import ([#796](https://www.github.com/ethersphere/swarm-cli/issues/796)) ([edd85d4](https://www.github.com/ethersphere/swarm-cli/commit/edd85d456f90328770af0405d0e011d990f0f060))
+
 ## [3.6.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.5.0...v3.6.0) (2026-09-02)
 
 
