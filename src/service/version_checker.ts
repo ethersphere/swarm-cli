@@ -1,7 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import PackageJson from '../../package.json'
 import { CommandConfig } from '../command/root-command/command-config'
-import fetch from 'node-fetch'
 import { Dates } from 'cafe-utility'
 
 const LATEST_RELEASE_URL = 'https://api.github.com/repos/ethersphere/swarm-cli/releases/latest'

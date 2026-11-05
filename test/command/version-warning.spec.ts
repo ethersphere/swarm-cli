@@ -1,10 +1,8 @@
-import fetch, { Response } from 'node-fetch'
 import PackageJson from '../../package.json'
 import { describeCommand, invokeTestCli } from '../utility'
 import { existsSync, unlinkSync } from 'fs'
 
-jest.mock('node-fetch')
-const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+const realFetch = global.fetch
 
 describeCommand('Test Outdated Version Warning', ({ hasMessageContaining }) => {
   afterEach(() => {
@@ -14,10 +12,13 @@ describeCommand('Test Outdated Version Warning', ({ hasMessageContaining }) => {
   })
   it('should print warning when version is outdated', async () => {
     process.env.SKIP_VERSION_CHECK = 'false'
-    mockedFetch.mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ tag_name: 'v999.0.0' }),
-    } as unknown as Response)
+    jest
+      .spyOn(global, 'fetch')
+      .mockImplementation((input, init) =>
+        String(input).includes('api.github.com')
+          ? Promise.resolve({ ok: true, json: () => Promise.resolve({ tag_name: 'v999.0.0' }) } as Response)
+          : realFetch(input, init),
+      )
     await invokeTestCli(['status'])
     await invokeTestCli(['status'])
     expect(
