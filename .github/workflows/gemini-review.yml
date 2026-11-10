@@ -2,8 +2,14 @@
 # Fails on high/critical findings. Human approval is STILL required: this is
 # an extra gate, never a replacement. If it blocks wrongly, @devops can bypass.
 #
-# SECURITY: pull_request_target runs the workflow from the BASE branch with
-# secrets, so a PR cannot modify this file to steal the key. This job
+# AUTH: keyless. The job gets a GitHub OIDC token and exchanges it via GCP
+# Workload Identity Federation (project ethswarm-ci-gemini) for a short-lived
+# token of a service account that can only call Vertex AI predict. The WIF
+# provider only accepts this exact workflow file, event pull_request_target,
+# environment gemini-review and the repo's protected base branch.
+#
+# SECURITY: pull_request_target runs the workflow from the BASE branch, so a PR
+# cannot modify this file to obtain the token. This job
 # therefore must NEVER check out or execute PR code. It only fetches the diff
 # as text through the API, pinned to the exact base/head SHAs of the triggering
 # event (so a later push cannot swap what gets marked green), and data is passed
@@ -26,14 +32,30 @@ jobs:
   gemini-review:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # The key lives in this environment, which only protected base branches may use,
-    # so a workflow pushed to a side branch cannot read it.
+    # Only protected base branches may use this environment, and the WIF provider
+    # requires it, so a workflow pushed to a side branch cannot get a token.
     environment: gemini-review
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
     steps:
+      - name: Authenticate to Google Cloud (Workload Identity Federation)
+        id: gcp
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: projects/119058812833/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: gemini-review@ethswarm-ci-gemini.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_lifetime: 900s
+          create_credentials_file: false
+          export_environment_variables: false
+
       - name: Review diff with Gemini
         env:
           GH_TOKEN: ${{ github.token }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GCP_TOKEN: ${{ steps.gcp.outputs.access_token }}
+          GCP_PROJECT: ethswarm-ci-gemini
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
@@ -43,8 +65,8 @@ jobs:
           MAX_FILES: "300"
         run: |
           set -euo pipefail
-          [ -n "$GEMINI_API_KEY" ] || { echo "::error::GEMINI_API_KEY secret not available"; exit 1; }
-          [[ "$GEMINI_MODEL" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "::error::GEMINI_MODEL org variable unset or invalid"; exit 1; }
+          [ -n "$GCP_TOKEN" ] || { echo "::error::no GCP access token from Workload Identity Federation"; exit 1; }
+          [[ "$GEMINI_MODEL" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "::error::GEMINI_MODEL environment variable unset or invalid"; exit 1; }
 
           # Pin everything to the event's SHAs, not the live PR state.
           gh api "repos/$REPO/compare/$BASE_SHA...$HEAD_SHA" -H "Accept: application/vnd.github.diff" > diff.txt
@@ -113,11 +135,11 @@ jobs:
           }' > req.json
 
           HTTP=$(curl -sS -g -o resp.json -w '%{http_code}' --max-time 300 \
-            -H "x-goog-api-key: $GEMINI_API_KEY" -H "Content-Type: application/json" \
-            "https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent" \
+            -H "Authorization: Bearer $GCP_TOKEN" -H "Content-Type: application/json" \
+            "https://aiplatform.googleapis.com/v1/projects/${GCP_PROJECT}/locations/global/publishers/google/models/${GEMINI_MODEL}:generateContent" \
             --data-binary @req.json) || HTTP=000
           if [ "$HTTP" != 200 ]; then
-            echo "::error::Gemini API call failed (HTTP $HTTP)"; [ -s resp.json ] && jq -r '.error.message // empty' resp.json | head -5; exit 1
+            echo "::error::Vertex AI Gemini call failed (HTTP $HTTP)"; [ -s resp.json ] && jq -r '.error.message // empty' resp.json | head -5; exit 1
           fi
           FINISH=$(jq -r '.candidates[0].finishReason // "NONE"' resp.json)
           if [ "$FINISH" != STOP ]; then
