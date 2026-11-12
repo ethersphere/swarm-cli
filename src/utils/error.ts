@@ -47,7 +47,7 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
   }
 
   if (process.env.SWARM_CLI_PRINT_STACK === 'true' && error?.stack) {
-    printer.printError(String(error.stack))
+    process.stderr.write(String(error.stack) + '\n')
   }
 
   // bee-js validates with zod; a ZodError.message is a JSON blob of issues.
