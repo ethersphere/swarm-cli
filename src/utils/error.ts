@@ -46,6 +46,10 @@ export function errorHandler(error: any, options?: BeeErrorOptions): void {
     process.exitCode = 1
   }
 
+  if (process.env.SWARM_CLI_PRINT_STACK === 'true' && error?.stack) {
+    process.stderr.write(String(error.stack) + '\n')
+  }
+
   // bee-js validates with zod; a ZodError.message is a JSON blob of issues.
   // Flatten each issue into a readable line that shows where the violation came from.
   if (error?.name === 'ZodError' && Array.isArray(error?.issues)) {

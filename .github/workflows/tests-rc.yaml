@@ -11,6 +11,7 @@ on:
 env:
   BEE_API_URL: 'http://localhost:1633'
   BEE_PEER_API_URL: 'http://localhost:11633'
+  SWARM_CLI_PRINT_STACK: 'true'
 
 jobs:
   tests-bee-rc:
