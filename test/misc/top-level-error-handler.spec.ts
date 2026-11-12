@@ -7,6 +7,32 @@ function expectErrorsToDeepEqual(actual: string[], expected: string[]): void {
 }
 
 describeCommand('Top-Level Error Handler', ({ consoleMessages }) => {
+  const printStack = process.env.SWARM_CLI_PRINT_STACK
+
+  beforeEach(() => {
+    delete process.env.SWARM_CLI_PRINT_STACK
+  })
+
+  afterAll(() => {
+    if (printStack !== undefined) {
+      process.env.SWARM_CLI_PRINT_STACK = printStack
+    }
+  })
+
+  it('should print the stack trace first when SWARM_CLI_PRINT_STACK is true', async () => {
+    process.env.SWARM_CLI_PRINT_STACK = 'true'
+    jest.spyOn(Utils, 'getSourcemap').mockImplementation(() => {
+      throw Error('Oops!')
+    })
+    await invokeTestCli(['status'])
+    expect(consoleMessages[0]).toMatch(/^Error: Oops!\n\s+at /)
+    expect(consoleMessages.slice(1)).toStrictEqual([
+      FORMATTED_ERROR + ' Oops!',
+      '',
+      'There may be additional information in the Bee logs.',
+    ])
+  })
+
   it('should handle normal errors', async () => {
     jest.spyOn(Utils, 'getSourcemap').mockImplementation(() => {
       throw Error('Oops!')
