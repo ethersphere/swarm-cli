@@ -1,5 +1,13 @@
 # Changelog
 
+### [3.7.1](https://www.github.com/ethersphere/swarm-cli/compare/v3.7.0...v3.7.1) (2026-11-12)
+
+
+### Bug Fixes
+
+* set neighborhood-suggester to empty ([#804](https://www.github.com/ethersphere/swarm-cli/issues/804)) ([47ddd19](https://www.github.com/ethersphere/swarm-cli/commit/47ddd191f58132e737fdf201ec48cbc426b4cb71))
+* show stack trace at error ([#806](https://www.github.com/ethersphere/swarm-cli/issues/806)) ([b3f7ae4](https://www.github.com/ethersphere/swarm-cli/commit/b3f7ae4375f3211dbf582a8155faf5b8e8218a0a))
+
 ## [3.7.0](https://www.github.com/ethersphere/swarm-cli/compare/v3.6.0...v3.7.0) (2026-10-19)
 
 
