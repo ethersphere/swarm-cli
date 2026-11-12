@@ -1,15 +1,13 @@
 import inquirer from 'inquirer'
 import { describeCommand, invokeTestCli } from '../utility'
 import { existsSync, readFileSync, unlinkSync } from 'fs'
-import fetch, { Response } from 'node-fetch'
-jest.mock('node-fetch')
 
-const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
+const mockedFetch = jest.spyOn(global, 'fetch')
 
 function mockFetchSuccess() {
   mockedFetch.mockResolvedValue({
     arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)),
-  } as unknown as Response)
+  } as Response)
 }
 
 describeCommand('Test Quickstart command', () => {

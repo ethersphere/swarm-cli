@@ -2,7 +2,6 @@ import { Strings } from 'cafe-utility'
 import { execSync } from 'child_process'
 import { existsSync, writeFileSync } from 'fs'
 import { LeafCommand } from 'furious-commander'
-import fetch from 'node-fetch'
 import { RootCommand } from './root-command'
 
 const archTable = {
