@@ -65,7 +65,8 @@ mainnet: true
 resolver-options: ["https://ethereum-rpc.publicnode.com"]
 storage-incentives-enable: false
 swap-enable: ${type === 'light' ? 'true' : 'false'}
-password: "${Strings.randomAlphanumeric(20)}"`,
+password: "${Strings.randomAlphanumeric(20)}"
+neighborhood-suggester: ""`,
     )
 
     this.console.info('')
