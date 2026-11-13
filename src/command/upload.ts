@@ -1,12 +1,12 @@
 import { BeeRequestOptions, FileUploadOptions, Reference, RedundancyLevel, Tag, Utils } from '@ethersphere/bee-js'
 import { Numbers, Optional, System } from 'cafe-utility'
 import chalk from 'chalk'
-import { Presets, SingleBar } from 'cli-progress'
 import * as FS from 'fs'
 import { Argument, LeafCommand, Option } from '../../vendor/commander'
 import { join, parse } from 'path'
 import { exit } from 'process'
 import { setCurlStore } from '../curl'
+import { ProgressBar } from '../utils/progress'
 import { AccessHistory } from '../service/access'
 import { AccessHistoryOperation } from '../service/access/types/history-event'
 import { History } from '../service/history'
@@ -380,7 +380,7 @@ export class Upload extends RootCommand implements LeafCommand {
     const pollingTrials = this.syncPollingTrials
     let synced = false
     let syncProgress = 0
-    const progressBar = new SingleBar({ clearOnComplete: true }, Presets.rect)
+    const progressBar = new ProgressBar()
 
     if (this.verbosity !== VerbosityLevel.Quiet && !this.curl) {
       progressBar.start(tag.split, 0)

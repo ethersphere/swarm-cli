@@ -14,7 +14,6 @@
         "@ethersphere/core-sdk": "^0.2.2",
         "cafe-utility": "^33.3.1",
         "chalk": "^2.4.2",
-        "cli-progress": "^3.11.2",
         "cli-table3": "^0.6.5",
         "ethers": "^6.16.0",
         "inquirer": "^8.2.5",
@@ -26,7 +25,6 @@
       },
       "devDependencies": {
         "@commitlint/config-conventional": "^11.0.0",
-        "@types/cli-progress": "^3.8.0",
         "@types/inquirer": "^8.2.5",
         "@types/jest": "^29.2.3",
         "@types/node": "^24.9.2",
@@ -1784,15 +1782,6 @@
         "@babel/types": "^7.3.0"
       }
     },
-    "node_modules/@types/cli-progress": {
-      "version": "3.9.2",
-      "resolved": "https://registry.npmjs.org/@types/cli-progress/-/cli-progress-3.9.2.tgz",
-      "integrity": "sha512-VO5/X5Ij+oVgEVjg5u0IXVe3JQSKJX+Ev8C5x+0hPy0AuWyW+bF8tbajR7cPFnDGhs7pidztcac+ccrDtk5teA==",
-      "dev": true,
-      "dependencies": {
-        "@types/node": "*"
-      }
-    },
     "node_modules/@types/graceful-fs": {
       "version": "4.1.5",
       "resolved": "https://registry.npmjs.org/@types/graceful-fs/-/graceful-fs-4.1.5.tgz",
@@ -2615,17 +2604,6 @@
       },
       "engines": {
         "node": ">=8"
-      }
-    },
-    "node_modules/cli-progress": {
-      "version": "3.11.2",
-      "resolved": "https://registry.npmjs.org/cli-progress/-/cli-progress-3.11.2.tgz",
-      "integrity": "sha512-lCPoS6ncgX4+rJu5bS3F/iCz17kZ9MPZ6dpuTtI0KXKABkhyXIdYB3Inby1OpaGti3YlI3EeEkM9AuWpelJrVA==",
-      "dependencies": {
-        "string-width": "^4.2.3"
-      },
-      "engines": {
-        "node": ">=4"
       }
     },
     "node_modules/cli-spinners": {

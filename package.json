@@ -41,7 +41,6 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
-    "@types/cli-progress": "^3.8.0",
     "@types/inquirer": "^8.2.5",
     "@types/jest": "^29.2.3",
     "@types/node": "^24.9.2",
@@ -65,7 +64,6 @@
     "@ethersphere/core-sdk": "^0.2.2",
     "cafe-utility": "^33.3.1",
     "chalk": "^2.4.2",
-    "cli-progress": "^3.11.2",
     "cli-table3": "^0.6.5",
     "ethers": "^6.16.0",
     "inquirer": "^8.2.5",
