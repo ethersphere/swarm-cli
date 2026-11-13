@@ -1,5 +1,5 @@
 import { Reference } from '@ethersphere/bee-js'
-import { Aggregation, LeafCommand, Option } from 'furious-commander'
+import { Aggregation, LeafCommand, Option } from '../../../vendor/commander'
 import { History } from '../../service/history'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'

@@ -1,5 +1,5 @@
 import { Topic } from '@ethersphere/bee-js'
-import { Option } from 'furious-commander'
+import { Option } from '../../../vendor/commander'
 import { RootCommand } from '../root-command'
 
 // TODO: https://github.com/ethersphere/bee/issues/2041

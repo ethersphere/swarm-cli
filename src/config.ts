@@ -1,4 +1,4 @@
-import { IOption } from 'furious-commander'
+import { IOption } from '../vendor/commander'
 import PackageJson from '../package.json'
 import { Access } from './command/access'
 import { Addresses } from './command/addresses'

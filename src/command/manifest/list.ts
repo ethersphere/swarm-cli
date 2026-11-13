@@ -1,6 +1,6 @@
 import { MantarayNode, Reference } from '@ethersphere/bee-js'
 import chalk from 'chalk'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../../vendor/commander'
 import { exit } from 'process'
 import { makeBzzAddress } from '../../utils/bzz-address'
 import { createKeyValue } from '../../utils/text'

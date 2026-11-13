@@ -9,7 +9,7 @@ import {
 import { Binary, Optional } from 'cafe-utility'
 import chalk from 'chalk'
 import { readFileSync } from 'fs'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../../vendor/commander'
 import { join } from 'path'
 import { pickStamp } from '../../service/stamp'
 import { readdirDeepAsync } from '../../utils'

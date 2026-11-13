@@ -1,6 +1,6 @@
 import { Wallet } from '@ethereumjs/wallet'
 import { randomBytes } from 'crypto'
-import { Argument, LeafCommand, Option, Utils } from 'furious-commander'
+import { Argument, LeafCommand, Option, Utils } from '../../../vendor/commander'
 import { getPrintableIdentityType } from '../../service/identity'
 import { Identity, IdentityType } from '../../service/identity/types'
 import { CommandLineError } from '../../utils/error'

@@ -1,4 +1,4 @@
-import { GroupCommand } from 'furious-commander'
+import { GroupCommand } from '../../../vendor/commander'
 import { Grant } from './grant'
 import { History } from './history'
 import { Init } from './init'

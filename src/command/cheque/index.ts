@@ -1,4 +1,4 @@
-import { GroupCommand } from 'furious-commander'
+import { GroupCommand } from '../../../vendor/commander'
 import { Cashout } from './cashout'
 import { Deposit } from './deposit'
 import { List } from './list'

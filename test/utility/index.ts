@@ -1,5 +1,5 @@
 import { existsSync, unlinkSync } from 'fs'
-import { cli } from 'furious-commander'
+import { cli } from '../../vendor/commander'
 import { join } from 'path'
 import { optionParameters, rootCommandClasses } from '../../src/config'
 import { errorHandler } from '../../src/utils/error'

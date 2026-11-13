@@ -1,4 +1,4 @@
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 

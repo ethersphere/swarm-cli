@@ -1,6 +1,6 @@
 import { BeeModes } from '@ethersphere/bee-js'
 import chalk from 'chalk'
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../vendor/commander'
 import { exit } from 'process'
 import { createKeyValue } from '../utils/text'
 import { RootCommand } from './root-command'

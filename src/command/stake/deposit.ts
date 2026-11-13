@@ -1,5 +1,5 @@
 import { BZZ } from '@ethersphere/bee-js'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../../vendor/commander'
 import { exit } from 'process'
 import { createSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'

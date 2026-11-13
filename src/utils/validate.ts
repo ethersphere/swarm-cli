@@ -1,4 +1,4 @@
-import { Context } from 'madlad'
+import { Context } from '../../vendor/commander'
 
 export function validateTokenAmount(value: unknown, context: Context): string[] {
   if (context.options.unit === 'bzz') {

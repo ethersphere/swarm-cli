@@ -1,5 +1,5 @@
 import { PostageBatch } from '@ethersphere/bee-js'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { exit } from 'process'
 import { printStamp } from '../../service/stamp'
 import { printDivided } from '../../utils/text'

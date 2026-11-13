@@ -1,5 +1,5 @@
 import { System } from 'cafe-utility'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { createSpinner } from '../../utils/spinner'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'

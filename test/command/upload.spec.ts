@@ -1,7 +1,7 @@
 import { ChunkSplitter } from '@ethersphere/bee-js'
 import { System } from 'cafe-utility'
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../vendor/commander'
 import QRCode from 'qrcode'
 import { Readable } from 'stream'
 import type { Upload } from '../../src/command/upload'
