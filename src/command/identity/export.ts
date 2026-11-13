@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../../vendor/commander'
 import { isSimpleWallet } from '../../service/identity'
 import { IdentityType } from '../../service/identity/types'
 import { CommandLineError } from '../../utils/error'

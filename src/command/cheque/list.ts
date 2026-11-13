@@ -1,4 +1,4 @@
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { ChequeCommand } from './cheque-command'
 
 export class List extends ChequeCommand implements LeafCommand {

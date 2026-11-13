@@ -1,4 +1,4 @@
-import { Argument, LeafCommand } from 'furious-commander'
+import { Argument, LeafCommand } from '../../../vendor/commander'
 import { exit } from 'process'
 import { CommandLineError } from '../../utils/error'
 import { Message } from '../../utils/message'

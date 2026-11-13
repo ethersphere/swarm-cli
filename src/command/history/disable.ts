@@ -1,4 +1,4 @@
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { HistoryCommand } from './history-command'
 import { warningText } from '../../utils/text'
 import { existsSync, unlinkSync } from 'fs'

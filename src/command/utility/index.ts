@@ -1,6 +1,6 @@
 import { Wallet } from '@ethereumjs/wallet'
 import { readFile } from 'fs/promises'
-import { GroupCommand } from 'furious-commander'
+import { GroupCommand } from '../../../vendor/commander'
 import { fileExists } from '../../utils'
 import { CommandLog } from '../root-command/command-log'
 import { Cid } from './cid'

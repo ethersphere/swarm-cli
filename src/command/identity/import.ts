@@ -1,6 +1,6 @@
 import { Wallet } from '@ethereumjs/wallet'
 import { readFileSync } from 'fs'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../../vendor/commander'
 import { IdentityType } from '../../service/identity/types'
 import { expectFile, getFieldOrNull, isPrivateKey, normalizePrivateKey } from '../../utils'
 import { CommandLineError } from '../../utils/error'

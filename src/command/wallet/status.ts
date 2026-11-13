@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 

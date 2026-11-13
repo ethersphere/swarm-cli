@@ -17,7 +17,6 @@
         "cli-progress": "^3.11.2",
         "cli-table3": "^0.6.5",
         "ethers": "^6.16.0",
-        "furious-commander": "^1.7.1",
         "inquirer": "^8.2.5",
         "ora": "^5.3.0",
         "qrcode": "^1.5.4",
@@ -4259,20 +4258,6 @@
         "url": "https://github.com/sponsors/ljharb"
       }
     },
-    "node_modules/furious-commander": {
-      "version": "1.8.0",
-      "resolved": "https://registry.npmjs.org/furious-commander/-/furious-commander-1.8.0.tgz",
-      "integrity": "sha512-Hoxuw0UHdWVvsSVEtCxQD41/EUvzPxckdy7C+oGuh9IxH/SUJ31toVTl3u/WPF1iKp+sXGocoeth1QkySPz/xw==",
-      "license": "MIT",
-      "dependencies": {
-        "madlad": "^1.5.0",
-        "reflect-metadata": "^0.1.13"
-      },
-      "engines": {
-        "node": ">=10.0.0",
-        "npm": ">=6.0.0"
-      }
-    },
     "node_modules/gensync": {
       "version": "1.0.0-beta.2",
       "resolved": "https://registry.npmjs.org/gensync/-/gensync-1.0.0-beta.2.tgz",
@@ -6994,12 +6979,6 @@
         "node": ">=10"
       }
     },
-    "node_modules/madlad": {
-      "version": "1.5.0",
-      "resolved": "https://registry.npmjs.org/madlad/-/madlad-1.5.0.tgz",
-      "integrity": "sha512-wvZkAV48esvLI7+ni4+5flCWtgO8MFY+l1LYOzoK3qA4O1IBQ6GntsGb/7jjNPr+O/zZfH5U52uuo7TY4sLf6A==",
-      "license": "MIT"
-    },
     "node_modules/make-dir": {
       "version": "3.1.0",
       "resolved": "https://registry.npmjs.org/make-dir/-/make-dir-3.1.0.tgz",
@@ -7887,11 +7866,6 @@
       "engines": {
         "node": ">=8"
       }
-    },
-    "node_modules/reflect-metadata": {
-      "version": "0.1.13",
-      "resolved": "https://registry.npmjs.org/reflect-metadata/-/reflect-metadata-0.1.13.tgz",
-      "integrity": "sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg=="
     },
     "node_modules/regexpp": {
       "version": "3.2.0",

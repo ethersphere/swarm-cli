@@ -1,5 +1,5 @@
 import { HistoryCommand } from './history-command'
-import { Argument, LeafCommand } from 'furious-commander'
+import { Argument, LeafCommand } from '../../../vendor/commander'
 import { createKeyValue, warningText } from '../../utils/text'
 import { exit } from 'process'
 import { History } from '../../service/history'

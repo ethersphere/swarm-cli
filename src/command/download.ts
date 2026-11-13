@@ -1,6 +1,6 @@
 import { Bytes, MantarayNode } from '@ethersphere/bee-js'
 import fs from 'fs'
-import { Aggregation, LeafCommand } from 'furious-commander'
+import { Aggregation, LeafCommand } from '../../vendor/commander'
 import { BzzAddress, makeBzzAddress } from '../utils/bzz-address'
 import { Download as ManifestDownload } from './manifest/download'
 import { RootCommand } from './root-command'

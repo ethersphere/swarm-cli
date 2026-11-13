@@ -1,4 +1,4 @@
-import { Utils } from 'furious-commander'
+import { Utils } from '../../vendor/commander'
 import { FORMATTED_ERROR } from '../../src/command/root-command/printer'
 import { describeCommand, invokeTestCli } from '../utility'
 

@@ -1,5 +1,5 @@
 import { BZZ } from '@ethersphere/bee-js'
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { createSpinner } from '../../utils/spinner'
 import { RootCommand } from '../root-command'
 import { VerbosityLevel } from '../root-command/command-log'

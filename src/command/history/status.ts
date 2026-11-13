@@ -1,4 +1,4 @@
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { HistoryCommand } from './history-command'
 import chalk from 'chalk'
 import { existsSync } from 'fs'

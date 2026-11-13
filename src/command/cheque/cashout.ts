@@ -1,6 +1,6 @@
 import { BZZ } from '@ethersphere/bee-js'
 import chalk from 'chalk'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { createKeyValue } from '../../utils/text'
 import { ChequeCommand } from './cheque-command'
 

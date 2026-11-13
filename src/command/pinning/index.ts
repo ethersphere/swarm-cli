@@ -1,4 +1,4 @@
-import { GroupCommand } from 'furious-commander'
+import { GroupCommand } from '../../../vendor/commander'
 import { List } from './list'
 import { Pin } from './pin'
 import { ReuploadAll } from './reupload-all'

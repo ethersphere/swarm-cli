@@ -30,8 +30,8 @@
     "test:coverage": "jest --config=jest.config.ts --coverage",
     "check": "tsc --project tsconfig.test.json",
     "start": "ts-node src/index.ts",
-    "lint": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "lint:check": "eslint \"src/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint --fix \"src/**/*.ts\" \"vendor/**/*.ts\" \"test/**/*.ts\" && prettier --write \"src/**/*.ts\" \"vendor/**/*.ts\" \"test/**/*.ts\"",
+    "lint:check": "eslint \"src/**/*.ts\" \"vendor/**/*.ts\" \"test/**/*.ts\" && prettier --check \"src/**/*.ts\" \"vendor/**/*.ts\" \"test/**/*.ts\"",
     "bee": "npx @fairdatasociety/fdp-play@3.3.0 start --detach --fresh --bee-version 2.6.0"
   },
   "engines": {
@@ -70,7 +70,6 @@
     "cli-progress": "^3.11.2",
     "cli-table3": "^0.6.5",
     "ethers": "^6.16.0",
-    "furious-commander": "^1.7.1",
     "inquirer": "^8.2.5",
     "ora": "^5.3.0",
     "qrcode": "^1.5.4",
