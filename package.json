@@ -40,7 +40,6 @@
     "bee": "1.9.0-13a47043"
   },
   "devDependencies": {
-    "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
     "@types/cli-progress": "^3.8.0",
     "@types/inquirer": "^8.2.5",
@@ -53,7 +52,6 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.1.5",
     "eslint-plugin-prettier": "^4.2.1",
-    "husky": "^4.3.6",
     "jest": "^29.3.1",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
