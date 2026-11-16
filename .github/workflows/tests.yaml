@@ -12,6 +12,12 @@ env:
   BEE_API_URL: 'http://localhost:1633'
   BEE_PEER_API_URL: 'http://localhost:11633'
 
+# Explicit token permissions (the repo default becomes read-only).
+permissions:
+  contents: read
+  actions: read         # download the coverage artifact of the base branch run
+  pull-requests: write  # post the coverage comparison on the PR
+
 jobs:
   tests-bee-stable:
     runs-on: ubuntu-latest
