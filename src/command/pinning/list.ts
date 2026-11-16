@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { PinningCommand } from './pinning-command'
 
 export class List extends PinningCommand implements LeafCommand {

@@ -1,4 +1,4 @@
-import { Argument, LeafCommand } from 'furious-commander'
+import { Argument, LeafCommand } from '../../../vendor/commander'
 import { createWallet } from '.'
 import { RootCommand } from '../root-command'
 

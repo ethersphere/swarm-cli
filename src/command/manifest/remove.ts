@@ -1,6 +1,6 @@
 import { MantarayNode } from '@ethersphere/bee-js'
 import { Optional } from 'cafe-utility'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../../vendor/commander'
 import { pickStamp } from '../../service/stamp'
 import { BzzAddress } from '../../utils/bzz-address'
 import { CommandLineError } from '../../utils/error'

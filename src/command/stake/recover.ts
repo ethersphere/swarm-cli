@@ -1,5 +1,5 @@
 import { Contract } from 'ethers'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../../vendor/commander'
 import { makeReadySigner } from '../../utils/rpc'
 import { RootCommand } from '../root-command'
 import { createWallet } from '../utility'

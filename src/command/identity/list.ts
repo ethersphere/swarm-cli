@@ -1,4 +1,4 @@
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { getPrintableIdentityType, getSimpleWallet, isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { createKeyValue } from '../../utils/text'
 import { IdentityCommand } from './identity-command'

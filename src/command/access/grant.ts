@@ -1,4 +1,4 @@
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { exit } from 'process'
 import { AccessHistory } from '../../service/access'
 import { AccessHistoryOperation } from '../../service/access/types/history-event'

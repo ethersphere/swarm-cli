@@ -1,5 +1,5 @@
 import { DAI } from '@ethersphere/bee-js'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { createKeyValue } from '../../utils/text'
 import { RootCommand } from '../root-command'
 

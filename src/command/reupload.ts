@@ -1,4 +1,4 @@
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../vendor/commander'
 import { pickStamp } from '../service/stamp'
 import { stampProperties } from '../utils/option'
 import { RootCommand } from './root-command'

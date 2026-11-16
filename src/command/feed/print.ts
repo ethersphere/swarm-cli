@@ -1,7 +1,7 @@
 import { Wallet } from '@ethereumjs/wallet'
 import { ChunkSplitter, Topic } from '@ethersphere/bee-js'
 import { Binary } from 'cafe-utility'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { Identity } from '../../service/identity/types'

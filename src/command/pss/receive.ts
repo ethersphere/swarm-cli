@@ -1,6 +1,6 @@
 import { Topic } from '@ethersphere/bee-js'
 import { createWriteStream } from 'fs'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { getFieldOrNull } from '../../utils'
 import { PssCommand } from './pss-command'
 

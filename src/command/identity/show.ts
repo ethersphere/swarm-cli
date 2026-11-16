@@ -1,5 +1,5 @@
 import { Wallet } from '@ethereumjs/wallet'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../../vendor/commander'
 import { exit } from 'process'
 import { isSimpleWallet, isV3Wallet } from '../../service/identity'
 import { normalizePrivateKey } from '../../utils'

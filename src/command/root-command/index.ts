@@ -1,6 +1,6 @@
 import { Bee, BeeOptions, Reference } from '@ethersphere/bee-js'
 import { Optional } from 'cafe-utility'
-import { ExternalOption, Sourcemap, Utils } from 'furious-commander'
+import { ExternalOption, Sourcemap, Utils } from '../../../vendor/commander'
 import PackageJson from '../../../package.json'
 import { printCurlCommand } from '../../curl'
 import { checkForUpdates, getLatestVersionCheck } from '../../service/version_checker'

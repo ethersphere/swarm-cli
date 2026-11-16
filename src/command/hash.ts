@@ -1,6 +1,6 @@
 import { ChunkSplitter, Reference } from '@ethersphere/bee-js'
 import { readFileSync } from 'fs'
-import { Argument, LeafCommand } from 'furious-commander'
+import { Argument, LeafCommand } from '../../vendor/commander'
 import { RootCommand } from './root-command'
 
 export class Hash extends RootCommand implements LeafCommand {

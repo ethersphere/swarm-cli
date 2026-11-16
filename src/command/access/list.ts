@@ -1,4 +1,4 @@
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { AccessHistory } from '../../service/access'
 import { AccessCommand } from './access-command'
 

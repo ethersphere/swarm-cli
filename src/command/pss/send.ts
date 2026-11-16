@@ -1,6 +1,6 @@
 import { Topic } from '@ethersphere/bee-js'
 import { readFileSync } from 'fs'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { exit } from 'process'
 import { pickStamp } from '../../service/stamp'
 import { fileExists, getByteSize } from '../../utils'

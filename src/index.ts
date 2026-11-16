@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as dns from 'dns'
-import { cli } from 'furious-commander'
+import { cli } from '../vendor/commander'
 import { application } from './application'
 import { optionParameters, rootCommandClasses } from './config'
 import { printer } from './printer'

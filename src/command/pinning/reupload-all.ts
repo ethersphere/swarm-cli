@@ -1,4 +1,4 @@
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { stampProperties } from '../../utils/option'
 import { PinningCommand } from './pinning-command'
 

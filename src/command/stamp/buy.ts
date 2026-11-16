@@ -1,7 +1,7 @@
 import { BatchId, Utils } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
 import chalk from 'chalk'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { exit } from 'process'
 import { isChainStateReady } from '../../utils/chainsync'
 import { createSpinner } from '../../utils/spinner'

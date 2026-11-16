@@ -1,7 +1,7 @@
 import { Utils } from '@ethersphere/bee-js'
 import { Numbers, Strings } from 'cafe-utility'
 import { Contract, ContractTransactionReceipt, Wallet } from 'ethers'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { ABI, Contracts } from '../../utils/contracts'
 import { makeReadySigner } from '../../utils/rpc'
 import { RootCommand } from '../root-command'

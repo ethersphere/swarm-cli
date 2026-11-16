@@ -1,6 +1,6 @@
 import { BeeError, Topic } from '@ethersphere/bee-js'
 import { createWriteStream } from 'fs'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { PssCommand } from './pss-command'
 
 export class Subscribe extends PssCommand implements LeafCommand {

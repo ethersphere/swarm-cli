@@ -1,6 +1,6 @@
 import { Dates, System } from 'cafe-utility'
 import { JsonRpcProvider, Wallet } from 'ethers'
-import { Argument, LeafCommand, Option } from 'furious-commander'
+import { Argument, LeafCommand, Option } from '../../../vendor/commander'
 import { getNetworkId } from '../../utils/contracts'
 import {
   estimateNativeTransferTransactionCost,

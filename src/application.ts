@@ -1,4 +1,4 @@
-import { Application } from 'furious-commander/dist/application'
+import { Application } from '../vendor/commander'
 import PackageJson from '../package.json'
 
 export const application: Application = {

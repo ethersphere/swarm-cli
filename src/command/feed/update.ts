@@ -1,5 +1,5 @@
 import { Reference } from '@ethersphere/bee-js'
-import { LeafCommand, Option } from 'furious-commander'
+import { LeafCommand, Option } from '../../../vendor/commander'
 import { pickStamp } from '../../service/stamp'
 import { stampProperties } from '../../utils/option'
 import { FeedCommand } from './feed-command'

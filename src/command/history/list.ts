@@ -1,7 +1,7 @@
 import { HistoryCommand } from './history-command'
 import { History } from '../../service/history'
 import Table from 'cli-table3'
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { ellipsis, warningText } from '../../utils/text'
 import { HistoryItem } from '../../service/history/types/history-item'
 

@@ -1,4 +1,4 @@
-import { IOption } from 'furious-commander'
+import { IOption } from '../../vendor/commander'
 
 export const stampProperties: IOption = {
   key: 'stamp',

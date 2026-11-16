@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { Printer } from 'furious-commander/dist/printer'
+import { Printer } from '../vendor/commander'
 import { Printer as SwarmPrinter } from './command/root-command/printer'
 
 export const printer: Printer = {

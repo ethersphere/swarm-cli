@@ -1,4 +1,4 @@
-import { Argument, LeafCommand } from 'furious-commander'
+import { Argument, LeafCommand } from '../../../vendor/commander'
 import { PinningCommand } from './pinning-command'
 
 export class Unpin extends PinningCommand implements LeafCommand {

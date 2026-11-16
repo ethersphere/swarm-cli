@@ -1,4 +1,4 @@
-import { GroupCommand } from 'furious-commander'
+import { GroupCommand } from '../../../vendor/commander'
 import { Receive } from './receive'
 import { Send } from './send'
 import { Subscribe } from './subscribe'

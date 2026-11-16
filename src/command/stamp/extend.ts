@@ -1,6 +1,6 @@
 import { Duration, Size } from '@ethersphere/bee-js'
 import { Dates, Numbers } from 'cafe-utility'
-import { LeafCommand } from 'furious-commander'
+import { LeafCommand } from '../../../vendor/commander'
 import { exit } from 'process'
 import { pickStamp } from '../../service/stamp'
 import { createSpinner } from '../../utils/spinner'
