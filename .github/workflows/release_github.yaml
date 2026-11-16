@@ -10,10 +10,23 @@ on:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    # Only this environment (default branch only) holds RELEASE_APP_KEY.
+    environment: release-ci
+    permissions: {}
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v2
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_KEY }}
+          # Least privilege: release-please updates the release PR (and its labels) and creates the release + tag.
+          permission-contents: write
+          permission-pull-requests: write
+          permission-issues: write
+      - uses: googleapis/release-please-action@00911586051618367fa9c19b161a0a146ac51970 # v2
         id: release
         with:
-          token: ${{ secrets.GHA_PAT_BASIC }}
+          token: ${{ steps.app-token.outputs.token }}
           release-type: node
           package-name: swarm-cli
